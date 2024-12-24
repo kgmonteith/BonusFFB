@@ -15,18 +15,46 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="0">
+     <widget class="QComboBox" name="clutchDeviceComboBox">
+      <property name="placeholderText">
+       <string>Select clutch pedal device</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
-     <widget class="QSpinBox" name="spinBox"/>
+     <widget class="QSpinBox" name="spinBox">
+      <property name="suffix">
+       <string>%</string>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+     </widget>
     </item>
     <item row="0" column="0">
      <widget class="QSlider" name="horizontalSlider">
+      <property name="maximum">
+       <number>100</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QComboBox" name="clutchDeviceComboBox"/>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="telemetryLabel">
+      <property name="text">
+       <string>❌ Telemetry disconnected</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -87,12 +115,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>574</x>
-     <y>138</y>
+     <x>573</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel">
-     <x>522</x>
-     <y>137</y>
+     <x>527</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
@@ -103,12 +131,28 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>289</x>
-     <y>137</y>
+     <x>298</x>
+     <y>93</y>
     </hint>
     <hint type="destinationlabel">
-     <x>582</x>
-     <y>136</y>
+     <x>573</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>84</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>

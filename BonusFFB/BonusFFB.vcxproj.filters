@@ -32,5 +32,18 @@
     <ClInclude Include="BonusFFB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\scs-telemetry-common.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Telemetry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Telemetry.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

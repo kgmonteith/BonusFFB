@@ -1,5 +1,4 @@
 #include "HShifter.h"
-#include "BonusFFB.h"
 #include <QtWidgets/QApplication>
 #include <QDebug>
 #include <QFile>
@@ -7,12 +6,12 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setStyle("Fusion");
+
     HShifter w;
     w.show();
 
-    BonusFFB* bffb = new BonusFFB();
-    bffb->hello();
-
+    w.initializeBonusFFB();
     w.setSlider();
 
     return a.exec();
