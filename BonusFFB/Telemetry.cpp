@@ -12,9 +12,7 @@ Telemetry::Telemetry() {
 
 void Telemetry::connectTelemetry()
 {
-	qDebug() << "Called connectTelemtry";
 	if (pTelemMap != nullptr) {
-		qDebug() << "Current renderTime: " << pTelemMap->renderTime << ", game: " << pTelemMap->scs_values.game;
 		if (pTelemMap->scs_values.game == UnknownGame) {
 			// Telemetry has stopped, disconnect the telemetry
 			disconnectTelemetry();

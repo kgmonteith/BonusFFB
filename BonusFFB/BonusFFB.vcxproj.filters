@@ -29,10 +29,10 @@
     <ClCompile Include="BonusFFB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClInclude Include="BonusFFB.h">
+    <ClInclude Include="..\include\scs-telemetry-common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\scs-telemetry-common.hpp">
+    <ClInclude Include="BonusFFB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

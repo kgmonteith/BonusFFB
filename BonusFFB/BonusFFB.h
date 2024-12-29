@@ -4,36 +4,33 @@
 
 #include "bonusffb_global.h"
 #include <dinput.h>
-#include <string>
-#include <QMap>
+#include <QObject>
 #include <QList>
+#include <QUuid>
 
-inline bool operator< (const GUID& firstGUID, const GUID& secondGUID) {
-    return (memcmp(&firstGUID, &secondGUID, sizeof(GUID)) < 0 ? true : false);
-}
+#define VJOY_PRODUCT_GUID 0xBEAD1234
 
+namespace BonusFFB {
+    struct DeviceInfo
+    {
+        QString name;
+        QUuid instanceGuid;
+        QUuid productGuid;
+        bool supportsFfb;
+        LPDIRECTINPUTDEVICE8 diDevice;
+    };
 
-struct BFFBDIDevice
-{
-    QString instanceName;
-    QString guidString;
-    const DIDEVICEINSTANCE* device;
-};
+    static LPDIRECTINPUT8 g_pDI;
 
-//class BONUSFFB_EXPORT BonusFFB
-class BonusFFB
-{
-public:
-    BonusFFB();
-    HRESULT initDirectInput() noexcept;
+    HRESULT initDirectInput(QList<DeviceInfo>*) noexcept;
+    static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
+    DeviceInfo * getDeviceFromGuid(QList<DeviceInfo> *, QUuid);
+    HRESULT prepare(DeviceInfo*, HWND*);
+    HRESULT release(DeviceInfo*);
+    HRESULT updateState(DeviceInfo*, DIJOYSTATE2*);
 
-    static QList<BFFBDIDevice> diDevices; // All directInput devices
+    BOOL CALLBACK EnumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
+    QMap<QUuid, QString> getDeviceAxes(DeviceInfo*);
+    long getAxisReading(DIJOYSTATE2*, QUuid);
 
-private:
-    LPDIRECTINPUT8 pDI = nullptr;
-    LPDIRECTINPUTDEVICE8 pFlightbase = nullptr;
-    LPDIRECTINPUTEFFECT pEffect = nullptr;
-
-    //static QMap<std::wstring, DIDEVICEINSTANCE> diDevices; // All directInput devices
-    static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID* pContext) noexcept;
 };
