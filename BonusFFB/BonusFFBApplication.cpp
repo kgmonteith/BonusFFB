@@ -8,37 +8,23 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "BonusFFBApplication.h"
+#include <QDesktopServices>
+#include <QUrl>
 
-#include <QObject>
-#include <QChronoTimer>
-
-#include <wtypes.h>
-#include "scs-telemetry-common.hpp"
-
-enum class TelemetrySource {
-	none, ats, ets2
-};
-
-class Telemetry : public QObject
+BonusFFBApplication::BonusFFBApplication(QWidget* parent)
+    : QMainWindow(parent)
 {
-	Q_OBJECT;
+}
 
-public:
-	Telemetry();
-	void connectTelemetry();
-	void disconnectTelemetry();
-	void startConnectTimer();
+BonusFFBApplication::~BonusFFBApplication()
+{
+}
 
-signals:
-	void telemetryConnected(QString);
-	void telemetryDisconnected(QString);
-	void lastUpdate(QString);
+void BonusFFBApplication::openUserGuide() {
+    QDesktopServices::openUrl(QUrl("http://www.kgmonteith.com", QUrl::TolerantMode));
+}
 
-private:
-	HANDLE pHandle = nullptr;
-	void* pBufferPtr = nullptr;
-	scsTelemetryMap_s* pTelemMap = nullptr;
+void BonusFFBApplication::openAbout() {
 
-	QChronoTimer* timer;
-};
+}

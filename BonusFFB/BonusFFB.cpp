@@ -1,3 +1,13 @@
+/*
+This file is part of Bonus FFB.
+
+Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
+
+Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "BonusFFB.h"
 
 #include <QDebug>
@@ -7,7 +17,6 @@ BOOL CALLBACK BonusFFB::enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID*
 {
     QList<DeviceInfo>* diDevices = static_cast<QList<DeviceInfo>*>(pContext);
 
-    QString devName = QString::fromWCharArray(pInst->tszInstanceName);
     IDirectInputDevice8* dev;
     g_pDI->CreateDevice(pInst->guidInstance, &dev, NULL);
 
@@ -15,12 +24,14 @@ BOOL CALLBACK BonusFFB::enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID*
     capabilities.dwSize = sizeof(DIDEVCAPS);
     dev->GetCapabilities(&capabilities);
 
-    qDebug() << "Device: " << devName << ", dwFlags: " << (capabilities.dwFlags & DIDC_FORCEFEEDBACK) << ", dwFFSamplePeriod: " << capabilities.dwAxes;
-
-    unsigned long guidManufacturer = pInst->guidProduct.Data1;
     QUuid instanceGuid = pInst->guidInstance;
     QUuid productGuid = pInst->guidProduct;
     bool supportsFfb = (capabilities.dwFlags & DIDC_FORCEFEEDBACK);
+    QString devName = QString::fromWCharArray(pInst->tszInstanceName);
+    if (productGuid.data1 == VJOY_PRODUCT_GUID) {
+        vjoy_device_count += 1;
+        devName.append(QString(" %1").arg(vjoy_device_count));
+    }
     DeviceInfo deviceInfo = { devName, instanceGuid, productGuid, supportsFfb, dev};
     diDevices->append(deviceInfo);
 

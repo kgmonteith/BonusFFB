@@ -35,14 +35,23 @@
     <ClInclude Include="BonusFFB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Telemetry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BonusFFBApplication.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="BonusFFBApplication.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

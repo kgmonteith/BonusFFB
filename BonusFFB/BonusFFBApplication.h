@@ -10,35 +10,19 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QChronoTimer>
+#include <QtWidgets/QMainWindow>
+#include <QTimer>
 
-#include <wtypes.h>
-#include "scs-telemetry-common.hpp"
-
-enum class TelemetrySource {
-	none, ats, ets2
-};
-
-class Telemetry : public QObject
+class BonusFFBApplication : public QMainWindow
 {
-	Q_OBJECT;
+	Q_OBJECT
 
 public:
-	Telemetry();
-	void connectTelemetry();
-	void disconnectTelemetry();
-	void startConnectTimer();
+	BonusFFBApplication(QWidget* parent = nullptr);
+	~BonusFFBApplication();
 
-signals:
-	void telemetryConnected(QString);
-	void telemetryDisconnected(QString);
-	void lastUpdate(QString);
-
-private:
-	HANDLE pHandle = nullptr;
-	void* pBufferPtr = nullptr;
-	scsTelemetryMap_s* pTelemMap = nullptr;
-
-	QChronoTimer* timer;
+public slots:
+	void openUserGuide();
+	void openAbout();
 };
+
