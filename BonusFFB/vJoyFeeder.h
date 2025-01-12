@@ -10,24 +10,23 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include "version.h"
-#include <QtWidgets/QMainWindow>
-#include <QTimer>
-#include <QVersionNumber>
+#ifndef __wtypes_h__
+#include <wtypes.h>
+#endif
 
-// This is a parent class implementing functions common to individual Bonus FFB apps
-class BonusFFBApplication : public QMainWindow
+#ifndef __WINDEF_
+#include <windef.h>
+#endif
+
+#include "public.h"
+#include "vjoyinterface.h"
+
+#include <QObject>
+
+class vJoyFeeder : public QObject
 {
-	Q_OBJECT
-
 public:
-	BonusFFBApplication(QWidget* parent = nullptr);
-	~BonusFFBApplication();
-
-	QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-
-public slots:
-	void openUserGuide();
-	void openAbout();
+	static bool isDriverEnabled();
+	static bool checkVersionMatch();
 };
 

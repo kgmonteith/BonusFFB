@@ -53,14 +53,14 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="ffbDeviceFoundLabel">
          <property name="text">
-          <string>❌ FFB joystick not found</string>
+          <string>❌ FFB device not found</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="vjoyDeviceFoundLabel">
          <property name="text">
           <string>❌ vJoy device not found</string>
          </property>
@@ -123,7 +123,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="monitorTab">
        <attribute name="title">
@@ -622,21 +622,28 @@
         <item>
          <widget class="QGroupBox" name="groupBox_10">
           <property name="title">
-           <string>GroupBox</string>
+           <string>Constant effects</string>
           </property>
           <layout class="QFormLayout" name="formLayout_4">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>TextLabel</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>Overall FFB intensity</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item row="0" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
-              <widget class="QSlider" name="horizontalSlider_4">
+              <widget class="QSlider" name="overallIntensitySlider">
                <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
                 <number>100</number>
                </property>
                <property name="orientation">
@@ -651,12 +658,186 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="spinBox_3">
+              <widget class="QSpinBox" name="overallIntensitySpinBox">
                <property name="suffix">
                 <string>%</string>
                </property>
                <property name="maximum">
                 <number>100</number>
+               </property>
+               <property name="value">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>Damper</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="toolTip">
+                <string>Words words words</string>
+               </property>
+               <property name="text">
+                <string>&lt;a href=&quot;https://google.com&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+               </property>
+               <property name="openExternalLinks">
+                <bool>true</bool>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <item>
+              <widget class="QSlider" name="damperSlider">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::TickPosition::TicksBelow</enum>
+               </property>
+               <property name="tickInterval">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="damperSpinBox">
+               <property name="suffix">
+                <string>%</string>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>Inertia</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>ℹ️</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="QSlider" name="inertiaSlider">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>30</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::TickPosition::TicksBelow</enum>
+               </property>
+               <property name="tickInterval">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="inertiaSpinBox">
+               <property name="suffix">
+                <string>%</string>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>30</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>Friction</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>ℹ️</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <item>
+              <widget class="QSlider" name="frictionSlider">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>30</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::TickPosition::TicksBelow</enum>
+               </property>
+               <property name="tickInterval">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="frictionSpinBox">
+               <property name="suffix">
+                <string>%</string>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>30</number>
                </property>
               </widget>
              </item>
@@ -777,7 +958,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionUserGuide"/>
-    <addaction name="actionAbout_Bonus_FFB"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -796,7 +977,7 @@
     <string>User guide</string>
    </property>
   </action>
-  <action name="actionAbout_Bonus_FFB">
+  <action name="actionAbout">
    <property name="text">
     <string>About Bonus FFB</string>
    </property>
@@ -830,12 +1011,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>245</x>
-     <y>202</y>
+     <x>515</x>
+     <y>560</y>
     </hint>
     <hint type="destinationlabel">
-     <x>520</x>
-     <y>209</y>
+     <x>775</x>
+     <y>563</y>
     </hint>
    </hints>
   </connection>
@@ -846,12 +1027,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>527</x>
-     <y>197</y>
+     <x>775</x>
+     <y>563</y>
     </hint>
     <hint type="destinationlabel">
-     <x>399</x>
-     <y>200</y>
+     <x>669</x>
+     <y>560</y>
     </hint>
    </hints>
   </connection>
@@ -862,12 +1043,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>366</x>
-     <y>235</y>
+     <x>636</x>
+     <y>593</y>
     </hint>
     <hint type="destinationlabel">
-     <x>521</x>
-     <y>239</y>
+     <x>775</x>
+     <y>596</y>
     </hint>
    </hints>
   </connection>
@@ -878,12 +1059,140 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>534</x>
-     <y>234</y>
+     <x>775</x>
+     <y>596</y>
     </hint>
     <hint type="destinationlabel">
-     <x>434</x>
-     <y>237</y>
+     <x>704</x>
+     <y>593</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>overallIntensitySlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>overallIntensitySpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>461</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>737</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>overallIntensitySpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>overallIntensitySlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>740</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>665</x>
+     <y>205</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>damperSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>damperSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>756</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>681</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inertiaSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>inertiaSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>629</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>749</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inertiaSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>inertiaSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>747</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>639</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frictionSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>frictionSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>753</x>
+     <y>300</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>668</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frictionSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>frictionSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>469</x>
+     <y>305</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>746</x>
+     <y>306</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>damperSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>damperSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>426</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>741</x>
+     <y>233</y>
     </hint>
    </hints>
   </connection>

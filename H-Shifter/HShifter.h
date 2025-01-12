@@ -16,8 +16,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "BonusFFB.h"
 #include "BonusFFBApplication.h"
 #include "Telemetry.h"
+#include "SlotGuard.h"
+#include "SynchroGuard.h"
+#include "vJoyFeeder.h"
 
-#define GAMELOOP_INTERVAL_MS 10
+#define GAMELOOP_INTERVAL_MS 1
 #define SLOT_WIDTH_PX 5.0
 #define JOYSTICK_MARKER_DIAMETER_PX 21.0
 
@@ -34,14 +37,13 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 public slots:
-    void saveSettings();
-    void loadSettings();
+    void saveDeviceSettings();
+    void loadDeviceSettings();
     void startOnLaunch();
 
     void rescaleShifterMap();
     void updateJoystickCircle(int, int);
 
-    void gameLoop();
     void toggleGameLoop(bool);
 
     void changeJoystickDevice(int);
@@ -60,6 +62,10 @@ signals:
     void resetClutchAxes();
 
 private:
+    void startGameLoop();
+    void stopGameLoop();
+    void gameLoop();
+
     Ui::HShifterClass ui;
     QTimer telemetryTimer;
     Telemetry telemetry;
@@ -82,4 +88,8 @@ private:
     QGraphicsRectItem* rightSlotRect;
     QGraphicsRectItem* leftSlotRect;
     QGraphicsEllipseItem* joystickCircle;
+
+    // Stateful FFB effect managers
+    SlotGuard slotGuard;
+    SynchroGuard synchroGuard;
 };

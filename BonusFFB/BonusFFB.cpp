@@ -12,6 +12,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 #include <QUuid>
+#include <QTextStream>
+#include <QThread>
 
 BOOL CALLBACK BonusFFB::enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID* pContext) noexcept
 {
@@ -73,40 +75,80 @@ BonusFFB::DeviceInfo * BonusFFB::getDeviceFromGuid(QList<DeviceInfo> * deviceLis
             return &*it;
         }
     }
+    qDebug() << "Device not found: " << guid;
+    return nullptr;
 }
 
-// Set up the device for reading state. *Does not* configure the device for writing FFB events.
-HRESULT BonusFFB::prepare(DeviceInfo* device, HWND* handle) {
+// Set up the device for reading state.
+HRESULT BonusFFB::DeviceInfo::acquire(HWND* handle) {
     HRESULT hr;
-    if (FAILED(hr = device->diDevice->SetDataFormat(&c_dfDIJoystick2))) {
-        qDebug() << "SetDataFormat failed, hr: " << unsigned long(hr);
+
+    if (FAILED(hr = this->diDevice->SetDataFormat(&c_dfDIJoystick2))) {
+        qDebug() << "SetDataFormat failed, hr: " << Qt::hex << unsigned long(hr);
         return hr;
     }
 
     // Set the cooperative level to let DInput know how this device should
     // interact with the system and with other DInput applications.
-    if (FAILED(hr = device->diDevice->SetCooperativeLevel(*handle,
+    if (FAILED(hr = this->diDevice->SetCooperativeLevel(*handle,
         DISCL_EXCLUSIVE | DISCL_BACKGROUND))) {
-
         qDebug() << "SetCooperativeLevel failed, hr: " << unsigned long(hr);
         return hr;
     }
 
-    if (FAILED(hr = device->diDevice->Acquire())) {
+    if (FAILED(hr = this->diDevice->Acquire())) {
         qDebug() << "Acquire failed, hr: " << unsigned long(hr);
     }
     return hr;
 }
 
 // Safe teardown after preparing device
-HRESULT BonusFFB::release(DeviceInfo* device) {
-    HRESULT hr = device->diDevice->Unacquire();
+HRESULT BonusFFB::DeviceInfo::release() {
+    HRESULT hr = this->diDevice->Unacquire();
     return hr;
 }
 
-HRESULT BonusFFB::updateState(DeviceInfo* device, DIJOYSTATE2* joystickState) {
-    HRESULT hr = device->diDevice->GetDeviceState(sizeof(DIJOYSTATE2), joystickState);
+HRESULT BonusFFB::DeviceInfo::updateState() {
+    HRESULT hr = this->diDevice->GetDeviceState(sizeof(DIJOYSTATE2), &this->joyState);
     return hr;
+}
+
+QMap<QUuid, QString> BonusFFB::DeviceInfo::getDeviceAxes() {
+    QMap<QUuid, QString> axisMap;
+    this->diDevice->EnumObjects(enumAxesCallback,
+        (VOID*)&axisMap, DIDFT_AXIS);
+    return axisMap;
+}
+
+long BonusFFB::DeviceInfo::getAxisReading(QUuid axisGuid) {
+    if (axisGuid == GUID_XAxis)
+    {
+        return this->joyState.lX;
+    }
+    else if (axisGuid == GUID_YAxis)
+    {
+        return this->joyState.lY;
+    }
+    else if (axisGuid == GUID_ZAxis)
+    {
+        return this->joyState.lZ;
+    }
+    else if (axisGuid == GUID_RxAxis) {
+        return this->joyState.lRx;
+    }
+    else if (axisGuid == GUID_RyAxis)
+    {
+        return this->joyState.lRy;
+    }
+    else if (axisGuid == GUID_RzAxis)
+    {
+        return this->joyState.lRz;
+    }
+    else if (axisGuid == GUID_Slider)
+    {
+        return this->joyState.rglSlider[0];
+    }
+    return 0;
 }
 
 HRESULT BonusFFB::initDirectInput(QList<DeviceInfo>* diDevices) noexcept {
@@ -129,7 +171,7 @@ HRESULT BonusFFB::initDirectInput(QList<DeviceInfo>* diDevices) noexcept {
     }
 }
 
-BOOL CALLBACK BonusFFB::EnumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
+BOOL CALLBACK BonusFFB::enumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
     VOID* pContext) noexcept
 {
     assert(pContext != nullptr);
@@ -138,42 +180,4 @@ BOOL CALLBACK BonusFFB::EnumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
     axisMap->insert(pdidoi->guidType, QString::fromStdWString(pdidoi->tszName));
 
     return DIENUM_CONTINUE;
-}
-
-QMap<QUuid, QString> BonusFFB::getDeviceAxes(DeviceInfo* pDevice) {
-    QMap<QUuid, QString> axisMap;
-    pDevice->diDevice->EnumObjects(EnumAxesCallback,
-        (VOID*)&axisMap, DIDFT_AXIS);
-    return axisMap;
-}
-
-long BonusFFB::getAxisReading(DIJOYSTATE2* joyState, QUuid axisGuid) {
-    if (axisGuid == GUID_XAxis)
-    {
-        return joyState->lX;
-    }
-    else if (axisGuid == GUID_YAxis)
-    {
-        return joyState->lY;
-    }
-    else if (axisGuid == GUID_ZAxis)
-    {
-        return joyState->lZ;
-    }
-    else if (axisGuid == GUID_RxAxis) {
-        return joyState->lRx;
-    }
-    else if (axisGuid == GUID_RyAxis)
-    {
-        return joyState->lRy;
-    }
-    else if (axisGuid == GUID_RzAxis)
-    {
-        return joyState->lRz;
-    }
-    else if (axisGuid == GUID_Slider)
-    {
-        return joyState->rglSlider[0];
-    }
-    return 0;
 }

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
     HShifter w;
     w.show();
-    w.loadSettings();
+    w.loadDeviceSettings();
     if (startOnLaunch) {
         w.startOnLaunch();
     }

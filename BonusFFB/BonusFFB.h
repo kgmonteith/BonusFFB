@@ -17,30 +17,41 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include <QList>
 #include <QUuid>
+#include <QMap>
 
 #define VJOY_PRODUCT_GUID 0xBEAD1234
 
 namespace BonusFFB {
-    struct DeviceInfo
+
+    class DeviceInfo
     {
+    public:
         QString name;
         QUuid instanceGuid;
         QUuid productGuid;
         bool supportsFfb;
         LPDIRECTINPUTDEVICE8 diDevice;
+        DIJOYSTATE2 joyState;
+
+        HRESULT acquire(HWND*);
+        HRESULT release();
+        HRESULT updateState();
+        QMap<QUuid, QString> getDeviceAxes();
+        long getAxisReading(QUuid);
+    };
+
+    class FFBEffect
+    {
+    public:
     };
 
     static LPDIRECTINPUT8 g_pDI;
     static int vjoy_device_count = 0;
 
     HRESULT initDirectInput(QList<DeviceInfo>*) noexcept;
-    static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
     DeviceInfo * getDeviceFromGuid(QList<DeviceInfo> *, QUuid);
-    HRESULT prepare(DeviceInfo*, HWND*);
-    HRESULT release(DeviceInfo*);
-    HRESULT updateState(DeviceInfo*, DIJOYSTATE2*);
 
-    BOOL CALLBACK EnumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
-    QMap<QUuid, QString> getDeviceAxes(DeviceInfo*);
-    long getAxisReading(DIJOYSTATE2*, QUuid);
+    BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
+    BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
+
 };

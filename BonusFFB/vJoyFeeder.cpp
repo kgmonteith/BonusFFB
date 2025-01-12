@@ -8,26 +8,16 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "vJoyFeeder.h"
+#include <QDebug>
 
-#include "version.h"
-#include <QtWidgets/QMainWindow>
-#include <QTimer>
-#include <QVersionNumber>
+bool vJoyFeeder::isDriverEnabled() {
+	return vJoyEnabled();
+}
 
-// This is a parent class implementing functions common to individual Bonus FFB apps
-class BonusFFBApplication : public QMainWindow
-{
-	Q_OBJECT
-
-public:
-	BonusFFBApplication(QWidget* parent = nullptr);
-	~BonusFFBApplication();
-
-	QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-
-public slots:
-	void openUserGuide();
-	void openAbout();
-};
-
+bool vJoyFeeder::checkVersionMatch() {
+	unsigned short versionDLL, versionDriver;
+	bool ret = DriverMatch(&versionDLL, &versionDriver);
+	qDebug() << "vJoy DLL version: " << versionDLL << ", driver version: " << versionDriver;
+	return ret;
+}

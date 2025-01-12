@@ -9,7 +9,9 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "BonusFFBApplication.h"
+#include <QDate>
 #include <QDesktopServices>
+#include <QMessageBox>
 #include <QUrl>
 
 BonusFFBApplication::BonusFFBApplication(QWidget* parent)
@@ -26,5 +28,6 @@ void BonusFFBApplication::openUserGuide() {
 }
 
 void BonusFFBApplication::openAbout() {
-
+    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.";
+    QMessageBox::about(this, "About Bonus FFB", about);
 }

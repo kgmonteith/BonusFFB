@@ -68,12 +68,28 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -108,8 +124,12 @@
   <ItemGroup>
     <ClCompile Include="BonusFFBApplication.cpp" />
     <ClCompile Include="Telemetry.cpp" />
+    <ClCompile Include="vJoyFeeder.cpp" />
+    <ClInclude Include="..\include\public.h" />
     <ClInclude Include="..\include\scs-telemetry-common.hpp" />
+    <ClInclude Include="..\include\vjoyinterface.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="vJoyFeeder.h" />
     <QtMoc Include="BonusFFBApplication.h" />
     <ClInclude Include="bonusffb_global.h" />
     <ClInclude Include="BonusFFB.h" />

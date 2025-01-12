@@ -10,6 +10,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "HShifter.h"
 #include <QSettings>
+#include <QMessageBox>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
@@ -22,6 +23,10 @@ HShifter::HShifter(QWidget *parent)
 {
     ui.setupUi(this);
 
+    // Ensure the monitor is the default tab
+    ui.monitorTabWidget->setCurrentIndex(0);
+
+    // Hide I/O config sliders on startup
     QSizePolicy sp_retain = ui.ioTabJoystickLRProgressBar->sizePolicy();
     sp_retain.setRetainSizeWhenHidden(true);
     ui.ioTabJoystickLRProgressBar->setSizePolicy(sp_retain);
@@ -35,10 +40,11 @@ HShifter::HShifter(QWidget *parent)
 
     // Menu action connections
     QObject::connect(ui.actionExit, &QAction::triggered, this, &HShifter::close);
-    QObject::connect(ui.actionSaveSettings, &QAction::triggered, this, &HShifter::saveSettings);
-    QObject::connect(ui.actionLoadSettings, &QAction::triggered, this, &HShifter::loadSettings);
+    QObject::connect(ui.actionSaveSettings, &QAction::triggered, this, &HShifter::saveDeviceSettings);
+    QObject::connect(ui.actionLoadSettings, &QAction::triggered, this, &HShifter::loadDeviceSettings);
     QObject::connect(ui.monitorTabWidget, &QTabWidget::currentChanged, this, &HShifter::rescaleShifterMap);
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFBApplication::openUserGuide);
+    QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFBApplication::openAbout);
     // Telemetry connections
     QObject::connect(&telemetry, &Telemetry::telemetryConnected,
         ui.telemetryLabel, &QLabel::setText);
@@ -63,6 +69,10 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &HShifter::toggleGameLoop);
     QObject::connect(&gameLoopTimer, &QTimer::timeout, this, &HShifter::gameLoop);
     
+    // Initialize vJoyFeeder
+    qDebug() << "Is vJoy enabled? " << vJoyFeeder::isDriverEnabled();
+    vJoyFeeder::checkVersionMatch();
+
     // Initialize Direct Input, get the list of connected devices
     BonusFFB::initDirectInput(&deviceList);
 
@@ -70,15 +80,17 @@ HShifter::HShifter(QWidget *parent)
     for (auto const device : deviceList)
     {
         ui.pedalsDeviceComboBox->addItem(device.name, device.instanceGuid);
-        // Let's go mailroom, help a guy out
-        //if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
+        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
             ui.joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
-        //}
+            ui.ffbDeviceFoundLabel->setText("🟢 FFB device detected");
+        }
         if (device.productGuid.data1 == VJOY_PRODUCT_GUID) {
             ui.vjoyDeviceComboBox->addItem(device.name, device.instanceGuid);
+            ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device detected");
         }
     }
 
+    // Start telemetry receiver
     telemetry.startConnectTimer();
 }
 
@@ -116,7 +128,7 @@ void HShifter::initializeGraphics() {
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
     QColor seethroughWhite = Qt::white;
-    seethroughWhite.setAlphaF(0.85);
+    seethroughWhite.setAlphaF(float(0.85));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
     QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
@@ -156,7 +168,6 @@ void HShifter::rescaleShifterMap() {
 
     leftSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
 
-    // This one will have to change...
     joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
 
@@ -169,7 +180,7 @@ void HShifter::updateJoystickCircle(int LRValue, int FBValue) {
     ui.graphicsView->setUpdatesEnabled(true);
 }
 
-void HShifter::saveSettings() {
+void HShifter::saveDeviceSettings() {
     QSettings settings = QSettings(QDir::currentPath() + "/hshifter.ini", QSettings::IniFormat);
     settings.beginGroup("joystick");
     settings.setValue("device_guid", joystick->instanceGuid.toString());
@@ -188,7 +199,7 @@ void HShifter::saveSettings() {
     settings.endGroup();
 }
 
-void HShifter::loadSettings() {
+void HShifter::loadDeviceSettings() {
     qDebug() << "Loading settings";
     QString settingsFile = QDir::currentPath() + "/hshifter.ini";
     if (!QFile(settingsFile).exists()) {
@@ -198,19 +209,33 @@ void HShifter::loadSettings() {
     QSettings settings = QSettings(settingsFile, QSettings::IniFormat);
 
     settings.beginGroup("joystick");
-    ui.joystickDeviceComboBox->setCurrentIndex(ui.joystickDeviceComboBox->findData(settings.value("device_guid").toUuid()));
-    ui.joystickLRAxisComboBox->setCurrentIndex(ui.joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
-    ui.invertJoystickLRAxisBox->setChecked(settings.value("invert_lr_axis").toBool());
-    ui.joystickFBAxisComboBox->setCurrentIndex(ui.joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
-    ui.invertJoystickFBAxisBox->setChecked(settings.value("invert_fb_axis").toBool());
+    int joystick_index = ui.joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
+    if (joystick_index == -1) {
+        QMessageBox::warning(this, "Joystick not found", "Saved joystick device is not connected.\nReconnect the device or update the input/output settings.");
+    }
+    else
+    {
+        ui.joystickDeviceComboBox->setCurrentIndex(joystick_index);
+        ui.joystickLRAxisComboBox->setCurrentIndex(ui.joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
+        ui.invertJoystickLRAxisBox->setChecked(settings.value("invert_lr_axis").toBool());
+        ui.joystickFBAxisComboBox->setCurrentIndex(ui.joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
+        ui.invertJoystickFBAxisBox->setChecked(settings.value("invert_fb_axis").toBool());
+    }
     settings.endGroup();
 
     settings.beginGroup("pedals");
-    ui.pedalsDeviceComboBox->setCurrentIndex(ui.pedalsDeviceComboBox->findData(settings.value("device_guid").toUuid()));
-    ui.clutchAxisComboBox->setCurrentIndex(ui.clutchAxisComboBox->findData(settings.value("clutch_axis").toUuid()));
-    ui.invertClutchAxisBox->setChecked(settings.value("invert_clutch_axis").toBool());
-    ui.throttleAxisComboBox->setCurrentIndex(ui.throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
-    ui.invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
+    int pedals_index = ui.pedalsDeviceComboBox->findData(settings.value("device_guid").toUuid());
+    if (pedals_index == -1) {
+        QMessageBox::warning(this, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output settings.");
+    }
+    else
+    {
+        ui.pedalsDeviceComboBox->setCurrentIndex(pedals_index);
+        ui.clutchAxisComboBox->setCurrentIndex(ui.clutchAxisComboBox->findData(settings.value("clutch_axis").toUuid()));
+        ui.invertClutchAxisBox->setChecked(settings.value("invert_clutch_axis").toBool());
+        ui.throttleAxisComboBox->setCurrentIndex(ui.throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
+        ui.invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
+    }
     settings.endGroup();
 }
 
@@ -219,18 +244,17 @@ void HShifter::startOnLaunch() {
 }
 
 void HShifter::changeJoystickDevice(int deviceIndex) {
+    // Release previous joystick
     if (joystick != nullptr) {
-        BonusFFB::release(joystick);
+        joystick->release();
     }
     QUuid deviceGuid = ui.joystickDeviceComboBox->currentData().toUuid();
     joystick = BonusFFB::getDeviceFromGuid(&deviceList, deviceGuid);
-    HWND hwnd = (HWND)(winId());
-    BonusFFB::prepare(joystick, &hwnd);
     qDebug() << "New joystick device: " << joystick->name;
 
     ui.joystickLRAxisComboBox->clear();
     ui.joystickFBAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = BonusFFB::getDeviceAxes(joystick);
+    QMap<QUuid, QString> axisMap = joystick->getDeviceAxes();
     for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
     {
         ui.joystickLRAxisComboBox->addItem(axis.value(), axis.key());
@@ -240,17 +264,17 @@ void HShifter::changeJoystickDevice(int deviceIndex) {
 
 void HShifter::changePedalsDevice(int deviceIndex) {
     if (pedals != nullptr) {
-        BonusFFB::release(pedals);
+        pedals->release();
     }
     QUuid deviceGuid = ui.pedalsDeviceComboBox->currentData().toUuid();
     pedals = BonusFFB::getDeviceFromGuid(&deviceList, deviceGuid);
     HWND hwnd = (HWND)(winId());
-    BonusFFB::prepare(pedals, &hwnd);
+    pedals->acquire(&hwnd);
     qDebug() << "New clutch device acquired: " << pedals->name;
 
     ui.clutchAxisComboBox->clear();
     ui.throttleAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = BonusFFB::getDeviceAxes(pedals);
+    QMap<QUuid, QString> axisMap = pedals->getDeviceAxes();
     for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
     {
         ui.clutchAxisComboBox->addItem(axis.value(), axis.key());
@@ -275,34 +299,59 @@ void HShifter::changeThrottleAxis(int axisIndex) {
 }
 
 void HShifter::toggleGameLoop(bool newState) {
-    qDebug() << "toggleGameLoop new state: " << newState;
     ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
     if (newState == true) {
-        gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
-        ui.ioTabJoystickLRProgressBar->show();
-        ui.ioTabJoystickFBProgressBar->show();
-        ui.ioTabClutchProgressBar->show();
-        ui.ioTabThrottleProgressBar->show();
+        startGameLoop();
     }
     else
     {
-        gameLoopTimer.stop();
-        ui.ioTabJoystickLRProgressBar->hide();
-        ui.ioTabJoystickFBProgressBar->hide();
-        ui.ioTabClutchProgressBar->hide();
-        ui.ioTabThrottleProgressBar->hide();
+        stopGameLoop();
     }
 }
+
+void HShifter::startGameLoop() {
+    gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
+    ui.ioTabJoystickLRProgressBar->show();
+    ui.ioTabJoystickFBProgressBar->show();
+    ui.ioTabClutchProgressBar->show();
+    ui.ioTabThrottleProgressBar->show();
+
+    // Acquire joystick
+    HWND hwnd = (HWND)(winId());
+    qDebug() << "Acquiring joystick...";
+    if (FAILED(joystick->acquire(&hwnd))) {
+        QMessageBox::critical(this, "Error", "Could not acquire exclusive use of FFB joystick. Please close other games or applications and try again.");
+        emit toggleGameLoop(false);
+        return;
+    };
+
+    // Initialize FFB
+    HRESULT hr = slotGuard.start(joystick);
+    hr = synchroGuard.start(joystick);
+    qDebug() << "synchroGuard result: " << Qt::hex << unsigned long(hr);
+}
+
+void HShifter::stopGameLoop() {
+    gameLoopTimer.stop();
+    ui.ioTabJoystickLRProgressBar->hide();
+    ui.ioTabJoystickFBProgressBar->hide();
+    ui.ioTabClutchProgressBar->hide();
+    ui.ioTabThrottleProgressBar->hide();
+
+    // Release joystick
+    joystick->release();
+}
+
 // This is the main work function, called once per tick
 void HShifter::gameLoop() {
     if (pedals == nullptr || joystick == nullptr) {
         return;
     }
 
-    DIJOYSTATE2 joystickState;
-    BonusFFB::updateState(joystick, &joystickState);
-    long joystickLRValue = BonusFFB::getAxisReading(&joystickState, joystickLRAxisGuid);
-    long joystickFBValue = BonusFFB::getAxisReading(&joystickState, joystickFBAxisGuid);
+    // Get new joystick values
+    joystick->updateState();
+    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
+    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     if (ui.invertJoystickLRAxisBox->isChecked()) {
         joystickLRValue = abs(65535 - joystickLRValue);
     }
@@ -314,19 +363,22 @@ void HShifter::gameLoop() {
     emit joystickFBValueChanged(joystickFBValue);
     emit joystickValueChanged(joystickLRValue, joystickFBValue);
 
-    DIJOYSTATE2 pedalsState;
-    BonusFFB::updateState(pedals, &pedalsState);
-    long clutchValue = BonusFFB::getAxisReading(&pedalsState, clutchAxisGuid);
+    // Get new pedal values
+    pedals->updateState();
+    long clutchValue = pedals->getAxisReading(clutchAxisGuid);
     if (ui.invertClutchAxisBox->isChecked()) {
         clutchValue = abs(65535 - clutchValue);
     }
     emit clutchValueChanged(clutchValue);
-    long throttleValue = BonusFFB::getAxisReading(&pedalsState, throttleAxisGuid);
+    long throttleValue = pedals->getAxisReading(throttleAxisGuid);
     if (ui.invertThrottleAxisBox->isChecked()) {
         throttleValue = abs(65535 - throttleValue);
     }
     emit throttleValueChanged(throttleValue);
 
+    // State things...
+    auto state = slotGuard.update(joystickLRValue, joystickFBValue);
+    synchroGuard.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue, false);
 }
 
 HShifter::~HShifter()
