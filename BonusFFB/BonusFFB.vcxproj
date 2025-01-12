@@ -136,6 +136,11 @@
     <ClCompile Include="BonusFFB.cpp" />
     <QtMoc Include="Telemetry.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\lib\vJoyInterface.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

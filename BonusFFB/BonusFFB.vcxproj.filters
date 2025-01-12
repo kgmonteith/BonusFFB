@@ -67,4 +67,7 @@
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
+  </ItemGroup>
 </Project>
