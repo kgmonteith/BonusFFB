@@ -1,0 +1,21 @@
+site_name: Bonus FFB
+site_url: https://kgmonteith.github.io/Bonus-FFB
+repo_url: https://github.com/kgmonteith/Bonus-FFB
+copyright: Copyright &copy; 2024 - 2025 Ken Monteith
+theme:
+  name: material
+  palette: 
+    scheme: default
+    primary: indigo
+    accent: indigo
+  icon:
+    logo: material/plane-car
+  features:
+    - navigation.tabs
+extra:
+  analytics:
+    provider: google
+    property: G-24NFE8C173
+nav:
+  - Home: index.md
+  - Download: https://github.com/kgmonteith/Bonus-FFB/releases
