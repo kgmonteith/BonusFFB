@@ -10,31 +10,49 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
+#include <QObject>
 #include "BonusFFB.h"
+#include "vJoyFeeder.h"
 
-class SynchroGuard
+class SynchroGuard: public QObject
 {
+	Q_OBJECT
+
 public:
+	enum SynchroState {
+		UNKNOWN,
+		ENTERING_SYNCH,
+		IN_SYNCH,
+		EXITING_SYNCH
+	};
+
 	HRESULT start(BonusFFB::DeviceInfo*);
-	void update(long , long , long , long, bool);
+public slots:
+	void updateClutchEngagement(int);
+	void updateThrottleEngagement(int);
+	void synchroStateChanged(SynchroState newState);
 
 private:
+	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
+
 	DIEFFECT springEff = {};
 	LPDIRECTINPUTEFFECT lpdiSpringEff = nullptr;
 
 	DIEFFECT rumbleEff = {};
 	LPDIRECTINPUTEFFECT lpdiRumbleEff = nullptr;
 
-	DICONDITION noSpring = { 0, 0, 0 };
+	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
 	//DICONDITION testCondition = { 15000, 0, -10000, 0, 0, 15000 };	// works, i guess... but why......
-	DICONDITION testCondition = { 0, 0, -10000, 0, 0, 1000 }; // also works, but seems weaker. hmm.
+	DICONDITION unsynchronizedSpring = { 0, 0, -10000, 0, 0, 2250 }; // also works, but seems weaker. hmm.
+	DICONDITION keepInGearSpring = { 0 , 0, 10000 };
 	// ^^^ at 0 offset 1500 deadzone, 10k torque at y=48000
 	//		-1000 offset 1500 deadzone, 10k torque at y=44500
 	//		0 offset, 2500 deadzone, 10k torque at y=51000
 	//		0 offset, 1000 deadzone, 10k torque at y=46000
 	//		-2000 offset 1000 deadzone, 10k torque at y=40500. force is too high to actuate the neutral channel. or enter the slot, really.
+	DICONDITION Springconditions[2] = { unsynchronizedSpring, noSpring };
 
+	int rumbleIntensity = 0;
 	DIPERIODIC rumble = { 0, 0, 0, 140000 };
-	bool rumbling = false;
 };
 

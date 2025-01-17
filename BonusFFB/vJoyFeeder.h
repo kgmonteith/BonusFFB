@@ -18,15 +18,41 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <windef.h>
 #endif
 
+#include <QObject>
 #include "public.h"
 #include "vjoyinterface.h"
 
-#include <QObject>
 
 class vJoyFeeder : public QObject
 {
+	Q_OBJECT
+
 public:
+	enum ButtonPressState {
+		NONE,
+		ONE,
+		TWO,
+		THREE,
+		FOUR,
+		FIVE,
+		SIX
+	};
+
 	static bool isDriverEnabled();
 	static bool checkVersionMatch();
+	static int deviceCount();
+	bool acquire();
+	bool is_acquired();
+	void release();
+
+	void pressButton(int);
+	void releaseButton(int);
+public slots:
+	void setDeviceIndex(unsigned int);
+	void updateButtons(ButtonPressState);
+private:
+	unsigned int deviceNum = 1;
+	bool acquired = false;
+	ButtonPressState pressedButton = ButtonPressState::NONE;
 };
 

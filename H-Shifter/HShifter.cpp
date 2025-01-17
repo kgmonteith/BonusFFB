@@ -46,10 +46,8 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFBApplication::openUserGuide);
     QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFBApplication::openAbout);
     // Telemetry connections
-    QObject::connect(&telemetry, &Telemetry::telemetryConnected,
-        ui.telemetryLabel, &QLabel::setText);
-    QObject::connect(&telemetry, &Telemetry::telemetryDisconnected,
-        ui.telemetryLabel, &QLabel::setText);
+    QObject::connect(&telemetry, &Telemetry::telemetryConnected, ui.telemetryLabel, &QLabel::setText);
+    QObject::connect(&telemetry, &Telemetry::telemetryDisconnected, ui.telemetryLabel, &QLabel::setText);
     // Joystick connections
     QObject::connect(this, &HShifter::joystickLRValueChanged, ui.ioTabJoystickLRProgressBar, &QProgressBar::setValue);
     QObject::connect(this, &HShifter::joystickFBValueChanged, ui.ioTabJoystickFBProgressBar, &QProgressBar::setValue);
@@ -65,13 +63,33 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(ui.pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &HShifter::changePedalsDevice);
     QObject::connect(ui.clutchAxisComboBox, &QComboBox::currentIndexChanged, this, &HShifter::changeClutchAxis);
     QObject::connect(ui.throttleAxisComboBox, &QComboBox::currentIndexChanged, this, &HShifter::changeThrottleAxis);
+    // vJoy connections
+    QObject::connect(ui.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, &vjoy, &vJoyFeeder::setDeviceIndex);
+    QObject::connect(&stateManager, &StateManager::buttonZoneChanged, &vjoy, &vJoyFeeder::updateButtons);
     // Game loop connections
     QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &HShifter::toggleGameLoop);
     QObject::connect(&gameLoopTimer, &QTimer::timeout, this, &HShifter::gameLoop);
+    // FFB effect connections
+    QObject::connect(&stateManager, &StateManager::slotStateChanged, &slotGuard, &SlotGuard::updateSlotGuardEffects);
+    QObject::connect(this, &HShifter::clutchValueChanged, &synchroGuard, &SynchroGuard::updateClutchEngagement);
+    QObject::connect(&stateManager, &StateManager::synchroStateChanged, &synchroGuard, &SynchroGuard::synchroStateChanged);
     
     // Initialize vJoyFeeder
-    qDebug() << "Is vJoy enabled? " << vJoyFeeder::isDriverEnabled();
-    vJoyFeeder::checkVersionMatch();
+    if (!vJoyFeeder::isDriverEnabled()) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy not installed");
+    }
+    else if (!vJoyFeeder::checkVersionMatch()) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy v2.1.8 or newer required");
+    }
+    else if (vJoyFeeder::deviceCount() <= 0) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy device not configured");
+    }
+    else {
+        ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
+    }
+    qDebug() << "Is vJoy enabled? " << vJoyFeeder::isDriverEnabled() << ", driver match: " << vJoyFeeder::checkVersionMatch();
+    qDebug() << "vJoy device count: " << vJoyFeeder::deviceCount();
+    
 
     // Initialize Direct Input, get the list of connected devices
     BonusFFB::initDirectInput(&deviceList);
@@ -84,12 +102,11 @@ HShifter::HShifter(QWidget *parent)
             ui.joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
             ui.ffbDeviceFoundLabel->setText("🟢 FFB device detected");
         }
-        if (device.productGuid.data1 == VJOY_PRODUCT_GUID) {
-            ui.vjoyDeviceComboBox->addItem(device.name, device.instanceGuid);
-            ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device detected");
-        }
     }
 
+    for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
+        ui.vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i+1)), i+1);
+    }
     // Start telemetry receiver
     telemetry.startConnectTimer();
 }
@@ -325,10 +342,12 @@ void HShifter::startGameLoop() {
         return;
     };
 
+    // Acquire vJoy for feeding
+    vjoy.acquire();
+
     // Initialize FFB
     HRESULT hr = slotGuard.start(joystick);
     hr = synchroGuard.start(joystick);
-    qDebug() << "synchroGuard result: " << Qt::hex << unsigned long(hr);
 }
 
 void HShifter::stopGameLoop() {
@@ -338,7 +357,8 @@ void HShifter::stopGameLoop() {
     ui.ioTabClutchProgressBar->hide();
     ui.ioTabThrottleProgressBar->hide();
 
-    // Release joystick
+    // Release devices
+    vjoy.release();
     joystick->release();
 }
 
@@ -377,8 +397,9 @@ void HShifter::gameLoop() {
     emit throttleValueChanged(throttleValue);
 
     // State things...
-    auto state = slotGuard.update(joystickLRValue, joystickFBValue);
-    synchroGuard.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue, false);
+    stateManager.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue);
+    //auto state = slotGuard.update(joystickLRValue, joystickFBValue);
+    //synchroGuard.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue, false);
 }
 
 HShifter::~HShifter()

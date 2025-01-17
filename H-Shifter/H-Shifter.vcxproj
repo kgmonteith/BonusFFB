@@ -113,6 +113,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="SynchroGuard.cpp" />
     <QtRcc Include="HShifter.qrc" />
     <QtUic Include="HShifter.ui" />
@@ -129,8 +130,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SlotGuard.h" />
-    <ClInclude Include="SynchroGuard.h" />
+    <QtMoc Include="SlotGuard.h" />
+    <QtMoc Include="StateManager.h" />
+    <QtMoc Include="SynchroGuard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

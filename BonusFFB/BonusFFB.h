@@ -19,6 +19,12 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QUuid>
 #include <QMap>
 
+#define JOY_MINPOINT 0
+#define JOY_MIDPOINT 32767
+#define JOY_MAXPOINT 65535
+#define FFB_MIDPOINT 5000
+#define FFB_MAXPOINT 10000
+
 #define VJOY_PRODUCT_GUID 0xBEAD1234
 
 namespace BonusFFB {

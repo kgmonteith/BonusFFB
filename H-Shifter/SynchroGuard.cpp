@@ -27,7 +27,7 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     springEff.rglDirection = dir;
     springEff.lpEnvelope = 0;
     springEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    springEff.lpvTypeSpecificParams = &testCondition;
+    springEff.lpvTypeSpecificParams = &noSpring;
     springEff.dwStartDelay = 0;
 
 
@@ -69,7 +69,40 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     return hr;
 }
 
-void SynchroGuard::update(long lrValue, long fbValue, long clutchValue, long throttleValue, bool gearEngaged) {
+void SynchroGuard::updateClutchEngagement(int clutchValue) {
+    if (synchroState != SynchroState::IN_SYNCH) {
+        double clutchPercent = 1 - (double(clutchValue) / JOY_MAXPOINT);
+        // Update engine rumble
+        rumble.dwMagnitude = 00 * clutchPercent;
+        rumbleEff.lpvTypeSpecificParams = &rumble;
+        lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+        // Update kickout spring
+    //    unsynchronizedSpring.lNegativeCoefficient = long(-10000 * clutchPercent);
+    //    springEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+    }
+}
+
+void SynchroGuard::updateThrottleEngagement(int throttleValue) {
+    //double throttlePercent = 1 - (double(throttlePercent) / JOY_MAXPOINT);
+}
+
+void SynchroGuard::synchroStateChanged(SynchroState newState) {
+    qDebug() << "New synchro state: " << newState;
+    if (newState == SynchroState::IN_SYNCH) {
+        // Disable spring and motor effects
+    //    springEff.lpvTypeSpecificParams = &noSpring;
+    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+        //lpdiSpringEff->Stop();
+    }
+    else {
+    //    springEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+    }
+    synchroState = newState;
+}
+
+    /*
     bool under_slot = SlotGuard::is_under_slot(lrValue);
     double clutch_engagement = clutchValue * 0.152587;
     if (under_slot) {
@@ -91,5 +124,4 @@ void SynchroGuard::update(long lrValue, long fbValue, long clutchValue, long thr
             HRESULT hr = lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
             rumbling = false;
         }
-    }
-}
+    }*/

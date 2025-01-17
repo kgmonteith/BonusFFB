@@ -129,7 +129,7 @@
     <ClInclude Include="..\include\scs-telemetry-common.hpp" />
     <ClInclude Include="..\include\vjoyinterface.h" />
     <ClInclude Include="version.h" />
-    <ClInclude Include="vJoyFeeder.h" />
+    <QtMoc Include="vJoyFeeder.h" />
     <QtMoc Include="BonusFFBApplication.h" />
     <ClInclude Include="bonusffb_global.h" />
     <ClInclude Include="BonusFFB.h" />

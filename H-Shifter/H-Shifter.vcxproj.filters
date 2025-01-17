@@ -46,13 +46,19 @@
     <ClCompile Include="SynchroGuard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SlotGuard.h">
+    <QtMoc Include="StateManager.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SynchroGuard.h">
+    </QtMoc>
+    <QtMoc Include="SlotGuard.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
+    <QtMoc Include="SynchroGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

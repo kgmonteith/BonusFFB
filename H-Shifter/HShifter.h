@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "SlotGuard.h"
 #include "SynchroGuard.h"
 #include "vJoyFeeder.h"
+#include "StateManager.h"
 
 #define GAMELOOP_INTERVAL_MS 1
 #define SLOT_WIDTH_PX 5.0
@@ -67,8 +68,6 @@ private:
     void gameLoop();
 
     Ui::HShifterClass ui;
-    QTimer telemetryTimer;
-    Telemetry telemetry;
 
     QList<BonusFFB::DeviceInfo> deviceList;
 
@@ -82,14 +81,19 @@ private:
 
     QTimer gameLoopTimer;
 
+    QTimer telemetryTimer;
+    Telemetry telemetry;
+    vJoyFeeder vjoy = vJoyFeeder();
+
+    // Stateful FFB effect managers
+    StateManager stateManager;
+    SlotGuard slotGuard;
+    SynchroGuard synchroGuard;
+
     QGraphicsScene* scene = nullptr;
     QGraphicsRectItem* neutralChannelRect;
     QGraphicsRectItem* centerSlotRect;
     QGraphicsRectItem* rightSlotRect;
     QGraphicsRectItem* leftSlotRect;
     QGraphicsEllipseItem* joystickCircle;
-
-    // Stateful FFB effect managers
-    SlotGuard slotGuard;
-    SynchroGuard synchroGuard;
 };

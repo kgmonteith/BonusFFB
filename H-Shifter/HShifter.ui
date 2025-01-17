@@ -62,14 +62,14 @@
        <item>
         <widget class="QLabel" name="vjoyDeviceFoundLabel">
          <property name="text">
-          <string>❌ vJoy device not found</string>
+          <string>❌ vJoy not installed</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="telemetryLabel">
          <property name="text">
-          <string>❌ Telemetry disconnected</string>
+          <string>⚠️ Telemetry disconnected</string>
          </property>
         </widget>
        </item>

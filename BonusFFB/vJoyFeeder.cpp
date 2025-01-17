@@ -18,6 +18,67 @@ bool vJoyFeeder::isDriverEnabled() {
 bool vJoyFeeder::checkVersionMatch() {
 	unsigned short versionDLL, versionDriver;
 	bool ret = DriverMatch(&versionDLL, &versionDriver);
-	qDebug() << "vJoy DLL version: " << versionDLL << ", driver version: " << versionDriver;
-	return ret;
+	// Assume 2.1.8 is compatible with subsequent versions
+	if (versionDriver >= 536)
+		return true;
+	return false;
+}
+
+int vJoyFeeder::deviceCount() {
+	int ct;
+	GetNumberExistingVJD(&ct);
+	return ct;
+}
+
+void vJoyFeeder::setDeviceIndex(unsigned int d) {
+	bool acquired = is_acquired();
+	if (acquired) {
+		release();
+	}
+	deviceNum = d + 1;	// Device number is 1-indexed, sigh
+	if (acquired) {
+		acquire();
+	}
+}
+
+bool vJoyFeeder::acquire() {
+	VjdStat status = GetVJDStatus(deviceNum);
+	if (status != VJD_STAT_FREE) {
+		return false;
+	}
+	if (!AcquireVJD(deviceNum))
+		return false;
+	acquired = true;
+	return true;
+}
+
+bool vJoyFeeder::is_acquired() {
+	return acquired;
+}
+
+void vJoyFeeder::release() {
+	if (acquired) {
+		ResetButtons(deviceNum);
+		RelinquishVJD(deviceNum);
+	}
+	acquired = false;
+}
+
+void vJoyFeeder::pressButton(int button) {
+	SetBtn(true, deviceNum, unsigned char(button));
+}
+
+void vJoyFeeder::releaseButton(int button) {
+	SetBtn(false, deviceNum, unsigned char(button));
+}
+
+void vJoyFeeder::updateButtons(ButtonPressState newState) {
+	// Only called when state changes
+	if (newState != ButtonPressState::NONE) {
+		pressButton(newState);
+	}
+	else {
+		releaseButton(pressedButton);
+	}
+	pressedButton = newState;
 }

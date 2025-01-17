@@ -44,9 +44,6 @@
     <ClInclude Include="..\include\vjoyinterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vJoyFeeder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Telemetry.cpp">
@@ -64,6 +61,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="BonusFFBApplication.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="vJoyFeeder.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

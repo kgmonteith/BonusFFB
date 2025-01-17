@@ -12,30 +12,29 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "BonusFFB.h"
 
-#define MINPOINT 0
-#define MIDPOINT 32768
-#define MAXPOINT 65536
-#define SIDE_SLOT_WIDTH 500
-#define MIDDLE_SLOT_HALF_WIDTH 1200
-#define NEUTRAL_HALF_WIDTH 1200
-
 static DWORD AXES[2] = { DIJOFS_X, DIJOFS_Y };
 static LONG FORWARDBACK[2] = { 1 , 0 };
 
-class SlotGuard {
+class SlotGuard: public QObject {
+	Q_OBJECT
+
 public:
-	enum PositionState {
+	enum SlotState {
+		UNKNOWN,
 		NEUTRAL,
-		SLOT_LEFT,
-		SLOT_MIDDLE,
-		SLOT_RIGHT,
-		NEUTRAL_UNDER_SLOT
+		NEUTRAL_UNDER_SLOT,
+		SLOT_LEFT_FWD,
+		SLOT_LEFT_BACK,
+		SLOT_MIDDLE_FWD,
+		SLOT_MIDDLE_BACK,
+		SLOT_RIGHT_FWD,
+		SLOT_RIGHT_BACK
 	};
 
 	HRESULT start(BonusFFB::DeviceInfo*);
-	PositionState update(long, long);
-	static bool is_in_neutral(long);
-	static int is_under_slot(long);
+
+public slots:
+	void updateSlotGuardEffects(SlotState);
 
 private:
 	DIEFFECT eff = {};
@@ -49,6 +48,5 @@ private:
 
 	DICONDITION conditions[2] = { noSpring, noSpring };
 
-	PositionState state;
 	BonusFFB::FFBEffect slotGuardSpring;
 };
