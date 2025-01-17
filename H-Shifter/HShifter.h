@@ -53,6 +53,7 @@ public slots:
     void changePedalsDevice(int);
     void changeClutchAxis(int);
     void changeThrottleAxis(int);
+    void updateGearText(int);
 
 signals:
     void joystickValueChanged(int, int);

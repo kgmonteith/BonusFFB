@@ -28,16 +28,6 @@ class vJoyFeeder : public QObject
 	Q_OBJECT
 
 public:
-	enum ButtonPressState {
-		NONE,
-		ONE,
-		TWO,
-		THREE,
-		FOUR,
-		FIVE,
-		SIX
-	};
-
 	static bool isDriverEnabled();
 	static bool checkVersionMatch();
 	static int deviceCount();
@@ -49,10 +39,10 @@ public:
 	void releaseButton(int);
 public slots:
 	void setDeviceIndex(unsigned int);
-	void updateButtons(ButtonPressState);
+	void updateButtons(int);
 private:
 	unsigned int deviceNum = 1;
 	bool acquired = false;
-	ButtonPressState pressedButton = ButtonPressState::NONE;
+	int pressedButton = 0;
 };
 

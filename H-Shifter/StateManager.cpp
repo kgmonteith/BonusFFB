@@ -59,22 +59,22 @@ void StateManager::updateSlotState(long lrValue, long fbValue) {
 }
 
 void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
-    vJoyFeeder::ButtonPressState newState = vJoyFeeder::ButtonPressState::NONE;
+    int newState = 0;
     if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState == TelemetryState::ENABLED)) {
         if (slotState == SlotGuard::SlotState::SLOT_LEFT_FWD)
-            newState = vJoyFeeder::ButtonPressState::ONE;
+            newState = 1;
         else if (slotState == SlotGuard::SlotState::SLOT_MIDDLE_FWD)
-            newState = vJoyFeeder::ButtonPressState::THREE;
+            newState = 3;
         else if (slotState == SlotGuard::SlotState::SLOT_RIGHT_FWD)
-            newState = vJoyFeeder::ButtonPressState::FIVE;
+            newState = 5;
     }
     else if (fbValue >= JOY_MAXPOINT - button_zone_depth || (fbValue >= JOY_MAXPOINT - button_zone_depth && telemetryState == TelemetryState::ENABLED)) {
         if (slotState == SlotGuard::SlotState::SLOT_LEFT_BACK)
-            newState = vJoyFeeder::ButtonPressState::TWO;
+            newState = 2;
         else if (slotState == SlotGuard::SlotState::SLOT_MIDDLE_BACK)
-            newState = vJoyFeeder::ButtonPressState::FOUR;
+            newState = 4;
         else if (slotState == SlotGuard::SlotState::SLOT_RIGHT_BACK)
-            newState = vJoyFeeder::ButtonPressState::SIX;
+            newState = 6;
     }
     if (buttonZoneState != newState) {
         buttonZoneState = newState;

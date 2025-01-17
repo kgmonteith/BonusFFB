@@ -72,9 +72,9 @@ void vJoyFeeder::releaseButton(int button) {
 	SetBtn(false, deviceNum, unsigned char(button));
 }
 
-void vJoyFeeder::updateButtons(ButtonPressState newState) {
+void vJoyFeeder::updateButtons(int newState) {
 	// Only called when state changes
-	if (newState != ButtonPressState::NONE) {
+	if (newState != 0) {
 		pressButton(newState);
 	}
 	else {

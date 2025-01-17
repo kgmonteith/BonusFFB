@@ -34,7 +34,7 @@ public slots:
 
 signals:
     void slotStateChanged(SlotGuard::SlotState);
-    void buttonZoneChanged(vJoyFeeder::ButtonPressState);
+    void buttonZoneChanged(int);
     void synchroStateChanged(SynchroGuard::SynchroState);
 
 private:
@@ -44,7 +44,7 @@ private:
 
     TelemetryState telemetryState = TelemetryState::DISABLED;
     SlotGuard::SlotState slotState = SlotGuard::SlotState::NEUTRAL;
-    vJoyFeeder::ButtonPressState buttonZoneState = vJoyFeeder::ButtonPressState::NONE;
+    int buttonZoneState = 0;
     SynchroGuard::SynchroState synchroState = SynchroGuard::SynchroState::ENTERING_SYNCH;
 
     int side_slot_width = 500;

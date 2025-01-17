@@ -66,6 +66,7 @@ HShifter::HShifter(QWidget *parent)
     // vJoy connections
     QObject::connect(ui.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, &vjoy, &vJoyFeeder::setDeviceIndex);
     QObject::connect(&stateManager, &StateManager::buttonZoneChanged, &vjoy, &vJoyFeeder::updateButtons);
+    QObject::connect(&stateManager, &StateManager::buttonZoneChanged, this, &HShifter::updateGearText);
     // Game loop connections
     QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &HShifter::toggleGameLoop);
     QObject::connect(&gameLoopTimer, &QTimer::timeout, this, &HShifter::gameLoop);
@@ -107,8 +108,15 @@ HShifter::HShifter(QWidget *parent)
     for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
         ui.vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i+1)), i+1);
     }
+
     // Start telemetry receiver
     telemetry.startConnectTimer();
+
+    if (!ui.joystickDeviceComboBox->count() || !vJoyFeeder::isDriverEnabled()) {
+        ui.toggleGameLoopButton->setDisabled(true);
+        ui.toggleGameLoopButton->setText("🚫");
+        ui.toggleGameLoopButton->setToolTip("Cannot start without FFB joystick and vJoy");
+    }
 }
 
 void HShifter::initializeGraphics() {
@@ -315,6 +323,15 @@ void HShifter::changeThrottleAxis(int axisIndex) {
     throttleAxisGuid = ui.throttleAxisComboBox->currentData().toUuid();
 }
 
+void HShifter::updateGearText(int button) {
+    if (button) {
+        ui.gearLabel->setText(QString::number(button));
+    }
+    else {
+        ui.gearLabel->setText("N");
+    }
+}
+
 void HShifter::toggleGameLoop(bool newState) {
     ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
     if (newState == true) {
@@ -404,5 +421,6 @@ void HShifter::gameLoop() {
 
 HShifter::~HShifter()
 {
-    emit toggleGameLoop(false);
+    if (gameLoopTimer.isActive())
+        emit toggleGameLoop(false);
 }
