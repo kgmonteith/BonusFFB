@@ -31,6 +31,7 @@ public:
 	static bool isDriverEnabled();
 	static bool checkVersionMatch();
 	static int deviceCount();
+	int getDeviceIndex();
 	bool acquire();
 	bool is_acquired();
 	void release();

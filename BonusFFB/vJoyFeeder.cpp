@@ -30,6 +30,10 @@ int vJoyFeeder::deviceCount() {
 	return ct;
 }
 
+int vJoyFeeder::getDeviceIndex() {
+	return deviceNum - 1;
+}
+
 void vJoyFeeder::setDeviceIndex(unsigned int d) {
 	bool acquired = is_acquired();
 	if (acquired) {

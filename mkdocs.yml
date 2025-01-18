@@ -8,10 +8,11 @@ theme:
     scheme: default
     primary: indigo
     accent: indigo
-  icon:
-    logo: material/plane-car
+#  icon:
+#    logo: material/plane-car
   features:
     - navigation.tabs
+    - toc.integrate
 extra:
   analytics:
     provider: google
@@ -19,3 +20,12 @@ extra:
 nav:
   - Home: index.md
   - Download: https://github.com/kgmonteith/Bonus-FFB/releases
+  - Getting started: getting-started.md
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

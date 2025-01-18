@@ -230,6 +230,10 @@ void HShifter::saveDeviceSettings() {
     settings.setValue("throttle_axis", throttleAxisGuid.toString());
     settings.setValue("invert_throttle_axis", ui.invertThrottleAxisBox->isChecked());
     settings.endGroup();
+
+    settings.beginGroup("vjoy");
+    settings.setValue("vjoy_device", vjoy.getDeviceIndex());
+    settings.endGroup();
 }
 
 void HShifter::loadDeviceSettings() {
@@ -269,6 +273,10 @@ void HShifter::loadDeviceSettings() {
         ui.throttleAxisComboBox->setCurrentIndex(ui.throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
         ui.invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
     }
+    settings.endGroup();
+
+    settings.beginGroup("vjoy");
+    ui.vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
     settings.endGroup();
 }
 

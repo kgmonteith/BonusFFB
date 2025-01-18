@@ -100,7 +100,6 @@ void StateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int
         newState = SynchroGuard::SynchroState::ENTERING_SYNCH;
     }
     if (newState != synchroState) {
-        qDebug() << "New synchro state: " << newState << ", gearValues: " << gearValues;
         synchroState = newState;
         emit synchroStateChanged(synchroState);
     }
