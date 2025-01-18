@@ -134,12 +134,10 @@ HRESULT BonusFFB::initDirectInput(QList<DeviceInfo>* diDevices) noexcept {
     }
 
     // Look for a force feedback device we can use
-    if (FAILED(hr = g_pDI->EnumDevices(DI8DEVCLASS_GAMECTRL,
+    hr = g_pDI->EnumDevices(DI8DEVCLASS_GAMECTRL,
         enumDevicesCallback, diDevices,
-        DIEDFL_ATTACHEDONLY)))
-    {
-        return hr;
-    }
+        DIEDFL_ATTACHEDONLY);
+    return hr;
 }
 
 BOOL CALLBACK BonusFFB::enumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,

@@ -1,6 +1,6 @@
 site_name: Bonus FFB
-site_url: https://kgmonteith.github.io/Bonus-FFB
-repo_url: https://github.com/kgmonteith/Bonus-FFB
+site_url: https://kgmonteith.github.io/BonusFFB
+repo_url: https://github.com/kgmonteith/BonusFFB
 copyright: Copyright &copy; 2024 - 2025 Ken Monteith
 theme:
   name: material
@@ -17,9 +17,12 @@ extra:
   analytics:
     provider: google
     property: G-24NFE8C173
+  social:
+    - icon: fontawesome/brands/discord 
+      link: https://discord.com/users/447499151337324574
 nav:
   - Home: index.md
-  - Download: https://github.com/kgmonteith/Bonus-FFB/releases
+  - Download: https://github.com/kgmonteith/BonusFFB/releases
   - Getting started: getting-started.md
 markdown_extensions:
   - admonition

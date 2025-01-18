@@ -1,6 +1,6 @@
 # Bonus FFB 🕹️
 
-Do you own a force-feedback joystick? Did you know it can simulate other peripherals, like shifters and handbrakes, using only FFB effects? That's Bonus FFB!
+Do you own a force-feedback joystick? Did you know it can simulate other peripherals using only FFB effects? That's Bonus FFB!
 
 Bonus FFB can simulate these devices using a force-feedback joystick:
 
@@ -9,7 +9,7 @@ Bonus FFB can simulate these devices using a force-feedback joystick:
 * Sequential shifters
 * Auto-manual shifters
 
-[Check out the documentation](https://kgmonteith.github.io/Bonus-FFB/) to get started.
+[Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started.
 
 ---
 
