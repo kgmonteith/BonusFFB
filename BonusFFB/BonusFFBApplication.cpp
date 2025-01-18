@@ -24,7 +24,7 @@ BonusFFBApplication::~BonusFFBApplication()
 }
 
 void BonusFFBApplication::openUserGuide() {
-    QDesktopServices::openUrl(QUrl("http://www.kgmonteith.com", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("https://kgmonteith.github.io/BonusFFB/", QUrl::TolerantMode));
 }
 
 void BonusFFBApplication::openAbout() {

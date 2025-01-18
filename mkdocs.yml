@@ -5,14 +5,17 @@ copyright: Copyright &copy; 2024 - 2025 Ken Monteith
 theme:
   name: material
   palette: 
-    scheme: default
-    primary: indigo
-    accent: indigo
+    scheme: slate
+    primary: deep purple
+    accent: deep purple
   favicon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>"
   logo: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>"
   features:
-    - navigation.tabs
-    - toc.integrate
+#    - navigation.tabs
+#    - navigation.tabs.sticky
+    - navigation.sections
+#    - navigation.expand
+#    - toc.integrate
 extra:
   analytics:
     provider: google
@@ -24,6 +27,9 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
   - attr_list
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
@@ -32,3 +38,6 @@ nav:
   - Home: index.md
   - Download: https://github.com/kgmonteith/BonusFFB/releases
   - Getting started: getting-started.md
+  - Device settings: 
+    - MOZA AB9: device-support/moza-ab9.md
+  - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
