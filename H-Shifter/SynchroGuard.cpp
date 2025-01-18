@@ -14,22 +14,81 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QDebug>
 
 HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
-    springEff.dwSize = sizeof(DIEFFECT);
-    springEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
-    springEff.dwDuration = INFINITE;
-    springEff.dwSamplePeriod = 0;
-    springEff.dwGain = DI_FFNOMINALMAX;
-    springEff.dwTriggerButton = DIEB_NOTRIGGER;
-    springEff.dwTriggerRepeatInterval = 0;
-    springEff.cAxes = 2;
-    springEff.rgdwAxes = AXES;
+    unsynchronizedSpringEff.dwSize = sizeof(DIEFFECT);
+    unsynchronizedSpringEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
+    unsynchronizedSpringEff.dwDuration = INFINITE;
+    unsynchronizedSpringEff.dwSamplePeriod = 0;
+    unsynchronizedSpringEff.dwGain = DI_FFNOMINALMAX;
+    unsynchronizedSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    unsynchronizedSpringEff.dwTriggerRepeatInterval = 0;
+    unsynchronizedSpringEff.cAxes = 2;
+    unsynchronizedSpringEff.rgdwAxes = AXES;
     LONG dir[2] = { DI_DEGREES * 180, 0 };
-    springEff.rglDirection = dir;
-    springEff.lpEnvelope = 0;
-    springEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    springEff.lpvTypeSpecificParams = &noSpring;
-    springEff.dwStartDelay = 0;
+    unsynchronizedSpringEff.rglDirection = dir;
+    unsynchronizedSpringEff.lpEnvelope = 0;
+    unsynchronizedSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+    unsynchronizedSpringEff.dwStartDelay = 0;
 
+    HRESULT hr;
+    if (lpdiUnsynchronizedSpringEff == nullptr) {
+        hr = device->diDevice->CreateEffect(GUID_Spring,
+            &unsynchronizedSpringEff, &lpdiUnsynchronizedSpringEff, nullptr);
+        if (FAILED(hr)) {
+            return hr;
+        }
+    }
+    hr = lpdiUnsynchronizedSpringEff->Start(INFINITE, 0);
+
+    /*
+    unsynchronizedConstantEff.dwSize = sizeof(DIEFFECT);
+    unsynchronizedConstantEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
+    unsynchronizedConstantEff.dwDuration = INFINITE;
+    unsynchronizedConstantEff.dwSamplePeriod = 0;
+    unsynchronizedConstantEff.dwGain = DI_FFNOMINALMAX;
+    unsynchronizedConstantEff.dwTriggerButton = DIEB_NOTRIGGER;
+    unsynchronizedConstantEff.dwTriggerRepeatInterval = 0;
+    unsynchronizedConstantEff.cAxes = 2;
+    unsynchronizedConstantEff.rgdwAxes = AXES;
+    unsynchronizedConstantEff.rglDirection = BACK;
+    unsynchronizedConstantEff.lpEnvelope = 0;
+    unsynchronizedConstantEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    unsynchronizedConstantEff.lpvTypeSpecificParams = { 0 };
+    unsynchronizedConstantEff.dwStartDelay = 0;
+
+    if (lpdiUnsynchronizedConstantEff == nullptr) {
+        hr = device->diDevice->CreateEffect(GUID_ConstantForce,
+            &unsynchronizedConstantEff, &lpdiUnsynchronizedConstantEff, nullptr);
+        if (FAILED(hr)) {
+            return hr;
+        }
+    }
+    hr = lpdiUnsynchronizedConstantEff->Start(INFINITE, 0);
+    */
+
+    keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
+    keepInGearSpringEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
+    keepInGearSpringEff.dwDuration = INFINITE;
+    keepInGearSpringEff.dwSamplePeriod = 0;
+    keepInGearSpringEff.dwGain = DI_FFNOMINALMAX;
+    keepInGearSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    keepInGearSpringEff.dwTriggerRepeatInterval = 0;
+    keepInGearSpringEff.cAxes = 2;
+    keepInGearSpringEff.rgdwAxes = AXES;
+    keepInGearSpringEff.rglDirection = dir;
+    keepInGearSpringEff.lpEnvelope = 0;
+    keepInGearSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
+    keepInGearSpringEff.dwStartDelay = 0;
+
+    if (lpdiKeepInGearSpringEff == nullptr) {
+        hr = device->diDevice->CreateEffect(GUID_Spring,
+            &keepInGearSpringEff, &lpdiKeepInGearSpringEff, nullptr);
+        if (FAILED(hr)) {
+            return hr;
+        }
+    }
+    hr = lpdiKeepInGearSpringEff->Start(INFINITE, 0);
 
     LONG rglDirection[2] = { 90 * DI_DEGREES, DI_DEGREES };
     rumbleEff.dwSize = sizeof(DIEFFECT);
@@ -47,16 +106,6 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
 
-    HRESULT hr;
-    if (lpdiSpringEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_Spring,
-            &springEff, &lpdiSpringEff, nullptr);
-        if (FAILED(hr)) {
-            return hr;
-        }
-    }
-    hr = lpdiSpringEff->Start(INFINITE, 0);
-
     if (lpdiRumbleEff == nullptr) {
         hr = device->diDevice->CreateEffect(GUID_Sine,
             &rumbleEff, &lpdiRumbleEff, nullptr);
@@ -69,59 +118,99 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     return hr;
 }
 
-void SynchroGuard::updateClutchEngagement(int clutchValue) {
-    if (synchroState != SynchroState::IN_SYNCH) {
-        double clutchPercent = 1 - (double(clutchValue) / JOY_MAXPOINT);
-        // Update engine rumble
-        rumble.dwMagnitude = 00 * clutchPercent;
-        rumbleEff.lpvTypeSpecificParams = &rumble;
-        lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
-        // Update kickout spring
-    //    unsynchronizedSpring.lNegativeCoefficient = long(-10000 * clutchPercent);
-    //    springEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
+    clutchPercent = 1 - (double(clutchValue) / JOY_MAXPOINT);
+    throttlePercent = double(throttleValue) / JOY_MAXPOINT;
+    // Update kickout spring
+    if (synchroState == SynchroState::ENTERING_SYNCH) {
+        unsynchronizedSpring.lNegativeCoefficient = -10000 * clutchPercent;
+        unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
+    else if (synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) {
+        if (throttleValue > 100) {
+            int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent * 3);
+            if (scaledCoeff > keepInGearSpringMaxCoefficient)
+                scaledCoeff = keepInGearSpringMaxCoefficient;
+            else if (scaledCoeff < keepInGearSpringIdleCoefficient)
+                scaledCoeff = keepInGearSpringIdleCoefficient;
+            keepInGearSpring.lNegativeCoefficient = scaledCoeff * clutchPercent;
+            keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
+            lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
+        }
+        else {
+            keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;
+            keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
+            lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
+        }
+    }
+    //keepInGearSpring.lPositiveCoefficient = long(keepInGearSpringIdleCoefficient * clutchPercent);
 }
 
-void SynchroGuard::updateThrottleEngagement(int throttleValue) {
-    //double throttlePercent = 1 - (double(throttlePercent) / JOY_MAXPOINT);
-}
+/*
+    throttlePercent = 1 - (double(throttleValue) / JOY_MAXPOINT);
+    if (synchroState == SynchroState::IN_SYNCH) {
+        if (throttleValue > 0) {
+            keepInGearSpring.lPositiveCoefficient = keepInGearSpringMaxCoefficient * clutchPercent;
+        }
+        else {
+            keepInGearSpring.lPositiveCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;
+        }
+        qDebug() << "New spring coefficient: " << keepInGearSpring.lPositiveCoefficient;
+        springEff.lpvTypeSpecificParams = &keepInGearSpring;
+        lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+    }*/
 
 void SynchroGuard::synchroStateChanged(SynchroState newState) {
-    qDebug() << "New synchro state: " << newState;
     if (newState == SynchroState::IN_SYNCH) {
-        // Disable spring and motor effects
-    //    springEff.lpvTypeSpecificParams = &noSpring;
-    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
-        //lpdiSpringEff->Stop();
+        qDebug() << "Disabling unsynch spring";
+        // Activate keep-in-gear spring, disable unsynch spring
+        unsynchronizedSpring.lNegativeCoefficient = 0;
+        unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
-    else {
-    //    springEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-    //    lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
+    else if (newState == SynchroState::ENTERING_SYNCH) {
+        // Deactivate keep-in-gear spring, enable unsynch spring
+        unsynchronizedSpring.lNegativeCoefficient = -10000 * clutchPercent;
+        unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
+        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
     synchroState = newState;
 }
 
-    /*
-    bool under_slot = SlotGuard::is_under_slot(lrValue);
-    double clutch_engagement = clutchValue * 0.152587;
-    if (under_slot) {
-        testCondition.lNegativeCoefficient = -10000 + clutch_engagement;
-        springEff.lpvTypeSpecificParams = &testCondition;
-        lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
-        //qDebug() << "clutch_engagement: " << clutch_engagement << ", fbValue: " << fbValue << ", midpoint: " << MIDPOINT;
-        if (clutch_engagement < 3000 && (fbValue > MIDPOINT + 7500 || fbValue < MIDPOINT - 7500)) {
-            qDebug() << "Rumbling...";
-            rumble.dwMagnitude = 2000;
-            rumbleEff.lpvTypeSpecificParams = &rumble;
-            HRESULT hr = lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
-            qDebug() << "hr: " << Qt::hex << unsigned long(hr);
-            rumbling = true;
+void SynchroGuard::grindingStateChanged(bool newState) {
+    if (newState == true) {
+        rumble.dwPeriod = int(6e7 / engineRPM);
+        rumble.dwMagnitude = rumbleIntensity * clutchPercent;
+        rumbleEff.lpvTypeSpecificParams = &rumble;
+        lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+    }
+    else {
+        rumble.dwMagnitude = 0;
+        rumbleEff.lpvTypeSpecificParams = &rumble;
+        lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+    }
+    grinding = newState;
+}
+/*
+void SynchroGuard::updateUnsynchRumble(int lrValue, int fbValue) {
+    if (synchroState == SynchroState::ENTERING_SYNCH) {
+        if (fbValue <= grindPoint || fbValue >= JOY_MAXPOINT - grindPoint) {
+            // something something grinding gears
         }
-        else if (rumbling) {
-            rumble.dwMagnitude = 0;
-            rumbleEff.lpvTypeSpecificParams = &rumble;
-            HRESULT hr = lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
-            rumbling = false;
-        }
-    }*/
+    }
+}
+*/
+
+int SynchroGuard::RPMtoMicrosendsPerCycle(float rpm) {
+    return int(6e7 / rpm);
+}
+
+void SynchroGuard::updateEngineRPM(float newRPM) {
+    if (grinding) {
+        rumble.dwPeriod = int(6e7 / newRPM);
+        rumbleEff.lpvTypeSpecificParams = &rumble;
+        lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+    }
+    engineRPM = newRPM;
+}

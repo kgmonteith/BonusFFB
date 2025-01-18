@@ -20,6 +20,10 @@ Telemetry::Telemetry() {
 	connect(timer, &QChronoTimer::timeout, this, &Telemetry::connectTelemetry);
 }
 
+TelemetrySource Telemetry::isConnected() {
+	return telemetrySource;
+}
+
 void Telemetry::connectTelemetry()
 {
 	if (pTelemMap != nullptr) {
@@ -46,12 +50,9 @@ void Telemetry::connectTelemetry()
 		pHandle = nullptr;
 	}
 
-	if (pTelemMap->scs_values.game == ATS) {
-		emit telemetryConnected("🟢 ATS telemetry connected");
-	}
-	else if (pTelemMap->scs_values.game == ETS2)
-	{
-		emit telemetryConnected("🟢 ETS2 telemetry connected");
+	if (pTelemMap->scs_values.game == ATS or pTelemMap->scs_values.game == ETS2) {
+		telemetrySource = TelemetrySource::SCS;
+		emit telemetryChanged(TelemetrySource::SCS);
 	}
 	else
 	{
@@ -67,7 +68,26 @@ void Telemetry::disconnectTelemetry() {
 	pHandle = nullptr;
 	pBufferPtr = nullptr;
 	pTelemMap = nullptr;
-	emit telemetryDisconnected("❌ Telemetry disconnected");
+	telemetrySource = TelemetrySource::NONE;
+	emit telemetryChanged(telemetrySource);
+}
+
+QPair<int, int> Telemetry::getGearState() {
+	int slottedGear = 0;	// Slotted gear is set even when the gear is not correctly engaged
+	int selectedGear = 0;	// Selected gear is ONLY set when the gear is correctly engaged
+	if (telemetrySource == TelemetrySource::SCS) {
+		slottedGear = pTelemMap->truck_ui.shifterSlot;
+		selectedGear = pTelemMap->truck_i.gear;
+	}
+	return QPair<int, int>(slottedGear, selectedGear);
+}
+
+float Telemetry::getEngineRPM() {
+	float rpm = 0;
+	if (telemetrySource == TelemetrySource::SCS) {
+		rpm = pTelemMap->truck_f.engineRpm;
+	}
+	return rpm;
 }
 
 void Telemetry::startConnectTimer()

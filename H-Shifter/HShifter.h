@@ -44,6 +44,7 @@ public slots:
 
     void rescaleShifterMap();
     void updateJoystickCircle(int, int);
+    void displayTelemetryState(TelemetrySource);
 
     void toggleGameLoop(bool);
 
@@ -61,6 +62,9 @@ signals:
     void joystickFBValueChanged(int);
     void clutchValueChanged(int);
     void throttleValueChanged(int);
+    void pedalValuesChanged(int, int);
+    void gearValuesChanged(QPair<int, int>);
+    void engineRPMChanged(float);
     void resetClutchAxes();
 
 private:
@@ -97,4 +101,8 @@ private:
     QGraphicsRectItem* rightSlotRect;
     QGraphicsRectItem* leftSlotRect;
     QGraphicsEllipseItem* joystickCircle;
+
+    int lastPedalValues[2] = {0, 0};
+    QPair<int, int> lastGearValues = { 0, 0 };
+    float lastEngineRPM = 0.0;
 };

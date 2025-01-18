@@ -13,39 +13,35 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "vJoyFeeder.h"
 #include "SlotGuard.h"
 #include "SynchroGuard.h"
+#include "Telemetry.h"
 
 class StateManager: public QObject
 {
     Q_OBJECT;
 
 public:
-    // Tracks whether telemetry is running
-    enum TelemetryState {
-        DISABLED,
-        ENABLED
-    };
-    Q_ENUM(TelemetryState)
-
-public:
-    void update(long, long, long, long);
+    void update(long, long, long, long, QPair<int, int>);
 
 public slots:
-    void setTelemetryState(TelemetryState);
+    void setTelemetryState(TelemetrySource);
 
 signals:
     void slotStateChanged(SlotGuard::SlotState);
     void buttonZoneChanged(int);
     void synchroStateChanged(SynchroGuard::SynchroState);
+    void grindingStateChanged(bool);
 
 private:
     void updateSlotState(long, long);
     void updateButtonZoneState(long, long);
-    void updateSynchroState(long, long);
+    void updateSynchroState(long, long, QPair<int, int>);
+    void updateGrindingState(long, long);
 
-    TelemetryState telemetryState = TelemetryState::DISABLED;
-    SlotGuard::SlotState slotState = SlotGuard::SlotState::NEUTRAL;
     int buttonZoneState = 0;
+    TelemetrySource telemetryState = TelemetrySource::NONE;
+    SlotGuard::SlotState slotState = SlotGuard::SlotState::NEUTRAL;
     SynchroGuard::SynchroState synchroState = SynchroGuard::SynchroState::ENTERING_SYNCH;
+    bool grindingState = false;
 
     int side_slot_width = 500;
     int middle_slot_half_width = 1200;
@@ -53,9 +49,10 @@ private:
 
     int button_zone_half_width = 2000;
     int button_zone_depth = 4000;
-    int button_zone_depth_telemetry = 10000;
+    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
     int finished_exiting_synch_depth = JOY_MIDPOINT * 0.55;
+    int grind_point_depth = JOY_MIDPOINT * 0.65;
 };
 

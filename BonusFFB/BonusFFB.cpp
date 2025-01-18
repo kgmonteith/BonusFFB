@@ -40,34 +40,6 @@ BOOL CALLBACK BonusFFB::enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID*
     return DIENUM_CONTINUE;
 }
 
-/*
-BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
-    VOID* pDevice) noexcept
-
-    int nSliderCount = 0;  // Number of returned slider controls
-    int nPOVCount = 0;     // Number of returned POV controls
-
-    BFFBDIDevice* diDevice = static_cast<BFFBDIDevice*>(pContext);
-
-    // For axes that are returned, set the DIPROP_RANGE property for the
-    // enumerated axis in order to scale min/max values.
-    if (pdidoi->dwType & DIDFT_AXIS)
-    {
-        DIPROPRANGE diprg;
-        diprg.diph.dwSize = sizeof(DIPROPRANGE);
-        diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-        diprg.diph.dwHow = DIPH_BYID;
-        diprg.diph.dwObj = pdidoi->dwType; // Specify the enumerated axis
-        diprg.lMin = -1000;
-        diprg.lMax = +1000;
-
-        // Set the range for the axis
-        if (FAILED(g_pJoystick->SetProperty(DIPROP_RANGE, &diprg.diph)))
-            return DIENUM_STOP;
-    }
-    }
-}*/
-
 BonusFFB::DeviceInfo * BonusFFB::getDeviceFromGuid(QList<DeviceInfo> * deviceList, QUuid guid) {
     for (QList<DeviceInfo>::iterator it = deviceList->begin(); it != deviceList->end(); it++)
     {
@@ -152,7 +124,6 @@ long BonusFFB::DeviceInfo::getAxisReading(QUuid axisGuid) {
 }
 
 HRESULT BonusFFB::initDirectInput(QList<DeviceInfo>* diDevices) noexcept {
-    qDebug() << "InitDirectInput called";
     // Register with the DirectInput subsystem and get a pointer
     // to a IDirectInput interface we can use.
     HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION,

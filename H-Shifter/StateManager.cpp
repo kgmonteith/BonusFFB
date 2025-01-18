@@ -11,14 +11,15 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "StateManager.h"
 #include <QDebug>
 
-void StateManager::setTelemetryState(TelemetryState t) {
+void StateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void StateManager::update(long lrValue, long fbValue, long clutchValue, long throttleValue) {
+void StateManager::update(long lrValue, long fbValue, long clutchValue, long throttleValue, QPair<int, int> gearValues) {
     updateSlotState(lrValue, fbValue);
     updateButtonZoneState(lrValue, fbValue);
-    updateSynchroState(lrValue, fbValue);
+    updateSynchroState(lrValue, fbValue, gearValues);
+    updateGrindingState(lrValue, fbValue);
 }
 
 void StateManager::updateSlotState(long lrValue, long fbValue) {
@@ -29,8 +30,7 @@ void StateManager::updateSlotState(long lrValue, long fbValue) {
     }
     else if (inNeutral) {
         newState = SlotGuard::SlotState::NEUTRAL;
-    }
-    if (lrValue <= JOY_MINPOINT + side_slot_width) {
+    } else if (lrValue <= JOY_MINPOINT + side_slot_width) {
         // In or under left channel
         if (fbValue <= JOY_MIDPOINT)
             newState = SlotGuard::SlotState::SLOT_LEFT_FWD;
@@ -60,7 +60,7 @@ void StateManager::updateSlotState(long lrValue, long fbValue) {
 
 void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
-    if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState == TelemetryState::ENABLED)) {
+    if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
         if (slotState == SlotGuard::SlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == SlotGuard::SlotState::SLOT_MIDDLE_FWD)
@@ -68,7 +68,7 @@ void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
         else if (slotState == SlotGuard::SlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (fbValue >= JOY_MAXPOINT - button_zone_depth || (fbValue >= JOY_MAXPOINT - button_zone_depth && telemetryState == TelemetryState::ENABLED)) {
+    else if (fbValue >= JOY_MAXPOINT - button_zone_depth || (fbValue >= JOY_MAXPOINT - button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
         if (slotState == SlotGuard::SlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == SlotGuard::SlotState::SLOT_MIDDLE_BACK)
@@ -82,9 +82,12 @@ void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
     }
 }
 
-void StateManager::updateSynchroState(long lrValue, long fbValue) {
+void StateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int> gearValues) {
     SynchroGuard::SynchroState newState = SynchroGuard::SynchroState::UNKNOWN;
-    if (fbValue <= in_synch_depth || fbValue >= JOY_MAXPOINT - in_synch_depth) {
+    if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second != 0) {
+        // Gears are synchronized from telemetry reading
+        newState = SynchroGuard::SynchroState::IN_SYNCH;
+    } else if (fbValue <= in_synch_depth || fbValue >= JOY_MAXPOINT - in_synch_depth) {
         // Gears are synchronized
         newState = SynchroGuard::SynchroState::IN_SYNCH;
     }
@@ -97,7 +100,19 @@ void StateManager::updateSynchroState(long lrValue, long fbValue) {
         newState = SynchroGuard::SynchroState::ENTERING_SYNCH;
     }
     if (newState != synchroState) {
+        qDebug() << "New synchro state: " << newState << ", gearValues: " << gearValues;
         synchroState = newState;
         emit synchroStateChanged(synchroState);
+    }
+}
+
+void StateManager::updateGrindingState(long lrValue, long fbValue) {
+    bool newState = false;
+    if (grindingState == false && synchroState == SynchroGuard::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
+        newState = true;
+    }
+    if (newState != grindingState) {
+        grindingState = newState;
+        emit grindingStateChanged(grindingState);
     }
 }

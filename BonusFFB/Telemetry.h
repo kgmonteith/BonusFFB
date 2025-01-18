@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "scs-telemetry-common.hpp"
 
 enum class TelemetrySource {
-	none, ats, ets2
+	NONE, SCS
 };
 
 class Telemetry : public QObject
@@ -29,13 +29,16 @@ public:
 	void connectTelemetry();
 	void disconnectTelemetry();
 	void startConnectTimer();
+	TelemetrySource isConnected();
+	QPair<int, int> getGearState();
+	float getEngineRPM();
 
 signals:
-	void telemetryConnected(QString);
-	void telemetryDisconnected(QString);
+	void telemetryChanged(TelemetrySource);
 	void lastUpdate(QString);
 
 private:
+	TelemetrySource telemetrySource = TelemetrySource::NONE;
 	HANDLE pHandle = nullptr;
 	void* pBufferPtr = nullptr;
 	scsTelemetryMap_s* pTelemMap = nullptr;

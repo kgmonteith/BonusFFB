@@ -46,8 +46,8 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFBApplication::openUserGuide);
     QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFBApplication::openAbout);
     // Telemetry connections
-    QObject::connect(&telemetry, &Telemetry::telemetryConnected, ui.telemetryLabel, &QLabel::setText);
-    QObject::connect(&telemetry, &Telemetry::telemetryDisconnected, ui.telemetryLabel, &QLabel::setText);
+    QObject::connect(&telemetry, &Telemetry::telemetryChanged, this, &HShifter::displayTelemetryState);
+    QObject::connect(&telemetry, &Telemetry::telemetryChanged, &stateManager, &StateManager::setTelemetryState);
     // Joystick connections
     QObject::connect(this, &HShifter::joystickLRValueChanged, ui.ioTabJoystickLRProgressBar, &QProgressBar::setValue);
     QObject::connect(this, &HShifter::joystickFBValueChanged, ui.ioTabJoystickFBProgressBar, &QProgressBar::setValue);
@@ -72,8 +72,10 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(&gameLoopTimer, &QTimer::timeout, this, &HShifter::gameLoop);
     // FFB effect connections
     QObject::connect(&stateManager, &StateManager::slotStateChanged, &slotGuard, &SlotGuard::updateSlotGuardEffects);
-    QObject::connect(this, &HShifter::clutchValueChanged, &synchroGuard, &SynchroGuard::updateClutchEngagement);
+    QObject::connect(this, &HShifter::pedalValuesChanged, &synchroGuard, &SynchroGuard::updatePedalEngagement);
     QObject::connect(&stateManager, &StateManager::synchroStateChanged, &synchroGuard, &SynchroGuard::synchroStateChanged);
+    QObject::connect(this, &HShifter::engineRPMChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    QObject::connect(&stateManager, &StateManager::grindingStateChanged, &synchroGuard, &SynchroGuard::grindingStateChanged);
     
     // Initialize vJoyFeeder
     if (!vJoyFeeder::isDriverEnabled()) {
@@ -87,10 +89,7 @@ HShifter::HShifter(QWidget *parent)
     }
     else {
         ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
-    }
-    qDebug() << "Is vJoy enabled? " << vJoyFeeder::isDriverEnabled() << ", driver match: " << vJoyFeeder::checkVersionMatch();
-    qDebug() << "vJoy device count: " << vJoyFeeder::deviceCount();
-    
+    }    
 
     // Initialize Direct Input, get the list of connected devices
     BonusFFB::initDirectInput(&deviceList);
@@ -203,6 +202,15 @@ void HShifter::updateJoystickCircle(int LRValue, int FBValue) {
     ui.graphicsView->setUpdatesEnabled(false);
     joystickCircle->setPos(QPoint(scaledLRValue, scaledFBValue) - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
     ui.graphicsView->setUpdatesEnabled(true);
+}
+
+void HShifter::displayTelemetryState(TelemetrySource newState) {
+    if (newState == TelemetrySource::NONE) {
+        ui.telemetryLabel->setText("⚠️ Telemetry disconnected");
+    }
+    else if (newState == TelemetrySource::SCS) {
+        ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
+    }
 }
 
 void HShifter::saveDeviceSettings() {
@@ -412,11 +420,28 @@ void HShifter::gameLoop() {
         throttleValue = abs(65535 - throttleValue);
     }
     emit throttleValueChanged(throttleValue);
+    if (lastPedalValues[0] != clutchValue || lastPedalValues[1] != throttleValue) {
+        emit pedalValuesChanged(clutchValue, throttleValue);
+        lastPedalValues[0] = clutchValue;
+        lastPedalValues[1] = throttleValue;
+    }
 
-    // State things...
-    stateManager.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue);
-    //auto state = slotGuard.update(joystickLRValue, joystickFBValue);
-    //synchroGuard.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue, false);
+    // Get telemetry values
+    if (telemetry.isConnected() != TelemetrySource::NONE) {
+        QPair<int, int> gearValues = telemetry.getGearState();
+        if (gearValues != lastGearValues) {
+            emit gearValuesChanged(gearValues);
+            lastGearValues = gearValues;
+        }
+        float engineRPM = telemetry.getEngineRPM();
+        if (engineRPM != lastEngineRPM) {
+            emit engineRPMChanged(engineRPM);
+            lastEngineRPM = engineRPM;
+        }
+    }
+
+    // Update state
+    stateManager.update(joystickLRValue, joystickFBValue, clutchValue, throttleValue, lastGearValues);
 }
 
 HShifter::~HShifter()

@@ -21,3 +21,6 @@ The game has a clutch range setting that specifies how much the the clutch shoul
 The gear cannot be disengaged when any amount of throttle is applied.
 
 The gearbox grind frequency is proportional to the engine RPMs, possible the exactly value. In any case, fewer RPMs == slower vibration, higher RPM == faster vibration
+
+500 revs / minute = 120000 microsends per cycle?
+500 rpm = 1/x = 0.002 minutes per rev = *60 = 0.12 seconds per rev = *1000000 = 120000 microseconds per cycle
