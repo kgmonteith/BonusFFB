@@ -8,8 +8,8 @@ theme:
     scheme: default
     primary: indigo
     accent: indigo
-#  icon:
-#    logo: material/plane-car
+  favicon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>"
+  logo: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>"
   features:
     - navigation.tabs
     - toc.integrate
@@ -20,10 +20,6 @@ extra:
   social:
     - icon: fontawesome/brands/discord 
       link: https://discord.com/users/447499151337324574
-nav:
-  - Home: index.md
-  - Download: https://github.com/kgmonteith/BonusFFB/releases
-  - Getting started: getting-started.md
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -32,3 +28,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+nav:
+  - Home: index.md
+  - Download: https://github.com/kgmonteith/BonusFFB/releases
+  - Getting started: getting-started.md
