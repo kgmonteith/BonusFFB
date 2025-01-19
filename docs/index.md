@@ -7,9 +7,9 @@ Do you own a force-feedback joystick? Did you know it can simulate other periphe
 Bonus FFB can simulate these devices using a force-feedback joystick:
 
 * [H-pattern shifter](h-shifter/index.md)
-* Handbrake
 * Sequential shifter (work in progress)
 * Auto-manual shifter (work in progress)
+* Handbrake
 
 ## Supported devices
 
