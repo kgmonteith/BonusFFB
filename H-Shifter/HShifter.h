@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -13,13 +15,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
 #include "ui_HShifter.h"
-#include "BonusFFB.h"
 #include "BonusFFBApplication.h"
+#include "StateManager.h"
 #include "Telemetry.h"
 #include "SlotGuard.h"
 #include "SynchroGuard.h"
-#include "vJoyFeeder.h"
-#include "StateManager.h"
 
 #define GAMELOOP_INTERVAL_MS 1
 #define SLOT_WIDTH_PX 5.0
@@ -38,9 +38,8 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 public slots:
-    void saveDeviceSettings();
-    void loadDeviceSettings();
     void startOnLaunch();
+    void loadDeviceSettings();
 
     void rescaleShifterMap();
     void updateJoystickCircle(int, int);
@@ -74,33 +73,22 @@ private:
 
     Ui::HShifterClass ui;
 
-    QList<BonusFFB::DeviceInfo> deviceList;
-
-    BonusFFB::DeviceInfo* joystick = nullptr;
-    QUuid joystickLRAxisGuid;
-    QUuid joystickFBAxisGuid;
-
-    BonusFFB::DeviceInfo* pedals = nullptr;
-    QUuid clutchAxisGuid;
-    QUuid throttleAxisGuid;
-
-    QTimer gameLoopTimer;
-
-    QTimer telemetryTimer;
-    Telemetry telemetry;
-    vJoyFeeder vjoy = vJoyFeeder();
-
-    // Stateful FFB effect managers
-    StateManager stateManager;
-    SlotGuard slotGuard;
-    SynchroGuard synchroGuard;
-
     QGraphicsScene* scene = nullptr;
     QGraphicsRectItem* neutralChannelRect;
     QGraphicsRectItem* centerSlotRect;
     QGraphicsRectItem* rightSlotRect;
     QGraphicsRectItem* leftSlotRect;
     QGraphicsEllipseItem* joystickCircle;
+
+    QTimer gameLoopTimer;
+
+    QTimer telemetryTimer;
+    Telemetry telemetry;
+
+    // Stateful FFB effect managers
+    StateManager stateManager;
+    SlotGuard slotGuard;
+    SynchroGuard synchroGuard;
 
     int lastPedalValues[2] = {0, 0};
     QPair<int, int> lastGearValues = { 0, 0 };

@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -13,58 +15,56 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QDebug>
 
 HRESULT SlotGuard::start(BonusFFB::DeviceInfo* device) {
-    eff.dwSize = sizeof(DIEFFECT);
-    eff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    eff.dwDuration = INFINITE;
-    eff.dwSamplePeriod = 0;
-    eff.dwGain = DI_FFNOMINALMAX;
-    eff.dwTriggerButton = DIEB_NOTRIGGER;
-    eff.dwTriggerRepeatInterval = 0;
-    eff.cAxes = 2;
-    eff.rgdwAxes = AXES;
-    eff.rglDirection = FORWARDBACK;
-    eff.lpEnvelope = 0;
-    eff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    conditions[0] = keepLeft;
-    conditions[1] = keepFBCentered;
-    eff.lpvTypeSpecificParams = &conditions;
-    eff.dwStartDelay = 0;
+    slotSpringEff.dwSize = sizeof(DIEFFECT);
+    slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    slotSpringEff.dwDuration = INFINITE;
+    slotSpringEff.dwSamplePeriod = 0;
+    slotSpringEff.dwGain = DI_FFNOMINALMAX;
+    slotSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    slotSpringEff.dwTriggerRepeatInterval = 0;
+    slotSpringEff.cAxes = 2;
+    slotSpringEff.rgdwAxes = AXES;
+    slotSpringEff.rglDirection = FORWARDBACK;
+    slotSpringEff.lpEnvelope = 0;
+    slotSpringEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
+    springConditions[0] = keepLeft;
+    springConditions[1] = keepFBCentered;
+    slotSpringEff.lpvTypeSpecificParams = &springConditions;
+    slotSpringEff.dwStartDelay = 0;
 
 
     HRESULT hr;
-    if (lpdiEff == nullptr) {
+    if (lpdiSlotSpringEff == nullptr) {
         hr = device->diDevice->CreateEffect(GUID_Spring,
-            &eff, &lpdiEff, nullptr);
+            &slotSpringEff, &lpdiSlotSpringEff, nullptr);
         if (FAILED(hr))
             return hr;
     }
-    hr = lpdiEff->Start(INFINITE, 0);
+    hr = lpdiSlotSpringEff->Start(INFINITE, 0);
     return hr;
 }
 
 void SlotGuard::updateSlotGuardEffects(SlotState state) {
-    //HRESULT hr;
-
     if (state == SlotState::NEUTRAL_UNDER_SLOT) {
         // Disable the effect to prevent thrashing
         // We can scale the condition coefficients near the junctions instead, but good enough for now
-        conditions[0] = noSpring;
-        conditions[1] = noSpring;
-        conditions[1].lDeadBand = 500;
+        springConditions[0] = noSpring;
+        springConditions[1] = noSpring;
+        springConditions[1].lDeadBand = 500;
     } else if (state == SlotState::NEUTRAL) {
-        conditions[0] = noSpring;
-        conditions[1] = keepFBCentered;
-        conditions[1].lDeadBand = 500;
+        springConditions[0] = noSpring;
+        springConditions[1] = keepFBCentered;
+        springConditions[1].lDeadBand = 500;
     } else if (state == SlotState::SLOT_LEFT_FWD || state == SlotState::SLOT_LEFT_BACK) {
-        conditions[0] = keepLeft;
-        conditions[1] = noSpring;
+        springConditions[0] = keepLeft;
+        springConditions[1] = noSpring;
     } else if (state == SlotState::SLOT_MIDDLE_FWD || state == SlotState::SLOT_MIDDLE_BACK) {
-        conditions[0] = keepLRCentered;
-        conditions[1] = noSpring;
+        springConditions[0] = keepLRCentered;
+        springConditions[1] = noSpring;
     } else if (state == SlotState::SLOT_RIGHT_FWD || state == SlotState::SLOT_RIGHT_BACK) {
-        conditions[0] = keepRight;
-        conditions[1] = noSpring;
+        springConditions[0] = keepRight;
+        springConditions[1] = noSpring;
     }
-    eff.lpvTypeSpecificParams = conditions;
-    lpdiEff->SetParameters(&eff, DIEP_TYPESPECIFICPARAMS);
+    slotSpringEff.lpvTypeSpecificParams = springConditions;
+    lpdiSlotSpringEff->SetParameters(&slotSpringEff, DIEP_TYPESPECIFICPARAMS);
 }

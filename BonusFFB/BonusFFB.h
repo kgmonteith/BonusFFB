@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -27,6 +29,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #define VJOY_PRODUCT_GUID 0xBEAD1234
 
+static DWORD AXES[2] = { DIJOFS_X, DIJOFS_Y };
+
 namespace BonusFFB {
 
     class DeviceInfo
@@ -44,11 +48,6 @@ namespace BonusFFB {
         HRESULT updateState();
         QMap<QUuid, QString> getDeviceAxes();
         long getAxisReading(QUuid);
-    };
-
-    class FFBEffect
-    {
-    public:
     };
 
     static LPDIRECTINPUT8 g_pDI;

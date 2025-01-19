@@ -1,4 +1,6 @@
 ﻿/*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -76,6 +78,9 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(&stateManager, &StateManager::synchroStateChanged, &synchroGuard, &SynchroGuard::synchroStateChanged);
     QObject::connect(this, &HShifter::engineRPMChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     QObject::connect(&stateManager, &StateManager::grindingStateChanged, &synchroGuard, &SynchroGuard::grindingStateChanged);
+    QObject::connect(ui.grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::setGrindEffectIntensity);
+    QObject::connect(ui.grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    QObject::connect(ui.keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::setKeepInGearIdleIntensity);
     
     // Initialize vJoyFeeder
     if (!vJoyFeeder::isDriverEnabled()) {
@@ -164,6 +169,48 @@ void HShifter::initializeGraphics() {
     ui.graphicsView->show();
 }
 
+void HShifter::loadDeviceSettings() {
+    qDebug() << "Loading settings";
+    if (!QFile(this->deviceSettingsFile).exists()) {
+        qDebug() << "Settings file does not exist";
+        return;
+    }
+    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
+
+    settings.beginGroup("joystick");
+    int joystick_index = ui.joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
+    if (joystick_index == -1) {
+        QMessageBox::warning(this, "Joystick not found", "Saved joystick device is not connected.\nReconnect the device or update the input/output settings.");
+    }
+    else
+    {
+        ui.joystickDeviceComboBox->setCurrentIndex(joystick_index);
+        ui.joystickLRAxisComboBox->setCurrentIndex(ui.joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
+        ui.invertJoystickLRAxisBox->setChecked(settings.value("invert_lr_axis").toBool());
+        ui.joystickFBAxisComboBox->setCurrentIndex(ui.joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
+        ui.invertJoystickFBAxisBox->setChecked(settings.value("invert_fb_axis").toBool());
+    }
+    settings.endGroup();
+
+    settings.beginGroup("pedals");
+    int pedals_index = ui.pedalsDeviceComboBox->findData(settings.value("device_guid").toUuid());
+    if (pedals_index == -1) {
+        QMessageBox::warning(this, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output settings.");
+    }
+    else
+    {
+        ui.pedalsDeviceComboBox->setCurrentIndex(pedals_index);
+        ui.clutchAxisComboBox->setCurrentIndex(ui.clutchAxisComboBox->findData(settings.value("clutch_axis").toUuid()));
+        ui.invertClutchAxisBox->setChecked(settings.value("invert_clutch_axis").toBool());
+        ui.throttleAxisComboBox->setCurrentIndex(ui.throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
+        ui.invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
+    }
+    settings.endGroup();
+
+    settings.beginGroup("vjoy");
+    ui.vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
+    settings.endGroup();
+}
 
 void HShifter::resizeEvent(QResizeEvent* e)
 {
@@ -211,73 +258,6 @@ void HShifter::displayTelemetryState(TelemetrySource newState) {
     else if (newState == TelemetrySource::SCS) {
         ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
     }
-}
-
-void HShifter::saveDeviceSettings() {
-    QSettings settings = QSettings(QDir::currentPath() + "/hshifter.ini", QSettings::IniFormat);
-    settings.beginGroup("joystick");
-    settings.setValue("device_guid", joystick->instanceGuid.toString());
-    settings.setValue("lr_axis", joystickLRAxisGuid.toString());
-    settings.setValue("invert_lr_axis", ui.invertJoystickLRAxisBox->isChecked());
-    settings.setValue("fb_axis", joystickFBAxisGuid.toString());
-    settings.setValue("invert_fb_axis", ui.invertJoystickFBAxisBox->isChecked());
-    settings.endGroup();
-
-    settings.beginGroup("pedals");
-    settings.setValue("device_guid", pedals->instanceGuid.toString());
-    settings.setValue("clutch_axis", clutchAxisGuid.toString());
-    settings.setValue("invert_clutch_axis", ui.invertClutchAxisBox->isChecked());
-    settings.setValue("throttle_axis", throttleAxisGuid.toString());
-    settings.setValue("invert_throttle_axis", ui.invertThrottleAxisBox->isChecked());
-    settings.endGroup();
-
-    settings.beginGroup("vjoy");
-    settings.setValue("vjoy_device", vjoy.getDeviceIndex());
-    settings.endGroup();
-}
-
-void HShifter::loadDeviceSettings() {
-    qDebug() << "Loading settings";
-    QString settingsFile = QDir::currentPath() + "/hshifter.ini";
-    if (!QFile(settingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(settingsFile, QSettings::IniFormat);
-
-    settings.beginGroup("joystick");
-    int joystick_index = ui.joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1) {
-        QMessageBox::warning(this, "Joystick not found", "Saved joystick device is not connected.\nReconnect the device or update the input/output settings.");
-    }
-    else
-    {
-        ui.joystickDeviceComboBox->setCurrentIndex(joystick_index);
-        ui.joystickLRAxisComboBox->setCurrentIndex(ui.joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
-        ui.invertJoystickLRAxisBox->setChecked(settings.value("invert_lr_axis").toBool());
-        ui.joystickFBAxisComboBox->setCurrentIndex(ui.joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
-        ui.invertJoystickFBAxisBox->setChecked(settings.value("invert_fb_axis").toBool());
-    }
-    settings.endGroup();
-
-    settings.beginGroup("pedals");
-    int pedals_index = ui.pedalsDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (pedals_index == -1) {
-        QMessageBox::warning(this, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output settings.");
-    }
-    else
-    {
-        ui.pedalsDeviceComboBox->setCurrentIndex(pedals_index);
-        ui.clutchAxisComboBox->setCurrentIndex(ui.clutchAxisComboBox->findData(settings.value("clutch_axis").toUuid()));
-        ui.invertClutchAxisBox->setChecked(settings.value("invert_clutch_axis").toBool());
-        ui.throttleAxisComboBox->setCurrentIndex(ui.throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
-        ui.invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
-    }
-    settings.endGroup();
-
-    settings.beginGroup("vjoy");
-    ui.vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
-    settings.endGroup();
 }
 
 void HShifter::startOnLaunch() {
