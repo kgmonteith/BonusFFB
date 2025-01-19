@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -10,10 +12,35 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include <QObject>
+#include "BonusFFB.h"
 #include "vJoyFeeder.h"
-#include "SlotGuard.h"
-#include "SynchroGuard.h"
 #include "Telemetry.h"
+
+
+enum class SynchroState {
+    UNKNOWN,
+    ENTERING_SYNCH,
+    IN_SYNCH,
+    EXITING_SYNCH
+};
+
+enum class GrindingState {
+    OFF,
+    GRINDING_FWD,
+    GRINDING_BACK
+};
+
+enum class SlotState {
+    UNKNOWN,
+    NEUTRAL,
+    NEUTRAL_UNDER_SLOT,
+    SLOT_LEFT_FWD,
+    SLOT_LEFT_BACK,
+    SLOT_MIDDLE_FWD,
+    SLOT_MIDDLE_BACK,
+    SLOT_RIGHT_FWD,
+    SLOT_RIGHT_BACK
+};
 
 class StateManager: public QObject
 {
@@ -26,10 +53,10 @@ public slots:
     void setTelemetryState(TelemetrySource);
 
 signals:
-    void slotStateChanged(SlotGuard::SlotState);
+    void slotStateChanged(SlotState);
     void buttonZoneChanged(int);
-    void synchroStateChanged(SynchroGuard::SynchroState);
-    void grindingStateChanged(bool);
+    void synchroStateChanged(SynchroState);
+    void grindingStateChanged(GrindingState);
 
 private:
     void updateSlotState(long, long);
@@ -39,9 +66,9 @@ private:
 
     int buttonZoneState = 0;
     TelemetrySource telemetryState = TelemetrySource::NONE;
-    SlotGuard::SlotState slotState = SlotGuard::SlotState::NEUTRAL;
-    SynchroGuard::SynchroState synchroState = SynchroGuard::SynchroState::ENTERING_SYNCH;
-    bool grindingState = false;
+    SlotState slotState = SlotState::NEUTRAL;
+    SynchroState synchroState = SynchroState::UNKNOWN;
+    GrindingState grindingState = GrindingState::OFF;
 
     int side_slot_width = 500;
     int middle_slot_half_width = 1200;

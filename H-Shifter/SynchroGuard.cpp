@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -9,7 +11,6 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "SynchroGuard.h"
-#include "SlotGuard.h"
 
 #include <QDebug>
 
@@ -40,7 +41,7 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     }
     hr = lpdiUnsynchronizedSpringEff->Start(INFINITE, 0);
 
-    /*
+    /* Maybe we'll want a constant effect, but I think we're good for now 
     unsynchronizedConstantEff.dwSize = sizeof(DIEFFECT);
     unsynchronizedConstantEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
     unsynchronizedConstantEff.dwDuration = INFINITE;
@@ -50,10 +51,10 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     unsynchronizedConstantEff.dwTriggerRepeatInterval = 0;
     unsynchronizedConstantEff.cAxes = 2;
     unsynchronizedConstantEff.rgdwAxes = AXES;
-    unsynchronizedConstantEff.rglDirection = BACK;
+    unsynchronizedConstantEff.rglDirection = FORWARD;
     unsynchronizedConstantEff.lpEnvelope = 0;
     unsynchronizedConstantEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-    unsynchronizedConstantEff.lpvTypeSpecificParams = { 0 };
+    unsynchronizedConstantEff.lpvTypeSpecificParams = &unsynchronizedConstant;
     unsynchronizedConstantEff.dwStartDelay = 0;
 
     if (lpdiUnsynchronizedConstantEff == nullptr) {
@@ -144,22 +145,8 @@ void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
             lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
         }
     }
-    //keepInGearSpring.lPositiveCoefficient = long(keepInGearSpringIdleCoefficient * clutchPercent);
 }
 
-/*
-    throttlePercent = 1 - (double(throttleValue) / JOY_MAXPOINT);
-    if (synchroState == SynchroState::IN_SYNCH) {
-        if (throttleValue > 0) {
-            keepInGearSpring.lPositiveCoefficient = keepInGearSpringMaxCoefficient * clutchPercent;
-        }
-        else {
-            keepInGearSpring.lPositiveCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;
-        }
-        qDebug() << "New spring coefficient: " << keepInGearSpring.lPositiveCoefficient;
-        springEff.lpvTypeSpecificParams = &keepInGearSpring;
-        lpdiSpringEff->SetParameters(&springEff, DIEP_TYPESPECIFICPARAMS);
-    }*/
 
 void SynchroGuard::synchroStateChanged(SynchroState newState) {
     if (newState == SynchroState::IN_SYNCH) {
@@ -178,39 +165,52 @@ void SynchroGuard::synchroStateChanged(SynchroState newState) {
     synchroState = newState;
 }
 
-void SynchroGuard::grindingStateChanged(bool newState) {
-    if (newState == true) {
+void SynchroGuard::grindingStateChanged(GrindingState newState) {
+    if (newState != GrindingState::OFF) {
+        // Start rumbling
         rumble.dwPeriod = int(6e7 / engineRPM);
-        rumble.dwMagnitude = rumbleIntensity * clutchPercent;
+        rumble.dwMagnitude = grindingIntensity * clutchPercent;
         rumbleEff.lpvTypeSpecificParams = &rumble;
         lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+        // Enable constant pushback
+        /*
+        unsynchronizedConstant.lMagnitude = 10000;
+        unsynchronizedConstantEff.lpvTypeSpecificParams = &unsynchronizedConstant;
+        lpdiUnsynchronizedConstantEff->SetParameters(&unsynchronizedConstantEff, DIEP_TYPESPECIFICPARAMS);
+        */
     }
     else {
+        // Stop rumbling
         rumble.dwMagnitude = 0;
         rumbleEff.lpvTypeSpecificParams = &rumble;
         lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
+        // Disable constant pushback
+        /*
+        unsynchronizedConstant.lMagnitude = 0;
+        unsynchronizedConstantEff.lpvTypeSpecificParams = &unsynchronizedConstant;
+        lpdiUnsynchronizedConstantEff->SetParameters(&unsynchronizedConstantEff, DIEP_TYPESPECIFICPARAMS);
+        */
     }
-    grinding = newState;
-}
-/*
-void SynchroGuard::updateUnsynchRumble(int lrValue, int fbValue) {
-    if (synchroState == SynchroState::ENTERING_SYNCH) {
-        if (fbValue <= grindPoint || fbValue >= JOY_MAXPOINT - grindPoint) {
-            // something something grinding gears
-        }
-    }
-}
-*/
-
-int SynchroGuard::RPMtoMicrosendsPerCycle(float rpm) {
-    return int(6e7 / rpm);
+    grindingState = newState;
 }
 
 void SynchroGuard::updateEngineRPM(float newRPM) {
-    if (grinding) {
+    if (grindingState != GrindingState::OFF) {
         rumble.dwPeriod = int(6e7 / newRPM);
         rumbleEff.lpvTypeSpecificParams = &rumble;
         lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
     }
     engineRPM = newRPM;
+}
+
+void SynchroGuard::setGrindEffectIntensity(int value) {
+    grindingIntensity = value * 100;    // Scale to 10000
+}
+
+void SynchroGuard::setGrindEffectRPM(int value) {
+    updateEngineRPM(float(value));
+}
+
+void SynchroGuard::setKeepInGearIdleIntensity(int value) {
+    keepInGearSpringIdleCoefficient = value * 100;
 }
