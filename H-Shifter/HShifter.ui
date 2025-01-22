@@ -40,6 +40,39 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="toggleGameLoopButton">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>80</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>80</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>36</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>▶️</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QGroupBox" name="groupBox">
       <property name="enabled">
@@ -74,39 +107,6 @@
         </widget>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="toggleGameLoopButton">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>80</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>80</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="baseSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>36</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>▶️</string>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
      </widget>
     </item>
     <item row="7" column="0" rowspan="3" colspan="3">
@@ -281,326 +281,6 @@
               <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
             </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Input/output settings</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="title">
-           <string/>
-          </property>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="minimumSize">
-              <size>
-               <width>99</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>FFB joystick</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="joystickDeviceComboBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>Left/right axis</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
-             <item>
-              <widget class="QComboBox" name="joystickLRAxisComboBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>200</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="invertJoystickLRAxisBox">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">padding-right: 40px;</string>
-               </property>
-               <property name="text">
-                <string>Invert axis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="ioTabJoystickLRProgressBar">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-               <property name="textVisible">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>Forward/back axis</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QComboBox" name="joystickFBAxisComboBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>200</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="invertJoystickFBAxisBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">padding-right: 40px;</string>
-               </property>
-               <property name="text">
-                <string>Invert axis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="ioTabJoystickFBProgressBar">
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-               <property name="textVisible">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_7">
-          <property name="title">
-           <string/>
-          </property>
-          <layout class="QFormLayout" name="formLayout_3">
-           <item row="0" column="0">
-            <widget class="QLabel" name="cluckDeviceLabel">
-             <property name="minimumSize">
-              <size>
-               <width>99</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Pedals device</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="pedalsDeviceComboBox">
-             <property name="font">
-              <font>
-               <family>Segoe UI</family>
-               <pointsize>9</pointsize>
-              </font>
-             </property>
-             <property name="placeholderText">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="clutchAxisLabel">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Clutch axis</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QComboBox" name="clutchAxisComboBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="toolTip">
-                <string/>
-               </property>
-               <property name="placeholderText">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="invertClutchAxisBox">
-               <property name="styleSheet">
-                <string notr="true">padding-right: 40px;</string>
-               </property>
-               <property name="text">
-                <string>Invert axis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="ioTabClutchProgressBar">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-               <property name="textVisible">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Throttle axis</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QComboBox" name="throttleAxisComboBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="invertThrottleAxisBox">
-               <property name="styleSheet">
-                <string notr="true">padding-right: 40px;</string>
-               </property>
-               <property name="text">
-                <string>Invert axis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QProgressBar" name="ioTabThrottleProgressBar">
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-               <property name="value">
-                <number>0</number>
-               </property>
-               <property name="textVisible">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_8">
-          <property name="title">
-           <string/>
-          </property>
-          <layout class="QFormLayout" name="formLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="vJoyOutputDeviceLabel">
-             <property name="text">
-              <string>vJoy output device</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="vjoyDeviceComboBox"/>
            </item>
           </layout>
          </widget>
@@ -875,34 +555,18 @@
  </resources>
  <connections>
   <connection>
-   <sender>grindIntensitySlider</sender>
+   <sender>grindRPMSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>grindingIntensitySpinBox</receiver>
+   <receiver>grindRPMSpinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>461</x>
-     <y>201</y>
+     <x>469</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
-     <x>737</x>
-     <y>210</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>grindingIntensitySpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>grindIntensitySlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>740</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>665</x>
-     <y>205</y>
+     <x>746</x>
+     <y>306</y>
     </hint>
    </hints>
   </connection>
@@ -923,6 +587,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>keepInGearIdleSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>keepInGearIdleSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>426</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>741</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>grindRPMSpinBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>grindRPMSlider</receiver>
@@ -939,34 +619,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>grindRPMSlider</sender>
+   <sender>grindingIntensitySpinBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>grindRPMSpinBox</receiver>
+   <receiver>grindIntensitySlider</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>469</x>
-     <y>305</y>
+     <x>740</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
-     <x>746</x>
-     <y>306</y>
+     <x>665</x>
+     <y>205</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>keepInGearIdleSlider</sender>
+   <sender>grindIntensitySlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>keepInGearIdleSpinBox</receiver>
+   <receiver>grindingIntensitySpinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>426</x>
-     <y>238</y>
+     <x>461</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
-     <x>741</x>
-     <y>233</y>
+     <x>737</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>

@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QStandardPaths>
 #include "BonusFFB.h"
 #include "vJoyFeeder.h"
+#include "DeviceSettings.h"
 
 // This parent class implements objects and functions common to individual Bonus FFB apps
 class BonusFFBApplication : public QMainWindow
@@ -28,11 +29,12 @@ class BonusFFBApplication : public QMainWindow
 public:
 	BonusFFBApplication(QWidget* parent = nullptr);
 	~BonusFFBApplication();
+	QPair<int, int> getJoystickValues();
+	QPair<int, int> getPedalValues();
 
-	QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+	DeviceSettings* deviceSettings;
 
 	vJoyFeeder vjoy = vJoyFeeder();
-
 	QList<BonusFFB::DeviceInfo> deviceList;
 
 	BonusFFB::DeviceInfo* joystick = nullptr;
@@ -43,12 +45,32 @@ public:
 	QUuid clutchAxisGuid;
 	QUuid throttleAxisGuid;
 
+	QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+
 public slots:
 	void openUserGuide();
 	void openAbout();
 	void saveDeviceSettings();
+	void loadDeviceSettings();
+	void changeJoystickDevice(int);
+	void changePedalsDevice(int);
+	void changeJoystickLRAxis(int);
+	void changeJoystickFBAxis(int);
+	void changeClutchAxis(int);
+	void changeThrottleAxis(int);
+
+signals:
+	void joystickValueChanged(int, int);
+	void joystickLRValueChanged(int);
+	void joystickFBValueChanged(int);
+	void clutchValueChanged(int);
+	void throttleValueChanged(int);
+	void pedalValuesChanged(int, int);
 
 protected:
 	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/deviceSettings.ini";
+
+private:
+	QPair<int, int> lastPedalValues = { 0, 0 };
 };
 

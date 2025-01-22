@@ -47,7 +47,7 @@ class StateManager: public QObject
     Q_OBJECT;
 
 public:
-    void update(long, long, long, long, QPair<int, int>);
+    void update(QPair<int, int>, QPair<int, int>, QPair<int, int>);
 
 public slots:
     void setTelemetryState(TelemetrySource);

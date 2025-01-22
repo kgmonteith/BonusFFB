@@ -39,7 +39,6 @@ protected:
 
 public slots:
     void startOnLaunch();
-    void loadDeviceSettings();
 
     void rescaleShifterMap();
     void updateJoystickCircle(int, int);
@@ -47,21 +46,9 @@ public slots:
 
     void toggleGameLoop(bool);
 
-    void changeJoystickDevice(int);
-    void changeJoystickLRAxis(int);
-    void changeJoystickFBAxis(int);
-    void changePedalsDevice(int);
-    void changeClutchAxis(int);
-    void changeThrottleAxis(int);
     void updateGearText(int);
 
 signals:
-    void joystickValueChanged(int, int);
-    void joystickLRValueChanged(int);
-    void joystickFBValueChanged(int);
-    void clutchValueChanged(int);
-    void throttleValueChanged(int);
-    void pedalValuesChanged(int, int);
     void gearValuesChanged(QPair<int, int>);
     void engineRPMChanged(float);
     void resetClutchAxes();
@@ -90,7 +77,6 @@ private:
     SlotGuard slotGuard;
     SynchroGuard synchroGuard;
 
-    int lastPedalValues[2] = {0, 0};
     QPair<int, int> lastGearValues = { 0, 0 };
     float lastEngineRPM = 0.0;
 };

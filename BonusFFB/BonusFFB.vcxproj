@@ -36,7 +36,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.8.0_msvc2022_64</QtInstall>
+    <QtInstall>6.8.1_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
     <QtPlugin>false</QtPlugin>
@@ -124,11 +124,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BonusFFBApplication.cpp" />
+    <ClCompile Include="DeviceSettings.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
     <ClInclude Include="..\include\public.h" />
     <ClInclude Include="..\include\scs-telemetry-common.hpp" />
     <ClInclude Include="..\include\vjoyinterface.h" />
+    <QtMoc Include="DeviceSettings.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
     <QtMoc Include="BonusFFBApplication.h" />
@@ -141,6 +143,9 @@
     <CopyFileToFolders Include="..\lib\vJoyInterface.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="DeviceSettings.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

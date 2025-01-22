@@ -17,7 +17,9 @@ void StateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void StateManager::update(long lrValue, long fbValue, long clutchValue, long throttleValue, QPair<int, int> gearValues) {
+void StateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
+    long lrValue = joystickValues.first;
+    long fbValue = joystickValues.second;
     updateSlotState(lrValue, fbValue);
     updateButtonZoneState(lrValue, fbValue);
     updateSynchroState(lrValue, fbValue, gearValues);
