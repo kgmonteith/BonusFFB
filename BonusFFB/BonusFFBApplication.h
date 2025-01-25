@@ -21,6 +21,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "vJoyFeeder.h"
 #include "DeviceSettings.h"
 
+#define SLOT_WIDTH_PX 5.0
+#define JOYSTICK_MARKER_DIAMETER_PX 21.0
+
 // This parent class implements objects and functions common to individual Bonus FFB apps
 class BonusFFBApplication : public QMainWindow
 {

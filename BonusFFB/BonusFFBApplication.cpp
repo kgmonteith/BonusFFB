@@ -25,8 +25,12 @@ BonusFFBApplication::BonusFFBApplication(QWidget* parent)
 {
     qDebug("BonusFFBApplication constructor invoked");
     deviceSettings = new DeviceSettings(nullptr);
-    qDebug() << deviceSettings;
-    qDebug() << deviceSettings->children();
+    qDebug("Created deviceSettings object");
+
+    // Hide all optional devices, child applications will reenable them if used
+    deviceSettings->pedalsDeviceComboBox->parent()->setProperty("visible", false);
+    deviceSettings->vjoyDeviceComboBox->parent()->setProperty("visible", false);
+    qDebug("Hid deviceSettings");
 
     // Joystick connections
     QObject::connect(deviceSettings->joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &BonusFFBApplication::changeJoystickDevice);
@@ -42,6 +46,7 @@ BonusFFBApplication::BonusFFBApplication(QWidget* parent)
     QObject::connect(this, &BonusFFBApplication::throttleValueChanged, deviceSettings->findChild<QProgressBar*>("ioTabThrottleProgressBar"), &QProgressBar::setValue);
     // vJoy connections
     QObject::connect(deviceSettings->vjoyDeviceComboBox, &QComboBox::currentIndexChanged, &vjoy, &vJoyFeeder::setDeviceIndex);
+    qDebug("Created connections");
 
     // Populate the device lists
     for (auto const device : deviceList)
@@ -51,9 +56,14 @@ BonusFFBApplication::BonusFFBApplication(QWidget* parent)
             deviceSettings->joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
         }
     }
-    for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
-        deviceSettings->vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i + 1)), i + 1);
+    qDebug("Populated device list");
+
+    if (vJoyFeeder::isDriverEnabled()) {
+        for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
+            deviceSettings->vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i + 1)), i + 1);
+        }
     }
+    qDebug("BonusFFBApplication constructor finished");
 }
 
 BonusFFBApplication::~BonusFFBApplication()

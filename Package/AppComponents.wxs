@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
+			<File Source="H-Shifter.exe">
+				<Shortcut Name="Bonus FFB H-Shifter" Directory="DesktopFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" />
+
+				<Shortcut Name="Bonus FFB H-Shifter" Directory="ProgramMenuFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" />
+			</File>
+			<File Source="Handbrake.exe">
+				<Shortcut Name="Bonus FFB Handbrake" Directory="DesktopFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" />
+
+				<Shortcut Name="Bonus FFB Handbrake" Directory="ProgramMenuFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" />
+			</File>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

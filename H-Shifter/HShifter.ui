@@ -213,7 +213,7 @@
            </sizepolicy>
           </property>
           <property name="title">
-           <string>Shifter map</string>
+           <string>Joystick map</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="0" column="0">
@@ -299,6 +299,9 @@
           </property>
           <property name="title">
            <string/>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
           </property>
           <layout class="QFormLayout" name="formLayout_4">
            <item row="0" column="0">

@@ -29,6 +29,10 @@ HShifter::HShifter(QWidget *parent)
     ui.monitorTabWidget->setCurrentIndex(0);
     ui.monitorTabWidget->insertTab(1, deviceSettings, "Input/output settings");
 
+    // Show pedals settings
+    deviceSettings->pedalsDeviceComboBox->parent()->setProperty("visible", true);
+    deviceSettings->vjoyDeviceComboBox->parent()->setProperty("visible", true);
+
     // Menu action connections
     QObject::connect(ui.actionExit, &QAction::triggered, this, &HShifter::close);
     QObject::connect(ui.actionSaveSettings, &QAction::triggered, this, &HShifter::saveDeviceSettings);
@@ -36,7 +40,7 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFBApplication::openUserGuide);
     QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFBApplication::openAbout);
     // Graphics connections
-    QObject::connect(ui.monitorTabWidget, &QTabWidget::currentChanged, this, &HShifter::rescaleShifterMap);
+    QObject::connect(ui.monitorTabWidget, &QTabWidget::currentChanged, this, &HShifter::rescaleJoystickMap);
     // Telemetry connections
     QObject::connect(&telemetry, &Telemetry::telemetryChanged, this, &HShifter::displayTelemetryState);
     QObject::connect(&telemetry, &Telemetry::telemetryChanged, &stateManager, &StateManager::setTelemetryState);
@@ -91,6 +95,12 @@ HShifter::HShifter(QWidget *parent)
     }
 }
 
+HShifter::~HShifter()
+{
+    if (gameLoopTimer.isActive())
+        emit toggleGameLoop(false);
+}
+
 void HShifter::initializeGraphics() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui.graphicsView->viewport()->rect());
@@ -139,11 +149,11 @@ void HShifter::initializeGraphics() {
 
 void HShifter::resizeEvent(QResizeEvent* e)
 {
-    rescaleShifterMap();
+    rescaleJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active
-void HShifter::rescaleShifterMap() {
+void HShifter::rescaleJoystickMap() {
     if (scene == nullptr) {
         return;
     }
@@ -267,10 +277,4 @@ void HShifter::gameLoop() {
 
     // Update state
     stateManager.update(joystickValues, pedalValues, lastGearValues);
-}
-
-HShifter::~HShifter()
-{
-    if (gameLoopTimer.isActive())
-        emit toggleGameLoop(false);
 }

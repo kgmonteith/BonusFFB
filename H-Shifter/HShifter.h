@@ -22,8 +22,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "SynchroGuard.h"
 
 #define GAMELOOP_INTERVAL_MS 1
-#define SLOT_WIDTH_PX 5.0
-#define JOYSTICK_MARKER_DIAMETER_PX 21.0
 
 class HShifter : public BonusFFBApplication
 {
@@ -40,7 +38,7 @@ protected:
 public slots:
     void startOnLaunch();
 
-    void rescaleShifterMap();
+    void rescaleJoystickMap();
     void updateJoystickCircle(int, int);
     void displayTelemetryState(TelemetrySource);
 

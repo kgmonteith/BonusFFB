@@ -1,0 +1,19 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Bonus FFB" Manufacturer="Ken Monteith" Version="1.0.0" UpgradeCode="ea04bc92-dde2-42ca-b2a4-ad303163fec3">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+	<MediaTemplate EmbedCab="yes" />
+    <Feature Id="Main">
+		<Files Include="../$(BonusFFB.Platform)/$(BonusFFB.Configuration)/**">
+			<Exclude Files="../$(BonusFFB.Platform)/$(BonusFFB.Configuration)/H-Shifter.exe" />
+			<Exclude Files="../$(BonusFFB.Platform)/$(BonusFFB.Configuration)/Handbrake.exe" />
+			<Exclude Files="../$(BonusFFB.Platform)/$(BonusFFB.Configuration)/**.lib" />
+			<Exclude Files="../$(BonusFFB.Platform)/$(BonusFFB.Configuration)/**.pdb" />
+		</Files>
+      <ComponentGroupRef Id="AppComponents" />
+	</Feature>
+
+	<ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER"/>
+
+</Package>
+</Wix>

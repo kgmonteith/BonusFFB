@@ -12,15 +12,28 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QtWidgets/QMainWindow>
 #include "ui_Handbrake.h"
+#include "BonusFFBApplication.h"
 
-class Handbrake : public QMainWindow
+class Handbrake : public BonusFFBApplication
 {
     Q_OBJECT
 
 public:
     Handbrake(QWidget *parent = nullptr);
     ~Handbrake();
+    void initializeGraphics();
+
+public slots:
+    void rescaleJoystickMap();
+    void updateJoystickCircle(int, int);
+
+protected:
+    void resizeEvent(QResizeEvent* event);
 
 private:
     Ui::HandbrakeClass ui;
+
+    QGraphicsScene* scene = nullptr;
+    QGraphicsRectItem* channelRect;
+    QGraphicsEllipseItem* joystickCircle;
 };

@@ -14,7 +14,12 @@ You should have received a copy of the GNU General Public License along with Bon
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationName("Bonus FFB");
+    a.setStyle("Fusion");
+
     Handbrake w;
     w.show();
+    w.initializeGraphics();
+
     return a.exec();
 }

@@ -55,7 +55,7 @@
     <ClCompile Include="vJoyFeeder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceSettingsClass.cpp">
+    <ClCompile Include="DeviceSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -69,15 +69,16 @@
     <QtMoc Include="vJoyFeeder.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="DeviceSettingsClass.h">
+    <QtMoc Include="DeviceSettings.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
+    <CopyFileToFolders Include="..\LICENSE.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="DeviceSettingsClass.ui">
+    <QtUic Include="DeviceSettings.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
