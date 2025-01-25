@@ -15,7 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Handbrake", "Handbrake\Hand
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BonusFFB", "BonusFFB\BonusFFB.vcxproj", "{78BBFCF2-C4BA-49F8-B4C6-EB0C3EAAB17E}"
 EndProject
-Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer", "Package\Installer.wixproj", "{B11F9F30-721A-4D3B-9EBA-A3FBA97CC13E}"
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer", "Installer\Installer.wixproj", "{B11F9F30-721A-4D3B-9EBA-A3FBA97CC13E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
