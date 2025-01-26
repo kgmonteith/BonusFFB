@@ -1,4 +1,6 @@
 /*
+Copyright (C) 2024-2025 Ken Monteith.
+
 This file is part of Bonus FFB.
 
 Bonus FFB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
@@ -16,6 +18,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setApplicationName("Bonus FFB");
     a.setStyle("Fusion");
+    a.setWindowIcon(QIcon("Handbrake.ico"));
 
     Handbrake w;
     w.show();

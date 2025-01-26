@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setApplicationName("Bonus FFB");
     a.setStyle("Fusion");
+    a.setWindowIcon(QIcon("HShifter.ico"));
 
     QCommandLineParser parser;
     QCommandLineOption startOnLaunchOption(QStringList() << "s" << "start-on-launch", "Start FFB on launch");

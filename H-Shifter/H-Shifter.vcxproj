@@ -123,6 +123,9 @@
     <ClCompile Include="HShifter.cpp" />
     <ClCompile Include="SlotGuard.cpp" />
     <ClCompile Include="main.cpp" />
+    <CopyFileToFolders Include="HShifter.ico" />
+    <ClInclude Include="resource.h" />
+    <ResourceCompile Include="H-Shifter.rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BonusFFB\BonusFFB.vcxproj">

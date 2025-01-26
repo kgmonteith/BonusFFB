@@ -6,12 +6,15 @@
   <ItemGroup>
     <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
   </ItemGroup>
-    <ItemGroup>
-	    <BindVariable Include="WixUILicenseRtf=LICENSE.rtf" />
-    </ItemGroup>
-	<ItemGroup>
+  <ItemGroup>
+    <BindVariable Include="WixUILicenseRtf=LICENSE.rtf" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\BonusFFB\BonusFFB.vcxproj" />
     <ProjectReference Include="..\H-Shifter\H-Shifter.vcxproj" />
     <ProjectReference Include="..\Handbrake\Handbrake.vcxproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Icons\" />
   </ItemGroup>
 </Project>
