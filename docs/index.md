@@ -1,19 +1,17 @@
 # Bonus FFB
 
-Do you own a force-feedback joystick? Did you know it can simulate other peripherals using only FFB effects and free software? That's Bonus FFB!
+Do you own a force-feedback joystick? Have you wondered if it can simulate other gaming peripherals using only FFB effects? It sure can&mdash;that's Bonus FFB!
 
-## Applications 
+Bonus FFB is free, open-source software that simulates these devices using force-feedback joysticks:
 
-Bonus FFB can simulate these devices using a force-feedback joystick:
-
-* [H-pattern shifter](h-shifter/index.md)
-* Sequential shifter (work in progress)
-* Auto-manual shifter (work in progress)
-* Handbrake
+* [H-pattern shifters](h-shifter.md)
+* Sequential shifters (coming soon)
+* Auto-manual (PRNDL) shifters (coming soon)
+* Handbrakes
 
 ## Supported devices
 
-* [MOZA AB9 configuration guide](device-settings/#moza-ab9)
+* [MOZA AB9 FFB Base](device-settings/#moza-ab9)
 
 !!! tip "Help us support more devices"
     Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other modern FFB joystick and would like to test Bonus FFB, please get in touch via [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).

@@ -27,7 +27,7 @@ HShifter::HShifter(QWidget *parent)
 
     // Ensure the monitor is the default tab
     ui.monitorTabWidget->setCurrentIndex(0);
-    ui.monitorTabWidget->insertTab(1, deviceSettings, "Input/output settings");
+    ui.monitorTabWidget->insertTab(1, deviceSettings, DEVICESETTINGSTABNAME);
 
     // Show pedals settings
     deviceSettings->pedalsDeviceComboBox->parent()->setProperty("visible", true);
@@ -134,8 +134,8 @@ void HShifter::initializeGraphics() {
     scene->addItem(leftSlotRect);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
-    QColor seethroughWhite = Qt::white;
-    seethroughWhite.setAlphaF(float(0.85));
+    QColor seethroughWhite = Qt::transparent;
+    seethroughWhite.setAlphaF(float(0.15));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
     QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);

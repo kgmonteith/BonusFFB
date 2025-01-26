@@ -4,6 +4,8 @@
 #include <QComboBox>
 #include "ui_DeviceSettings.h"
 
+#define DEVICESETTINGSTABNAME "Input/output settings"
+
 class DeviceSettings : public QWidget
 {
 	Q_OBJECT

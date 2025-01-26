@@ -13,7 +13,7 @@ theme:
   features:
 #    - navigation.tabs
 #    - navigation.tabs.sticky
-#    - navigation.sections
+    - navigation.sections
 #    - navigation.expand
 #    - toc.integrate
 extra:
@@ -38,6 +38,9 @@ nav:
   - Home: index.md
   - Download: https://github.com/kgmonteith/BonusFFB/releases
   - Getting started: getting-started.md
-  - H-Shifter: h-shifter/index.md
   - Device settings: device-settings.md
-  - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
+  - Applications:
+    - H-Shifter: hshifter.md
+  - Ask for help:
+    - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
+    - Chat on Discord: https://discord.com/users/447499151337324574

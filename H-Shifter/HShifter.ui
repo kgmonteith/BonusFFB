@@ -422,7 +422,7 @@
              <item>
               <widget class="QLabel" name="label_13">
                <property name="text">
-                <string>In-gear lock intensity</string>
+                <string>Idle in-gear lock intensity</string>
                </property>
               </widget>
              </item>
