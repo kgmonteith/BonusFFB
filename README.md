@@ -13,7 +13,7 @@ Bonus FFB can simulate these devices using a force-feedback joystick:
 
 ---
 
-> [!WARNING]
+> [!CAUTION]
 > Using force-feedback devices for anything other than their intended purpose may result in damage or bodily harm. The authors of Bonus FFB accept no liability for any loss or damage including, without limitation, indirect or consequential loss or damage arising out of or in connection with the use of the software. Use Bonus FFB at your own risk.
 
 
