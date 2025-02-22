@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 
     Handbrake w;
     w.show();
+    w.loadDeviceSettings();
     w.initializeGraphics();
 
     return a.exec();

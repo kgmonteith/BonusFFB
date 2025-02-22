@@ -48,6 +48,9 @@ BonusFFBApplication::BonusFFBApplication(QWidget* parent)
     QObject::connect(deviceSettings->vjoyDeviceComboBox, &QComboBox::currentIndexChanged, &vjoy, &vJoyFeeder::setDeviceIndex);
     qDebug("Created connections");
 
+    // Initialize Direct Input, get the list of connected devices
+    BonusFFB::initDirectInput(&deviceList);
+
     // Populate the device lists
     for (auto const device : deviceList)
     {

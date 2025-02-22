@@ -25,13 +25,18 @@ Handbrake::Handbrake(QWidget *parent)
     ui.monitorTabWidget->setCurrentIndex(0);
     ui.monitorTabWidget->insertTab(1, deviceSettings, DEVICESETTINGSTABNAME);
 
+    QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &Handbrake::toggleGameLoop);
     // Graphics connections
-//    QObject::connect(ui.monitorTabWidget, &QTabWidget::currentChanged, this, &Handbrake::rescaleJoystickMap);
+    QObject::connect(ui.monitorTabWidget, &QTabWidget::currentChanged, this, &Handbrake::rescaleJoystickMap);
     // Joystick connections
-//    QObject::connect(this, &Handbrake::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
+    QObject::connect(this, &Handbrake::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
 
     // Initialize Direct Input, get the list of connected devices
     BonusFFB::initDirectInput(&deviceList);
+
+    if (deviceSettings->joystickDeviceComboBox->count()) {
+        ui.ffbDeviceFoundLabel->setText("🟢 FFB device detected");
+    }
 
     if (!deviceSettings->joystickDeviceComboBox->count()) {
         ui.toggleGameLoopButton->setDisabled(true);
@@ -101,4 +106,15 @@ void Handbrake::updateJoystickCircle(int LRValue, int FBValue) {
     ui.graphicsView->setUpdatesEnabled(false);
     joystickCircle->setPos(QPoint(scaledLRValue, scaledFBValue) - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
     ui.graphicsView->setUpdatesEnabled(true);
+}
+
+void Handbrake::toggleGameLoop(bool newState) {
+    ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
+    if (newState == true) {
+        //startGameLoop();
+    }
+    else
+    {
+        //stopGameLoop();
+    }
 }

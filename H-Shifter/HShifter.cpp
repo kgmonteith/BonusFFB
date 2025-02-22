@@ -78,12 +78,9 @@ HShifter::HShifter(QWidget *parent)
     else {
         ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
     }
-    if (deviceSettings->vjoyDeviceComboBox->count()) {
+    if (deviceSettings->joystickDeviceComboBox->count()) {
         ui.ffbDeviceFoundLabel->setText("🟢 FFB device detected");
     }
-
-    // Initialize Direct Input, get the list of connected devices
-    BonusFFB::initDirectInput(&deviceList);
 
     // Start telemetry receiver
     telemetry.startConnectTimer();
@@ -233,7 +230,11 @@ void HShifter::startGameLoop() {
     };
 
     // Acquire vJoy for feeding
-    vjoy.acquire();
+    if (!vjoy.acquire()) {
+        QMessageBox::critical(this, "Error", "Could not acquire vJoy device. Only one program may feed each vJoy device, please close other games or applications and try again.");
+        emit toggleGameLoop(false);
+        return;
+    }
 
     // Initialize FFB
     HRESULT hr = slotGuard.start(joystick);

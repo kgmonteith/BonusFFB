@@ -126,7 +126,8 @@ void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
     if (synchroState == SynchroState::ENTERING_SYNCH) {
         unsynchronizedSpring.lNegativeCoefficient = -10000 * clutchPercent;
         unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
+        if (lpdiUnsynchronizedSpringEff != nullptr)
+            lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
     else if (synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) {
         if (throttleValue > 100) {
@@ -137,12 +138,14 @@ void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
                 scaledCoeff = keepInGearSpringIdleCoefficient;
             keepInGearSpring.lNegativeCoefficient = scaledCoeff * clutchPercent;
             keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
-            lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
+            if (lpdiKeepInGearSpringEff != nullptr)
+                lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
         }
         else {
             keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;
             keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
-            lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
+            if (lpdiKeepInGearSpringEff != nullptr)
+                lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
         }
     }
 }
@@ -154,13 +157,15 @@ void SynchroGuard::synchroStateChanged(SynchroState newState) {
         // Activate keep-in-gear spring, disable unsynch spring
         unsynchronizedSpring.lNegativeCoefficient = 0;
         unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
+        if (lpdiUnsynchronizedSpringEff != nullptr)
+            lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
     else if (newState == SynchroState::ENTERING_SYNCH) {
         // Deactivate keep-in-gear spring, enable unsynch spring
         unsynchronizedSpring.lNegativeCoefficient = -10000 * clutchPercent;
         unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-        lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
+        if (lpdiUnsynchronizedSpringEff != nullptr)
+            lpdiUnsynchronizedSpringEff->SetParameters(&unsynchronizedSpringEff, DIEP_TYPESPECIFICPARAMS);
     }
     synchroState = newState;
 }

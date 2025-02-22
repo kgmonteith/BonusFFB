@@ -7,8 +7,6 @@
 ??? warning "You must set `Force Feedback Mode` to `DirectInput` or `Integrated FFB`"
     If `Force Feedback Mode` is incorrect, Bonus FFB will silently fail to send to force feedback commands to the base, resulting a 'dead stick' effect.
 
-As of January 2025, MOZA's Pit House software crashes when an AB9 FFB base is powered on. This usually doesn't matter, just be sure to fully configure your wheel before powering on the AB9 base. It does prevent devices that must be run through Pit House from running correctly&mdash;for example, the MOZA Stalks in ATS/ETS2 compatibility mode.
-
 ### Required MOZA Cockpit settings
 
 Under Basic Settings, change these settings:

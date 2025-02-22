@@ -66,5 +66,6 @@ void SlotGuard::updateSlotGuardEffects(SlotState state) {
         springConditions[1] = noSpring;
     }
     slotSpringEff.lpvTypeSpecificParams = springConditions;
-    lpdiSlotSpringEff->SetParameters(&slotSpringEff, DIEP_TYPESPECIFICPARAMS);
+    if (lpdiSlotSpringEff != nullptr)
+        lpdiSlotSpringEff->SetParameters(&slotSpringEff, DIEP_TYPESPECIFICPARAMS);
 }

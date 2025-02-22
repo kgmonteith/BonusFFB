@@ -29,15 +29,14 @@ Follow the [device settings guide](device-settings.md) for your specific FFB joy
 
 ## Install and configure Bonus FFB
 
-
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 
 Bonus FFB installs several executables, one for each application:
 
 * [H-Shifter](hshifter.md)
-* [Handbrake](handbrake.md)
+* That's all for the initial release, register your interest [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) for other applications
 
-Launch your desired application and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier.
+Launch your desired application and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier. Choose `File > Save device settings` when you're happy with the device and axis settings.
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 

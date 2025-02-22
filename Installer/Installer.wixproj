@@ -17,4 +17,5 @@
   <ItemGroup>
     <Folder Include="Icons\" />
   </ItemGroup>
+    <Target Name="CollectSuggestedVisualStudioComponentIds" />
 </Project>

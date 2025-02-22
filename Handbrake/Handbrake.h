@@ -28,6 +28,7 @@ public:
 public slots:
     void rescaleJoystickMap();
     void updateJoystickCircle(int, int);
+    void toggleGameLoop(bool);
 
 protected:
     void resizeEvent(QResizeEvent* event);

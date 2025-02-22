@@ -363,7 +363,10 @@
              <item>
               <widget class="QLabel" name="label_18">
                <property name="text">
-                <string>ℹ️</string>
+                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect-rpm&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+               </property>
+               <property name="openExternalLinks">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -432,13 +435,10 @@
                 <string>Words words words</string>
                </property>
                <property name="text">
-                <string>&lt;a href=&quot;https://google.com&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#idle-in-gear-lock-intensity&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                </property>
                <property name="openExternalLinks">
                 <bool>true</bool>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::TextInteractionFlag::TextBrowserInteraction</set>
                </property>
               </widget>
              </item>

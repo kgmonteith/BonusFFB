@@ -42,5 +42,6 @@ nav:
   - Applications:
     - H-Shifter: hshifter.md
   - Ask for help:
+    - FAQ: faq.md
     - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
     - Chat on Discord: https://discord.com/users/447499151337324574

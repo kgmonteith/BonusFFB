@@ -4,9 +4,9 @@ Do you own a force-feedback joystick? Have you wondered if it can simulate other
 
 Bonus FFB is free, open-source software that simulates these devices using force-feedback joysticks:
 
-* [H-pattern shifters](h-shifter.md)
-* Sequential shifters (coming soon)
+* [H-pattern shifters](hshifter.md)
 * Auto-manual (PRNDL) shifters (coming soon)
+* Sequential shifters (eventually)
 * Handbrakes
 
 ## Supported devices

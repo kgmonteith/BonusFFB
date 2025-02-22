@@ -71,7 +71,7 @@ void vJoyFeeder::release() {
 }
 
 void vJoyFeeder::pressButton(int button) {
-	SetBtn(true, deviceNum, unsigned char(button));
+	bool ret = SetBtn(true, deviceNum, unsigned char(button));
 }
 
 void vJoyFeeder::releaseButton(int button) {

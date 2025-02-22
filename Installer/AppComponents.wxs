@@ -11,6 +11,7 @@
 				<Shortcut Name="Bonus FFB H-Shifter" Directory="ProgramMenuFolder"
 						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="HShifter.ico" />
 			</File>
+			<!-- Not releasing Handbrake for now
 			<File Source="Handbrake.exe">
 				<Shortcut Name="Bonus FFB Handbrake" Directory="DesktopFolder"
 						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="Handbrake.ico" />
@@ -18,6 +19,7 @@
 				<Shortcut Name="Bonus FFB Handbrake" Directory="ProgramMenuFolder"
 						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="Handbrake.ico" />
 			</File>
+			--> 
 		</ComponentGroup>
 	</Fragment>
 </Wix>
