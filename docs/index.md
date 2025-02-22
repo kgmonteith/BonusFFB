@@ -9,6 +9,8 @@ Bonus FFB is free, open-source software that simulates these devices using force
 * Sequential shifters (eventually)
 * Got an idea? [Make a suggestion](https://github.com/kgmonteith/BonusFFB/issues)
 
+Follow the [Getting Started](getting-started.md) guide for complete installations instructions.
+
 ## Demo video
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/UknrYzPSzug?si=49k1dFGFPOvRBpj0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
