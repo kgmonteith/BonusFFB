@@ -4,6 +4,8 @@ This application simulates an H-pattern shifter with gear grinding, locking, and
 
 H-Shifter is best suited to casual driving games, such truck, bus, and taxi sims. Depending on the strength of your FFB joystick, it's possible to overcome the locking, grinding, and channel-keeping force effects. Remember to play along and not push through these effects. If you want something stronger and more precise, consider a purpose-built device like the [Bash Pro](https://mvhstudios.co.uk/products/bash-pro).
 
+![H-Shifter](images/hshifter-screenshot.png) 
+
 ## Features
 
 When not using telemetry, you must depress the clutch to change gears.
@@ -21,17 +23,19 @@ H-Shifter sends vJoy button presses when gears are engaged. Bind the in-game gea
 
 ### ATS/ETS2 settings
 
-Set this values in the "Controls" menu:
+Set these values in the "Controls" menu:
 
 * In the `Input Types` list, add the vJoy Device
-* `Transmission` to `H-Shifter`
-* `Clutch axis deadzone` to 1-5%
-    * Setting a small clutch deadzone is strongly recommended to smooth out clutch-enabled FFB effects
-* `Clutch range` as desired, ~75% is recommended
+* Set `Transmission` to `H-Shifter`
+* Set `Acceleration axis deadzone` to 1%
+    * This is recommended to reduce thrashing of the locked-in-gear effect
+* Set `Clutch axis deadzone` to 1-5%
+    * This is strongly recommended to smooth out clutch-enabled FFB effects
+* Set `Clutch range` as desired, ~75% is recommended
     * Setting the clutch range too high will make shifting into gears unrealistic
-* `Shifter layout` to match the vehicle's transmission, e.g., Eaton-Fuller 18 speed
-* `Shifter layout behavior` to `Advanced`
-* `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
+* Set `Shifter layout` to match the vehicle's transmission, e.g., Eaton-Fuller 18 speed
+* Set `Shifter layout behavior` to `Advanced`
+* Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
     * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
 
 ## FFB effect descriptions

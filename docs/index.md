@@ -7,11 +7,15 @@ Bonus FFB is free, open-source software that simulates these devices using force
 * [H-pattern shifters](hshifter.md)
 * Auto-manual (PRNDL) shifters (coming soon)
 * Sequential shifters (eventually)
-* Handbrakes
+* Got an idea? [Make a suggestion](https://github.com/kgmonteith/BonusFFB/issues)
+
+## Demo video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UknrYzPSzug?si=49k1dFGFPOvRBpj0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Supported devices
 
-* [MOZA AB9 FFB Base](device-settings/#moza-ab9)
+* [MOZA AB9 FFB Base](device-settings.md#moza-ab9)
 
 !!! tip "Help us support more devices"
     Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other powerful FFB joystick and would like to test Bonus FFB, please get in touch via [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).

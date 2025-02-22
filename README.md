@@ -5,11 +5,10 @@ Do you own a force-feedback joystick? Did you know it can simulate other periphe
 Bonus FFB can simulate these devices using a force-feedback joystick:
 
 * H-pattern shifters
-* Handbrakes
-* Sequential shifters
-* Auto-manual shifters
+* Sequential shifters (coming soon)
+* Auto-manual shifters (eventually)
 
-[Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started.
+[Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started. If you have suggestions, [open a ticket](https://github.com/kgmonteith/BonusFFB/issues).
 
 ---
 
