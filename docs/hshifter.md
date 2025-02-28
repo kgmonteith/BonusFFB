@@ -23,9 +23,10 @@ H-Shifter sends vJoy button presses when gears are engaged. Bind the in-game gea
 
 ### ATS/ETS2 settings
 
-Set these values in the "Controls" menu:
+Set these values in the "Controls" menu.
 
 * In the `Input Types` list, add the vJoy Device
+![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to `H-Shifter`
 * Set `Acceleration axis deadzone` to 1%
     * This is recommended to reduce thrashing of the locked-in-gear effect
@@ -37,6 +38,8 @@ Set these values in the "Controls" menu:
 * Set `Shifter layout behavior` to `Advanced`
 * Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
     * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
+![ATS Hshifter settings](images/ats-hshifter.png)
+    * (Your device number will be different than in the above screenshot)
 
 ## FFB effect descriptions
 

@@ -9,6 +9,8 @@ Install a recent version of [vJoy](https://github.com/jshafer817/vJoy/releases/t
 
 Run vJoyConf and set up at least one virtual device with a minimum of 8 buttons:
 
+![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
+
 ## Install optional telemetry plugins
 
 ### American Truck Simulator/Euro Truck Simulator 2
