@@ -7,7 +7,7 @@
 
 Install a recent version of [vJoy](https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1).
 
-Run vJoyConf and set up at least one virtual device with a minimum of 8 buttons:
+Run the "Configure vJoy" application. Set up at least one virtual device with a minimum of 8 buttons, and click the "Enable vJoy" checkbox:
 
 ![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
 
