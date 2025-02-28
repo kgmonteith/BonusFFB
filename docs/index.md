@@ -7,7 +7,7 @@ Bonus FFB is free, open-source software that simulates these devices using force
 * [H-pattern shifters](hshifter.md)
 * Auto-manual (PRNDL) shifters (coming soon)
 * Sequential shifters (eventually)
-* Got an idea? [Make a suggestion](https://github.com/kgmonteith/BonusFFB/issues)
+* Got an idea? [Make a suggestion :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues)
 
 Follow the [Getting Started](getting-started.md) guide for complete installations instructions.
 
