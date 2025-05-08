@@ -105,6 +105,18 @@ void StateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int
     }
     if (newState != synchroState) {
         synchroState = newState;
+        if (synchroState == SynchroState::EXITING_SYNCH) {
+            qDebug() << "synchroState EXITING_SYNCH";
+        }
+        else if (synchroState == SynchroState::ENTERING_SYNCH) {
+            qDebug() << "synchroState ENTERING_SYNCH";
+        }
+        else if (synchroState == SynchroState::UNKNOWN) {
+            qDebug() << "synchroState UNKNOWN";
+        }
+        else if (synchroState == SynchroState::IN_SYNCH) {
+            qDebug() << "synchroState IN_SYNCH";
+        }
         emit synchroStateChanged(synchroState);
     }
 }

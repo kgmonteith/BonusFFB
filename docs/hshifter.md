@@ -38,8 +38,9 @@ Set these values in the "Controls" menu.
 * Set `Shifter layout behavior` to `Advanced`
 * Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
     * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
+    
 ![ATS Hshifter settings](images/ats-hshifter.png)
-    * (Your device number will be different than in the above screenshot)
+(Your device number will be different than in the above screenshot)
 
 ## FFB effect descriptions
 
