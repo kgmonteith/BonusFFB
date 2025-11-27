@@ -62,7 +62,9 @@ HShifter::HShifter(QWidget *parent)
     QObject::connect(this, &HShifter::engineRPMChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     QObject::connect(&stateManager, &StateManager::grindingStateChanged, &synchroGuard, &SynchroGuard::grindingStateChanged);
     QObject::connect(ui.grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::setGrindEffectIntensity);
-    QObject::connect(ui.grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    QObject::connect(ui.grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateGrindEffectRPM);
+    //QObject::connect(ui.grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    QObject::connect(ui.grindEffectBehaviorComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &SynchroGuard::setGrindEffectBehavior);
     QObject::connect(ui.keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::setKeepInGearIdleIntensity);
     
     // Initialize vJoyFeeder

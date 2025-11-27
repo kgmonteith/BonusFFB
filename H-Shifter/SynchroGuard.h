@@ -20,6 +20,12 @@ You should have received a copy of the GNU General Public License along with Bon
 static LONG FORWARD[2] = { 0 , 0 };
 static LONG BACK[2] = { 180 * DI_DEGREES , 0 };
 
+enum class GrindEffectBehavior {
+	MATCH_ENGINE_RPM,
+	ADD_ENGINE_RPM,
+	OVERRIDE_ENGINE_RPM
+};
+
 class SynchroGuard: public QObject
 {
 	Q_OBJECT
@@ -32,17 +38,22 @@ public slots:
 	void synchroStateChanged(SynchroState);
 	void grindingStateChanged(GrindingState);
 	void updateEngineRPM(float);
+	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
-	void setGrindEffectRPM(int);
 	void setKeepInGearIdleIntensity(int);
+	void setGrindEffectBehavior(int);
 
 private:
+	float computeGrindRPM();
+
 	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
 	GrindingState grindingState = GrindingState::OFF;
+	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;
 
 	int keepInGearSpringIdleCoefficient = 2200;
 	int keepInGearSpringMaxCoefficient = 10000;
-	float engineRPM = 500;
+	float engineRPM = 0;
+	float grindEffectRPM = 3000;
 	int grindingIntensity = 1500;
 
 	DIEFFECT unsynchronizedSpringEff = {};
@@ -66,4 +77,3 @@ private:
 	double clutchPercent = 0;
 	double throttlePercent = 0;
 };
-

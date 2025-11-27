@@ -44,13 +44,13 @@ Set these values in the "Controls" menu.
 
 ## FFB effect descriptions
 
-### Grind effect RPM
+### Grind effect
 
-This effect occurs when attempting to shift into gear without the clutch depressed or the transmission synchronized.
+This effect occurs when attempting to shift into gear without the clutch depressed or the transmission synchronized. The drop-down selects how to apply the effect:
 
-When not using telemetry, this value is used for the revolutions per minute of the effect. 
-
-When using telemetry this setting is not used, the grind effect uses the engine RPM instead.
+* `Match telemetry RPM` sets the effect the engine RPM value from the game telemetry. The `Grind effect RPM` value is not used.
+* `Add to telemetry RPM` adds the value of the `Grind effect RPM` slider to the engine RPM.
+* `Override telemetry RPM` ignores the telemetry engine RPM and forces the grind effect to the `Grind effect RPM` value.
 
 ### Idle in-gear lock intensity
 

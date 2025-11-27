@@ -303,7 +303,7 @@
           <property name="flat">
            <bool>true</bool>
           </property>
-          <layout class="QFormLayout" name="formLayout_4">
+          <layout class="QFormLayout" name="formLayout">
            <item row="0" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
@@ -352,18 +352,18 @@
             </layout>
            </item>
            <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QLabel" name="label_17">
+              <widget class="QLabel" name="label_15">
                <property name="text">
-                <string>Grind effect RPM</string>
+                <string>Grind effect behavior</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_18">
+              <widget class="QLabel" name="label_16">
                <property name="text">
-                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect-rpm&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                </property>
                <property name="openExternalLinks">
                 <bool>true</bool>
@@ -373,6 +373,36 @@
             </layout>
            </item>
            <item row="1" column="1">
+            <widget class="QComboBox" name="grindEffectBehaviorComboBox">
+             <item>
+              <property name="text">
+               <string>Match telemetry RPM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Add to telemetry RPM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Override telemetry RPM</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>Grind effect RPM</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_16">
              <item>
               <widget class="QSlider" name="grindRPMSlider">
@@ -420,7 +450,7 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="0">
+           <item row="3" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
               <widget class="QLabel" name="label_13">
@@ -431,9 +461,6 @@
              </item>
              <item>
               <widget class="QLabel" name="label_14">
-               <property name="toolTip">
-                <string>Words words words</string>
-               </property>
                <property name="text">
                 <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#idle-in-gear-lock-intensity&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                </property>
@@ -444,7 +471,7 @@
              </item>
             </layout>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_12">
              <item>
               <widget class="QSlider" name="keepInGearIdleSlider">

@@ -180,7 +180,7 @@ void SynchroGuard::synchroStateChanged(SynchroState newState) {
 void SynchroGuard::grindingStateChanged(GrindingState newState) {
     if (newState != GrindingState::OFF) {
         // Start rumbling
-        rumble.dwPeriod = int(6e7 / engineRPM);
+        rumble.dwPeriod = int(6e7 / computeGrindRPM());
         rumble.dwMagnitude = grindingIntensity * clutchPercent;
         rumbleEff.lpvTypeSpecificParams = &rumble;
         lpdiRumbleEff->SetParameters(&rumbleEff, DIEP_TYPESPECIFICPARAMS);
@@ -215,12 +215,29 @@ void SynchroGuard::updateEngineRPM(float newRPM) {
     engineRPM = newRPM;
 }
 
-void SynchroGuard::setGrindEffectIntensity(int value) {
-    grindingIntensity = value * 100;    // Scale to 10000
+float SynchroGuard::computeGrindRPM() {
+    if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM) {
+        //qDebug() << "GrindEffectBehavior MATCH_ENGINE_RPM " << engineRPM;
+        return engineRPM;
+    }
+    else if (grindEffectBehavior == GrindEffectBehavior::ADD_ENGINE_RPM) {
+        //qDebug() << "GrindEffectBehavior ADD_ENGINE_RPM" << engineRPM + grindEffectRPM;
+        return engineRPM + grindEffectRPM;
+    }
+    //qDebug() << "GrindEffectBehavior OVERRIDE_ENGINE_RPM " << grindEffectRPM;
+    return grindEffectRPM;
 }
 
-void SynchroGuard::setGrindEffectRPM(int value) {
-    updateEngineRPM(float(value));
+void SynchroGuard::updateGrindEffectRPM(float newRPM) {
+    grindEffectRPM = newRPM;
+}
+
+void SynchroGuard::setGrindEffectBehavior(int index) {
+    grindEffectBehavior = static_cast<GrindEffectBehavior>(index);
+}
+
+void SynchroGuard::setGrindEffectIntensity(int value) {
+    grindingIntensity = value * 100;    // Scale to 10000
 }
 
 void SynchroGuard::setKeepInGearIdleIntensity(int value) {
