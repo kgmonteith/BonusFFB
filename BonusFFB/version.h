@@ -5,6 +5,6 @@
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
-#define PATCH_VERSION 1
+#define PATCH_VERSION 2
 
 #endif

@@ -363,7 +363,7 @@
              <item>
               <widget class="QLabel" name="label_16">
                <property name="text">
-                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect-behavior&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                </property>
                <property name="openExternalLinks">
                 <bool>true</bool>
@@ -397,16 +397,6 @@
               <widget class="QLabel" name="label_17">
                <property name="text">
                 <string>Grind effect RPM</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_18">
-               <property name="text">
-                <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#grind-effect-rpm&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-               </property>
-               <property name="openExternalLinks">
-                <bool>true</bool>
                </property>
               </widget>
              </item>
