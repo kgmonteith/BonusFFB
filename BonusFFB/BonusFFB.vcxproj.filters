@@ -23,18 +23,78 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bonusffb_global.h">
+    <QtRcc Include="BonusFFB.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtUic Include="BonusFFB.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtMoc Include="BonusFFB.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
     <ClCompile Include="BonusFFB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClInclude Include="..\include\scs-telemetry-common.hpp">
+    <None Include="BonusFFB.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <ResourceCompile Include="BonusFFB.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Telemetry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vJoyFeeder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hshifter\HShifter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hshifter\HShifterSlotGuard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hshifter\HShifterStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hshifter\HShifterSynchroGuard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BonusFFBApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Telemetry.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BonusFFB.h">
+    </QtMoc>
+    <QtMoc Include="vJoyFeeder.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
+    <QtMoc Include="hshifter\HShifter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="hshifter\HShifterSlotGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="hshifter\HShifterStateManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="hshifter\HShifterSynchroGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="BonusFFBApp.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -44,42 +104,11 @@
     <ClInclude Include="..\include\vjoyinterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Telemetry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BonusFFBApplication.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vJoyFeeder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DeviceSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="Telemetry.h">
+    <ClInclude Include="..\include\scs-telemetry-common.hpp">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="BonusFFBApplication.h">
+    </ClInclude>
+    <ClInclude Include="DeviceInfo.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="vJoyFeeder.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DeviceSettings.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
-    <CopyFileToFolders Include="..\LICENSE.rtf" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="DeviceSettings.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
+    </ClInclude>
   </ItemGroup>
 </Project>

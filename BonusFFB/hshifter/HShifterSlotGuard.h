@@ -12,16 +12,16 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include "BonusFFB.h"
-#include "StateManager.h"
+#include "DeviceInfo.h"
+#include "HShifterStateManager.h"
 
 static LONG FORWARDBACK[2] = { 1 , 0 };
 
-class SlotGuard: public QObject {
+class HShifterSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
-	HRESULT start(BonusFFB::DeviceInfo*);
+	HRESULT start(DeviceInfo*);
 
 public slots:
 	void updateSlotGuardEffects(SlotState);

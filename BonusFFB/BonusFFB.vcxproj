@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{78BBFCF2-C4BA-49F8-B4C6-EB0C3EAAB17E}</ProjectGuid>
+    <ProjectGuid>{50B44180-46B1-47C4-B3EC-704C86CA008F}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0</WindowsTargetPlatformVersion>
@@ -19,13 +19,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -39,7 +39,6 @@
     <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
-    <QtPlugin>false</QtPlugin>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.8.0_msvc2022_64</QtInstall>
@@ -65,37 +64,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile />
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-    </Lib>
-    <Lib>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-    </Lib>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dinput8.lib;dxguid.lib;vJoyInterface.lib</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile />
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-    </Lib>
-    <Lib>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-    </Lib>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);dinput8.lib;dxguid.lib;vJoyInterface.lib</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>BONUSFFB_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -108,7 +96,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>BONUSFFB_LIB;BUILD_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -123,34 +110,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BonusFFBApplication.cpp" />
-    <ClCompile Include="DeviceSettings.cpp" />
+    <ClCompile Include="BonusFFBApp.cpp" />
+    <ClCompile Include="DeviceInfo.cpp" />
+    <ClCompile Include="hshifter\HShifter.cpp" />
+    <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
+    <ClCompile Include="hshifter\HShifterStateManager.cpp" />
+    <ClCompile Include="hshifter\HShifterSynchroGuard.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
-    <ClInclude Include="..\include\public.h" />
-    <ClInclude Include="..\include\scs-telemetry-common.hpp" />
-    <ClInclude Include="..\include\vjoyinterface.h" />
-    <QtMoc Include="DeviceSettings.h" />
-    <ClInclude Include="version.h" />
-    <QtMoc Include="vJoyFeeder.h" />
-    <QtMoc Include="BonusFFBApplication.h" />
-    <ClInclude Include="bonusffb_global.h" />
-    <ClInclude Include="BonusFFB.h" />
+    <QtRcc Include="BonusFFB.qrc" />
+    <QtUic Include="BonusFFB.ui" />
+    <QtMoc Include="BonusFFB.h" />
     <ClCompile Include="BonusFFB.cpp" />
+    <ClCompile Include="main.cpp" />
+    <None Include="BonusFFB.ico" />
+    <ResourceCompile Include="BonusFFB.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <QtMoc Include="Telemetry.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\lib\vJoyInterface.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="DeviceSettings.ui" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="..\LICENSE.rtf">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
+    <ClInclude Include="..\include\public.h" />
+    <ClInclude Include="..\include\scs-telemetry-common.hpp" />
+    <ClInclude Include="..\include\vjoyinterface.h" />
+    <QtMoc Include="BonusFFBApp.h" />
+    <ClInclude Include="DeviceInfo.h" />
+    <QtMoc Include="hshifter\HShifter.h" />
+    <QtMoc Include="hshifter\HShifterSlotGuard.h" />
+    <QtMoc Include="hshifter\HShifterStateManager.h" />
+    <QtMoc Include="hshifter\HShifterSynchroGuard.h" />
+    <ClInclude Include="version.h" />
+    <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

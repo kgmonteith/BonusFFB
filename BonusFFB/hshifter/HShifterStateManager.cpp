@@ -10,14 +10,14 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "StateManager.h"
+#include "HShifterStateManager.h"
 #include <QDebug>
 
-void StateManager::setTelemetryState(TelemetrySource t) {
+void HShifterStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void StateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
+void HShifterStateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
     long lrValue = joystickValues.first;
     long fbValue = joystickValues.second;
     updateSlotState(lrValue, fbValue);
@@ -26,7 +26,7 @@ void StateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalV
     updateGrindingState(lrValue, fbValue);
 }
 
-void StateManager::updateSlotState(long lrValue, long fbValue) {
+void HShifterStateManager::updateSlotState(long lrValue, long fbValue) {
     SlotState newState = SlotState::UNKNOWN;
     bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
     if (inNeutral && newState != SlotState::UNKNOWN) {
@@ -62,7 +62,7 @@ void StateManager::updateSlotState(long lrValue, long fbValue) {
     }
 }
 
-void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
+void HShifterStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
     if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
         if (slotState == SlotState::SLOT_LEFT_FWD)
@@ -86,7 +86,7 @@ void StateManager::updateButtonZoneState(long lrValue, long fbValue) {
     }
 }
 
-void StateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int> gearValues) {
+void HShifterStateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int> gearValues) {
     SynchroState newState = SynchroState::UNKNOWN;
     if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second != 0) {
         // Gears are synchronized from telemetry reading
@@ -121,7 +121,7 @@ void StateManager::updateSynchroState(long lrValue, long fbValue, QPair<int, int
     }
 }
 
-void StateManager::updateGrindingState(long lrValue, long fbValue) {
+void HShifterStateManager::updateGrindingState(long lrValue, long fbValue) {
     GrindingState newState = GrindingState::OFF;
     if (grindingState == GrindingState::OFF && synchroState == SynchroState::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
         if (fbValue < JOY_MIDPOINT)

@@ -12,9 +12,9 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include <QObject>
-#include "BonusFFB.h"
 #include "vJoyFeeder.h"
 #include "Telemetry.h"
+#include "DeviceInfo.h"
 
 
 enum class SynchroState {
@@ -42,7 +42,7 @@ enum class SlotState {
     SLOT_RIGHT_BACK
 };
 
-class StateManager: public QObject
+class HShifterStateManager: public QObject
 {
     Q_OBJECT;
 

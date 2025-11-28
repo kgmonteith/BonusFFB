@@ -10,33 +10,18 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "BonusFFB.h"
+#include <QtWidgets/QApplication>
 
-#include <QtWidgets/QMainWindow>
-#include "ui_Handbrake.h"
-#include "BonusFFBApplication.h"
-
-class Handbrake : public BonusFFBApplication
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
+    app.setStyle("Fusion");
+    app.setWindowIcon(QIcon("BonusFFB.ico"));
 
-public:
-    Handbrake(QWidget *parent = nullptr);
-    ~Handbrake();
-    void initializeGraphics();
-
-public slots:
-    void rescaleJoystickMap();
-    void updateJoystickCircle(int, int);
-    void toggleGameLoop(bool);
-
-protected:
-    void resizeEvent(QResizeEvent* event);
-
-private:
-    Ui::HandbrakeClass ui;
-
-    QGraphicsScene* scene = nullptr;
-    QGraphicsRectItem* channelRect;
-    QGraphicsEllipseItem* joystickCircle;
-};
+    BonusFFB window;
+    window.show();
+    window.hshifter.initializeJoystickMap();
+    window.hshifter.loadDeviceSettings();
+    return app.exec();
+}

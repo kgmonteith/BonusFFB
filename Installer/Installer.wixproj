@@ -12,10 +12,9 @@
   <ItemGroup>
     <ProjectReference Include="..\BonusFFB\BonusFFB.vcxproj" />
     <ProjectReference Include="..\H-Shifter\H-Shifter.vcxproj" />
-    <ProjectReference Include="..\Handbrake\Handbrake.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Icons\" />
   </ItemGroup>
-    <Target Name="CollectSuggestedVisualStudioComponentIds" />
+  <Target Name="CollectSuggestedVisualStudioComponentIds" />
 </Project>
