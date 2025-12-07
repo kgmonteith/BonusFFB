@@ -11,7 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BonusFFB\BonusFFB.vcxproj" />
-    <ProjectReference Include="..\H-Shifter\H-Shifter.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Icons\" />
