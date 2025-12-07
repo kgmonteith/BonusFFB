@@ -41,6 +41,7 @@ nav:
   - Device settings: device-settings.md
   - Applications:
     - H-Shifter: hshifter.md
+    - PRNDL: prndl.md
   - Ask for help:
     - FAQ: faq.md
     - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues

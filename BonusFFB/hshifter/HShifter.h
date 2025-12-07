@@ -12,55 +12,50 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include "version.h"
-#include <QtWidgets/QMainWindow>
-#include <QTimer>
-#include <QVersionNumber>
+#include <QObject>
 #include <QStandardPaths>
-#include "BonusFFB.h"
-#include "vJoyFeeder.h"
-#include "DeviceSettings.h"
+#include "BonusFFBApp.h"
+#include "HShifterStateManager.h"
+#include "HShifterSlotGuard.h"
+#include "HShifterSynchroGuard.h"
 
-#define SLOT_WIDTH_PX 5.0
-#define JOYSTICK_MARKER_DIAMETER_PX 21.0
-
-// This parent class implements objects and functions common to individual Bonus FFB apps
-class BonusFFBApplication : public QMainWindow
+class HShifter : public BonusFFBApp
 {
-	Q_OBJECT
+	Q_OBJECT;
 
 public:
-	BonusFFBApplication(QWidget* parent = nullptr);
-	~BonusFFBApplication();
+	void initialize();
+	void saveSettings();
+	void loadSettings();
+	void initializeJoystickMap();
+	HRESULT startGameLoop();
+	void stopGameLoop();
+	void gameLoop();
+
 	QPair<int, int> getJoystickValues();
 	QPair<int, int> getPedalValues();
 
-	DeviceSettings* deviceSettings;
-
-	vJoyFeeder vjoy = vJoyFeeder();
-	QList<BonusFFB::DeviceInfo> deviceList;
-
-	BonusFFB::DeviceInfo* joystick = nullptr;
+	DeviceInfo* joystick = nullptr;
 	QUuid joystickLRAxisGuid;
 	QUuid joystickFBAxisGuid;
 
-	BonusFFB::DeviceInfo* pedals = nullptr;
+	DeviceInfo* pedals = nullptr;
 	QUuid clutchAxisGuid;
 	QUuid throttleAxisGuid;
 
-	QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-
 public slots:
-	void openUserGuide();
-	void openAbout();
-	void saveDeviceSettings();
-	void loadDeviceSettings();
 	void changeJoystickDevice(int);
 	void changePedalsDevice(int);
 	void changeJoystickLRAxis(int);
 	void changeJoystickFBAxis(int);
 	void changeClutchAxis(int);
 	void changeThrottleAxis(int);
+
+	void redrawJoystickMap();
+	void updateJoystickCircle(int, int);
+	void updateGearText(int);
+	void showAxisProgressBars();
+	void hideAxisProgressBars();
 
 signals:
 	void joystickValueChanged(int, int);
@@ -69,11 +64,28 @@ signals:
 	void clutchValueChanged(int);
 	void throttleValueChanged(int);
 	void pedalValuesChanged(int, int);
+	void gearValuesChanged(QPair<int, int>);
+	void engineRPMChanged(float);
+	void resetClutchAxes();
 
 protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/deviceSettings.ini";
+	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/hshifterDeviceSettings.ini";
 
 private:
+	QGraphicsScene* scene = nullptr;
+	QGraphicsRectItem* neutralChannelRect;
+	QGraphicsRectItem* centerSlotRect;
+	QGraphicsRectItem* rightSlotRect;
+	QGraphicsRectItem* leftSlotRect;
+	QGraphicsEllipseItem* joystickCircle;
+
+	// Stateful FFB effect managers
+	HShifterStateManager stateManager;
+	HShifterSlotGuard slotGuard;
+	HShifterSynchroGuard synchroGuard;
+
+	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };
+	float lastEngineRPM = 0.0;
 };
 

@@ -2,14 +2,4 @@
 
 ### My device configuration is bad, how do I reset it?
 
-Close Bonus FFB, delete `%AppData%/Bonus FFB/deviceSettings.ini`, relaunch Bonus FFB.
-
-### Can I configure a Bonus FFB application to start running immediately when it's launched?
-
-Yes:
-
-* Right-click on the shortcut to the app
-* Select `Properties`
-* Add `-s` to end of the `Target` value, for example `H-Shifter.exe -s`
-* Click `Apply`
-* Launch the app using the shortcup
+Close Bonus FFB, delete the `.ini` files in `%AppData%/BonusFFB`, and relaunch Bonus FFB. Reconfigure your device settings, and be sure to save them with `File > Save device settings`.

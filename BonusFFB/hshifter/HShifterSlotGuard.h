@@ -12,41 +12,27 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#ifndef __wtypes_h__
-#include <wtypes.h>
-#endif
+#include "DeviceInfo.h"
+#include "HShifterStateManager.h"
 
-#ifndef __WINDEF_
-#include <windef.h>
-#endif
-
-#include <QObject>
-#include "public.h"
-#include "vjoyinterface.h"
-
-
-class vJoyFeeder : public QObject
-{
+class HShifterSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
-	static bool isDriverEnabled();
-	static bool checkVersionMatch();
-	static int deviceCount();
-	int getDeviceIndex();
-	bool acquire();
-	bool is_acquired();
-	void release();
+	HRESULT start(DeviceInfo*);
 
-	void pressButton(int);
-	void releaseButton(int);
 public slots:
-	void setDeviceIndex(unsigned int);
-	void shortPressButton(int);
-	void updateButtons(int);
-private:
-	unsigned int deviceNum = 1;
-	bool acquired = false;
-	int pressedButton = 0;
-};
+	void updateSlotGuardEffects(SlotState);
 
+private:
+	DIEFFECT slotSpringEff = {};
+	LPDIRECTINPUTEFFECT lpdiSlotSpringEff = nullptr;
+
+	DICONDITION noSpring = { 0, 0, 0 };
+	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION keepLeft = { -10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION keepRight = { 10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+
+	DICONDITION springConditions[2] = { noSpring, noSpring };
+};

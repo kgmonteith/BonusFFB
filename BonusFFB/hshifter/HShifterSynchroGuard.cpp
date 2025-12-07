@@ -10,11 +10,11 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "SynchroGuard.h"
+#include "HShifterSynchroGuard.h"
 
 #include <QDebug>
 
-HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
+HRESULT HShifterSynchroGuard::start(DeviceInfo* device) {
     unsynchronizedSpringEff.dwSize = sizeof(DIEFFECT);
     unsynchronizedSpringEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
     unsynchronizedSpringEff.dwDuration = INFINITE;
@@ -40,32 +40,6 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
         }
     }
     hr = lpdiUnsynchronizedSpringEff->Start(INFINITE, 0);
-
-    /* Maybe we'll want a constant effect, but I think we're good for now 
-    unsynchronizedConstantEff.dwSize = sizeof(DIEFFECT);
-    unsynchronizedConstantEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
-    unsynchronizedConstantEff.dwDuration = INFINITE;
-    unsynchronizedConstantEff.dwSamplePeriod = 0;
-    unsynchronizedConstantEff.dwGain = DI_FFNOMINALMAX;
-    unsynchronizedConstantEff.dwTriggerButton = DIEB_NOTRIGGER;
-    unsynchronizedConstantEff.dwTriggerRepeatInterval = 0;
-    unsynchronizedConstantEff.cAxes = 2;
-    unsynchronizedConstantEff.rgdwAxes = AXES;
-    unsynchronizedConstantEff.rglDirection = FORWARD;
-    unsynchronizedConstantEff.lpEnvelope = 0;
-    unsynchronizedConstantEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-    unsynchronizedConstantEff.lpvTypeSpecificParams = &unsynchronizedConstant;
-    unsynchronizedConstantEff.dwStartDelay = 0;
-
-    if (lpdiUnsynchronizedConstantEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_ConstantForce,
-            &unsynchronizedConstantEff, &lpdiUnsynchronizedConstantEff, nullptr);
-        if (FAILED(hr)) {
-            return hr;
-        }
-    }
-    hr = lpdiUnsynchronizedConstantEff->Start(INFINITE, 0);
-    */
 
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
@@ -119,7 +93,7 @@ HRESULT SynchroGuard::start(BonusFFB::DeviceInfo* device) {
     return hr;
 }
 
-void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
+void HShifterSynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
     clutchPercent = 1 - (double(clutchValue) / JOY_MAXPOINT);
     throttlePercent = double(throttleValue) / JOY_MAXPOINT;
     // Update kickout spring
@@ -151,7 +125,7 @@ void SynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
 }
 
 
-void SynchroGuard::synchroStateChanged(SynchroState newState) {
+void HShifterSynchroGuard::synchroStateChanged(SynchroState newState) {
     if (newState == SynchroState::IN_SYNCH) {
         // Activate keep-in-gear spring, disable unsynch spring
         unsynchronizedSpring.lNegativeCoefficient = 0;
@@ -177,7 +151,7 @@ void SynchroGuard::synchroStateChanged(SynchroState newState) {
     synchroState = newState;
 }
 
-void SynchroGuard::grindingStateChanged(GrindingState newState) {
+void HShifterSynchroGuard::grindingStateChanged(GrindingState newState) {
     if (newState != GrindingState::OFF) {
         // Start rumbling
         rumble.dwPeriod = int(6e7 / computeGrindRPM());
@@ -206,7 +180,7 @@ void SynchroGuard::grindingStateChanged(GrindingState newState) {
     grindingState = newState;
 }
 
-void SynchroGuard::updateEngineRPM(float newRPM) {
+void HShifterSynchroGuard::updateEngineRPM(float newRPM) {
     if (grindingState != GrindingState::OFF) {
         rumble.dwPeriod = int(6e7 / newRPM);
         rumbleEff.lpvTypeSpecificParams = &rumble;
@@ -215,7 +189,7 @@ void SynchroGuard::updateEngineRPM(float newRPM) {
     engineRPM = newRPM;
 }
 
-float SynchroGuard::computeGrindRPM() {
+float HShifterSynchroGuard::computeGrindRPM() {
     if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM) {
         //qDebug() << "GrindEffectBehavior MATCH_ENGINE_RPM " << engineRPM;
         return engineRPM;
@@ -228,18 +202,18 @@ float SynchroGuard::computeGrindRPM() {
     return grindEffectRPM;
 }
 
-void SynchroGuard::updateGrindEffectRPM(float newRPM) {
+void HShifterSynchroGuard::updateGrindEffectRPM(float newRPM) {
     grindEffectRPM = newRPM;
 }
 
-void SynchroGuard::setGrindEffectBehavior(int index) {
+void HShifterSynchroGuard::setGrindEffectBehavior(int index) {
     grindEffectBehavior = static_cast<GrindEffectBehavior>(index);
 }
 
-void SynchroGuard::setGrindEffectIntensity(int value) {
+void HShifterSynchroGuard::setGrindEffectIntensity(int value) {
     grindingIntensity = value * 100;    // Scale to 10000
 }
 
-void SynchroGuard::setKeepInGearIdleIntensity(int value) {
+void HShifterSynchroGuard::setKeepInGearIdleIntensity(int value) {
     keepInGearSpringIdleCoefficient = value * 100;
 }

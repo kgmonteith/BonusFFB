@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Fragment>
-		<Icon Id="HShifter.ico" SourceFile="Icons\HShifter.ico" />
-		<Icon Id="Handbrake.ico" SourceFile="Icons\Handbrake.ico" />
+		<Icon Id="BonusFFB.ico" SourceFile="Icons\BonusFFB.ico" />
 		<ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
-			<File Source="H-Shifter.exe">
-				<Shortcut Name="Bonus FFB H-Shifter" Directory="DesktopFolder"
-						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="HShifter.ico" />
+			<File Source="BonusFFB.exe">
+				<Shortcut Name="Bonus FFB" Directory="DesktopFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="BonusFFB.ico" />
 
-				<Shortcut Name="Bonus FFB H-Shifter" Directory="ProgramMenuFolder"
-						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="HShifter.ico" />
+				<Shortcut Name="Bonus FFB" Directory="ProgramMenuFolder"
+						  Advertise="yes" WorkingDirectory="INSTALLFOLDER" Icon="BonusFFB.ico" />
 			</File>
 			<!-- Not releasing Handbrake for now
 			<File Source="Handbrake.exe">

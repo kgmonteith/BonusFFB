@@ -14,49 +14,56 @@ You should have received a copy of the GNU General Public License along with Bon
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=nullptr; } }
 #define DIRECTINPUT_VERSION 0x0800
 
-#include "bonusffb_global.h"
-#include <dinput.h>
-#include <QObject>
-#include <QList>
-#include <QUuid>
-#include <QMap>
+#define GAMELOOP_INTERVAL_MS 1
 
-#define JOY_MINPOINT 0
-#define JOY_MIDPOINT 32767
-#define JOY_MAXPOINT 65535
-#define FFB_MIDPOINT 5000
-#define FFB_MAXPOINT 10000
+#include <QtWidgets/QMainWindow>
+#include <QTimer>
+#include <QVersionNumber>
+#include <QButtonGroup>
+#include "ui_BonusFFB.h"
+#include "Telemetry.h"
+#include "version.h"
+#include "vJoyFeeder.h"
+#include "DeviceInfo.h"
+#include "hshifter/HShifter.h"
+#include "prndl/Prndl.h"
 
-#define VJOY_PRODUCT_GUID 0xBEAD1234
+class BonusFFB : public QMainWindow
+{
+    Q_OBJECT
 
-static DWORD AXES[2] = { DIJOFS_X, DIJOFS_Y };
+public:
+    BonusFFB(QWidget *parent = nullptr);
+    ~BonusFFB();
+    void initializeGraphics();
+    DeviceInfo* getDeviceFromGuid(QUuid);
 
-namespace BonusFFB {
+    Ui::BonusFFBClass ui;
 
-    class DeviceInfo
-    {
-    public:
-        QString name;
-        QUuid instanceGuid;
-        QUuid productGuid;
-        bool supportsFfb;
-        LPDIRECTINPUTDEVICE8 diDevice;
-        DIJOYSTATE2 joyState;
+    vJoyFeeder vjoy = vJoyFeeder();
+    QList<DeviceInfo> deviceList;
 
-        HRESULT acquire(HWND*);
-        HRESULT release();
-        HRESULT updateState();
-        QMap<QUuid, QString> getDeviceAxes();
-        long getAxisReading(QUuid);
-    };
+    QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+    
+    QButtonGroup appSelectButtonGroup;
+    QList<BonusFFBApp*> appList;
+    BonusFFBApp* activeApp;
+    HShifter hshifter;
+    Prndl prndl;
 
-    static LPDIRECTINPUT8 g_pDI;
-    static int vjoy_device_count = 0;
+public slots:
+    void changeApp(int);
+    void openUserGuide();
+    void openAbout();
+    void displayTelemetryState(TelemetrySource);
+    void toggleGameLoop(bool);
 
-    HRESULT initDirectInput(QList<DeviceInfo>*) noexcept;
-    DeviceInfo * getDeviceFromGuid(QList<DeviceInfo> *, QUuid);
+protected:
+    void resizeEvent(QResizeEvent* event);
 
-    BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
-    BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
+private:
+    QTimer gameLoopTimer;
 
+    QTimer telemetryTimer;
+    Telemetry telemetry;
 };

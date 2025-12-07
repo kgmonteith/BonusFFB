@@ -10,33 +10,14 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
 
-#include <QtWidgets/QMainWindow>
-#include "ui_Handbrake.h"
-#include "BonusFFBApplication.h"
+#include "BonusFFBApp.h"
 
-class Handbrake : public BonusFFBApplication
-{
-    Q_OBJECT
+void BonusFFBApp::setPointers(Ui::BonusFFBClass* uiPtr, QList<DeviceInfo>* deviceListPtr, vJoyFeeder* vjoyPtr, Telemetry* tPtr,  HWND _hwnd) {
+    ui = uiPtr;
+    deviceList = deviceListPtr;
+    vjoy = vjoyPtr;
+    telemetry = tPtr;
+    hwnd = _hwnd;
 
-public:
-    Handbrake(QWidget *parent = nullptr);
-    ~Handbrake();
-    void initializeGraphics();
-
-public slots:
-    void rescaleJoystickMap();
-    void updateJoystickCircle(int, int);
-    void toggleGameLoop(bool);
-
-protected:
-    void resizeEvent(QResizeEvent* event);
-
-private:
-    Ui::HandbrakeClass ui;
-
-    QGraphicsScene* scene = nullptr;
-    QGraphicsRectItem* channelRect;
-    QGraphicsEllipseItem* joystickCircle;
-};
+}

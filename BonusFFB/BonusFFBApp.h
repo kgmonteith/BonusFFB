@@ -11,42 +11,36 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #pragma once
-
-#ifndef __wtypes_h__
-#include <wtypes.h>
-#endif
-
-#ifndef __WINDEF_
-#include <windef.h>
-#endif
-
 #include <QObject>
-#include "public.h"
-#include "vjoyinterface.h"
+#include "ui_BonusFFB.h"
+#include "DeviceInfo.h"
+#include "vJoyFeeder.h"
+#include "Telemetry.h"
 
+#define SLOT_WIDTH_PX 5.0
+#define JOYSTICK_MARKER_DIAMETER_PX 21.0
 
-class vJoyFeeder : public QObject
+class BonusFFBApp :
+    public QObject
 {
-	Q_OBJECT
+	Q_OBJECT;
 
 public:
-	static bool isDriverEnabled();
-	static bool checkVersionMatch();
-	static int deviceCount();
-	int getDeviceIndex();
-	bool acquire();
-	bool is_acquired();
-	void release();
+	Ui::BonusFFBClass* ui;
+	QList<DeviceInfo>* deviceList;
+	vJoyFeeder* vjoy;
+	HWND hwnd;
+	Telemetry* telemetry;
 
-	void pressButton(int);
-	void releaseButton(int);
+	void setPointers(Ui::BonusFFBClass*, QList<DeviceInfo>*, vJoyFeeder*, Telemetry*, HWND);
+	virtual HRESULT startGameLoop() = 0;
+	virtual void stopGameLoop() = 0;
+	virtual void gameLoop() = 0;
+	virtual void initializeJoystickMap() = 0;
+	virtual void saveSettings() = 0;
+	virtual void loadSettings() = 0;
+
 public slots:
-	void setDeviceIndex(unsigned int);
-	void shortPressButton(int);
-	void updateButtons(int);
-private:
-	unsigned int deviceNum = 1;
-	bool acquired = false;
-	int pressedButton = 0;
+	virtual void redrawJoystickMap() = 0;
 };
 

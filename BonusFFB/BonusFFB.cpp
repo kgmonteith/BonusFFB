@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 2024-2025 Ken Monteith.
 
 This file is part of Bonus FFB.
@@ -11,39 +11,149 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "BonusFFB.h"
+#include <QSettings>
+#include <QMessageBox>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
+#include <QDir>
+#include <QDesktopServices>
+#include <stdlib.h>
 
-#include <QDebug>
-#include <QUuid>
-#include <QTextStream>
-#include <QThread>
-
-BOOL CALLBACK BonusFFB::enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID* pContext) noexcept
+BonusFFB::BonusFFB(QWidget *parent)
+    : QMainWindow(parent)
 {
-    QList<DeviceInfo>* diDevices = static_cast<QList<DeviceInfo>*>(pContext);
+    ui.setupUi(this);
+    
+    // Configure app selection button group
+    appSelectButtonGroup.setExclusive(true);
+    appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 0);
+    appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 1);
+    appList.append(&hshifter);
+    appList.append(&prndl);
+    QObject::connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
+    ui.appStackedWidget->setCurrentIndex(0);
 
-    IDirectInputDevice8* dev;
-    g_pDI->CreateDevice(pInst->guidInstance, &dev, NULL);
+    // Ensure the monitor is the default tab
+    ui.hshifterTabWidget->setCurrentIndex(0);
+    ui.prndlTabWidget->setCurrentIndex(0);
 
-    DIDEVCAPS capabilities;
-    capabilities.dwSize = sizeof(DIDEVCAPS);
-    dev->GetCapabilities(&capabilities);
+    // Menu action connections
+    QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
+    QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
+    QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    // Game loop connections
+    QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
+    // Telemetry connections
+    QObject::connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
 
-    QUuid instanceGuid = pInst->guidInstance;
-    QUuid productGuid = pInst->guidProduct;
-    bool supportsFfb = (capabilities.dwFlags & DIDC_FORCEFEEDBACK);
-    QString devName = QString::fromWCharArray(pInst->tszInstanceName);
-    if (productGuid.data1 == VJOY_PRODUCT_GUID) {
-        vjoy_device_count += 1;
-        devName.append(QString(" %1").arg(vjoy_device_count));
+    // Initialize Direct Input, get the list of connected devices
+    initDirectInput(&deviceList);
+
+    // Set FFB device detection label
+    bool ffbDeviceFound = false;
+    for (const DeviceInfo device : deviceList)
+    {
+        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
+            ui.ffbDeviceFoundLabel->setText("🟢 FFB-enabled device detected");
+            ffbDeviceFound = true;
+            break;
+        }
     }
-    DeviceInfo deviceInfo = { devName, instanceGuid, productGuid, supportsFfb, dev};
-    diDevices->append(deviceInfo);
 
-    return DIENUM_CONTINUE;
+    // Initialize vJoyFeeder
+    if (!vJoyFeeder::isDriverEnabled()) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy not installed");
+    }
+    else if (!vJoyFeeder::checkVersionMatch()) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy v2.1.8 or newer required");
+    }
+    else if (vJoyFeeder::deviceCount() <= 0) {
+        ui.vjoyDeviceFoundLabel->setText("❌ vJoy device not configured");
+    }
+    else {
+        ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
+    }
+
+    // Initialize application GUIs
+    hshifter.setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
+    hshifter.initialize();
+    prndl.setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
+    prndl.initialize();
+    activeApp = &prndl;
+
+    // Start telemetry receiver
+    telemetry.startConnectTimer();
+
+    if (!ffbDeviceFound || !vJoyFeeder::isDriverEnabled()) {
+        ui.toggleGameLoopButton->setDisabled(true);
+        ui.toggleGameLoopButton->setText("🚫");
+        ui.toggleGameLoopButton->setToolTip("Cannot start without FFB joystick and vJoy");
+    }
+    qDebug("BonusFFBApplication constructor finished");
 }
 
-BonusFFB::DeviceInfo * BonusFFB::getDeviceFromGuid(QList<DeviceInfo> * deviceList, QUuid guid) {
-    for (QList<DeviceInfo>::iterator it = deviceList->begin(); it != deviceList->end(); it++)
+BonusFFB::~BonusFFB()
+{
+    if (gameLoopTimer.isActive())
+        emit toggleGameLoop(false);
+}
+
+void BonusFFB::changeApp(int appSelectButtonIndex) {
+    ui.appStackedWidget->setCurrentIndex(appSelectButtonIndex);
+    activeApp = appList[appSelectButtonIndex];
+    activeApp->redrawJoystickMap();
+}
+
+void BonusFFB::resizeEvent(QResizeEvent* e)
+{
+    activeApp->redrawJoystickMap();
+}
+
+void BonusFFB::openUserGuide() {
+    QDesktopServices::openUrl(QUrl("https://kgmonteith.github.io/BonusFFB/", QUrl::TolerantMode));
+}
+
+void BonusFFB::openAbout() {
+    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.";
+    QMessageBox::about(this, "About Bonus FFB", about);
+}
+
+void BonusFFB::displayTelemetryState(TelemetrySource newState) {
+    if (newState == TelemetrySource::NONE) {
+        ui.telemetryLabel->setText("⚠️ Telemetry disconnected");
+    }
+    else if (newState == TelemetrySource::SCS) {
+        ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
+    }
+}
+
+void BonusFFB::toggleGameLoop(bool newState) {
+    ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
+    if (newState == true) {
+        gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
+        for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
+            button->setEnabled(false);
+        }
+        if (FAILED(activeApp->startGameLoop())) {
+            emit toggleGameLoop(false);
+            return;
+        }
+        QObject::connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
+    }
+    else
+    {
+        QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
+        activeApp->stopGameLoop();
+        for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
+            button->setEnabled(true);
+        }
+    }
+}
+
+DeviceInfo* BonusFFB::getDeviceFromGuid(QUuid guid) {
+    for (QList<DeviceInfo>::iterator it = deviceList.begin(); it != deviceList.end(); it++)
     {
         if (it->instanceGuid == guid) {
             return &*it;
@@ -51,104 +161,4 @@ BonusFFB::DeviceInfo * BonusFFB::getDeviceFromGuid(QList<DeviceInfo> * deviceLis
     }
     qDebug() << "Device not found: " << guid;
     return nullptr;
-}
-
-// Set up the device for reading state.
-HRESULT BonusFFB::DeviceInfo::acquire(HWND* handle) {
-    HRESULT hr;
-
-    if (FAILED(hr = this->diDevice->SetDataFormat(&c_dfDIJoystick2))) {
-        qDebug() << "SetDataFormat failed, hr: " << Qt::hex << unsigned long(hr);
-        return hr;
-    }
-
-    // Set the cooperative level to let DInput know how this device should
-    // interact with the system and with other DInput applications.
-    if (FAILED(hr = this->diDevice->SetCooperativeLevel(*handle,
-        DISCL_EXCLUSIVE | DISCL_BACKGROUND))) {
-        qDebug() << "SetCooperativeLevel failed, hr: " << unsigned long(hr);
-        return hr;
-    }
-
-    if (FAILED(hr = this->diDevice->Acquire())) {
-        qDebug() << "Acquire failed, hr: " << unsigned long(hr);
-    }
-    return hr;
-}
-
-// Safe teardown after preparing device
-HRESULT BonusFFB::DeviceInfo::release() {
-    HRESULT hr = this->diDevice->Unacquire();
-    return hr;
-}
-
-HRESULT BonusFFB::DeviceInfo::updateState() {
-    HRESULT hr = this->diDevice->GetDeviceState(sizeof(DIJOYSTATE2), &this->joyState);
-    return hr;
-}
-
-QMap<QUuid, QString> BonusFFB::DeviceInfo::getDeviceAxes() {
-    QMap<QUuid, QString> axisMap;
-    this->diDevice->EnumObjects(enumAxesCallback,
-        (VOID*)&axisMap, DIDFT_AXIS);
-    return axisMap;
-}
-
-long BonusFFB::DeviceInfo::getAxisReading(QUuid axisGuid) {
-    if (axisGuid == GUID_XAxis)
-    {
-        return this->joyState.lX;
-    }
-    else if (axisGuid == GUID_YAxis)
-    {
-        return this->joyState.lY;
-    }
-    else if (axisGuid == GUID_ZAxis)
-    {
-        return this->joyState.lZ;
-    }
-    else if (axisGuid == GUID_RxAxis) {
-        return this->joyState.lRx;
-    }
-    else if (axisGuid == GUID_RyAxis)
-    {
-        return this->joyState.lRy;
-    }
-    else if (axisGuid == GUID_RzAxis)
-    {
-        return this->joyState.lRz;
-    }
-    else if (axisGuid == GUID_Slider)
-    {
-        return this->joyState.rglSlider[0];
-    }
-    return 0;
-}
-
-HRESULT BonusFFB::initDirectInput(QList<DeviceInfo>* diDevices) noexcept {
-    // Register with the DirectInput subsystem and get a pointer
-    // to a IDirectInput interface we can use.
-    HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION,
-        IID_IDirectInput8, (VOID**)&g_pDI, nullptr);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-
-    // Look for a force feedback device we can use
-    hr = g_pDI->EnumDevices(DI8DEVCLASS_GAMECTRL,
-        enumDevicesCallback, diDevices,
-        DIEDFL_ATTACHEDONLY);
-    return hr;
-}
-
-BOOL CALLBACK BonusFFB::enumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
-    VOID* pContext) noexcept
-{
-    assert(pContext != nullptr);
-    auto axisMap = static_cast<QMap<QUuid, QString>*>(pContext);
-
-    axisMap->insert(pdidoi->guidType, QString::fromStdWString(pdidoi->tszName));
-
-    return DIENUM_CONTINUE;
 }

@@ -1,14 +1,14 @@
 # H-Shifter
 
-This application simulates an H-pattern shifter with gear grinding, locking, and [float shifting](https://en.wikipedia.org/wiki/Float_shifting). Configuring clutch and throttle pedals axes in the `Input/output settings` tab is required. Float shifting requires [setting up game telemetry](getting-started.md/#install-optional-telemetry-plugins).
+This mode simulates an H-pattern shifter with gear grinding, locking, and [float shifting](https://en.wikipedia.org/wiki/Float_shifting). Configuring clutch and throttle pedals axes in the `Input/output settings` tab is required. Float shifting requires [setting up game telemetry](getting-started.md/#install-optional-telemetry-plugins), currently only supported for ATS/ETS2.
 
-H-Shifter is best suited to casual driving games, such truck, bus, and taxi sims. Depending on the strength of your FFB joystick, it's possible to overcome the locking, grinding, and channel-keeping force effects. Remember to play along and not push through these effects. If you want something stronger and more precise, consider a purpose-built device like the [Bash Pro](https://mvhstudios.co.uk/products/bash-pro).
+The H-shifter mode is best suited to casual driving games, such truck, bus, and taxi sims. Depending on the strength of your FFB joystick, it's possible to overcome the locking, grinding, and channel-keeping force effects. Remember to play along and not push through these effects. If you want something stronger and more precise, consider a purpose-built device like the [Bash Pro](https://mvhstudios.co.uk/products/bash-pro).
 
 ![H-Shifter](images/hshifter-screenshot.png) 
 
 ## Features
 
-When not using telemetry, you must depress the clutch to change gears.
+When not using telemetry, you must depress the clutch to change gears. If you don't, you'll experience a gear-grinding effect.
 
 When using telemetry, you may depress the clutch to change gears, or you can float-shift. How this is done varies by game:
 
@@ -19,7 +19,7 @@ When the throttle is engaged and the clutch is not, the shift lever will be lock
 
 ## Game configuration
 
-H-Shifter sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in H-Shifter's input/output settings.
+The H-shifter mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the H-shifter mode's input/output settings.
 
 ### ATS/ETS2 settings
 
@@ -28,7 +28,7 @@ Set these values in the "Controls" menu.
 * In the `Input Types` list, add the vJoy Device
 ![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to `H-Shifter`
-* Set `Acceleration axis deadzone` to 1%
+* Set `Acceleration axis deadzone` to ~1%
     * This is recommended to reduce thrashing of the locked-in-gear effect
 * Set `Clutch axis deadzone` to 1-5%
     * This is strongly recommended to smooth out clutch-enabled FFB effects

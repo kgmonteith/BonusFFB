@@ -7,7 +7,7 @@
 
 Install a recent version of [vJoy](https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1).
 
-Run the "Configure vJoy" application. Set up at least one virtual device with a minimum of 8 buttons, and click the "Enable vJoy" checkbox:
+Run the "Configure vJoy" application. Set up at least one virtual device with a minimum of 16 buttons, and click the "Enable vJoy" checkbox:
 
 ![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
 
@@ -21,7 +21,7 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
 * `C:\Program Files (x86)\Steam\steamapps\common\Euro Truck Simulator 2\bin\win_x64\plugins\`
 
 ??? tip "When installed correctly, ATS/ETS2 will start with a notice that the SDK has been activated."
-    Unfortunately you will have to press OK for this message each time the game is launched.
+    Unfortunately this message cannot be deactived, you will have to press OK each time the game is launched.
 
 ## Configure your FFB joystick
 
@@ -33,13 +33,15 @@ Follow the [device settings guide](device-settings.md) for your specific FFB joy
 
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 
-Bonus FFB installs several executables, one for each application:
+Bonus FFB installs as a single application with a few modes:
 
-* [H-Shifter](hshifter.md)
-* That's all for the initial release, register your interest on [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues) if you'd like more applications
+* [H-pattern shifter](hshifter.md) for simulating manual transmissions
+* ["PRNDL"-style shifter](prndl.md) for simulating automatic transmissions
 
-Launch your desired application and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier. Choose `File > Save device settings` when you're happy with the device and axis settings.
+Select your desired mode and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier. Choose `File > Save device settings` when you're happy with the device and axis settings.
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 
 Please read the application's guide for app-specific configuration, options, and features.
+
+If you'd like other modes or have ideas for Bonus FFB, reach out on [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).

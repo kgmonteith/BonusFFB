@@ -13,9 +13,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include <QObject>
-#include "BonusFFB.h"
+#include "DeviceInfo.h"
 #include "vJoyFeeder.h"
-#include "StateManager.h"
+#include "HShifterStateManager.h"
 
 static LONG FORWARD[2] = { 0 , 0 };
 static LONG BACK[2] = { 180 * DI_DEGREES , 0 };
@@ -26,12 +26,12 @@ enum class GrindEffectBehavior {
 	OVERRIDE_ENGINE_RPM
 };
 
-class SynchroGuard: public QObject
+class HShifterSynchroGuard: public QObject
 {
 	Q_OBJECT
 
 public:
-	HRESULT start(BonusFFB::DeviceInfo*);
+	HRESULT start(DeviceInfo*);
 
 public slots:
 	void updatePedalEngagement(int, int);
@@ -69,10 +69,6 @@ private:
 	DICONDITION unsynchronizedSpring = { 0, 0, -10000, 0, 0, 1300 };
 	DICONDITION keepInGearSpring = { 0 , 0, keepInGearSpringIdleCoefficient };
 	DIPERIODIC rumble = { 0, 0, 0, DWORD(6e7 / engineRPM) };
-
-	//DIEFFECT unsynchronizedConstantEff = {};
-	//LPDIRECTINPUTEFFECT lpdiUnsynchronizedConstantEff = nullptr;
-	//DICONSTANTFORCE unsynchronizedConstant = { 0000 };
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;

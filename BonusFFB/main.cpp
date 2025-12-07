@@ -10,20 +10,20 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "Handbrake.h"
+#include "BonusFFB.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    a.setApplicationName("Bonus FFB");
-    a.setStyle("Fusion");
-    a.setWindowIcon(QIcon("Handbrake.ico"));
+    QApplication app(argc, argv);
+    app.setStyle("Fusion");
+    app.setWindowIcon(QIcon("BonusFFB.ico"));
 
-    Handbrake w;
-    w.show();
-    w.loadDeviceSettings();
-    w.initializeGraphics();
-
-    return a.exec();
+    BonusFFB window;
+    window.show();
+    for (const auto app : window.appList) {
+        app->initializeJoystickMap();
+        app->loadSettings();
+    }
+    return app.exec();
 }

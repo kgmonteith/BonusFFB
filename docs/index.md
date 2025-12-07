@@ -4,14 +4,13 @@ Do you own a force-feedback joystick? Have you wondered if it can simulate other
 
 Bonus FFB is free, open-source software that simulates these devices using force-feedback joysticks:
 
-* [H-pattern shifters](hshifter.md)
-* Auto-manual (PRNDL) shifters (coming soon)
-* Sequential shifters (eventually)
+* [H-pattern manual transmission shifters](hshifter.md)
+* ["PRNDL"-style automatic transmission shifters](prndl.md)
 * Got an idea? [Make a suggestion :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues)
 
 Follow the [Getting Started](getting-started.md) guide for complete installations instructions.
 
-## Demo video
+## H-pattern shifter demo video
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/UknrYzPSzug?si=49k1dFGFPOvRBpj0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 

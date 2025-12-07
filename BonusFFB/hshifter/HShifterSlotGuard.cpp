@@ -10,11 +10,11 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "SlotGuard.h"
+#include "HShifterSlotGuard.h"
 
 #include <QDebug>
 
-HRESULT SlotGuard::start(BonusFFB::DeviceInfo* device) {
+HRESULT HShifterSlotGuard::start(DeviceInfo* device) {
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     slotSpringEff.dwDuration = INFINITE;
@@ -27,7 +27,7 @@ HRESULT SlotGuard::start(BonusFFB::DeviceInfo* device) {
     slotSpringEff.rglDirection = FORWARDBACK;
     slotSpringEff.lpEnvelope = 0;
     slotSpringEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    springConditions[0] = keepLeft;
+    springConditions[0] = noSpring;
     springConditions[1] = keepFBCentered;
     slotSpringEff.lpvTypeSpecificParams = &springConditions;
     slotSpringEff.dwStartDelay = 0;
@@ -44,7 +44,7 @@ HRESULT SlotGuard::start(BonusFFB::DeviceInfo* device) {
     return hr;
 }
 
-void SlotGuard::updateSlotGuardEffects(SlotState state) {
+void HShifterSlotGuard::updateSlotGuardEffects(SlotState state) {
     if (state == SlotState::NEUTRAL_UNDER_SLOT) {
         // Disable the effect to prevent thrashing
         // We can scale the condition coefficients near the junctions instead, but good enough for now
