@@ -95,6 +95,13 @@ long DeviceInfo::getAxisReading(QUuid axisGuid) {
     return 0;
 }
 
+bool DeviceInfo::isButtonPressed(int buttonIndex) {
+    if (this->joyState.rgbButtons[buttonIndex] & 0x80) {
+        return true;
+    }
+    return false;
+}
+
 
 BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID* pContext) noexcept
 {
@@ -110,12 +117,13 @@ BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* pInst, VOID* pContext)
     QUuid instanceGuid = pInst->guidInstance;
     QUuid productGuid = pInst->guidProduct;
     bool supportsFfb = (capabilities.dwFlags & DIDC_FORCEFEEDBACK);
+    int buttonCount = capabilities.dwButtons;
     QString devName = QString::fromWCharArray(pInst->tszInstanceName);
     if (productGuid.data1 == VJOY_PRODUCT_GUID) {
         vjoy_device_count += 1;
         devName.append(QString(" %1").arg(vjoy_device_count));
     }
-    DeviceInfo deviceInfo = { devName, instanceGuid, productGuid, supportsFfb, dev };
+    DeviceInfo deviceInfo = { devName, instanceGuid, productGuid, supportsFfb, buttonCount, dev };
     diDevices->append(deviceInfo);
 
     return DIENUM_CONTINUE;

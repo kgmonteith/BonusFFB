@@ -26,6 +26,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "vJoyFeeder.h"
 #include "DeviceInfo.h"
 #include "hshifter/HShifter.h"
+#include "prndl/Prndl.h"
 
 class BonusFFB : public QMainWindow
 {
@@ -48,6 +49,7 @@ public:
     QList<BonusFFBApp*> appList;
     BonusFFBApp* activeApp;
     HShifter hshifter;
+    Prndl prndl;
 
 public slots:
     void changeApp(int);

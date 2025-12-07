@@ -70,6 +70,15 @@
     <ClCompile Include="BonusFFBApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="prndl\Prndl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="prndl\PrndlSlotGuard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="prndl\PrndlStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -91,6 +100,15 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="BonusFFBApp.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="prndl\Prndl.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="prndl\PrndlSlotGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="prndl\PrndlStateManager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

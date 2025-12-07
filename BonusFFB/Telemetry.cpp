@@ -93,6 +93,10 @@ float Telemetry::getEngineRPM() {
 	return rpm;
 }
 
+bool Telemetry::getParkingBrakeState() {
+	return pTelemMap->truck_b.parkBrake;
+}
+
 void Telemetry::startConnectTimer()
 {
 	timer->start();

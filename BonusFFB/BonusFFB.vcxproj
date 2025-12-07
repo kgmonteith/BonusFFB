@@ -116,6 +116,9 @@
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
     <ClCompile Include="hshifter\HShifterSynchroGuard.cpp" />
+    <ClCompile Include="prndl\Prndl.cpp" />
+    <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
+    <ClCompile Include="prndl\PrndlStateManager.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
     <QtRcc Include="BonusFFB.qrc" />
@@ -139,6 +142,9 @@
     <QtMoc Include="hshifter\HShifterSlotGuard.h" />
     <QtMoc Include="hshifter\HShifterStateManager.h" />
     <QtMoc Include="hshifter\HShifterSynchroGuard.h" />
+    <QtMoc Include="prndl\Prndl.h" />
+    <QtMoc Include="prndl\PrndlSlotGuard.h" />
+    <QtMoc Include="prndl\PrndlStateManager.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>

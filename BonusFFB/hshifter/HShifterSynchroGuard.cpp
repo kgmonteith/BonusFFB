@@ -41,32 +41,6 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* device) {
     }
     hr = lpdiUnsynchronizedSpringEff->Start(INFINITE, 0);
 
-    /* Maybe we'll want a constant effect, but I think we're good for now 
-    unsynchronizedConstantEff.dwSize = sizeof(DIEFFECT);
-    unsynchronizedConstantEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
-    unsynchronizedConstantEff.dwDuration = INFINITE;
-    unsynchronizedConstantEff.dwSamplePeriod = 0;
-    unsynchronizedConstantEff.dwGain = DI_FFNOMINALMAX;
-    unsynchronizedConstantEff.dwTriggerButton = DIEB_NOTRIGGER;
-    unsynchronizedConstantEff.dwTriggerRepeatInterval = 0;
-    unsynchronizedConstantEff.cAxes = 2;
-    unsynchronizedConstantEff.rgdwAxes = AXES;
-    unsynchronizedConstantEff.rglDirection = FORWARD;
-    unsynchronizedConstantEff.lpEnvelope = 0;
-    unsynchronizedConstantEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-    unsynchronizedConstantEff.lpvTypeSpecificParams = &unsynchronizedConstant;
-    unsynchronizedConstantEff.dwStartDelay = 0;
-
-    if (lpdiUnsynchronizedConstantEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_ConstantForce,
-            &unsynchronizedConstantEff, &lpdiUnsynchronizedConstantEff, nullptr);
-        if (FAILED(hr)) {
-            return hr;
-        }
-    }
-    hr = lpdiUnsynchronizedConstantEff->Start(INFINITE, 0);
-    */
-
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
     keepInGearSpringEff.dwDuration = INFINITE;

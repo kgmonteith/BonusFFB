@@ -12,6 +12,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "vJoyFeeder.h"
 #include <QDebug>
+#include <QTimer>
 
 bool vJoyFeeder::isDriverEnabled() {
 	return vJoyEnabled();
@@ -76,6 +77,14 @@ void vJoyFeeder::pressButton(int button) {
 
 void vJoyFeeder::releaseButton(int button) {
 	SetBtn(false, deviceNum, unsigned char(button));
+}
+
+void vJoyFeeder::shortPressButton(int button) {
+	pressButton(button);
+	QTimer::singleShot(50, this, [this, button]() {
+		releaseButton(button);
+	});
+
 }
 
 void vJoyFeeder::updateButtons(int newState) {

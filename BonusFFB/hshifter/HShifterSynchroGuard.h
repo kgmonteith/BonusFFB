@@ -70,10 +70,6 @@ private:
 	DICONDITION keepInGearSpring = { 0 , 0, keepInGearSpringIdleCoefficient };
 	DIPERIODIC rumble = { 0, 0, 0, DWORD(6e7 / engineRPM) };
 
-	//DIEFFECT unsynchronizedConstantEff = {};
-	//LPDIRECTINPUTEFFECT lpdiUnsynchronizedConstantEff = nullptr;
-	//DICONSTANTFORCE unsynchronizedConstant = { 0000 };
-
 	double clutchPercent = 0;
 	double throttlePercent = 0;
 };

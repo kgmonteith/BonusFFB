@@ -32,6 +32,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #define VJOY_PRODUCT_GUID 0xBEAD1234
 
 static DWORD AXES[2] = { DIJOFS_X, DIJOFS_Y };
+static LONG FORWARDBACK[2] = { 1 , 0 };
 
 class DeviceInfo
 {
@@ -40,6 +41,7 @@ public:
     QUuid instanceGuid;
     QUuid productGuid;
     bool supportsFfb;
+    int buttonCount;
     LPDIRECTINPUTDEVICE8 diDevice;
     DIJOYSTATE2 joyState;
     bool isAcquired = false;
@@ -49,6 +51,7 @@ public:
     HRESULT updateState();
     QMap<QUuid, QString> getDeviceAxes();
     long getAxisReading(QUuid);
+    bool isButtonPressed(int);
 };
 
 static LPDIRECTINPUT8 g_pDI;
@@ -58,4 +61,4 @@ HRESULT initDirectInput(QList<DeviceInfo>*) noexcept;
 DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>*, QUuid);
 
 BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
-BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
+BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;\

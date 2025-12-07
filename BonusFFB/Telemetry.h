@@ -34,6 +34,7 @@ public:
 	TelemetrySource isConnected();
 	QPair<int, int> getGearState();
 	float getEngineRPM();
+	bool getParkingBrakeState();
 
 signals:
 	void telemetryChanged(TelemetrySource);

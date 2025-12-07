@@ -15,11 +15,12 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include <QStandardPaths>
 #include "BonusFFBApp.h"
-#include "HShifterStateManager.h"
-#include "HShifterSlotGuard.h"
-#include "HShifterSynchroGuard.h"
+#include "PrndlSlotGuard.h"
+#include "PrndlStateManager.h"
 
-class HShifter : public BonusFFBApp
+#define SHIFTER_POSITION_MARKER_DIAMETER_PX 17.0
+
+class Prndl : public BonusFFBApp
 {
 	Q_OBJECT;
 
@@ -28,64 +29,52 @@ public:
 	void saveSettings();
 	void loadSettings();
 	void initializeJoystickMap();
+
+	QPair<int, int> getJoystickValues();
+
 	HRESULT startGameLoop();
 	void stopGameLoop();
 	void gameLoop();
 
-	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
+	bool getShiftLockReleased();
 
 	DeviceInfo* joystick = nullptr;
 	QUuid joystickLRAxisGuid;
 	QUuid joystickFBAxisGuid;
 
-	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	QUuid throttleAxisGuid;
+	DeviceInfo* shiftLockDevice = nullptr;
+	QUuid shiftLockButtonGuid;
 
 public slots:
+	void redrawJoystickMap();
+	void changeSlotLabel(PrndlSlot slot);
 	void changeJoystickDevice(int);
-	void changePedalsDevice(int);
 	void changeJoystickLRAxis(int);
 	void changeJoystickFBAxis(int);
-	void changeClutchAxis(int);
-	void changeThrottleAxis(int);
-
-	void redrawJoystickMap();
+	void changeShiftLockDevice(int);
 	void updateJoystickCircle(int, int);
-	void updateGearText(int);
-	void showAxisProgressBars();
-	void hideAxisProgressBars();
+
 
 signals:
 	void joystickValueChanged(int, int);
 	void joystickLRValueChanged(int);
 	void joystickFBValueChanged(int);
-	void clutchValueChanged(int);
-	void throttleValueChanged(int);
-	void pedalValuesChanged(int, int);
-	void gearValuesChanged(QPair<int, int>);
-	void engineRPMChanged(float);
-	void resetClutchAxes();
+	void shiftLockStateChanged(bool);
 
 protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/hshifterDeviceSettings.ini";
+	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/prndlDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;
-	QGraphicsRectItem* neutralChannelRect;
 	QGraphicsRectItem* centerSlotRect;
-	QGraphicsRectItem* rightSlotRect;
-	QGraphicsRectItem* leftSlotRect;
+	QList<QGraphicsEllipseItem*> slotCircles;
 	QGraphicsEllipseItem* joystickCircle;
 
-	// Stateful FFB effect managers
-	HShifterStateManager stateManager;
-	HShifterSlotGuard slotGuard;
-	HShifterSynchroGuard synchroGuard;
 
-	QPair<int, int> lastGearValues = { 0, 0 };
-	QPair<int, int> lastPedalValues = { 0, 0 };
-	float lastEngineRPM = 0.0;
+	// Stateful FFB effect managers
+	PrndlSlotGuard slotGuard;
+	PrndlStateManager stateManager = PrndlStateManager();
+
+	bool lastShiftLockReleased = false;
 };
 

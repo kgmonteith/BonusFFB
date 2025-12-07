@@ -21,7 +21,9 @@ int main(int argc, char *argv[])
 
     BonusFFB window;
     window.show();
-    window.hshifter.initializeJoystickMap();
-    window.hshifter.loadDeviceSettings();
+    for (const auto app : window.appList) {
+        app->initializeJoystickMap();
+        app->loadSettings();
+    }
     return app.exec();
 }

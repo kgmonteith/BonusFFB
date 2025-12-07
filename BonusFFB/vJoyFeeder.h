@@ -42,6 +42,7 @@ public:
 	void releaseButton(int);
 public slots:
 	void setDeviceIndex(unsigned int);
+	void shortPressButton(int);
 	void updateButtons(int);
 private:
 	unsigned int deviceNum = 1;

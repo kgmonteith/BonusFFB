@@ -27,7 +27,7 @@ HRESULT HShifterSlotGuard::start(DeviceInfo* device) {
     slotSpringEff.rglDirection = FORWARDBACK;
     slotSpringEff.lpEnvelope = 0;
     slotSpringEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    springConditions[0] = keepLeft;
+    springConditions[0] = noSpring;
     springConditions[1] = keepFBCentered;
     slotSpringEff.lpvTypeSpecificParams = &springConditions;
     slotSpringEff.dwStartDelay = 0;

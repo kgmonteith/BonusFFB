@@ -22,10 +22,10 @@ You should have received a copy of the GNU General Public License along with Bon
 
 void HShifter::initialize() {
     // Menu action connections
-    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HShifter::saveDeviceSettings);
-    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &HShifter::loadDeviceSettings);
+    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HShifter::saveSettings);
+    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &HShifter::loadSettings);
     // Graphics connections
-    QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::rescaleJoystickMap);
+    QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
     // HShifter joystick connections
     QObject::connect(ui->hshifter_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &HShifter::changeJoystickDevice);
     QObject::connect(ui->hshifter_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &HShifter::changeJoystickLRAxis);
@@ -129,7 +129,7 @@ void HShifter::initializeJoystickMap() {
 
 
 // Separate call because the event doesn't trigger if another tab is active
-void HShifter::rescaleJoystickMap() {
+void HShifter::redrawJoystickMap() {
     if (scene == nullptr) {
         return;
     }
@@ -185,7 +185,7 @@ void HShifter::hideAxisProgressBars() {
     ui->ioTabThrottleProgressBar->hide();
 }
 
-void HShifter::saveDeviceSettings() {
+void HShifter::saveSettings() {
     QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
     settings.beginGroup("joystick");
     settings.setValue("device_guid", joystick->instanceGuid.toString());
@@ -208,7 +208,7 @@ void HShifter::saveDeviceSettings() {
     settings.endGroup();
 }
 
-void HShifter::loadDeviceSettings() {
+void HShifter::loadSettings() {
     qDebug() << "Loading settings";
     if (!QFile(deviceSettingsFile).exists()) {
         qDebug() << "Settings file does not exist";

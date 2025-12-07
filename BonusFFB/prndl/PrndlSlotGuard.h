@@ -13,26 +13,30 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include "DeviceInfo.h"
-#include "HShifterStateManager.h"
 
-class HShifterSlotGuard: public QObject {
+class PrndlSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
 	HRESULT start(DeviceInfo*);
 
 public slots:
-	void updateSlotGuardEffects(SlotState);
+	void updateSlotSpringCenter(long);
+	void toggleShiftLockEffect(bool);
+	void updateShiftLockEffectStrength(double);
 
 private:
-	DIEFFECT slotSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiSlotSpringEff = nullptr;
-
+	DIEFFECT keepCenteredSpringEff = {};
+	LPDIRECTINPUTEFFECT lpdiKeepCenteredSpringEff = nullptr;
 	DICONDITION noSpring = { 0, 0, 0 };
-	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONDITION keepLeft = { -10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONDITION keepRight = { 10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION keepCenteredSpringConditions[2] = { noSpring, noSpring };
 
-	DICONDITION springConditions[2] = { noSpring, noSpring };
+	DIEFFECT keepInGearSpringEff = {};
+	LPDIRECTINPUTEFFECT lpdiKeepInGearSpringEff = nullptr;
+	DICONDITION keepInGearSpring = { 0 , DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+
+	DIEFFECT shiftLockEff = {};
+	LPDIRECTINPUTEFFECT lpdiShiftLockEff = nullptr;
+	DICONSTANTFORCE shiftLockForce = { 0 };
 };
