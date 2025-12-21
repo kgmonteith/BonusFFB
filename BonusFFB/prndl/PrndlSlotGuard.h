@@ -22,21 +22,21 @@ public:
 
 public slots:
 	void updateSlotSpringCenter(long);
-	void toggleShiftLockEffect(bool);
 	void updateShiftLockEffectStrength(double);
 
 private:
+	DeviceInfo* device = nullptr;
+
 	DIEFFECT keepCenteredSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiKeepCenteredSpringEff = nullptr;
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepCenteredSpringConditions[2] = { noSpring, noSpring };
 
 	DIEFFECT keepInGearSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiKeepInGearSpringEff = nullptr;
 	DICONDITION keepInGearSpring = { 0 , DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 
 	DIEFFECT shiftLockEff = {};
-	LPDIRECTINPUTEFFECT lpdiShiftLockEff = nullptr;
 	DICONSTANTFORCE shiftLockForce = { 0 };
+	bool shiftLockEngaged = true;
+	long lastShiftLockForce = 0;
 };

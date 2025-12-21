@@ -243,8 +243,9 @@ void Prndl::loadSettings() {
 
     settings.beginGroup("joystick");
     int joystick_index = ui->prndl_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1) {
-        QMessageBox::warning(nullptr, "Joystick not found", "Saved joystick device is not connected.\nReconnect the device or update the input/output settings.");
+    if (joystick_index == -1 && !g_joystick_warned) {
+        QMessageBox::warning(nullptr, "Joystick not found", "Saved PRNDL joystick device is not connected.\nReconnect the device or update the input/output settings.");
+        g_joystick_warned = true;
     }
     else
     {
@@ -302,7 +303,12 @@ bool Prndl::getShiftLockReleased() {
 }
 
 QPair<int, int> Prndl::getJoystickValues() {
-    joystick->updateState();
+    HRESULT hr = joystick->updateState();
+    if (hr != DI_OK) {
+        qDebug() << "updateState failed, reacquiring joystick. Return code " << unsigned long(hr);
+        joystick->reacquire();
+        slotGuard.start(joystick);
+    }
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     emit joystickLRValueChanged(joystickLRValue);
@@ -329,6 +335,7 @@ HRESULT Prndl::startGameLoop() {    // Acquire joystick
     if (FAILED(slotGuard.start(joystick))) {
         qDebug() << "Failed to start slotGuard effects";
     }
+    joystick->startEffects();
     return S_OK;
 }
 
@@ -337,10 +344,6 @@ void Prndl::stopGameLoop() {
     vjoy->release();
     joystick->release();
     return;
-}
-
-int computeInSlot(int y_axis) {
-    JOY_MAXPOINT;
 }
 
 void Prndl::gameLoop() {

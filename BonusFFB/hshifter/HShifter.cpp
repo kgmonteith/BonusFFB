@@ -218,8 +218,9 @@ void HShifter::loadSettings() {
 
     settings.beginGroup("joystick");
     int joystick_index = ui->hshifter_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1) {
-        QMessageBox::warning(nullptr, "Joystick not found", "Saved joystick device is not connected.\nReconnect the device or update the input/output settings.");
+    if (joystick_index == -1 && !g_joystick_warned) {
+        QMessageBox::warning(nullptr, "Joystick not found", "Saved H-shifter joystick device is not connected.\nReconnect the device or update the input/output settings.");
+        g_joystick_warned = true;
     }
     else
     {
@@ -355,6 +356,7 @@ HRESULT HShifter::startGameLoop() {
     // Initialize FFB
     slotGuard.start(joystick);
     synchroGuard.start(joystick);
+    joystick->startEffects();
     return S_OK;
 }
 

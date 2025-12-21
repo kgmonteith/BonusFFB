@@ -14,7 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HShifterSlotGuard::start(DeviceInfo* device) {
+HRESULT HShifterSlotGuard::start(DeviceInfo* devPtr) {
+    device = devPtr;
+
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     slotSpringEff.dwDuration = INFINITE;
@@ -31,17 +33,8 @@ HRESULT HShifterSlotGuard::start(DeviceInfo* device) {
     springConditions[1] = keepFBCentered;
     slotSpringEff.lpvTypeSpecificParams = &springConditions;
     slotSpringEff.dwStartDelay = 0;
-
-
-    HRESULT hr;
-    if (lpdiSlotSpringEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_Spring,
-            &slotSpringEff, &lpdiSlotSpringEff, nullptr);
-        if (FAILED(hr))
-            return hr;
-    }
-    hr = lpdiSlotSpringEff->Start(INFINITE, 0);
-    return hr;
+    device->addEffect("slotSpring", { GUID_Spring, &slotSpringEff });
+    return DI_OK;
 }
 
 void HShifterSlotGuard::updateSlotGuardEffects(SlotState state) {
@@ -65,7 +58,5 @@ void HShifterSlotGuard::updateSlotGuardEffects(SlotState state) {
         springConditions[0] = keepRight;
         springConditions[1] = noSpring;
     }
-    slotSpringEff.lpvTypeSpecificParams = springConditions;
-    if (lpdiSlotSpringEff != nullptr)
-        lpdiSlotSpringEff->SetParameters(&slotSpringEff, DIEP_TYPESPECIFICPARAMS);
+    device->updateEffect("slotSpring");
 }

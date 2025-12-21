@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #define SLOT_WIDTH_PX 5.0
 #define JOYSTICK_MARKER_DIAMETER_PX 21.0
 
+static bool g_joystick_warned = false;
+
 class BonusFFBApp :
     public QObject
 {
@@ -36,6 +38,7 @@ public:
 	virtual HRESULT startGameLoop() = 0;
 	virtual void stopGameLoop() = 0;
 	virtual void gameLoop() = 0;
+	virtual void initialize() = 0;
 	virtual void initializeJoystickMap() = 0;
 	virtual void saveSettings() = 0;
 	virtual void loadSettings() = 0;

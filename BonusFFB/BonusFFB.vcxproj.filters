@@ -79,6 +79,9 @@
     <ClCompile Include="prndl\PrndlStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="handbrake\Handbrake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -109,6 +112,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="prndl\PrndlStateManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="handbrake\Handbrake.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -177,7 +177,7 @@ void PrndlStateManager::updateSlotState(long fbValue, bool shiftLockButtonState)
             // Using shift lock but button isn't pressed, so no state change
             return;
         }
-        else if (using_shift_lock && lock_shifts_from_neutral_to_reverse && engagedSlotState == PrndlSlot::NEUTRAL && newSlot == PrndlSlot::REVERSE && !shiftLockButtonState) {
+        else if (using_shift_lock && lock_shifts_from_neutral_to_reverse && engagedSlotState == PrndlSlot::NEUTRAL && (newSlot == PrndlSlot::REVERSE || newSlot == PrndlSlot::PARK) && !shiftLockButtonState) {
             // Same, but for N to R
             return;
         }

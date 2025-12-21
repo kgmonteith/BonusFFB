@@ -30,14 +30,17 @@ BonusFFB::BonusFFB(QWidget *parent)
     appSelectButtonGroup.setExclusive(true);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 0);
     appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 1);
+    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 2);
     appList.append(&hshifter);
     appList.append(&prndl);
+    appList.append(&handbrake);
     QObject::connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
     ui.appStackedWidget->setCurrentIndex(0);
 
     // Ensure the monitor is the default tab
     ui.hshifterTabWidget->setCurrentIndex(0);
     ui.prndlTabWidget->setCurrentIndex(0);
+    ui.handbrakeTabWidget->setCurrentIndex(0);
 
     // Menu action connections
     QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
@@ -77,11 +80,11 @@ BonusFFB::BonusFFB(QWidget *parent)
     }
 
     // Initialize application GUIs
-    hshifter.setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
-    hshifter.initialize();
-    prndl.setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
-    prndl.initialize();
-    activeApp = &prndl;
+    for (auto app : appList) {
+        app->setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
+        app->initialize();
+    }
+    activeApp = &hshifter;
 
     // Start telemetry receiver
     telemetry.startConnectTimer();

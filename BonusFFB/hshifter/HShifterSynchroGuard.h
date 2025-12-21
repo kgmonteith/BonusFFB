@@ -32,6 +32,7 @@ class HShifterSynchroGuard: public QObject
 
 public:
 	HRESULT start(DeviceInfo*);
+	HRESULT createEffects();
 
 public slots:
 	void updatePedalEngagement(int, int);
@@ -45,6 +46,8 @@ public slots:
 
 private:
 	float computeGrindRPM();
+
+	DeviceInfo* device = nullptr;
 
 	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
 	GrindingState grindingState = GrindingState::OFF;
@@ -60,10 +63,8 @@ private:
 	LPDIRECTINPUTEFFECT lpdiUnsynchronizedSpringEff = nullptr;
 
 	DIEFFECT keepInGearSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiKeepInGearSpringEff = nullptr;
 
 	DIEFFECT rumbleEff = {};
-	LPDIRECTINPUTEFFECT lpdiRumbleEff = nullptr;
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
 	DICONDITION unsynchronizedSpring = { 0, 0, -10000, 0, 0, 1300 };

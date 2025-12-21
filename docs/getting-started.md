@@ -37,6 +37,7 @@ Bonus FFB installs as a single application with a few modes:
 
 * [H-pattern shifter](hshifter.md) for simulating manual transmissions
 * ["PRNDL"-style shifter](prndl.md) for simulating automatic transmissions
+* A simple [handbrake](handbrake.md) lever
 
 Select your desired mode and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier. Choose `File > Save device settings` when you're happy with the device and axis settings.
 

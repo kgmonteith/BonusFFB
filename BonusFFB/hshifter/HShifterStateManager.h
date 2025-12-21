@@ -70,6 +70,21 @@ private:
     SynchroState synchroState = SynchroState::UNKNOWN;
     GrindingState grindingState = GrindingState::OFF;
 
+    // AustinH18's settings
+    /*
+    int side_slot_width = 15000;
+    int middle_slot_half_width = 15000;
+    int neutral_channel_half_width = 5500;
+
+    int button_zone_half_width = 2000;
+    int button_zone_depth = 4000;
+    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
+
+    int in_synch_depth = JOY_MIDPOINT * 0.20;
+    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.30;
+    int grind_point_depth = JOY_MIDPOINT * 0.65;
+    */
+
     int side_slot_width = 500;
     int middle_slot_half_width = 1200;
     int neutral_channel_half_width = 1400;

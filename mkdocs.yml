@@ -42,6 +42,7 @@ nav:
   - Applications:
     - H-Shifter: hshifter.md
     - PRNDL: prndl.md
+    - Handbrake: handbrake.md
   - Ask for help:
     - FAQ: faq.md
     - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
