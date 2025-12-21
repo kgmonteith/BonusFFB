@@ -81,7 +81,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     hshifter.initialize();
     prndl.setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
     prndl.initialize();
-    activeApp = &prndl;
+    activeApp = &hshifter;
 
     // Start telemetry receiver
     telemetry.startConnectTimer();

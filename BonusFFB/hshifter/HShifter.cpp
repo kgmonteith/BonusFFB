@@ -355,6 +355,7 @@ HRESULT HShifter::startGameLoop() {
     // Initialize FFB
     slotGuard.start(joystick);
     synchroGuard.start(joystick);
+    joystick->startEffects();
     return S_OK;
 }
 

@@ -14,8 +14,10 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT PrndlSlotGuard::start(DeviceInfo* device) {
-    HRESULT hr;
+HRESULT PrndlSlotGuard::start(DeviceInfo* devicePtr) {
+    device = devicePtr;
+
+    HRESULT hr = DI_OK;
     keepCenteredSpringEff.dwSize = sizeof(DIEFFECT);
     keepCenteredSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     keepCenteredSpringEff.dwDuration = INFINITE;
@@ -32,15 +34,7 @@ HRESULT PrndlSlotGuard::start(DeviceInfo* device) {
     keepCenteredSpringConditions[1] = noSpring;
     keepCenteredSpringEff.lpvTypeSpecificParams = &keepCenteredSpringConditions;
     keepCenteredSpringEff.dwStartDelay = 0;
-
-
-    if (lpdiKeepCenteredSpringEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_Spring,
-            &keepCenteredSpringEff, &lpdiKeepCenteredSpringEff, nullptr);
-        if (FAILED(hr))
-            return hr;
-    }
-    hr = lpdiKeepCenteredSpringEff->Start(INFINITE, 0);
+    device->addEffect("keepCenteredSpring", { GUID_Spring, &keepCenteredSpringEff });
     
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -56,15 +50,7 @@ HRESULT PrndlSlotGuard::start(DeviceInfo* device) {
     keepInGearSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
     keepInGearSpringEff.dwStartDelay = 0;
-
-    if (lpdiKeepInGearSpringEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_Spring,
-            &keepInGearSpringEff, &lpdiKeepInGearSpringEff, nullptr);
-        if (FAILED(hr)) {
-            return hr;
-        }
-    }
-    hr = lpdiKeepInGearSpringEff->Start(INFINITE, 0);
+    device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
     
     shiftLockEff.dwSize = sizeof(shiftLockEff);
     shiftLockEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -79,39 +65,23 @@ HRESULT PrndlSlotGuard::start(DeviceInfo* device) {
     shiftLockEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     shiftLockEff.lpvTypeSpecificParams = &shiftLockForce;
     shiftLockEff.dwStartDelay = 0;
-
-    if (lpdiShiftLockEff == nullptr) {
-        hr = device->diDevice->CreateEffect(GUID_ConstantForce,
-            &shiftLockEff, &lpdiShiftLockEff, nullptr);
-        if (FAILED(hr)) {
-            return hr;
-        }
-    }
-    hr = lpdiShiftLockEff->Start(INFINITE, 0);
+    device->addEffect("shiftLock", { GUID_ConstantForce, &shiftLockEff });
 
     qDebug() << "Started PrndlSlotGuard effect";
     return hr;
 }
 
 void PrndlSlotGuard::updateSlotSpringCenter(long newCenter) {
-    keepInGearSpring = {newCenter, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-    keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
-    if (lpdiKeepInGearSpringEff != nullptr)
-        lpdiKeepInGearSpringEff->SetParameters(&keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS);
-}
-
-void PrndlSlotGuard::toggleShiftLockEffect(bool shiftLockEngaged) {
-    if (shiftLockEngaged) {
-        lpdiShiftLockEff->Stop();
-    }
-    else {
-        lpdiShiftLockEff->Start(INFINITE, 0);
-    }
+    keepInGearSpring.lOffset = newCenter;
+    device->updateEffect("keepInGearSpring");
 }
 
 void PrndlSlotGuard::updateShiftLockEffectStrength(double strength) {
-    shiftLockForce = { (long)strength };
-    shiftLockEff.lpvTypeSpecificParams = &shiftLockForce;
-    if (lpdiShiftLockEff != nullptr)
-        lpdiShiftLockEff->SetParameters(&shiftLockEff, DIEP_TYPESPECIFICPARAMS);
+    long newStrength = (long)strength;
+    if (lastShiftLockForce != newStrength) {
+        qDebug() << "Setting shift lock strength to " << shiftLockForce.lMagnitude;
+        shiftLockForce.lMagnitude = newStrength;
+        device->updateEffect("shiftLock");
+        lastShiftLockForce = newStrength;
+    }
 }

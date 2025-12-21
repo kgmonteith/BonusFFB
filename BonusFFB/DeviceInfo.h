@@ -34,6 +34,14 @@ You should have received a copy of the GNU General Public License along with Bon
 static DWORD AXES[2] = { DIJOFS_X, DIJOFS_Y };
 static LONG FORWARDBACK[2] = { 1 , 0 };
 
+struct FFBEffect
+{
+    GUID guid;
+    DIEFFECT* eff;
+    LPDIRECTINPUTEFFECT ldpieff = nullptr;
+    DWORD flags = DIEP_TYPESPECIFICPARAMS;
+};
+
 class DeviceInfo
 {
 public:
@@ -44,14 +52,22 @@ public:
     int buttonCount;
     LPDIRECTINPUTDEVICE8 diDevice;
     DIJOYSTATE2 joyState;
+    QMap<QString, FFBEffect> effects;
     bool isAcquired = false;
 
     HRESULT acquire(HWND*, bool = false);
     HRESULT release();
+    HRESULT reacquire();
     HRESULT updateState();
+
     QMap<QUuid, QString> getDeviceAxes();
     long getAxisReading(QUuid);
     bool isButtonPressed(int);
+
+    void addEffect(QString, FFBEffect);
+    HRESULT startEffects();
+    HRESULT updateEffect(QString);
+    void clearEffects();
 };
 
 static LPDIRECTINPUT8 g_pDI;

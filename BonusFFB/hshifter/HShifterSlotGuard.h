@@ -25,8 +25,9 @@ public slots:
 	void updateSlotGuardEffects(SlotState);
 
 private:
+	DeviceInfo* device = nullptr;
+
 	DIEFFECT slotSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiSlotSpringEff = nullptr;
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };

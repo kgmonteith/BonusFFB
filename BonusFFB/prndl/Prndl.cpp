@@ -302,7 +302,12 @@ bool Prndl::getShiftLockReleased() {
 }
 
 QPair<int, int> Prndl::getJoystickValues() {
-    joystick->updateState();
+    HRESULT hr = joystick->updateState();
+    if (hr != DI_OK) {
+        qDebug() << "updateState failed, reacquiring joystick. Return code " << unsigned long(hr);
+        joystick->reacquire();
+        slotGuard.start(joystick);
+    }
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     emit joystickLRValueChanged(joystickLRValue);
@@ -329,6 +334,7 @@ HRESULT Prndl::startGameLoop() {    // Acquire joystick
     if (FAILED(slotGuard.start(joystick))) {
         qDebug() << "Failed to start slotGuard effects";
     }
+    joystick->startEffects();
     return S_OK;
 }
 
