@@ -19,5 +19,4 @@ void BonusFFBApp::setPointers(Ui::BonusFFBClass* uiPtr, QList<DeviceInfo>* devic
     vjoy = vjoyPtr;
     telemetry = tPtr;
     hwnd = _hwnd;
-
 }

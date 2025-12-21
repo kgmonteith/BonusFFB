@@ -27,6 +27,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "DeviceInfo.h"
 #include "hshifter/HShifter.h"
 #include "prndl/Prndl.h"
+#include "handbrake/Handbrake.h"
 
 class BonusFFB : public QMainWindow
 {
@@ -50,6 +51,7 @@ public:
     BonusFFBApp* activeApp;
     HShifter hshifter;
     Prndl prndl;
+    Handbrake handbrake;
 
 public slots:
     void changeApp(int);

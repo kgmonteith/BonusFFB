@@ -79,7 +79,6 @@ void PrndlSlotGuard::updateSlotSpringCenter(long newCenter) {
 void PrndlSlotGuard::updateShiftLockEffectStrength(double strength) {
     long newStrength = (long)strength;
     if (lastShiftLockForce != newStrength) {
-        qDebug() << "Setting shift lock strength to " << shiftLockForce.lMagnitude;
         shiftLockForce.lMagnitude = newStrength;
         device->updateEffect("shiftLock");
         lastShiftLockForce = newStrength;

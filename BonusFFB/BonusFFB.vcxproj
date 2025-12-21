@@ -113,6 +113,7 @@
   <ItemGroup>
     <ClCompile Include="BonusFFBApp.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
+    <ClCompile Include="handbrake\Handbrake.cpp" />
     <ClCompile Include="hshifter\HShifter.cpp" />
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
@@ -146,6 +147,7 @@
     <QtMoc Include="prndl\Prndl.h" />
     <QtMoc Include="prndl\PrndlSlotGuard.h" />
     <QtMoc Include="prndl\PrndlStateManager.h" />
+    <QtMoc Include="handbrake\Handbrake.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>
