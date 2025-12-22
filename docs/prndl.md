@@ -1,6 +1,6 @@
 # PRNDL
 
-This mode simulates an automatic gear shift lever, also known as a "PRNDL" shifter. It includes optional effects for locking the shifter in park or neutral, a configurable number of slots, and park gear simulation for ATS/ETS2.
+This mode simulates an automatic gear shift lever, colloquially known as a "PRNDL" shifter. It includes optional effects for locking the shifter in park or neutral, a configurable number of slots, and park gear simulation for ATS/ETS2.
 
 ![PRNDL](images/prndl-screenshot.png) 
 
@@ -8,9 +8,9 @@ This mode simulates an automatic gear shift lever, also known as a "PRNDL" shift
 
 Simply move the joystick forward and back to select the desired gear position.
 
-* If a shift lock device is selected in the `Input/output settings` tab, the chosen button must be depressed in order to shift out of park. This simulates the shift lock trigger found on almost modern automatic vehicles to prevent accidentally shifting from park to reverse.
-    * Similarly, if the `Enable shift lock between Neutral and Reverse` option is enabled, the button must be depressed to shift from neutral to reverse, which is also found on most automatic transmissions.
-* ATS/ETS2 does not have a "park" gear. When ATS/ETS2 telemtry is enabled, "park" is simulated by enabling or disabling the parking brake and setting the gear to neutral. To enable this behavior, ensure the option is enabled in the `Other settings` tab.
+* If a shift lock device is selected in the `Input/output settings` tab, the chosen button must be depressed in order to shift out of park. This simulates the shift lock trigger found on all modern automatic vehicles to prevent accidentally shifting from park to reverse.
+    * Similarly, if the `Enable shift lock between Neutral and Reverse` option is enabled, the button must be depressed to shift from neutral to reverse.
+* ATS/ETS2 does not have a "park" gear. When ATS/ETS2 telemetry is enabled, "park" is simulated by enabling or disabling the parking brake and setting the gear to neutral. To enable this behavior, ensure the option is enabled in the `Other settings` tab.
     * Alternatively, the park gear can be disabled in the `Other settings` tab.
 
 ## Game configuration
@@ -36,7 +36,7 @@ Set these values in the "Keys and buttons" menu:
 
 ### Enable Park slot
 
-This option enables the park slot. ATS/ETS2 does not have a park gear, so if you're not using telemetry, it's recommended to disable this option.
+This option enables the park slot. ATS/ETS2 does not have a park gear, so if you're not using telemetry, you may want to disable this option.
 
 ### Enable Low slot
 
@@ -44,7 +44,7 @@ Similar to the above, if your game of choice does not have a low gear, this opti
 
 ### Simulate Park slot in ATS/ETS2 using parking brake telemetry
 
-ATS/ETS2 does not implement a park gear in the game. When this option is enabled, and ATS/ETS2 telemetry is active, the PRNDL mode will simulate a park gear by enabling the parking brake and setting the gear to neutral. Disable this option if this behavior is not desired.
+ATS/ETS2 does not implement a park gear in the game. When this option is enabled and ATS/ETS2 telemetry is active, the PRNDL mode will simulate a park gear by enabling the parking brake and setting the gear to neutral. Disable this option if this behavior is not desired.
 
 ### Enable shift lock between Neutral and Reverse
 

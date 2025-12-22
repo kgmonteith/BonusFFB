@@ -192,7 +192,8 @@ void PrndlStateManager::updateShiftLockEffect(long fbValue, bool shiftLockButton
         scaledEffectStrength = scaleRangeValue(fbValue, 500, 7500);
     }
     else if (engagedSlotState == PrndlSlot::NEUTRAL) {
-        scaledEffectStrength = scaleRangeValue(fbValue, 32250, 22250) * -1; // 24750
+        double nFBValue = getFBValueForSlot(PrndlSlot::NEUTRAL);
+        scaledEffectStrength = scaleRangeValue(fbValue, nFBValue - 500, nFBValue-10500) * -1; // 24750
     }
     if (shiftLockButtonState) {
         scaledEffectStrength = 0;

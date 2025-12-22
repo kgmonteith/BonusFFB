@@ -46,7 +46,7 @@ HRESULT DeviceInfo::startEffects() {
 }
 
 HRESULT DeviceInfo::updateEffect(QString effName) {
-    FFBEffect eff = effects[effName];
+    FFBEffect eff = effects.value(effName);
     HRESULT hr = DI_OK;
     if(eff.ldpieff != nullptr) 
     {

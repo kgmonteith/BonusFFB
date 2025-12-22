@@ -16,6 +16,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QFile>
 #include "Prndl.h"
 
+QString Prndl::getAppName() {
+    return "prndl";
+}
+
 void Prndl::initialize() {
     // Menu action connections
     QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &Prndl::saveSettings);

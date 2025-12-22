@@ -20,6 +20,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QFile>
 #include "HShifter.h"
 
+QString HShifter::getAppName() {
+    return "hshifter";
+}
+
 void HShifter::initialize() {
     // Menu action connections
     QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HShifter::saveSettings);
@@ -340,7 +344,7 @@ HRESULT HShifter::startGameLoop() {
     showAxisProgressBars();
 
     // Acquire joystick
-    qDebug() << "Acquiring joystick...";
+    qDebug() << "Acquiring joystick for hshifter...";
     HRESULT hr = joystick->acquire(&hwnd, true);
     if (FAILED(hr)) {
         QMessageBox::critical(nullptr, "Error", "Could not acquire exclusive use of FFB joystick. Please close other games or applications and try again.");

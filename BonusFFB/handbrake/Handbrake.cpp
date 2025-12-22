@@ -16,6 +16,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QFile>
 #include "Handbrake.h"
 
+
+QString Handbrake::getAppName() {
+    return "handbrake";
+}
+
 void Handbrake::initialize() {
     // Menu action connections
     QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &Handbrake::saveSettings);
@@ -187,7 +192,6 @@ QPair<int, int> Handbrake::getJoystickValues() {
     if (hr != DI_OK) {
         qDebug() << "updateState failed, reacquiring joystick. Return code " << unsigned long(hr);
         joystick->reacquire();
-        //slotGuard.start(joystick);
     }
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
@@ -205,12 +209,6 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
         return hr;
     };
 
-    // TODO: Initialize FFB
-    /*
-    if (FAILED(slotGuard.start(joystick))) {
-        qDebug() << "Failed to start slotGuard effects";
-    }*/
-
     keepCenteredSpringEff.dwSize = sizeof(DIEFFECT);
     keepCenteredSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     keepCenteredSpringEff.dwDuration = INFINITE;
@@ -223,11 +221,9 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     keepCenteredSpringEff.rglDirection = &FORWARDBACK[0];
     keepCenteredSpringEff.lpEnvelope = 0;
     keepCenteredSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    //keepCenteredSpringConditions[0] = keepLRCentered;
-   // keepCenteredSpringConditions[1] = noSpring;
     keepCenteredSpringEff.lpvTypeSpecificParams = &keepLRCentered;
     keepCenteredSpringEff.dwStartDelay = 0;
-    joystick->addEffect("keepCenteredSpring", { GUID_Spring, &keepCenteredSpringEff });
+    joystick->addEffect("handbrakeKeepCenteredSpring", { GUID_Spring, &keepCenteredSpringEff });
 
     handbrakeSpringEff.dwSize = sizeof(DIEFFECT);
     handbrakeSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -241,10 +237,9 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     handbrakeSpringEff.rglDirection = &FORWARDBACK[0];
     handbrakeSpringEff.lpEnvelope = 0;
     handbrakeSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    //keepCenteredSpringConditions[0] = keepLRCentered;
-   // keepCenteredSpringConditions[1] = noSpring;
     handbrakeSpringEff.lpvTypeSpecificParams = &handbrakeSpring;
     handbrakeSpringEff.dwStartDelay = 0;
+    qDebug() << "Adding handbrakeSpring effect...";
     joystick->addEffect("handbrakeSpring", { GUID_Spring, &handbrakeSpringEff });
 
     joystick->startEffects();

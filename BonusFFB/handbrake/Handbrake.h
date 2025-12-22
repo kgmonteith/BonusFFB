@@ -23,6 +23,7 @@ class Handbrake : public BonusFFBApp
 	Q_OBJECT;
 
 public:
+	QString getAppName();
 	void initialize();
 	void saveSettings();
 	void loadSettings();

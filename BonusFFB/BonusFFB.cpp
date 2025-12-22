@@ -84,7 +84,7 @@ BonusFFB::BonusFFB(QWidget *parent)
         app->setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
         app->initialize();
     }
-    activeApp = &hshifter;
+    changeApp(0);
 
     // Start telemetry receiver
     telemetry.startConnectTimer();
@@ -139,6 +139,7 @@ void BonusFFB::toggleGameLoop(bool newState) {
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
             button->setEnabled(false);
         }
+        qDebug() << "Active app: " << activeApp->getAppName();
         if (FAILED(activeApp->startGameLoop())) {
             emit toggleGameLoop(false);
             return;
