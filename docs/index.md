@@ -6,6 +6,7 @@ Bonus FFB is free, open-source software that simulates these devices using force
 
 * [H-pattern manual transmission shifters](hshifter.md)
 * ["PRNDL"-style automatic transmission shifters](prndl.md)
+* [Simple handbrakes](handbrake.md)
 * Got an idea? [Make a suggestion :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues)
 
 Follow the [Getting Started](getting-started.md) guide for complete installations instructions.
