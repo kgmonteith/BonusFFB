@@ -54,8 +54,7 @@ void HShifter::initialize() {
     QObject::connect(&stateManager, &HShifterStateManager::buttonZoneChanged, vjoy, &vJoyFeeder::updateButtons);
     QObject::connect(&stateManager, &HShifterStateManager::buttonZoneChanged, this, &HShifter::updateGearText);
     // FFB effect connections
-    QObject::connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &HShifterSlotGuard::updateSlotGuardEffects);
-    QObject::connect(this, &HShifter::pedalValuesChanged, &synchroGuard, &HShifterSynchroGuard::updatePedalEngagement);
+    QObject::connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &HShifterSlotGuard::updateSlotGuardState);
     QObject::connect(&stateManager, &HShifterStateManager::synchroStateChanged, &synchroGuard, &HShifterSynchroGuard::synchroStateChanged);
     QObject::connect(this, &HShifter::engineRPMChanged, &synchroGuard, &HShifterSynchroGuard::updateEngineRPM);
     QObject::connect(&stateManager, &HShifterStateManager::grindingStateChanged, &synchroGuard, &HShifterSynchroGuard::grindingStateChanged);
@@ -397,5 +396,7 @@ void HShifter::gameLoop() {
     }
 
     // Update state
+    slotGuard.updateSlotGuardEffects(joystickValues);
+    synchroGuard.updatePedalEngagement(pedalValues, joystickValues);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
 }

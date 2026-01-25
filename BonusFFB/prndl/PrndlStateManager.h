@@ -25,6 +25,9 @@ enum class PrndlSlot {
     LOW
 };
 
+const int SHIFT_LOCK_OFFSET_LOW = 1500;
+const int SHIFT_LOCK_OFFSET_HIGH = 7500;
+
 class PrndlStateManager: public QObject
 {
     Q_OBJECT;
@@ -56,13 +59,14 @@ private:
     void updateButtonZoneState(long, bool, bool);
     void updateSlotState(long, bool);
     void updateShiftLockEffect(long, bool);
-    double scaleRangeValue(long, long, long);
     double getFBValueForSlot(PrndlSlot);
 
     QList<PrndlSlot> enabledPrndlSlots;
 
     PrndlSlot buttonZoneSlot = PrndlSlot::NONE;
     PrndlSlot engagedSlotState = PrndlSlot::NONE;
+    PrndlSlot lastEngagedSlotState = PrndlSlot::NONE;
+    bool delay_shift_lock = false;
     TelemetrySource telemetryState = TelemetrySource::NONE;
 
     int buttonOffset = 8;

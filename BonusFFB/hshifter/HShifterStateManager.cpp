@@ -29,34 +29,37 @@ void HShifterStateManager::update(QPair<int, int> joystickValues, QPair<int, int
 void HShifterStateManager::updateSlotState(long lrValue, long fbValue) {
     SlotState newState = SlotState::UNKNOWN;
     bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
-    if (inNeutral && newState != SlotState::UNKNOWN) {
-        newState = SlotState::NEUTRAL_UNDER_SLOT;
-    }
-    else if (inNeutral) {
-        newState = SlotState::NEUTRAL;
-    } else if (lrValue <= JOY_MINPOINT + side_slot_width) {
+    if (lrValue <= JOY_MINPOINT + side_slot_width) {
         // In or under left channel
-        if (fbValue <= JOY_MIDPOINT)
+        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
             newState = SlotState::SLOT_LEFT_FWD;
-        else
+        else if(fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = SlotState::SLOT_LEFT_BACK;
+        else
+            newState = SlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= JOY_MIDPOINT - middle_slot_half_width && lrValue <= JOY_MIDPOINT + middle_slot_half_width)
     {
         // In or under center channel
-        if (fbValue <= JOY_MIDPOINT)
+        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
             newState = SlotState::SLOT_MIDDLE_FWD;
-        else
+        else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = SlotState::SLOT_MIDDLE_BACK;
+        else
+            newState = SlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= JOY_MAXPOINT - side_slot_width) {
         // In neutral under right channel
-        if (fbValue <= JOY_MIDPOINT)
+        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
             newState = SlotState::SLOT_RIGHT_FWD;
-        else
+        else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = SlotState::SLOT_RIGHT_BACK;
+        else
+            newState = SlotState::NEUTRAL_UNDER_SLOT;
+    } else if (inNeutral) {
+        newState = SlotState::NEUTRAL;
     }
-    if (newState != slotState && newState != SlotState::UNKNOWN) {
+    if (newState != SlotState::UNKNOWN) {
         slotState = newState;
         emit slotStateChanged(slotState);
     }
@@ -103,22 +106,17 @@ void HShifterStateManager::updateSynchroState(long lrValue, long fbValue, QPair<
         // We are out of sync completely and will need to reenter
         newState = SynchroState::ENTERING_SYNCH;
     }
-    if (newState != synchroState) {
-        synchroState = newState;
-        emit synchroStateChanged(synchroState);
-    }
+    synchroState = newState;
+    emit synchroStateChanged(synchroState, fbValue);
 }
 
 void HShifterStateManager::updateGrindingState(long lrValue, long fbValue) {
-    GrindingState newState = GrindingState::OFF;
-    if (grindingState == GrindingState::OFF && synchroState == SynchroState::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
+    grindingState = GrindingState::OFF;
+    if (synchroState == SynchroState::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
         if (fbValue < JOY_MIDPOINT)
-            newState = GrindingState::GRINDING_FWD;
+            grindingState = GrindingState::GRINDING_FWD;
         else
-            newState = GrindingState::GRINDING_BACK;
+            grindingState = GrindingState::GRINDING_BACK;
     }
-    if (newState != grindingState) {
-        grindingState = newState;
-        emit grindingStateChanged(grindingState);
-    }
+    emit grindingStateChanged(grindingState, fbValue);
 }

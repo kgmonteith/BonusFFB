@@ -25,9 +25,12 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #define JOY_MINPOINT 0
 #define JOY_MIDPOINT 32767
+#define JOY_QUARTERPOINT 16384
+#define JOY_THREEQUARTERPOINT 49152
 #define JOY_MAXPOINT 65535
 #define FFB_MIDPOINT 5000
 #define FFB_MAXPOINT 10000
+#define FFB_MAX 10000
 
 #define VJOY_PRODUCT_GUID 0xBEAD1234
 
@@ -38,8 +41,8 @@ struct FFBEffect
 {
     GUID guid;
     DIEFFECT* eff;
-    LPDIRECTINPUTEFFECT ldpieff = nullptr;
     DWORD flags = DIEP_TYPESPECIFICPARAMS;
+    LPDIRECTINPUTEFFECT ldpieff = nullptr;
 };
 
 class DeviceInfo
@@ -77,4 +80,6 @@ HRESULT initDirectInput(QList<DeviceInfo>*) noexcept;
 DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>*, QUuid);
 
 BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
-BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;\
+BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
+
+double scaleRangeValue(long, long, long);

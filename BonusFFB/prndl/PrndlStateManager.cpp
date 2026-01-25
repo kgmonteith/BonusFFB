@@ -181,36 +181,33 @@ void PrndlStateManager::updateSlotState(long fbValue, bool shiftLockButtonState)
             // Same, but for N to R
             return;
         }
+        else if (newSlot == PrndlSlot::REVERSE) {
+            delay_shift_lock = true;
+        }
+        lastEngagedSlotState = engagedSlotState;
         engagedSlotState = newSlot;
         emit slotSpringChanged((long)scaledFFBCenter);
     }
 }
 
 void PrndlStateManager::updateShiftLockEffect(long fbValue, bool shiftLockButtonState) {
-    double scaledEffectStrength;
+    double scaledEffectStrength = 0;
+    double nFBValue = getFBValueForSlot(PrndlSlot::NEUTRAL);
     if (engagedSlotState == PrndlSlot::PARK) {
-        scaledEffectStrength = scaleRangeValue(fbValue, 500, 7500);
+        scaledEffectStrength = FFB_MAX * scaleRangeValue(fbValue, SHIFT_LOCK_OFFSET_LOW, SHIFT_LOCK_OFFSET_HIGH);
     }
     else if (engagedSlotState == PrndlSlot::NEUTRAL) {
-        double nFBValue = getFBValueForSlot(PrndlSlot::NEUTRAL);
-        scaledEffectStrength = scaleRangeValue(fbValue, nFBValue - 500, nFBValue-10500) * -1; // 24750
+        scaledEffectStrength = FFB_MAX * scaleRangeValue(fbValue, nFBValue - SHIFT_LOCK_OFFSET_LOW, nFBValue - SHIFT_LOCK_OFFSET_HIGH) * -1;
     }
-    if (shiftLockButtonState) {
+    // Delay the shift lock effect if we just left reverse
+    // This will prevent the shift lock from bumping the lever past gears
+    if (delay_shift_lock && (fbValue <= SHIFT_LOCK_OFFSET_LOW || fbValue >= nFBValue - SHIFT_LOCK_OFFSET_LOW)) {
+        delay_shift_lock = false;
+    }
+    if (delay_shift_lock || shiftLockButtonState) {
         scaledEffectStrength = 0;
     }
     if (using_shift_lock && ((engagedSlotState == PrndlSlot::PARK) || (lock_shifts_from_neutral_to_reverse && engagedSlotState == PrndlSlot::NEUTRAL))) {
         emit updateShiftLockEffectStrength(scaledEffectStrength);
     }
-}
-
-double PrndlStateManager::scaleRangeValue(long value, long range_min_val, long rename_max_val) {
-    double range_size = rename_max_val - range_min_val;
-    double offset_value = value - range_min_val;
-    if (range_size == 0.0) {
-        return 0.0;
-    }
-    double percentage = (offset_value / range_size) * 10000.0;
-    if (percentage < 0.0) percentage = 0.0;
-    if (percentage > 10000.0) percentage = 10000.0;
-    return percentage;
 }

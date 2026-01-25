@@ -229,3 +229,15 @@ DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>* deviceList, QUuid guid) {
     qDebug() << "Device not found: " << guid;
     return nullptr;
 }
+
+double scaleRangeValue(long value, long range_min_val, long rename_max_val) {
+    double range_size = rename_max_val - range_min_val;
+    double offset_value = value - range_min_val;
+    if (range_size == 0.0) {
+        return 0.0;
+    }
+    double percentage = (offset_value / range_size);
+    if (percentage < 0.0) percentage = 0.0;
+    if (percentage > 1.0) percentage = 1.0;
+    return percentage;
+}

@@ -55,8 +55,8 @@ public slots:
 signals:
     void slotStateChanged(SlotState);
     void buttonZoneChanged(int);
-    void synchroStateChanged(SynchroState);
-    void grindingStateChanged(GrindingState);
+    void synchroStateChanged(SynchroState, int);
+    void grindingStateChanged(GrindingState, int);
 
 private:
     void updateSlotState(long, long);
@@ -81,10 +81,11 @@ private:
     int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
-    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.30;
+    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.65;
     int grind_point_depth = JOY_MIDPOINT * 0.65;
     */
-
+    
+    ///*
     int side_slot_width = 500;
     int middle_slot_half_width = 1200;
     int neutral_channel_half_width = 1400;
@@ -94,7 +95,9 @@ private:
     int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
-    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.55;
+    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.65;
     int grind_point_depth = JOY_MIDPOINT * 0.65;
+    //*/
+    
 };
 

@@ -15,6 +15,19 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "DeviceInfo.h"
 #include "HShifterStateManager.h"
 
+enum class QUADRANT {
+	NW,
+	SW,
+	NE,
+	SE
+};
+
+enum class NEUTRAL_SHAPE {
+	SQUARE,
+	ROUNDED,
+	ANGLED
+};
+
 class HShifterSlotGuard: public QObject {
 	Q_OBJECT
 
@@ -22,12 +35,24 @@ public:
 	HRESULT start(DeviceInfo*);
 
 public slots:
-	void updateSlotGuardEffects(SlotState);
+	void updateSlotGuardEffects(QPair<int, int>);
+	void updateSlotGuardState(SlotState);
+	void setNeutralSpringStrength(int);
 
 private:
 	DeviceInfo* device = nullptr;
+	SlotState slot_state = SlotState::NEUTRAL_UNDER_SLOT;
+	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
 	DIEFFECT slotSpringEff = {};
+	DIEFFECT neutralSpringEff = {};
+	long neutral_spring_strength = 1500;
+	//long neutral_spring_strength = 00;
+	DICONDITION neutralSpring = { 0, neutral_spring_strength, neutral_spring_strength };
+	DICONDITION neutralSpringConditions[2] = { neutralSpring, neutralSpring };
+
+	DICONDITION leftPushoutSpring = { -5000, 0, -5000 };
+	DICONDITION topPushoutSpring = { -5000, 0, -5000 };
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
@@ -36,4 +61,18 @@ private:
 	DICONDITION keepRight = { 10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 
 	DICONDITION springConditions[2] = { noSpring, noSpring };
+
+	DIEFFECT lrSlotPushEff = {};
+	DIEFFECT fbSlotPushEff = {};
+	DICONSTANTFORCE lrcf;
+	DICONSTANTFORCE fbcf;
+	DICONSTANTFORCE slotPush[2] = { lrcf, fbcf };
+
+	DIEFFECT safetyDamper = {};
+	DIEFFECT safetyFriction = {};
+	DICONDITION unsafe = { 0, 0, 0 };
+	DICONDITION safe = { 0, 10000, 10000 };
+	DICONDITION halfsafe = { 0, 4000, 4000 };
+	DICONDITION safe2d[2] = { safe, halfsafe };
+	DICONDITION unsafe2d[2] = { unsafe, unsafe };
 };

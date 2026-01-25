@@ -17,22 +17,6 @@ You should have received a copy of the GNU General Public License along with Bon
 HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     device = devPtr;
 
-    unsynchronizedSpringEff.dwSize = sizeof(DIEFFECT);
-    unsynchronizedSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    unsynchronizedSpringEff.dwDuration = INFINITE;
-    unsynchronizedSpringEff.dwSamplePeriod = 0;
-    unsynchronizedSpringEff.dwGain = DI_FFNOMINALMAX;
-    unsynchronizedSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
-    unsynchronizedSpringEff.dwTriggerRepeatInterval = 0;
-    unsynchronizedSpringEff.cAxes = 1;
-    unsynchronizedSpringEff.rgdwAxes = &AXES[1];
-    unsynchronizedSpringEff.rglDirection = &FORWARDBACK[1];
-    unsynchronizedSpringEff.lpEnvelope = 0;
-    unsynchronizedSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    unsynchronizedSpringEff.lpvTypeSpecificParams = &unsynchronizedSpring;
-    unsynchronizedSpringEff.dwStartDelay = 0;
-    device->addEffect("unsynchronizedSpring", { GUID_Spring, &unsynchronizedSpringEff });
-    
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     keepInGearSpringEff.dwDuration = INFINITE;
@@ -49,117 +33,140 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     keepInGearSpringEff.dwStartDelay = 0;
     device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
 
-    LONG rglDirection[2] = { 90 * DI_DEGREES, DI_DEGREES };
+    keepInGearEff.dwSize = sizeof(DIEFFECT);
+    keepInGearEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    keepInGearEff.dwDuration = INFINITE;
+    keepInGearEff.dwSamplePeriod = 0;
+    keepInGearEff.dwGain = DI_FFNOMINALMAX;
+    keepInGearEff.dwTriggerButton = DIEB_NOTRIGGER;
+    keepInGearEff.dwTriggerRepeatInterval = 0;
+    keepInGearEff.cAxes = 1;
+    keepInGearEff.rgdwAxes = &AXES[1];
+    keepInGearEff.rglDirection = &FORWARDBACK[1];
+    keepInGearEff.lpEnvelope = 0;
+    keepInGearEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
+    keepInGearEff.dwStartDelay = 0;
+    device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
+
     rumbleEff.dwSize = sizeof(DIEFFECT);
-    rumbleEff.dwFlags = DIEFF_POLAR | DIEFF_OBJECTOFFSETS;
+    rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     rumbleEff.dwDuration = INFINITE;
     rumbleEff.dwSamplePeriod = 0;
     rumbleEff.dwGain = DI_FFNOMINALMAX;
     rumbleEff.dwTriggerButton = DIEB_NOTRIGGER;
     rumbleEff.dwTriggerRepeatInterval = 0;
-    rumbleEff.cAxes = 2;
-    rumbleEff.rgdwAxes = AXES;
-    rumbleEff.rglDirection = rglDirection;
+    rumbleEff.cAxes = 1;
+    rumbleEff.rgdwAxes = &AXES[0];
+    rumbleEff.rglDirection = &FORWARDBACK[0];
     rumbleEff.lpEnvelope = 0;
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { GUID_Sine, &rumbleEff });
+    device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
-    return createEffects();
+    rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
+    rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    rumblePushbackEff.dwDuration = INFINITE;
+    rumblePushbackEff.dwSamplePeriod = 0;
+    rumblePushbackEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
+    rumblePushbackEff.dwTriggerButton = DIEB_NOTRIGGER;
+    rumblePushbackEff.dwTriggerRepeatInterval = 0;
+    rumblePushbackEff.cAxes = 1;
+    rumblePushbackEff.rgdwAxes = &AXES[1];
+    rumblePushbackEff.rglDirection = &FORWARDBACK[1];
+    rumblePushbackEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
+    rumblePushbackEff.dwStartDelay = 0;
+    device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
+    return DI_OK;
 }
 
-HRESULT HShifterSynchroGuard::createEffects() {
-    HRESULT hr = DI_OK;
-    return hr;
-}
-
-void HShifterSynchroGuard::updatePedalEngagement(int clutchValue, int throttleValue) {
-    clutchPercent = 1 - (double(clutchValue) / JOY_MAXPOINT);
-    throttlePercent = double(throttleValue) / JOY_MAXPOINT;
-    // Update kickout spring
-    if (synchroState == SynchroState::ENTERING_SYNCH) {
-        unsynchronizedSpring.lNegativeCoefficient = 10000 * clutchPercent;
-        device->updateEffect("unsynchronizedSpring");
-    }
-    else if (synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) {
-        if (throttleValue > 100) {
-            int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent * 3);
-            if (scaledCoeff > keepInGearSpringMaxCoefficient)
-                scaledCoeff = keepInGearSpringMaxCoefficient;
-            else if (scaledCoeff < keepInGearSpringIdleCoefficient)
-                scaledCoeff = keepInGearSpringIdleCoefficient;
-            keepInGearSpring.lNegativeCoefficient = scaledCoeff * clutchPercent * -1;
+void HShifterSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
+    clutchPercent = 1 - (double(pedalValues.first) / JOY_MAXPOINT);
+    throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
+    int fbValue = joystickValues.second;
+    // Update keep-in-gear spring
+    if ((synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH)) {
+        if (pedalValues.second > 100) {
+            int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent);
+            if (fbValue > JOY_MIDPOINT) {
+                scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000) * -1;
+            }
+            else {
+                scaledCoeff *= scaleRangeValue(fbValue, 0, 6000);
+            }
+            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent;
         }
         else {
-            keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1;
+            keepInGearForce.lMagnitude = 0;
         }
-        device->updateEffect("keepInGearSpring");
+        device->updateEffect("keepInGearEff");
     }
 }
 
 
-void HShifterSynchroGuard::synchroStateChanged(SynchroState newState) {
+void HShifterSynchroGuard::synchroStateChanged(SynchroState newState, int fbValue) {
     if (newState == SynchroState::IN_SYNCH) {
-        // Activate keep-in-gear spring, disable unsynch spring
-        unsynchronizedSpring.lNegativeCoefficient = 0;
-        device->updateEffect("unsynchronizedSpring");
+        // Activate keep-in-gear spring
+        float phaseOut = 1.0;
+        if (fbValue <= JOY_MIDPOINT) {
+            phaseOut = scaleRangeValue(fbValue, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
+        }
+        else {
+            phaseOut = scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
+        }
         keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1;
         device->updateEffect("keepInGearSpring");
     }
     else if (newState == SynchroState::ENTERING_SYNCH) {
-        // Deactivate keep-in-gear spring, enable unsynch spring
-        unsynchronizedSpring.lNegativeCoefficient = 10000 * clutchPercent;
-        device->updateEffect("unsynchronizedSpring");
+        // Deactivate keep-in-gear spring
         keepInGearSpring.lNegativeCoefficient = 0;
         device->updateEffect("keepInGearSpring");
     }
     synchroState = newState;
 }
 
-void HShifterSynchroGuard::grindingStateChanged(GrindingState newState) {
+void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbValue) {
     if (newState != GrindingState::OFF) {
         // Start rumbling
+        double effectScaling = scaleRangeValue(fbValue, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500) * -1;
+        if (newState == GrindingState::GRINDING_BACK) {
+            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500));
+        }
         rumble.dwPeriod = int(6e7 / computeGrindRPM());
-        rumble.dwMagnitude = grindingIntensity * clutchPercent;
-        
-        // Enable constant pushback
-        /*
-        unsynchronizedConstant.lMagnitude = 10000;
-        lpdiUnsynchronizedConstantEff->SetParameters(&unsynchronizedConstantEff, DIEP_TYPESPECIFICPARAMS);
-        */
+        rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
+        if (synchroState == SynchroState::ENTERING_SYNCH)
+        {
+            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent;
+            //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
+        }
     }
     else {
         // Stop rumbling
         rumble.dwMagnitude = 0;
-        // Disable constant pushback
-        /*
-        unsynchronizedConstant.lMagnitude = 0;
-        lpdiUnsynchronizedConstantEff->SetParameters(&unsynchronizedConstantEff, DIEP_TYPESPECIFICPARAMS);
-        */
+        rumblePushback.lMagnitude = 0;
     }
     device->updateEffect("rumble");
+    device->updateEffect("rumblePushback");
     grindingState = newState;
 }
 
 void HShifterSynchroGuard::updateEngineRPM(float newRPM) {
+    engineRPM = newRPM;
     if (grindingState != GrindingState::OFF) {
-        rumble.dwPeriod = int(6e7 / newRPM);
+        rumble.dwPeriod = int(6e7 / computeGrindRPM());
         device->updateEffect("rumble");
     }
-    engineRPM = newRPM;
 }
 
 float HShifterSynchroGuard::computeGrindRPM() {
-    if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM) {
-        //qDebug() << "GrindEffectBehavior MATCH_ENGINE_RPM " << engineRPM;
+    if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM && engineRPM) {
         return engineRPM;
     }
     else if (grindEffectBehavior == GrindEffectBehavior::ADD_ENGINE_RPM) {
-        //qDebug() << "GrindEffectBehavior ADD_ENGINE_RPM" << engineRPM + grindEffectRPM;
         return engineRPM + grindEffectRPM;
     }
-    //qDebug() << "GrindEffectBehavior OVERRIDE_ENGINE_RPM " << grindEffectRPM;
     return grindEffectRPM;
 }
 
@@ -168,6 +175,7 @@ void HShifterSynchroGuard::updateGrindEffectRPM(float newRPM) {
 }
 
 void HShifterSynchroGuard::setGrindEffectBehavior(int index) {
+    qDebug() << "New grind effect behavior: " << index;
     grindEffectBehavior = static_cast<GrindEffectBehavior>(index);
 }
 

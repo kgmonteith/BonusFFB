@@ -32,12 +32,11 @@ class HShifterSynchroGuard: public QObject
 
 public:
 	HRESULT start(DeviceInfo*);
-	HRESULT createEffects();
 
 public slots:
-	void updatePedalEngagement(int, int);
-	void synchroStateChanged(SynchroState);
-	void grindingStateChanged(GrindingState);
+	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
+	void synchroStateChanged(SynchroState, int);
+	void grindingStateChanged(GrindingState, int);
 	void updateEngineRPM(float);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
@@ -59,17 +58,16 @@ private:
 	float grindEffectRPM = 3000;
 	int grindingIntensity = 1500;
 
-	DIEFFECT unsynchronizedSpringEff = {};
-	LPDIRECTINPUTEFFECT lpdiUnsynchronizedSpringEff = nullptr;
-
 	DIEFFECT keepInGearSpringEff = {};
-
+	DIEFFECT keepInGearEff = {};
 	DIEFFECT rumbleEff = {};
+	DIEFFECT rumblePushbackEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
-	DICONDITION unsynchronizedSpring = { 0, 0, -10000, 0, 0, 1300 };
-	DICONDITION keepInGearSpring = { 0 , 0, keepInGearSpringIdleCoefficient };
-	DIPERIODIC rumble = { 0, 0, 0, DWORD(6e7 / engineRPM) };
+	DICONDITION keepInGearSpring = { 0 , 0, 0 };
+	DICONSTANTFORCE keepInGearForce = { 0 };
+	DIPERIODIC rumble = { 0, 0, 0, (DWORD)grindEffectRPM };
+	DICONSTANTFORCE rumblePushback = { 0 };
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;
