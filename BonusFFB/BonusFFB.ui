@@ -132,7 +132,7 @@
     <item row="1" column="1" rowspan="5">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -814,7 +814,7 @@
                     <number>0</number>
                    </property>
                    <property name="maximum">
-                    <number>8000</number>
+                    <number>10000</number>
                    </property>
                    <property name="singleStep">
                     <number>500</number>
@@ -842,7 +842,7 @@
                     <string/>
                    </property>
                    <property name="maximum">
-                    <number>8000</number>
+                    <number>10000</number>
                    </property>
                    <property name="singleStep">
                     <number>500</number>
@@ -925,7 +925,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="prndlTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">

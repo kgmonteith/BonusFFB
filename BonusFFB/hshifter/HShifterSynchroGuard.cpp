@@ -63,7 +63,7 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    device->addEffect("rumble", { GUID_Triangle, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -154,10 +154,6 @@ void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbVa
 
 void HShifterSynchroGuard::updateEngineRPM(float newRPM) {
     engineRPM = newRPM;
-    if (grindingState != GrindingState::OFF) {
-        rumble.dwPeriod = int(6e7 / computeGrindRPM());
-        device->updateEffect("rumble");
-    }
 }
 
 float HShifterSynchroGuard::computeGrindRPM() {
