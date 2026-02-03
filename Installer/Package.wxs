@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="Bonus FFB" Manufacturer="Ken Monteith" Version="2.1.2" UpgradeCode="ea04bc92-dde2-42ca-b2a4-ad303163fec3">
+  <Package Name="Bonus FFB" Manufacturer="Ken Monteith" Version="2.1.3" UpgradeCode="ea04bc92-dde2-42ca-b2a4-ad303163fec3">
     <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
 	<MediaTemplate EmbedCab="yes" />
