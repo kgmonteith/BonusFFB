@@ -26,7 +26,7 @@ Follow the [Getting Started](getting-started.md) guide for complete installation
 
 Required depedencies:
 
-* [vJoy v2.1.8 or newer](https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1)
+* [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0)
 
 Optional (but recommended) dependencies:
 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024-2025 Ken Monteith.
+Copyright (C) 2024-2026 Ken Monteith.
 
 This file is part of Bonus FFB.
 
@@ -56,6 +56,10 @@ bool vJoyFeeder::acquire() {
 	if (!AcquireVJD(deviceNum))
 		return false;
 	acquired = true;
+	qDebug() << "vJoy device acquired, version: " << GetvJoyVersion();
+	qDebug() << QString::fromStdWString(static_cast<TCHAR*> (GetvJoyManufacturerString()));
+	qDebug() << QString::fromStdWString(static_cast<TCHAR*> (GetvJoyProductString()));
+	qDebug() << QString::fromStdWString(static_cast<TCHAR*> (GetvJoySerialNumberString()));
 	return true;
 }
 
