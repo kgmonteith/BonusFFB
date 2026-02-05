@@ -5,7 +5,7 @@
 
 ## Install vJoy
 
-Install a recent version of [vJoy](https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1).
+Install [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0).
 
 Run the "Configure vJoy" application. Set up at least one virtual device with a minimum of 16 buttons, and click the "Enable vJoy" checkbox:
 
