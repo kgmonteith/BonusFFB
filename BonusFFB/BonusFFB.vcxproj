@@ -114,6 +114,10 @@
     <ClCompile Include="BonusFFBApp.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="handbrake\Handbrake.cpp" />
+    <ClCompile Include="heavytruck\HeavyTruck.cpp" />
+    <ClCompile Include="heavytruck\HeavyTruckSlotGuard.cpp" />
+    <ClCompile Include="heavytruck\HeavyTruckStateManager.cpp" />
+    <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp" />
     <ClCompile Include="hshifter\HShifter.cpp" />
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
@@ -128,6 +132,9 @@
     <QtMoc Include="BonusFFB.h" />
     <ClCompile Include="BonusFFB.cpp" />
     <ClCompile Include="main.cpp" />
+    <CopyFileToFolders Include="..\lib\vJoyInterface.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="BonusFFB.ico" />
     <ResourceCompile Include="BonusFFB.rc" />
   </ItemGroup>
@@ -148,6 +155,11 @@
     <QtMoc Include="prndl\PrndlSlotGuard.h" />
     <QtMoc Include="prndl\PrndlStateManager.h" />
     <QtMoc Include="handbrake\Handbrake.h" />
+    <QtMoc Include="heavytruck\HeavyTruck.h" />
+    <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h" />
+    <QtMoc Include="heavytruck\HeavyTruckStateManager.h" />
+    <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
+    <ClInclude Include="SharedEnums.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>

@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include "DeviceInfo.h"
-#include "HShifterStateManager.h"
+#include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
-class HShifterSlotGuard: public QObject {
+class HeavyTruckSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
@@ -24,20 +24,14 @@ public:
 
 public slots:
 	void updateSlotGuardEffects(QPair<int, int>);
-	void updateSlotGuardState(SlotState);
-	void setNeutralSpringStrength(int);
+	void updateSlotGuardState(HeavyTruckSlotState);
 
 private:
 	DeviceInfo* device = nullptr;
-	SlotState slot_state = SlotState::NEUTRAL_UNDER_SLOT;
+	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
 	DIEFFECT slotSpringEff = {};
-	DIEFFECT neutralSpringEff = {};
-	long neutral_spring_strength = 1500;
-	//long neutral_spring_strength = 00;
-	DICONDITION neutralSpring = { 0, neutral_spring_strength, neutral_spring_strength };
-	DICONDITION neutralSpringConditions[2] = { neutralSpring, neutralSpring };
 
 	DICONDITION leftPushoutSpring = { -5000, 0, -5000 };
 	DICONDITION topPushoutSpring = { -5000, 0, -5000 };

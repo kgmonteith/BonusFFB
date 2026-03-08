@@ -82,6 +82,7 @@ QPair<int, int> Telemetry::getGearState() {
 		slottedGear = pTelemMap->truck_ui.shifterSlot;
 		selectedGear = pTelemMap->truck_i.gear;
 	}
+	//qDebug() << "Shifter Type Value: " << (QString(pTelemMap->config_s.shifterType)); // values are "automatic", "hshifter", "manual" for sequential, "arcade" for simple automatic
 	return QPair<int, int>(slottedGear, selectedGear);
 }
 

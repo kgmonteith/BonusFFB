@@ -82,6 +82,18 @@
     <ClCompile Include="handbrake\Handbrake.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="heavytruck\HeavyTruck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heavytruck\HeavyTruckSlotGuard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heavytruck\HeavyTruckStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -117,6 +129,18 @@
     <QtMoc Include="handbrake\Handbrake.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="heavytruck\HeavyTruckStateManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="heavytruck\HeavyTruck.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="version.h">
@@ -134,5 +158,11 @@
     <ClInclude Include="DeviceInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SharedEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
   </ItemGroup>
 </Project>

@@ -15,10 +15,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include "DeviceInfo.h"
 #include "vJoyFeeder.h"
-#include "HShifterStateManager.h"
+#include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
-class HShifterSynchroGuard: public QObject
+class HeavyTruckSynchroGuard: public QObject
 {
 	Q_OBJECT
 
@@ -27,8 +27,8 @@ public:
 
 public slots:
 	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
-	void synchroStateChanged(SynchroState, int);
-	void grindingStateChanged(GrindingState, int);
+	void synchroStateChanged(HeavyTruckSynchroState, int);
+	void grindingStateChanged(HeavyTruckGrindingState, int);
 	void updateEngineRPM(float);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
@@ -40,8 +40,8 @@ private:
 
 	DeviceInfo* device = nullptr;
 
-	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
-	GrindingState grindingState = GrindingState::OFF;
+	HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::ENTERING_SYNCH;
+	HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;
 
 	int keepInGearSpringIdleCoefficient = 2200;

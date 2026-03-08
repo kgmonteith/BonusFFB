@@ -49,6 +49,21 @@ HRESULT HShifterSlotGuard::start(DeviceInfo* devPtr) {
     neutralSpringEff.lpvTypeSpecificParams = &neutralSpringConditions;
     neutralSpringEff.dwStartDelay = 0;
     device->addEffect("neutralSpring", { GUID_Spring, &neutralSpringEff });
+
+    fbSlotPushEff.dwSize = sizeof(fbSlotPushEff);
+    fbSlotPushEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    fbSlotPushEff.dwDuration = INFINITE;
+    fbSlotPushEff.dwSamplePeriod = 0;
+    fbSlotPushEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
+    fbSlotPushEff.dwTriggerButton = DIEB_NOTRIGGER;
+    fbSlotPushEff.dwTriggerRepeatInterval = 0;
+    fbSlotPushEff.cAxes = 1;
+    fbSlotPushEff.rgdwAxes = &AXES[1];
+    fbSlotPushEff.rglDirection = &FORWARDBACK[1];
+    fbSlotPushEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    fbSlotPushEff.lpvTypeSpecificParams = &fbcf;
+    fbSlotPushEff.dwStartDelay = 0;
+    device->addEffect("fbSlotPush", { GUID_ConstantForce, &fbSlotPushEff });
     return DI_OK;
 }
 /*
@@ -404,9 +419,22 @@ void HShifterSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
     } else if (slot_state == SlotState::NEUTRAL) {
         springConditions[0] = noSpring;
         springConditions[1] = keepFBCentered;
+        // Move the offset to increase force instead of adding a scaled constant force, which causes thrashing
+        int offset = ((double(joystickValues.second) / 3.2767) - 10000) * -1.3;
+        springConditions[1].lOffset = offset;
         springConditions[1].lDeadBand = 500;
     } else if (slot_state == SlotState::SLOT_LEFT_FWD || slot_state == SlotState::SLOT_LEFT_BACK) {
         springConditions[0] = keepLeft;
+        // Think of a smarter way to implement this, but scaling the spring seems like a decent way to implement slot angling/rounding
+        /*
+        if (slot_state == SlotState::SLOT_LEFT_BACK) {
+            int offset = (((double(joystickValues.second) / 3.2767) - 10000));
+            int scaledStrength = scaleRangeValue(offset, 0, 5000) * FFB_MAX;
+            qDebug() << "joystickValues.second: " << joystickValues.second;
+                qDebug() << scaledStrength;
+            springConditions[0].lPositiveCoefficient = scaledStrength;
+            springConditions[0].lNegativeCoefficient = scaledStrength;
+        }*/
         springConditions[1] = noSpring;
     } else if (slot_state == SlotState::SLOT_MIDDLE_FWD || slot_state == SlotState::SLOT_MIDDLE_BACK) {
         springConditions[0] = keepLRCentered;
@@ -422,16 +450,15 @@ void HShifterSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
 void HShifterSlotGuard::setNeutralSpringStrength(int fbValue) {
     int neutralSpringStrength = 0;
     if (fbValue <= JOY_MIDPOINT) {
-        neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, 5000, 10000);
-        //neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
+        neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, 2500, 7500);
     }
     else {
-        neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, JOY_MAXPOINT - 5000, JOY_MAXPOINT - 10000);
-        //neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
+        neutralSpringStrength = neutral_spring_strength * scaleRangeValue(fbValue, JOY_MAXPOINT - 2500, JOY_MAXPOINT - 7500);
     }
     neutralSpringConditions[0].lPositiveCoefficient = neutralSpringStrength;
     neutralSpringConditions[0].lNegativeCoefficient = neutralSpringStrength;
     neutralSpringConditions[1].lPositiveCoefficient = neutralSpringStrength;
     neutralSpringConditions[1].lNegativeCoefficient = neutralSpringStrength;
+    //qDebug() << "neutralSpringStrength: " << neutralSpringStrength;
     device->updateEffect("neutralSpring");
 }
