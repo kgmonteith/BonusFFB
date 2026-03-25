@@ -38,7 +38,6 @@ class BonusFFB : public QMainWindow
 public:
     BonusFFB(QWidget *parent = nullptr);
     ~BonusFFB();
-    void initializeGraphics();
     DeviceInfo* getDeviceFromGuid(QUuid);
 
     Ui::BonusFFBClass ui;

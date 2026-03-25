@@ -35,6 +35,9 @@ public:
 	QPair<int, int> getGearState();
 	float getEngineRPM();
 	bool getParkingBrakeState();
+	float getTransmissionRPMForGear(int);
+	int getActiveGear();
+	int getGearForSlot(int);
 
 signals:
 	void telemetryChanged(TelemetrySource);

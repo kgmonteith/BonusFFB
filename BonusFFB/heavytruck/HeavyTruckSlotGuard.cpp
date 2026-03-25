@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr) {
     device = devPtr;
+
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     slotSpringEff.dwDuration = INFINITE;
@@ -47,7 +48,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr) {
     fbSlotPushEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     fbSlotPushEff.lpvTypeSpecificParams = &fbcf;
     fbSlotPushEff.dwStartDelay = 0;
-    device->addEffect("fbSlotPush", { GUID_ConstantForce, &fbSlotPushEff });
+    //device->addEffect("fbSlotPush", { GUID_ConstantForce, &fbSlotPushEff });
     return DI_OK;
 }
 

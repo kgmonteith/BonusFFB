@@ -22,6 +22,12 @@ Telemetry::Telemetry() {
 	connect(timer, &QChronoTimer::timeout, this, &Telemetry::connectTelemetry);
 }
 
+
+void Telemetry::startConnectTimer()
+{
+	timer->start();
+}
+
 TelemetrySource Telemetry::isConnected() {
 	return telemetrySource;
 }
@@ -83,22 +89,88 @@ QPair<int, int> Telemetry::getGearState() {
 		selectedGear = pTelemMap->truck_i.gear;
 	}
 	//qDebug() << "Shifter Type Value: " << (QString(pTelemMap->config_s.shifterType)); // values are "automatic", "hshifter", "manual" for sequential, "arcade" for simple automatic
+	//qDebug() << "truck_b.shifterToggle[2]: " << pTelemMap->truck_b.shifterToggle[0] << pTelemMap->truck_b.shifterToggle[1];
 	return QPair<int, int>(slottedGear, selectedGear);
 }
 
 float Telemetry::getEngineRPM() {
-	float rpm = 0;
 	if (telemetrySource == TelemetrySource::SCS) {
-		rpm = pTelemMap->truck_f.engineRpm;
+		return pTelemMap->truck_f.engineRpm;
 	}
-	return rpm;
+	return 0;
 }
 
 bool Telemetry::getParkingBrakeState() {
-	return pTelemMap->truck_b.parkBrake;
+	if (telemetrySource == TelemetrySource::SCS) {
+		return pTelemMap->truck_b.parkBrake;
+	}
+	return false;
 }
 
-void Telemetry::startConnectTimer()
-{
-	timer->start();
+int Telemetry::getActiveGear() {
+	if (telemetrySource == TelemetrySource::SCS) {
+		return pTelemMap->truck_i.gear;
+	}
+	return 0;
+}
+
+int Telemetry::getGearForSlot(int slotNumber) {
+	if (!slotNumber)
+		return 0;
+	if (telemetrySource == TelemetrySource::SCS) {
+		int rangeAdder = 0;
+		if (pTelemMap->truck_b.shifterToggle[0]) {
+			rangeAdder = 1;
+		}
+		int splitterAdder = 0;
+		if (pTelemMap->truck_b.shifterToggle[1]) {
+			splitterAdder = 2;
+		}
+		int gearIndex = ((slotNumber + 1) * 4) + rangeAdder + splitterAdder;
+		int gear = pTelemMap->truck_i.hshifterResulting[gearIndex];
+		return gear;
+	}
+	return 0;
+}
+
+float Telemetry::getTransmissionRPMForGear(int gear) {
+	float rpm = 0.0;
+	if (telemetrySource != TelemetrySource::SCS) {
+		return 0.0;
+	}
+
+	// Get average powered wheel rotations per second
+	double wheelOmegaSum = 0.0;
+	double wheelRadiusSum = 0.0;
+	int poweredWheelCt = 0;
+	for (int i = 0; i < pTelemMap->config_ui.truckWheelCount; i++) {
+		if (!pTelemMap->config_b.truckWheelPowered[i]) {
+			continue;
+		}
+		wheelOmegaSum += pTelemMap->truck_f.truck_wheelVelocity[i];
+		wheelRadiusSum += pTelemMap->config_f.truckWheelRadius[i];
+		poweredWheelCt++;
+	}
+	float averageDrivenWheelAngularVelocity = float(wheelOmegaSum / poweredWheelCt);
+	float wheelRadius = float(wheelRadiusSum / poweredWheelCt);
+
+	// Get gear ratio for input gear
+	float gearRatio = 0.0;
+	if (gear > 0) {
+		gearRatio = pTelemMap->config_f.gearRatiosForward[gear-1];
+	}
+	else if (gear < 0) {
+		gearRatio = pTelemMap->config_f.gearRatiosReverse[std::abs(gear-1)];
+	}
+	else
+	{
+		// In neutral, not relevant
+		return 0.0;
+	}
+
+	// Unit definitions: https://kniffen.dev/TruckSim-Telemetry/documents/Units.html
+	// Wheel velocity is Hz (rotations per second)
+	// Engine RPM = Wheel RPM * transmission ratio (Hz) * 60 * differential ratio
+	float transmission_rpm = gearRatio * averageDrivenWheelAngularVelocity * 60 * pTelemMap->config_f.gearDifferential;
+	return transmission_rpm;
 }

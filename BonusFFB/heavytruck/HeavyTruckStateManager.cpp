@@ -14,6 +14,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include <QDebug>
 
+void HeavyTruckStateManager::start(Telemetry* t) {
+    telemetry = t;
+}
+
 void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
@@ -21,13 +25,13 @@ void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
 void HeavyTruckStateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
     long lrValue = joystickValues.first;
     long fbValue = joystickValues.second;
-    updateHeavyTruckSlotState(lrValue, fbValue);
+    updateSlotState(lrValue, fbValue);
     updateButtonZoneState(lrValue, fbValue);
     updateHeavyTruckSynchroState(lrValue, fbValue, gearValues);
     updateHeavyTruckGrindingState(lrValue, fbValue);
 }
 
-void HeavyTruckStateManager::updateHeavyTruckSlotState(long lrValue, long fbValue) {
+void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
     if (lrValue <= JOY_MINPOINT + side_slot_width) {
@@ -64,6 +68,31 @@ void HeavyTruckStateManager::updateHeavyTruckSlotState(long lrValue, long fbValu
         slotState = newState;
         emit slotStateChanged(slotState);
     }
+    updateTargetGear();
+}
+
+void HeavyTruckStateManager::updateTargetGear() {
+    int targetSlot = 0;
+    if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
+        targetSlot = 1;
+    else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
+        targetSlot = 3;
+    else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
+        targetSlot = 5;
+    else if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
+        targetSlot = 2;
+    else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
+        targetSlot = 4;
+    else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
+        targetSlot = 6;
+    int targetGear = telemetry->getGearForSlot(targetSlot);
+    
+    float engineRPM = telemetry->getEngineRPM();
+    float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
+
+    rpmDelta = engineRPM - transmissionRPM;
+    emit targetGearChanged(targetGear);
+    emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
 
 void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
@@ -112,12 +141,16 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
 }
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fbValue) {
-    grindingState = HeavyTruckGrindingState::OFF;
+    HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
     if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
         if (fbValue < JOY_MIDPOINT)
-            grindingState = HeavyTruckGrindingState::GRINDING_FWD;
+            newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else
-            grindingState = HeavyTruckGrindingState::GRINDING_BACK;
+            newGrindingState = HeavyTruckGrindingState::GRINDING_BACK;
     }
-    emit grindingStateChanged(grindingState, fbValue);
+    if (newGrindingState != grindingState)
+    {
+        grindingState = newGrindingState;
+        emit grindingStateChanged(grindingState, fbValue);
+    }
 }

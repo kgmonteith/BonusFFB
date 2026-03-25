@@ -27,28 +27,38 @@ public:
 
 public slots:
 	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
+	void setJoystickFBValue(long);
 	void synchroStateChanged(HeavyTruckSynchroState, int);
-	void grindingStateChanged(HeavyTruckGrindingState, int);
-	void updateEngineRPM(float);
+	void grindingStateChanged(HeavyTruckGrindingState);
+	void setGrindEffectShape(int);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
 	void setKeepInGearIdleIntensity(int);
-	void setGrindEffectBehavior(int);
+	void setRumbleRPM();
+	void setMaxRevMatchRPM(int);
 
 private:
-	float computeGrindRPM();
-
 	DeviceInfo* device = nullptr;
+	long fbValue = 0;
 
+	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
 	HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::ENTERING_SYNCH;
 	HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;
+	GUID grindEffectShape = GUID_Triangle;
 
 	int keepInGearSpringIdleCoefficient = 2200;
 	int keepInGearSpringMaxCoefficient = 10000;
 	float engineRPM = 0;
-	float grindEffectRPM = 3000;
+	float grindEffectRPM = 300;
 	int grindingIntensity = 1500;
+	int maxRevMatchRPM = 120;
+
+	QTimer* rumbleUpdateTimer;
+	long rumblePhase = 0;
+	long rumblePeriod = 10000;
+
+	int grindPushbackScalingRange = 5000;
 
 	DIEFFECT keepInGearSpringEff = {};
 	DIEFFECT keepInGearEff = {};
@@ -58,9 +68,10 @@ private:
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
 	DICONDITION keepInGearSpring = { 0 , 0, 0 };
 	DICONSTANTFORCE keepInGearForce = { 0 };
-	DIPERIODIC rumble = { 0, 0, 0, (DWORD)grindEffectRPM };
+	DIPERIODIC rumble = { 0, 0, 0, 10000 };
 	DICONSTANTFORCE rumblePushback = { 0 };
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;
+
 };

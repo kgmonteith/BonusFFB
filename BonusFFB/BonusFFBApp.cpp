@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "BonusFFBApp.h"
 
+bool g_joystick_warned = false;
+
 void BonusFFBApp::setPointers(Ui::BonusFFBClass* uiPtr, QList<DeviceInfo>* deviceListPtr, vJoyFeeder* vjoyPtr, Telemetry* tPtr,  HWND _hwnd) {
     ui = uiPtr;
     deviceList = deviceListPtr;

@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
     device = devPtr;
+    rumbleUpdateTimer = new QTimer();
+    rumbleUpdateTimer->setInterval(20);
 
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -63,7 +65,10 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { GUID_Triangle, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    //device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    //device->addEffect("rumble", { GUID_Square, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    //device->addEffect("rumble", { GUID_SawtoothUp, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -79,7 +84,24 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
     device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
+
+    QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HeavyTruckSynchroGuard::setRumbleRPM);
     return DI_OK;
+}
+
+void HeavyTruckSynchroGuard::setGrindEffectShape(int index) {
+    if (index == 0) {
+        grindEffectShape = GUID_Triangle;
+    }
+    else if (index == 1) {
+        grindEffectShape = GUID_Sine;
+    }
+    else if (index == 2) {
+        grindEffectShape = GUID_SawtoothUp;
+    }
+    else {
+        grindEffectShape = GUID_Square;
+    }
 }
 
 void HeavyTruckSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
@@ -89,7 +111,7 @@ void HeavyTruckSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, 
     // Update keep-in-gear spring
     if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
         if (pedalValues.second > 100) {
-            int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent);
+            int scaledCoeff = keepInGearSpringMaxCoefficient * throttlePercent;
             if (fbValue > JOY_MIDPOINT) {
                 scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000) * -1;
             }
@@ -127,52 +149,72 @@ void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState
     synchroState = newState;
 }
 
-void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newState, int fbValue) {
-    if (newState != HeavyTruckGrindingState::OFF) {
+void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newState) {
+    grindingState = newState;
+    if (grindingState != HeavyTruckGrindingState::OFF) {
         // Start rumbling
-        double effectScaling = scaleRangeValue(fbValue, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500) * -1;
-        if (newState == HeavyTruckGrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500));
-        }
-        rumble.dwPeriod = int(6e7 / computeGrindRPM());
-        rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
-        if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
-        {
-            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent;
-            //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
-        }
+        setRumbleRPM();
+        rumbleUpdateTimer->start();
     }
     else {
         // Stop rumbling
+        rumbleUpdateTimer->stop();
         rumble.dwMagnitude = 0;
+        rumble.dwPhase = 0;
         rumblePushback.lMagnitude = 0;
+        device->updateEffect("rumble");
+        device->updateEffect("rumblePushback");
     }
-    device->updateEffect("rumble");
-    device->updateEffect("rumblePushback");
-    grindingState = newState;
 }
 
-void HeavyTruckSynchroGuard::updateEngineRPM(float newRPM) {
-    engineRPM = newRPM;
-}
-
-float HeavyTruckSynchroGuard::computeGrindRPM() {
-    if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM && engineRPM) {
-        return engineRPM;
+void HeavyTruckSynchroGuard::setRumbleRPM() {
+    double effectScaling = scaleRangeValue(fbValue, grind_point_depth, grind_point_depth - grindPushbackScalingRange * 0.4) * -1;
+    if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
+        effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange * 0.4));
     }
-    else if (grindEffectBehavior == GrindEffectBehavior::ADD_ENGINE_RPM) {
-        return engineRPM + grindEffectRPM;
+    DWORD rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling);
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
+    {
+        effectScaling = scaleRangeValue(fbValue, grind_point_depth, grind_point_depth - grindPushbackScalingRange) * -1;
+        if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
+            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange));
+        }
+        double revMatchScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
+        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchScaling;
+        //qDebug() << "revMatchScaling: " << revMatchScaling << ", rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
+        device->updateEffect("rumblePushback");
     }
-    return grindEffectRPM;
+    // I need anyone who finds this whole period/phase manipulation stuff to know that
+    // I hate it, but there's something fucky going on with the AB9 when you update
+    // periodic effects too frequently or by too much. It also resets the phase on a
+    // period change, sigh.
+    DWORD period = 6e7 / std::abs(grindEffectRPM);
+    period -= period % 10000;
+    if (period > 300000) {
+        period -= period % 100000;
+    }
+    if (period > 1000000) {
+        period -= period % 1000000;
+    }
+    if (period > 10000000) {
+        period = 10000000;
+    }
+    if (rumble.dwPeriod != 0)
+        rumblePhase += 720000000 / rumble.dwPeriod;
+    if (rumblePhase >= 36000)
+        rumblePhase = rumblePhase % 36000;
+    if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
+    {
+        //qDebug() << "rumble.dwPeriod: " << rumble.dwPeriod << "grindEffectRPM: " << grindEffectRPM << ", rumble.dwPhase: " << rumble.dwPhase << "rumblePhase: " << rumblePhase;
+        rumble.dwPeriod = period;
+        rumble.dwPhase = (DWORD)rumblePhase;
+        rumble.dwMagnitude = rumbleMag;
+        device->updateEffect("rumble");
+    }
 }
 
 void HeavyTruckSynchroGuard::updateGrindEffectRPM(float newRPM) {
     grindEffectRPM = newRPM;
-}
-
-void HeavyTruckSynchroGuard::setGrindEffectBehavior(int index) {
-    qDebug() << "New grind effect behavior: " << index;
-    grindEffectBehavior = static_cast<GrindEffectBehavior>(index);
 }
 
 void HeavyTruckSynchroGuard::setGrindEffectIntensity(int value) {
@@ -181,4 +223,12 @@ void HeavyTruckSynchroGuard::setGrindEffectIntensity(int value) {
 
 void HeavyTruckSynchroGuard::setKeepInGearIdleIntensity(int value) {
     keepInGearSpringIdleCoefficient = value * 100;
+}
+
+void HeavyTruckSynchroGuard::setJoystickFBValue(long value) {
+    fbValue = value;
+}
+
+void HeavyTruckSynchroGuard::setMaxRevMatchRPM(int value) {
+    maxRevMatchRPM = value;
 }

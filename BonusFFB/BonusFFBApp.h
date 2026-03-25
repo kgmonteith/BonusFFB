@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #define SLOT_WIDTH_PX 5.0
 #define JOYSTICK_MARKER_DIAMETER_PX 21.0
 
-static bool g_joystick_warned = false;
+extern bool g_joystick_warned;
 
 class BonusFFBApp :
     public QObject

@@ -216,7 +216,7 @@ shifter</string>
            <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="monitorTab">
            <attribute name="title">
@@ -985,90 +985,16 @@ shifter</string>
       </widget>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
-        <item row="0" column="0">
+        <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_8">
            <attribute name="title">
             <string>Monitor</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_22">
-            <item row="0" column="0" rowspan="2">
-             <widget class="QGroupBox" name="groupBox_14">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Clutch</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_19">
-               <item row="0" column="0">
-                <widget class="QProgressBar" name="heavytruck_clutchProgressBar">
-                 <property name="minimumSize">
-                  <size>
-                   <width>50</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <number>65535</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="textVisible">
-                  <bool>false</bool>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="0" column="1" rowspan="2">
-             <widget class="QGroupBox" name="groupBox_13">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Throttle</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_17">
-               <item row="0" column="0">
-                <widget class="QProgressBar" name="heavytruck_throttleProgressBar">
-                 <property name="minimumSize">
-                  <size>
-                   <width>50</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <number>65535</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="textVisible">
-                  <bool>false</bool>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_20">
             <item row="0" column="2" rowspan="2">
              <widget class="QGroupBox" name="shifterMapGroupBox_4">
               <property name="sizePolicy">
@@ -1152,23 +1078,34 @@ shifter</string>
             </item>
             <item row="1" column="3">
              <widget class="QGroupBox" name="groupBox_16">
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-               </font>
-              </property>
               <property name="title">
-               <string>Range toggle</string>
+               <string>Rev matching</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_25">
-               <item>
-                <widget class="QLabel" name="heavytruck_rangeToggleMonitorLabel">
+              <layout class="QGridLayout" name="gridLayout_22">
+               <item row="1" column="0">
+                <widget class="QLabel" name="heavytruck_rpmDeltaLabel">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>13</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>RPM delta</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="heavytruck_revMatchIndicatorLabel">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
@@ -1178,16 +1115,90 @@ shifter</string>
                  <property name="font">
                   <font>
                    <family>Bahnschrift</family>
-                   <pointsize>72</pointsize>
+                   <pointsize>48</pointsize>
                    <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
-                  <string>?</string>
+                  <string>🔴</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="1" rowspan="2">
+             <widget class="QGroupBox" name="groupBox_13">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Throttle</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_17">
+               <item row="0" column="0">
+                <widget class="QProgressBar" name="heavytruck_throttleProgressBar">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>65535</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0" rowspan="2">
+             <widget class="QGroupBox" name="groupBox_14">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Clutch</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_19">
+               <item row="0" column="0">
+                <widget class="QProgressBar" name="heavytruck_clutchProgressBar">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>65535</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
@@ -1550,213 +1561,6 @@ shifter</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="pedalsGroupBox_4">
-              <property name="title">
-               <string/>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_20">
-               <item row="0" column="0">
-                <widget class="QLabel" name="cluckDeviceLabel_4">
-                 <property name="minimumSize">
-                  <size>
-                   <width>99</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Shift knob device</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="heavytruck_shiftKnobDeviceComboBox">
-                 <property name="font">
-                  <font>
-                   <family>Segoe UI</family>
-                   <pointsize>9</pointsize>
-                  </font>
-                 </property>
-                 <property name="placeholderText">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="clutchAxisLabel_4">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Range toggle</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_39">
-                 <item>
-                  <widget class="QComboBox" name="heavytruck_rangeToggleComboBox">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>120</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>120</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="placeholderText">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="heavytruck_invertRangeToggleBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string>Invert switch</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_10">
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Policy::Expanding</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="clutchAxisLabel_5">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Splitter toggle</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_41">
-                 <item>
-                  <widget class="QComboBox" name="heavytruck_splitterToggleComboBox">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>120</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>120</width>
-                     <height>16777215</height>
-                    </size>
-                   </property>
-                   <property name="toolTip">
-                    <string/>
-                   </property>
-                   <property name="placeholderText">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="heavytruck_invertSplitterToggleBox">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="text">
-                    <string>Invert switch</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_12">
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Policy::Expanding</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
              <widget class="QGroupBox" name="vjoyGroupBox_3">
               <property name="title">
                <string/>
@@ -1846,7 +1650,7 @@ shifter</string>
                  <item>
                   <widget class="QLabel" name="label_27">
                    <property name="text">
-                    <string>Grind effect behavior</string>
+                    <string>Grind effect shape</string>
                    </property>
                   </widget>
                  </item>
@@ -1863,36 +1667,30 @@ shifter</string>
                 </layout>
                </item>
                <item row="1" column="1">
-                <widget class="QComboBox" name="heavytruck_grindEffectBehaviorComboBox">
+                <widget class="QComboBox" name="heavytruck_grindEffectShapeComboBox">
                  <item>
                   <property name="text">
-                   <string>Match telemetry RPM</string>
+                   <string>Triangle</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Add to telemetry RPM</string>
+                   <string>Sine wave</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Override telemetry RPM</string>
+                   <string>Sawtooth</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Square wave</string>
                   </property>
                  </item>
                 </widget>
                </item>
                <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_35">
-                 <item>
-                  <widget class="QLabel" name="label_29">
-                   <property name="text">
-                    <string>Grind effect RPM</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="3" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_37">
                  <item>
                   <widget class="QLabel" name="label_30">
@@ -1913,7 +1711,7 @@ shifter</string>
                  </item>
                 </layout>
                </item>
-               <item row="3" column="1">
+               <item row="2" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_38">
                  <item>
                   <widget class="QSlider" name="heavytruck_keepInGearIdleSlider">
@@ -1949,24 +1747,40 @@ shifter</string>
                  </item>
                 </layout>
                </item>
-               <item row="2" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_36">
+               <item row="3" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_41">
                  <item>
-                  <widget class="QSlider" name="heavytruck_grindRPMSlider">
+                  <widget class="QLabel" name="label_34">
+                   <property name="text">
+                    <string>Max rev-matched RPM
+for float shift</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_35">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/hshifter/#idle-in-gear-lock-intensity&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_42">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_maxRevMatchRPMSlider">
                    <property name="minimum">
-                    <number>0</number>
+                    <number>30</number>
                    </property>
                    <property name="maximum">
-                    <number>10000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>500</number>
-                   </property>
-                   <property name="pageStep">
-                    <number>500</number>
+                    <number>300</number>
                    </property>
                    <property name="value">
-                    <number>3000</number>
+                    <number>120</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -1975,23 +1789,23 @@ shifter</string>
                     <enum>QSlider::TickPosition::TicksBelow</enum>
                    </property>
                    <property name="tickInterval">
-                    <number>500</number>
+                    <number>10</number>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_grindRPMSpinBox">
+                  <widget class="QSpinBox" name="heavytruck_maxRevMatchRPMSpinbox">
                    <property name="suffix">
                     <string/>
                    </property>
-                   <property name="maximum">
-                    <number>10000</number>
+                   <property name="minimum">
+                    <number>30</number>
                    </property>
-                   <property name="singleStep">
-                    <number>500</number>
+                   <property name="maximum">
+                    <number>300</number>
                    </property>
                    <property name="value">
-                    <number>3000</number>
+                    <number>120</number>
                    </property>
                   </widget>
                  </item>
@@ -2011,7 +1825,7 @@ shifter</string>
         <item row="0" column="0">
          <widget class="QTabWidget" name="prndlTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
@@ -3151,6 +2965,38 @@ shifter</string>
     <hint type="destinationlabel">
      <x>556</x>
      <y>201</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_maxRevMatchRPMSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_maxRevMatchRPMSpinbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>561</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>846</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_maxRevMatchRPMSpinbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_maxRevMatchRPMSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>846</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>561</x>
+     <y>301</y>
     </hint>
    </hints>
   </connection>

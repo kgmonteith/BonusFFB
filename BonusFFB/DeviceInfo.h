@@ -82,4 +82,4 @@ DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>*, QUuid);
 BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
 BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
 
-double scaleRangeValue(long, long, long);
+double scaleRangeValue(double, double, double);

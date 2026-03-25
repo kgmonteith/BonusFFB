@@ -44,14 +44,9 @@ public:
 	QUuid clutchAxisGuid;
 	QUuid throttleAxisGuid;
 
-	DeviceInfo* shiftKnobDevice = nullptr;
-	QUuid rangeToggleGuid;
-	QUuid splitterToggleGuid;
-
 public slots:
 	void changeJoystickDevice(int);
 	void changePedalsDevice(int);
-	void changeShiftKnobDevice(int);
 	void changeJoystickLRAxis(int);
 	void changeJoystickFBAxis(int);
 	void changeClutchAxis(int);
@@ -60,6 +55,7 @@ public slots:
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
+	void updateRpmDeltaText(float);
 	void showAxisProgressBars();
 	void hideAxisProgressBars();
 
@@ -71,7 +67,6 @@ signals:
 	void throttleValueChanged(int);
 	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
-	void engineRPMChanged(float);
 	void resetClutchAxes();
 
 protected:
