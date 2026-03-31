@@ -20,7 +20,7 @@ class HeavyTruckSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*);
+	HRESULT start(DeviceInfo*, SlotParameters*);
 
 public slots:
 	void updateSlotGuardEffects(QPair<int, int>);
@@ -28,8 +28,10 @@ public slots:
 
 private:
 	DeviceInfo* device = nullptr;
+	SlotParameters* slot = nullptr;
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
+
 
 	DIEFFECT slotSpringEff = {};
 

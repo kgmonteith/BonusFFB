@@ -14,8 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include <QDebug>
 
-void HeavyTruckStateManager::start(Telemetry* t) {
+void HeavyTruckStateManager::start(Telemetry* t, SlotParameters * sPtr) {
     telemetry = t;
+    slot = sPtr;
 }
 
 void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
@@ -43,7 +44,7 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
         else
             newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
     }
-    else if (lrValue >= JOY_MIDPOINT - middle_slot_half_width && lrValue <= JOY_MIDPOINT + middle_slot_half_width)
+    else if (lrValue >= slot->asJoystickValue(1) - middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + middle_slot_half_width)
     {
         // In or under center channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
@@ -53,7 +54,7 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
         else
             newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
     }
-    else if (lrValue >= JOY_MAXPOINT - side_slot_width) {
+    else if (lrValue >= slot->asJoystickValue(2) - side_slot_width) {
         // In neutral under right channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_FWD;
@@ -97,7 +98,7 @@ void HeavyTruckStateManager::updateTargetGear() {
 
 void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
-    if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
+    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
@@ -105,7 +106,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (fbValue >= JOY_MAXPOINT - button_zone_depth || (fbValue >= JOY_MAXPOINT - button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
+    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= JOY_MAXPOINT - button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
@@ -124,9 +125,10 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
     if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second != 0) {
         // Gears are synchronized from telemetry reading
         newState = HeavyTruckSynchroState::IN_SYNCH;
-    } else if (fbValue <= in_synch_depth || fbValue >= JOY_MAXPOINT - in_synch_depth) {
+    /* } else if (fbValue <= in_synch_depth || fbValue >= JOY_MAXPOINT - in_synch_depth) {
         // Gears are synchronized
         newState = HeavyTruckSynchroState::IN_SYNCH;
+        */
     }
     else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && (fbValue <= finished_exiting_synch_depth || fbValue >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
         // Gears were synched, but now we are exiting sync on our way back to neutral

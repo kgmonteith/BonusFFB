@@ -22,3 +22,38 @@ enum class GrindEffectBehavior {
 	ADD_ENGINE_RPM,
 	OVERRIDE_ENGINE_RPM
 };
+
+class SlotParameters {
+public:
+	unsigned int slot_count = 3;
+	double pos_pct[4] = { 0, 0.5, 1.0, -1 };
+	double depth = 1.0; // HALF the absolute front-to-back range of the slot
+
+	double asFFBOffset(unsigned int slot_num) {  // -10000 to 10000
+		return (20000 * pos_pct[slot_num]) - 10000;
+	}
+
+	double asJoystickValue(unsigned int slot_num) { // 0 to 65535
+		return (JOY_MAXPOINT * pos_pct[slot_num]);
+	}
+
+	double depthAsFFBOffsetFwd() {
+		return depth * FFB_MINPOINT;
+	}
+
+	double depthAsFFBOffsetBack() {
+		return depth * FFB_MAXPOINT;
+	}
+
+	double depthAsJoystick() {
+		return depth * JOY_MIDPOINT;
+	}
+
+	double depthAsJoystickValueFwd() {
+		return JOY_MIDPOINT  - (depth * JOY_MIDPOINT);
+	}
+
+	double depthAsJoystickValueBack() {
+		return JOY_MIDPOINT + (depth * JOY_MIDPOINT);
+	}
+};

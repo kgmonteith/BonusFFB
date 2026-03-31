@@ -258,8 +258,8 @@ DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>* deviceList, QUuid guid) {
     return nullptr;
 }
 
-double scaleRangeValue(double value, double range_min_val, double rename_max_val) {
-    double range_size = rename_max_val - range_min_val;
+double scaleRangeValue(double value, double range_min_val, double range_max_val) {
+    double range_size = range_max_val - range_min_val;
     double offset_value = value - range_min_val;
     if (range_size == 0.0) {
         return 0.0;
@@ -268,6 +268,10 @@ double scaleRangeValue(double value, double range_min_val, double rename_max_val
     if (percentage < 0.0) percentage = 0.0;
     if (percentage > 1.0) percentage = 1.0;
     return percentage;
+}
+
+int joystickPositionToFFBOffset(int joystickValue) {
+    return ((double(joystickValue) / 3.2767) - 10000);
 }
 
 

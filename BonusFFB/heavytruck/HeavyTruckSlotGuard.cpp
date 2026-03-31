@@ -14,8 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr) {
+HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     device = devPtr;
+    slot = sPtr;
 
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -56,7 +57,6 @@ void HeavyTruckSlotGuard::updateSlotGuardState(HeavyTruckSlotState state) {
     slot_state = state;
 }
 
-
 void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
     if (slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
         // Disable the effect to prevent thrashing
@@ -68,28 +68,39 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
         springConditions[0] = noSpring;
         springConditions[1] = keepFBCentered;
         // Move the offset to increase force instead of adding a scaled constant force, which causes thrashing
-        int offset = ((double(joystickValues.second) / 3.2767) - 10000) * -1.3;
+        int offset = joystickPositionToFFBOffset(joystickValues.second) * -2;
         springConditions[1].lOffset = offset;
         springConditions[1].lDeadBand = 500;
     } else if (slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK) {
         springConditions[0] = keepLeft;
-        // Think of a smarter way to implement this, but scaling the spring seems like a decent way to implement slot angling/rounding
-        /*
-        if (slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK) {
-            int offset = (((double(joystickValues.second) / 3.2767) - 10000));
-            int scaledStrength = scaleRangeValue(offset, 0, 5000) * FFB_MAX;
-            qDebug() << "joystickValues.second: " << joystickValues.second;
-                qDebug() << scaledStrength;
-            springConditions[0].lPositiveCoefficient = scaledStrength;
-            springConditions[0].lNegativeCoefficient = scaledStrength;
-        }*/
         springConditions[1] = noSpring;
     } else if (slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK) {
         springConditions[0] = keepLRCentered;
+        springConditions[0].lOffset = slot->asFFBOffset(1);
         springConditions[1] = noSpring;
     } else if (slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) {
-        springConditions[0] = keepRight;
+        springConditions[0] = keepLRCentered;
+        springConditions[0].lOffset = slot->asFFBOffset(2);
         springConditions[1] = noSpring;
+    }
+    
+    // Prevent the stick from being pushed too far forward or back when the slot depth is less than 100%
+    if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD) && joystickValues.second <= JOY_MIDPOINT - slot->depthAsJoystick()) {
+        springConditions[1] = keepFBCentered;
+        int offset = slot->depthAsFFBOffsetFwd() + (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetFwd()) * 2.5);
+        springConditions[1].lOffset = offset;
+    }
+    else if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) && joystickValues.second >= JOY_MIDPOINT + slot->depthAsJoystick()) {
+        springConditions[1] = keepFBCentered;
+        int offset = slot->depthAsFFBOffsetBack() - (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetBack()) * 2.5);
+        springConditions[1].lOffset = offset;
+    }
+    // Prevent the stick from being pushed too far right at any point
+    if ((slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) && joystickValues.first > slot->asJoystickValue(2)) {
+        springConditions[0] = keepLRCentered;
+        springConditions[0].lOffset = slot->asFFBOffset(2);
+        //int offset = (FFB_MIDPOINT + 7500) + ((joystickValueToFFBValue(joystickValues.first) - 7500) * -1.5);
+        //springConditions[0].lOffset = offset;
     }
     device->updateEffect("slotSpring");
 }

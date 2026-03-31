@@ -14,8 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
+HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     device = devPtr;
+    slot = sPtr;
     rumbleUpdateTimer = new QTimer();
     rumbleUpdateTimer->setInterval(20);
 
@@ -49,7 +50,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
     keepInGearEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
     keepInGearEff.dwStartDelay = 0;
-    device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
+    //device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
 
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -65,8 +66,8 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr) {
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    //device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
     device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    //device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
     //device->addEffect("rumble", { GUID_Square, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
     //device->addEffect("rumble", { GUID_SawtoothUp, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
@@ -110,27 +111,47 @@ void HeavyTruckSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, 
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
     if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
-        if (pedalValues.second > 100) {
-            int scaledCoeff = keepInGearSpringMaxCoefficient * throttlePercent;
-            if (fbValue > JOY_MIDPOINT) {
-                scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000) * -1;
+        if (throttlePercent > .01) {
+            double pedalScaling = scaleRangeValue(throttlePercent, 0.01, 0.3);
+            if (fbValue < JOY_MIDPOINT && fbValue > slot->depthAsJoystickValueFwd()) {
+                keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * 3);
+                keepInGearSpring.lNegativeCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * pedalScaling;
+                keepInGearSpring.lPositiveCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * pedalScaling;
+            }
+            else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
+                keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * 3);
+                keepInGearSpring.lNegativeCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * pedalScaling;
+                keepInGearSpring.lPositiveCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * pedalScaling;
             }
             else {
-                scaledCoeff *= scaleRangeValue(fbValue, 0, 6000);
+                keepInGearSpring.lNegativeCoefficient = 0;
+                keepInGearSpring.lPositiveCoefficient = 0;
             }
-            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent;
+            //qDebug() << "keepInGearSpring.lOffset: " << keepInGearSpring.lOffset << ", keepInGearSpring.lPositiveCoefficient: " << keepInGearSpring.lPositiveCoefficient;
         }
         else {
-            keepInGearForce.lMagnitude = 0;
+            keepInGearSpring.lNegativeCoefficient = 0;
+            keepInGearSpring.lPositiveCoefficient = 0;
         }
-        device->updateEffect("keepInGearEff");
+        device->updateEffect("keepInGearSpring");
     }
 }
 
 
 void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState, int fbValue) {
+    /*
     if (newState == HeavyTruckSynchroState::IN_SYNCH) {
+        if (fbValue < JOY_MIDPOINT) {
+            keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd();
+        }
+        else {
+            keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack();
+        }
+        keepInGearSpring.lNegativeCoefficient = 10000;
+        keepInGearSpring.lPositiveCoefficient = 10000;
+        device->updateEffect("keepInGearSpring");
         // Activate keep-in-gear spring
+        /*
         float phaseOut = 1.0;
         if (fbValue <= JOY_MIDPOINT) {
             phaseOut = scaleRangeValue(fbValue, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
@@ -144,8 +165,9 @@ void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState
     else if (newState == HeavyTruckSynchroState::ENTERING_SYNCH) {
         // Deactivate keep-in-gear spring
         keepInGearSpring.lNegativeCoefficient = 0;
+        keepInGearSpring.lPositiveCoefficient = 0;
         device->updateEffect("keepInGearSpring");
-    }
+    }*/
     synchroState = newState;
 }
 
@@ -172,15 +194,16 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
         effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange * 0.4));
     }
-    DWORD rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling);
+    double revMatchRumbleScaling = std::fmax(0, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM * 1.5));
+    DWORD rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
     if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
     {
         effectScaling = scaleRangeValue(fbValue, grind_point_depth, grind_point_depth - grindPushbackScalingRange) * -1;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
             effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange));
         }
-        double revMatchScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
-        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchScaling;
+        double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
+        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling;
         //qDebug() << "revMatchScaling: " << revMatchScaling << ", rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         device->updateEffect("rumblePushback");
     }
@@ -208,6 +231,7 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
         //qDebug() << "rumble.dwPeriod: " << rumble.dwPeriod << "grindEffectRPM: " << grindEffectRPM << ", rumble.dwPhase: " << rumble.dwPhase << "rumblePhase: " << rumblePhase;
         rumble.dwPeriod = period;
         rumble.dwPhase = (DWORD)rumblePhase;
+        //qDebug() << "rumble.dwMagnitude: " << rumble.dwMagnitude;
         rumble.dwMagnitude = rumbleMag;
         device->updateEffect("rumble");
     }

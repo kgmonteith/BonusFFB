@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "vJoyFeeder.h"
 #include "Telemetry.h"
 #include "DeviceInfo.h"
-
+#include "SharedEnums.h"
 
 enum class HeavyTruckSynchroState {
     UNKNOWN,
@@ -47,7 +47,7 @@ class HeavyTruckStateManager: public QObject
     Q_OBJECT;
 
 public:
-    void start(Telemetry*);
+    void start(Telemetry*, SlotParameters*);
     void update(QPair<int, int>, QPair<int, int>, QPair<int, int>);
 
 public slots:
@@ -73,6 +73,9 @@ private:
     int buttonZoneState = 0;
     float rpmDelta = 0;
     float rpmMaxForFloat = 120;
+
+    SlotParameters* slot = nullptr;
+
     TelemetrySource telemetryState = TelemetrySource::NONE;
     HeavyTruckSlotState slotState = HeavyTruckSlotState::NEUTRAL;
     HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::UNKNOWN;
@@ -100,7 +103,8 @@ private:
 
     int button_zone_half_width = 2000;
     int button_zone_depth = 4000;
-    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
+    //int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
+    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
     int finished_exiting_synch_depth = JOY_MIDPOINT * 0.85;

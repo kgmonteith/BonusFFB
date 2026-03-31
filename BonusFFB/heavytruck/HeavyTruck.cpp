@@ -28,8 +28,11 @@ void HeavyTruck::initialize() {
     // Menu action connections
     QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HeavyTruck::saveSettings);
     QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &HeavyTruck::loadSettings);
+    // UI connections
+    connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
+    connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
     // Graphics connections
-    QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
+    QObject::connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // HeavyTruck joystick connections
     QObject::connect(ui->heavytruck_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickDevice);
     QObject::connect(ui->heavytruck_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickLRAxis);
@@ -65,6 +68,11 @@ void HeavyTruck::initialize() {
     //QObject::connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     QObject::connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
     QObject::connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
+    QObject::connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    QObject::connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    QObject::connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    //connect(this, &HeavyTruck::slotPositionsChanged, &stateManager, &HeavyTruckStateManager::setSlotParameters);
+    //connect(this, &HeavyTruck::slotPositionsChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotParameters);
 
     // Populate the device lists
     for (const DeviceInfo& device : *deviceList)
@@ -84,6 +92,30 @@ void HeavyTruck::initialize() {
 
     // Start with axis progress bars hidden
     hideAxisProgressBars();
+
+    // For now, use our EA presets on launch
+    // TODO: Remove this once config settings are saved to disk
+    setPresetPatternEatonFuller();
+}
+
+void HeavyTruck::setPresetPatternEatonFuller() {
+    ui->heavytruck_slotDepthSlider->setValue(66);
+    ui->heavytruck_centerSlotPositionSlider->setValue(34);
+    ui->heavytruck_rightSlotPositionSlider->setValue(66);
+}
+
+
+void HeavyTruck::setPresetPatternFullRange() {
+    ui->heavytruck_slotDepthSlider->setValue(100);
+    ui->heavytruck_centerSlotPositionSlider->setValue(50);
+    ui->heavytruck_rightSlotPositionSlider->setValue(100);
+}
+
+void HeavyTruck::slotParameterChanged(int t) {
+    // Either right or center slot position changed, so we need to update both
+    slot->depth = (double)ui->heavytruck_slotDepthSlider->value() * .01;
+    slot->pos_pct[1] = ui->heavytruck_centerSlotPositionSlider->value() * .01;
+    slot->pos_pct[2] = ui->heavytruck_rightSlotPositionSlider->value() * .01;
 }
 
 void HeavyTruck::initializeJoystickMap() {
@@ -92,30 +124,28 @@ void HeavyTruck::initializeJoystickMap() {
 
     long sceneWidth = ui->heavytruck_graphicsView->viewport()->rect().width();
     long sceneHeight = ui->heavytruck_graphicsView->viewport()->rect().height();
+    long slotHeight = sceneHeight * slot->depth;
+    long slotTop = (sceneHeight / 2) - (slotHeight / 2);
     QPointF center = scene->sceneRect().center();
 
     neutralChannelRect = new QGraphicsRectItem(0, 0, sceneWidth, SLOT_WIDTH_PX);
     neutralChannelRect->setBrush(QBrush(Qt::black));
     neutralChannelRect->setPen(Qt::NoPen);
-    neutralChannelRect->setPos(center - QPointF(sceneWidth / 2, SLOT_WIDTH_PX / 2));
     scene->addItem(neutralChannelRect);
 
-    centerSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    centerSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
     scene->addItem(centerSlotRect);
 
-    rightSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    rightSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
     rightSlotRect->setBrush(QBrush(Qt::black));
     rightSlotRect->setPen(Qt::NoPen);
-    rightSlotRect->setPos(QPointF(sceneWidth - SLOT_WIDTH_PX, 0));
     scene->addItem(rightSlotRect);
 
-    leftSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    leftSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
     leftSlotRect->setBrush(QBrush(Qt::black));
     leftSlotRect->setPen(Qt::NoPen);
-    leftSlotRect->setPos(QPointF(0, 0));
     scene->addItem(leftSlotRect);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
@@ -123,8 +153,6 @@ void HeavyTruck::initializeJoystickMap() {
     seethroughWhite.setAlphaF(float(0.15));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
-    QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
-    joystickCircle->setPos(circlePos);
     scene->addItem(joystickCircle);
 
     ui->heavytruck_graphicsView->setScene(scene);
@@ -132,28 +160,36 @@ void HeavyTruck::initializeJoystickMap() {
     ui->heavytruck_graphicsView->show();
 }
 
-
 // Separate call because the event doesn't trigger if another tab is active
 void HeavyTruck::redrawJoystickMap() {
     if (scene == nullptr) {
         return;
     }
+
     ui->heavytruck_graphicsView->scene()->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
 
     long sceneWidth = ui->heavytruck_graphicsView->viewport()->rect().width();
     long sceneHeight = ui->heavytruck_graphicsView->viewport()->rect().height();
+    long slotHeight = sceneHeight * slot->depth;
+    long slotTop = (sceneHeight / 2) - (slotHeight / 2);
+    long centerSlotPos = sceneWidth * slot->pos_pct[1] - SLOT_WIDTH_PX / 2;
+    long rightSlotPos = sceneWidth * slot->pos_pct[2] - SLOT_WIDTH_PX / 2;
+    if (rightSlotPos > sceneWidth - SLOT_WIDTH_PX) {
+        rightSlotPos = sceneWidth - SLOT_WIDTH_PX;
+    }
+    
     QPointF center = scene->sceneRect().center();
 
-    neutralChannelRect->setRect(0, 0, sceneWidth, SLOT_WIDTH_PX);
-    neutralChannelRect->setPos(center - QPointF(sceneWidth / 2, SLOT_WIDTH_PX / 2));
+    neutralChannelRect->setRect(0, 0, rightSlotPos, SLOT_WIDTH_PX);
+    neutralChannelRect->setPos(0, sceneHeight / 2  - SLOT_WIDTH_PX / 2);
 
-    centerSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
+    centerSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    centerSlotRect->setPos(centerSlotPos, 0);
 
-    rightSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
-    rightSlotRect->setPos(QPointF(sceneWidth - SLOT_WIDTH_PX, 0));
+    rightSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    rightSlotRect->setPos(rightSlotPos, 0);
 
-    leftSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    leftSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
 
     joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
@@ -369,9 +405,9 @@ HRESULT HeavyTruck::startGameLoop() {
     }
 
     // Initialize FFB
-    stateManager.start(telemetry);
-    slotGuard.start(joystick);
-    synchroGuard.start(joystick);
+    stateManager.start(telemetry, slot);
+    slotGuard.start(joystick, slot);
+    synchroGuard.start(joystick, slot);
     joystick->startEffects();
     return S_OK;
 }

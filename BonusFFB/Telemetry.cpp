@@ -143,7 +143,7 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	double wheelOmegaSum = 0.0;
 	double wheelRadiusSum = 0.0;
 	int poweredWheelCt = 0;
-	for (int i = 0; i < pTelemMap->config_ui.truckWheelCount; i++) {
+	for (unsigned int i = 0; i < pTelemMap->config_ui.truckWheelCount; i++) {
 		if (!pTelemMap->config_b.truckWheelPowered[i]) {
 			continue;
 		}

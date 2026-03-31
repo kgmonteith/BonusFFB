@@ -52,6 +52,10 @@ public slots:
 	void changeClutchAxis(int);
 	void changeThrottleAxis(int);
 
+	void setPresetPatternEatonFuller();
+	void setPresetPatternFullRange();
+	void slotParameterChanged(int);
+
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
@@ -60,6 +64,7 @@ public slots:
 	void hideAxisProgressBars();
 
 signals:
+	void slotPositionsChanged(int slotDepth, int rightSlot, int centerSlot);
 	void joystickValueChanged(int, int);
 	void joystickLRValueChanged(int);
 	void joystickFBValueChanged(int);
@@ -81,6 +86,7 @@ private:
 	QGraphicsEllipseItem* joystickCircle;
 
 	// Stateful FFB effect managers
+	SlotParameters* slot = new SlotParameters();
 	HeavyTruckStateManager stateManager;
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;

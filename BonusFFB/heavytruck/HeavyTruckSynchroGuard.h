@@ -23,7 +23,7 @@ class HeavyTruckSynchroGuard: public QObject
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*);
+	HRESULT start(DeviceInfo*, SlotParameters*);
 
 public slots:
 	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
@@ -39,6 +39,7 @@ public slots:
 
 private:
 	DeviceInfo* device = nullptr;
+	SlotParameters* slot = nullptr;
 	long fbValue = 0;
 
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
@@ -66,7 +67,8 @@ private:
 	DIEFFECT rumblePushbackEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
-	DICONDITION keepInGearSpring = { 0 , 0, 0 };
+	//DICONDITION keepInGearSpring = { 0 , 0, 0 };
+	DICONDITION keepInGearSpring = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONSTANTFORCE keepInGearForce = { 0 };
 	DIPERIODIC rumble = { 0, 0, 0, 10000 };
 	DICONSTANTFORCE rumblePushback = { 0 };
