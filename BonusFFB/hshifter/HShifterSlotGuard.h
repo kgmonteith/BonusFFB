@@ -14,19 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "DeviceInfo.h"
 #include "HShifterStateManager.h"
-
-enum class QUADRANT {
-	NW,
-	SW,
-	NE,
-	SE
-};
-
-enum class NEUTRAL_SHAPE {
-	SQUARE,
-	ROUNDED,
-	ANGLED
-};
+#include "SharedEnums.h"
 
 class HShifterSlotGuard: public QObject {
 	Q_OBJECT

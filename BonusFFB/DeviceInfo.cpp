@@ -34,6 +34,34 @@ HRESULT DeviceInfo::startEffects() {
                 qDebug() << "Failed to create effect " << i.key();
                 return hr;
             }
+
+
+            DIEFFECTINFO dei;
+            HRESULT hr;
+            // 1. Initialize the structure size
+            ZeroMemory(&dei, sizeof(DIEFFECTINFO));
+            dei.dwSize = sizeof(DIEFFECTINFO);
+            qDebug() << "Querying effect info...";
+            // 2. Call GetEffectInfo with a known effect GUID (e.g., Constant Force)
+            hr = diDevice->GetEffectInfo(&dei, i.value().guid);
+            if (SUCCEEDED(hr)) {
+                // 3. Effect info successfully retrieved
+                // dei.tstEffectType contains the effect type
+                // dei.szCollection contains the name of the effect
+                qDebug() << "Effect Name: " << QString::fromWCharArray(dei.tszName);
+                qDebug() << "dwStaticParams & DIEP_TYPESPECIFICPARAMS:" << (dei.dwStaticParams & DIEP_TYPESPECIFICPARAMS);
+                qDebug() << "dwDynamicParams & DIEP_TYPESPECIFICPARAMS:" << (dei.dwDynamicParams & DIEP_TYPESPECIFICPARAMS);
+                if (dei.dwDynamicParams & DIEP_DIRECTION)
+                {
+                    // Can reset parameter dynamically
+                    qDebug() << "  Dynamic direction change supported";
+                }
+                if (dei.dwDynamicParams & DIEP_TYPESPECIFICPARAMS) {
+                    qDebug() << "  Dynamic type-specific parameters supported";
+                }
+
+                qDebug() << "-------------";
+            }
         }
         hr = i.value().ldpieff->Start(INFINITE, 0);
         if (FAILED(hr))
@@ -230,8 +258,8 @@ DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>* deviceList, QUuid guid) {
     return nullptr;
 }
 
-double scaleRangeValue(long value, long range_min_val, long rename_max_val) {
-    double range_size = rename_max_val - range_min_val;
+double scaleRangeValue(double value, double range_min_val, double range_max_val) {
+    double range_size = range_max_val - range_min_val;
     double offset_value = value - range_min_val;
     if (range_size == 0.0) {
         return 0.0;
@@ -240,4 +268,34 @@ double scaleRangeValue(long value, long range_min_val, long rename_max_val) {
     if (percentage < 0.0) percentage = 0.0;
     if (percentage > 1.0) percentage = 1.0;
     return percentage;
+}
+
+int joystickPositionToFFBOffset(int joystickValue) {
+    return ((double(joystickValue) / 3.2767) - 10000);
+}
+
+
+BOOL CALLBACK enumEffectsCallback(LPDIRECTINPUTEFFECT lpdie, LPVOID pvRef)
+{
+    DIEFFECT dieff;
+    dieff.dwSize = sizeof(DIEFFECT);
+
+    // Retrieve effect parameters
+    HRESULT hr = lpdie->GetParameters(&dieff, DIEP_DIRECTION | DIEP_TYPESPECIFICPARAMS);
+    if (SUCCEEDED(hr))
+    {
+        // Process effect (e.g., check type, modify parameters)
+        qDebug() << "dieff.dwFlags:" << dieff.dwFlags;
+    }
+
+    // Return DIENUM_CONTINUE to continue, or DIENUM_STOP to stop
+    return DIENUM_CONTINUE;
+}
+
+// 2. Call the Method
+HRESULT EnumerateEffects(LPDIRECTINPUTDEVICE8 g_lpdid)
+{
+    // Enumerate all created effects
+    // The 3rd parameter can be context data, here NULL
+    return g_lpdid->EnumCreatedEffectObjects(enumEffectsCallback, NULL, 0);
 }

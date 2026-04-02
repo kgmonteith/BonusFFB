@@ -15,40 +15,51 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include "DeviceInfo.h"
 #include "vJoyFeeder.h"
-#include "HShifterStateManager.h"
+#include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
-class HShifterSynchroGuard: public QObject
+class HeavyTruckSynchroGuard: public QObject
 {
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*);
+	HRESULT start(DeviceInfo*, SlotParameters*);
 
 public slots:
 	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
-	void synchroStateChanged(SynchroState, int);
-	void grindingStateChanged(GrindingState, int);
-	void updateEngineRPM(float);
+	void setJoystickFBValue(long);
+	void synchroStateChanged(HeavyTruckSynchroState, int);
+	void grindingStateChanged(HeavyTruckGrindingState);
+	void setGrindEffectShape(int);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
 	void setKeepInGearIdleIntensity(int);
-	void setGrindEffectBehavior(int);
+	void setRumbleRPM();
+	void setMaxRevMatchRPM(int);
 
 private:
-	float computeGrindRPM();
-
 	DeviceInfo* device = nullptr;
+	SlotParameters* slot = nullptr;
+	long fbValue = 0;
 
-	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
-	GrindingState grindingState = GrindingState::OFF;
+	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
+	HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::ENTERING_SYNCH;
+	HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;
+	GUID grindEffectShape = GUID_Triangle;
 
 	int keepInGearSpringIdleCoefficient = 2200;
 	int keepInGearSpringMaxCoefficient = 10000;
 	float engineRPM = 0;
-	float grindEffectRPM = 3000;
+	float grindEffectRPM = 300;
 	int grindingIntensity = 1500;
+	int maxRevMatchRPM = 120;
+
+	QTimer* rumbleUpdateTimer;
+	long rumblePhase = 0;
+	long rumblePeriod = 10000;
+
+	int grindPushbackScalingRange = 5000;
 
 	DIEFFECT keepInGearSpringEff = {};
 	DIEFFECT keepInGearEff = {};
@@ -56,11 +67,13 @@ private:
 	DIEFFECT rumblePushbackEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
-	DICONDITION keepInGearSpring = { 0 , 0, 0 };
+	//DICONDITION keepInGearSpring = { 0 , 0, 0 };
+	DICONDITION keepInGearSpring = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONSTANTFORCE keepInGearForce = { 0 };
-	DIPERIODIC rumble = { 0, 0, 0, (DWORD)grindEffectRPM };
+	DIPERIODIC rumble = { 0, 0, 0, 10000 };
 	DICONSTANTFORCE rumblePushback = { 0 };
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;
+
 };

@@ -177,14 +177,18 @@ void Handbrake::loadSettings() {
 void Handbrake::springCenterChanged(int value) {
     springCenter = -10000 + (value * 200);
     handbrakeSpring.lOffset = springCenter;
-    joystick->updateEffect("handbrakeSpring");
+    if (joystick != nullptr && joystick->isAcquired) {
+        joystick->updateEffect("handbrakeSpring");
+    }
 }
 
 void Handbrake::springStrengthChanged(int value) {
     springStrength = 100 * value;
     handbrakeSpring.lPositiveCoefficient = springStrength;
     handbrakeSpring.lNegativeCoefficient = springStrength;
-    joystick->updateEffect("handbrakeSpring");
+    if (joystick != nullptr && joystick->isAcquired) {
+        joystick->updateEffect("handbrakeSpring");
+    }
 }
 
 QPair<int, int> Handbrake::getJoystickValues() {

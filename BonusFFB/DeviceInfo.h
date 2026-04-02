@@ -28,7 +28,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #define JOY_QUARTERPOINT 16384
 #define JOY_THREEQUARTERPOINT 49152
 #define JOY_MAXPOINT 65535
-#define FFB_MIDPOINT 5000
+#define FFB_MINPOINT -10000
+#define FFB_MIDPOINT 0
 #define FFB_MAXPOINT 10000
 #define FFB_MAX 10000
 
@@ -82,4 +83,5 @@ DeviceInfo* getDeviceFromGuid(QList<DeviceInfo>*, QUuid);
 BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE*, VOID*) noexcept;
 BOOL CALLBACK enumAxesCallback(const DIDEVICEOBJECTINSTANCE*, VOID*) noexcept;
 
-double scaleRangeValue(long, long, long);
+double scaleRangeValue(double, double, double);
+int joystickPositionToFFBOffset(int);

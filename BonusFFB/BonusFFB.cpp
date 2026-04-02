@@ -29,9 +29,11 @@ BonusFFB::BonusFFB(QWidget *parent)
     // Configure app selection button group
     appSelectButtonGroup.setExclusive(true);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 0);
-    appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 1);
-    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 2);
+    appSelectButtonGroup.addButton(ui.heavytruck_appSelectButton, 1);
+    appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 2);
+    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 3);
     appList.append(&hshifter);
+    appList.append(&heavytruck);
     appList.append(&prndl);
     appList.append(&handbrake);
     QObject::connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
@@ -39,6 +41,7 @@ BonusFFB::BonusFFB(QWidget *parent)
 
     // Ensure the monitor is the default tab
     ui.hshifterTabWidget->setCurrentIndex(0);
+    ui.heavytruckTabWidget->setCurrentIndex(0);
     ui.prndlTabWidget->setCurrentIndex(0);
     ui.handbrakeTabWidget->setCurrentIndex(0);
 

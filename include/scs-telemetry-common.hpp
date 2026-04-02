@@ -359,7 +359,7 @@ typedef struct scsTelemetryMap_s
 		bool lightsHazard;
 		bool cruiseControl; // special field not a sdk field
 		bool truck_wheelOnGround[16];
-		bool shifterToggle[2];
+		bool shifterToggle[2]; // [0] = range, [1] = splitter
 		bool differentialLock;
 		bool liftAxle;
 		bool liftAxleIndicator;

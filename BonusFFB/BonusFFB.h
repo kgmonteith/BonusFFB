@@ -27,6 +27,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "vJoyFeeder.h"
 #include "DeviceInfo.h"
 #include "hshifter/HShifter.h"
+#include "heavytruck/HeavyTruck.h"
 #include "prndl/Prndl.h"
 #include "handbrake/Handbrake.h"
 
@@ -37,7 +38,6 @@ class BonusFFB : public QMainWindow
 public:
     BonusFFB(QWidget *parent = nullptr);
     ~BonusFFB();
-    void initializeGraphics();
     DeviceInfo* getDeviceFromGuid(QUuid);
 
     Ui::BonusFFBClass ui;
@@ -51,6 +51,7 @@ public:
     QList<BonusFFBApp*> appList;
     BonusFFBApp* activeApp;
     HShifter hshifter;
+    HeavyTruck heavytruck;
     Prndl prndl;
     Handbrake handbrake;
 

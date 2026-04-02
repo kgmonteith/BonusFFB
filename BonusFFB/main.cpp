@@ -25,5 +25,6 @@ int main(int argc, char *argv[])
         app->initializeJoystickMap();
         app->loadSettings();
     }
+    qDebug() << "Finished launching";
     return app.exec();
 }
