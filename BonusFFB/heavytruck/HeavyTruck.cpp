@@ -26,53 +26,55 @@ QString HeavyTruck::getAppName() {
 
 void HeavyTruck::initialize() {
     // Menu action connections
-    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HeavyTruck::saveSettings);
-    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &HeavyTruck::loadSettings);
+    connect(ui->actionSaveSettings, &QAction::triggered, this, &HeavyTruck::saveSettings);
+    connect(ui->actionLoadSettings, &QAction::triggered, this, &HeavyTruck::loadSettings);
     // UI connections
     connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
     connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
     // Graphics connections
-    QObject::connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
+    connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // HeavyTruck joystick connections
-    QObject::connect(ui->heavytruck_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickDevice);
-    QObject::connect(ui->heavytruck_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickLRAxis);
-    QObject::connect(ui->heavytruck_joystickFBAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickFBAxis);
-    QObject::connect(this, &HeavyTruck::joystickLRValueChanged, ui->heavytruck_ioTabJoystickLRProgressBar, &QProgressBar::setValue);
-    QObject::connect(this, &HeavyTruck::joystickFBValueChanged, ui->heavytruck_ioTabJoystickFBProgressBar, &QProgressBar::setValue);
-    QObject::connect(this, &HeavyTruck::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
+    connect(ui->heavytruck_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickDevice);
+    connect(ui->heavytruck_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickLRAxis);
+    connect(ui->heavytruck_joystickFBAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickFBAxis);
+    connect(this, &HeavyTruck::joystickLRValueChanged, ui->heavytruck_ioTabJoystickLRProgressBar, &QProgressBar::setValue);
+    connect(this, &HeavyTruck::joystickFBValueChanged, ui->heavytruck_ioTabJoystickFBProgressBar, &QProgressBar::setValue);
+    connect(this, &HeavyTruck::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
     // HeavyTruck pedal connections
-    QObject::connect(ui->heavytruck_pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changePedalsDevice);
-    QObject::connect(ui->heavytruck_clutchAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeClutchAxis);
-    QObject::connect(ui->heavytruck_throttleAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeThrottleAxis);
-    QObject::connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_ioTabClutchProgressBar, &QProgressBar::setValue);
-    QObject::connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_ioTabThrottleProgressBar, &QProgressBar::setValue);
+    connect(ui->heavytruck_pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changePedalsDevice);
+    connect(ui->heavytruck_clutchAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeClutchAxis);
+    connect(ui->heavytruck_throttleAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeThrottleAxis);
+    connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_ioTabClutchProgressBar, &QProgressBar::setValue);
+    connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_ioTabThrottleProgressBar, &QProgressBar::setValue);
     // Telemetry connections
-    QObject::connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
+    connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
     // Joystick connections
-    QObject::connect(this, &HeavyTruck::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
+    connect(this, &HeavyTruck::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
     // Pedal connections
-    QObject::connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_clutchProgressBar, &QProgressBar::setValue);
-    QObject::connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_throttleProgressBar, &QProgressBar::setValue);
+    connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_clutchProgressBar, &QProgressBar::setValue);
+    connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_throttleProgressBar, &QProgressBar::setValue);
     // vJoy connections
-    QObject::connect(ui->heavytruck_vjoyDeviceComboBox, &QComboBox::currentIndexChanged, vjoy, &vJoyFeeder::setDeviceIndex);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, vjoy, &vJoyFeeder::updateButtons);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, this, &HeavyTruck::updateGearText);
+    connect(ui->heavytruck_vjoyDeviceComboBox, &QComboBox::currentIndexChanged, vjoy, &vJoyFeeder::setDeviceIndex);
+    connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, vjoy, &vJoyFeeder::updateButtons);
+    connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, this, &HeavyTruck::updateGearText);
     // FFB effect connections
-    QObject::connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::synchroStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::synchroStateChanged);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);
-    QObject::connect(&stateManager, &HeavyTruckStateManager::grindingStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::grindingStateChanged);
-    QObject::connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
-    QObject::connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
-    //QObject::connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
-    QObject::connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
-    QObject::connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
-    QObject::connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    QObject::connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    QObject::connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    //connect(this, &HeavyTruck::slotPositionsChanged, &stateManager, &HeavyTruckStateManager::setSlotParameters);
-    //connect(this, &HeavyTruck::slotPositionsChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotParameters);
+    connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
+    connect(&stateManager, &HeavyTruckStateManager::synchroStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::synchroStateChanged);
+    connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
+    connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);
+    connect(&stateManager, &HeavyTruckStateManager::grindingStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::grindingStateChanged);
+    connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
+    connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
+    //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
+    connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
+    connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    // Static FFB effect connections
+    connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
+    connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
+    connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
 
     // Populate the device lists
     for (const DeviceInfo& device : *deviceList)

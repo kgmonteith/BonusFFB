@@ -25,6 +25,9 @@ public:
 public slots:
 	void updateSlotGuardEffects(QPair<int, int>);
 	void updateSlotGuardState(HeavyTruckSlotState);
+	void updateDamper(int);
+	void updateInertia(int);
+	void updateFriction(int);
 
 private:
 	DeviceInfo* device = nullptr;
@@ -32,31 +35,20 @@ private:
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
-
 	DIEFFECT slotSpringEff = {};
-
-	DICONDITION leftPushoutSpring = { -5000, 0, -5000 };
-	DICONDITION topPushoutSpring = { -5000, 0, -5000 };
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONDITION keepLeft = { -10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONDITION keepRight = { 10000, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-
 	DICONDITION springConditions[2] = { noSpring, noSpring };
 
-	DIEFFECT lrSlotPushEff = {};
-	DIEFFECT fbSlotPushEff = {};
-	DICONSTANTFORCE lrcf;
-	DICONSTANTFORCE fbcf;
-	DICONSTANTFORCE slotPush[2] = { lrcf, fbcf };
-
-	DIEFFECT safetyDamper = {};
-	DIEFFECT safetyFriction = {};
-	DICONDITION unsafe = { 0, 0, 0 };
-	DICONDITION safe = { 0, 10000, 10000 };
-	DICONDITION halfsafe = { 0, 4000, 4000 };
-	DICONDITION safe2d[2] = { safe, halfsafe };
-	DICONDITION unsafe2d[2] = { unsafe, unsafe };
+	long damperStrength = 3000;
+	long inertiaStrength = 1000;
+	long frictionStrength = 1000;
+	DICONDITION damperCondition[2] = {{0, damperStrength, damperStrength}, {0, damperStrength, damperStrength}};
+	DICONDITION inertiaCondition[2] = { {0, inertiaStrength, inertiaStrength}, {0, inertiaStrength, inertiaStrength} };
+	DICONDITION frictionCondition[2] = { {0, frictionStrength, frictionStrength}, {0, frictionStrength, frictionStrength} };
+	DIEFFECT damperEff = {};
+	DIEFFECT inertiaEff = {};
+	DIEFFECT frictionEff = {};
 };
