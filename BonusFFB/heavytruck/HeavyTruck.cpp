@@ -67,7 +67,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
     //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
-    connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
+    connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
     connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
@@ -441,14 +441,14 @@ void HeavyTruck::gameLoop() {
             lastGearValues = gearValues;
         }
 
-        float engineRPM = telemetry->getEngineRPM();
-        if (engineRPM != lastEngineRPM) {
-            lastEngineRPM = engineRPM;
+        float speed = telemetry->getSpeed();
+        if (speed != lastSpeed) {
+            lastSpeed = speed;
         }
     }
 
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
-    synchroGuard.updatePedalEngagement(pedalValues, joystickValues);
+    synchroGuard.updateTorqueLock(pedalValues, joystickValues, lastSpeed);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
 }

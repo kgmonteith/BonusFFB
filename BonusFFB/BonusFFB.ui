@@ -3655,5 +3655,37 @@ shifter</string>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>heavytruck_keepInGearIdleSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_keepInGearIdleSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>556</x>
+     <y>390</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>841</x>
+     <y>391</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_keepInGearIdleSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_keepInGearIdleSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>841</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>390</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

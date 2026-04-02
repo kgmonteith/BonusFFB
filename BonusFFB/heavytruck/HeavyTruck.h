@@ -93,6 +93,6 @@ private:
 
 	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };
-	float lastEngineRPM = 0.0;
+	float lastSpeed = 0.0;
 };
 

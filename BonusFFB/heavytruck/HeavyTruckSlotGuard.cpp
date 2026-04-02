@@ -127,14 +127,14 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
         // We can scale the condition coefficients near the junctions instead, but good enough for now
         springConditions[0] = noSpring;
         springConditions[1] = noSpring;
-        springConditions[1].lDeadBand = 500;
+        springConditions[1].lDeadBand = 1000;
     } else if (slot_state == HeavyTruckSlotState::NEUTRAL) {
         springConditions[0] = noSpring;
         springConditions[1] = keepFBCentered;
         // Move the offset to increase force instead of adding a scaled constant force, which causes thrashing
-        int offset = joystickPositionToFFBOffset(joystickValues.second) * -2;
+        int offset = joystickPositionToFFBOffset(joystickValues.second) * -.8;//-2;
         springConditions[1].lOffset = offset;
-        springConditions[1].lDeadBand = 500;
+        springConditions[1].lDeadBand = 1000;
     } else if (slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK) {
         springConditions[0] = keepLRCentered;
         springConditions[0].lOffset = slot->asFFBOffset(0);

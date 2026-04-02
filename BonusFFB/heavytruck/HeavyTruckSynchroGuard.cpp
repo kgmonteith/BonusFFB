@@ -105,23 +105,35 @@ void HeavyTruckSynchroGuard::setGrindEffectShape(int index) {
     }
 }
 
-void HeavyTruckSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
+void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair<int, int> joystickValues, float speed) { // int clutchValue, int throttleValue, int fbValue) {
     clutchPercent = 1 - (double(pedalValues.first) / JOY_MAXPOINT);
     throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
     if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
-        if (throttlePercent > .01) {
-            double pedalScaling = scaleRangeValue(throttlePercent, 0.01, 0.3);
+        if (throttlePercent > .01 || speed > 0) {
+            // Assume throttle is applied, use pedal values for keep-in-gear force scaling
+            double scaling = scaleRangeValue(throttlePercent, 0.01, 0.06);
+            int maxStrength = keepInGearSpringMaxCoefficient;
+            float offsetScaling = 1.3;
+            if ((FFB_MAX * scaling) < keepInGearSpringIdleCoefficient && speed > 0) {
+                // Throttle is not actually applied, scale the keep-in-gear effect by the truck speed
+                scaling = scaleRangeValue(speed, 0.1, 2.2);
+                float nearNeutralScaling = scaleRangeValue(std::abs(joystickPositionToFFBOffset(fbValue)), 1000, 2500);
+                //float nearNeutralScaling = 1;
+                maxStrength = keepInGearSpringIdleCoefficient * nearNeutralScaling;
+                offsetScaling = 0;
+                qDebug() << "nearNeutralScaling: " << nearNeutralScaling << "speed: " << speed << ", maxStrength: " << maxStrength << ", scaling: " << scaling;
+            }
             if (fbValue < JOY_MIDPOINT && fbValue > slot->depthAsJoystickValueFwd()) {
-                keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * 3);
-                keepInGearSpring.lNegativeCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * pedalScaling;
-                keepInGearSpring.lPositiveCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * pedalScaling;
+                keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * offsetScaling);
+                keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling;
+                keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling;
             }
             else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
-                keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * 3);
-                keepInGearSpring.lNegativeCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * pedalScaling;
-                keepInGearSpring.lPositiveCoefficient = 10000 * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * pedalScaling;
+                keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * offsetScaling);
+                keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling;
+                keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling;
             }
             else {
                 keepInGearSpring.lNegativeCoefficient = 0;
@@ -133,8 +145,12 @@ void HeavyTruckSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, 
             keepInGearSpring.lNegativeCoefficient = 0;
             keepInGearSpring.lPositiveCoefficient = 0;
         }
-        device->updateEffect("keepInGearSpring");
     }
+    else {
+        keepInGearSpring.lNegativeCoefficient = 0;
+        keepInGearSpring.lPositiveCoefficient = 0;
+    }
+    device->updateEffect("keepInGearSpring");
 }
 
 

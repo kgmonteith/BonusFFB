@@ -26,7 +26,7 @@ public:
 	HRESULT start(DeviceInfo*, SlotParameters*);
 
 public slots:
-	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
+	void updateTorqueLock(QPair<int, int>, QPair<int, int>, float);
 	void setJoystickFBValue(long);
 	void synchroStateChanged(HeavyTruckSynchroState, int);
 	void grindingStateChanged(HeavyTruckGrindingState);
