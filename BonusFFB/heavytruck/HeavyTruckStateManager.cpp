@@ -144,7 +144,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fbValue) {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
         if (fbValue < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else
