@@ -28,6 +28,7 @@ public:
 	unsigned int slot_count = 3;
 	double pos_pct[4] = { 0, 0.5, 1.0, -1 };
 	double depth = 1.0; // HALF the absolute front-to-back range of the slot
+	int middle_slot_half_width = 1200;
 
 	double asFFBOffset(unsigned int slot_num) {  // -10000 to 10000
 		return (20000 * pos_pct[slot_num]) - 10000;

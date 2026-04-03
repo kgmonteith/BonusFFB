@@ -30,11 +30,27 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     slotSpringEff.rglDirection = FORWARDBACK;
     slotSpringEff.lpEnvelope = 0;
     slotSpringEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    springConditions[0] = noSpring;
-    springConditions[1] = keepFBCentered;
-    slotSpringEff.lpvTypeSpecificParams = &springConditions;
+    slotSpringConditions[0] = noSpring;
+    slotSpringConditions[1] = keepFBCentered;
+    slotSpringEff.lpvTypeSpecificParams = &slotSpringConditions;
     slotSpringEff.dwStartDelay = 0;
     device->addEffect("slotSpring", { GUID_Spring, &slotSpringEff });
+
+    rightSlotWallEff.dwSize = sizeof(DIEFFECT);
+    rightSlotWallEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    rightSlotWallEff.dwDuration = INFINITE;
+    rightSlotWallEff.dwSamplePeriod = 0;
+    rightSlotWallEff.dwGain = DI_FFNOMINALMAX;
+    rightSlotWallEff.dwTriggerButton = DIEB_NOTRIGGER;
+    rightSlotWallEff.dwTriggerRepeatInterval = 0;
+    rightSlotWallEff.cAxes = 1;
+    rightSlotWallEff.rgdwAxes = &AXES[0];
+    rightSlotWallEff.rglDirection = &FORWARDBACK[0];
+    rightSlotWallEff.lpEnvelope = 0;
+    rightSlotWallEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    rightSlotWallEff.lpvTypeSpecificParams = &rightSlotWallCondition;
+    rightSlotWallEff.dwStartDelay = 0;
+    device->addEffect("rightSlotWall", { GUID_Spring, &rightSlotWallEff });
 
     damperEff.dwSize = sizeof(DIEFFECT);
     damperEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -125,47 +141,62 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
     if (slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
         // Disable the effect to prevent thrashing
         // We can scale the condition coefficients near the junctions instead, but good enough for now
-        springConditions[0] = noSpring;
-        springConditions[1] = noSpring;
-        springConditions[1].lDeadBand = 1000;
+        slotSpringConditions[0] = noSpring;
+        slotSpringConditions[1] = noSpring;
+        slotSpringConditions[1].lDeadBand = 750;
     } else if (slot_state == HeavyTruckSlotState::NEUTRAL) {
-        springConditions[0] = noSpring;
-        springConditions[1] = keepFBCentered;
+        slotSpringConditions[0] = noSpring;
+        slotSpringConditions[1] = keepFBCentered;
         // Move the offset to increase force instead of adding a scaled constant force, which causes thrashing
-        int offset = joystickPositionToFFBOffset(joystickValues.second) * -.8;//-2;
-        springConditions[1].lOffset = offset;
-        springConditions[1].lDeadBand = 1000;
-    } else if (slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK) {
-        springConditions[0] = keepLRCentered;
-        springConditions[0].lOffset = slot->asFFBOffset(0);
-        springConditions[1] = noSpring;
-    } else if (slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK) {
-        springConditions[0] = keepLRCentered;
-        springConditions[0].lOffset = slot->asFFBOffset(1);
-        springConditions[1] = noSpring;
-    } else if (slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) {
-        springConditions[0] = keepLRCentered;
-        springConditions[0].lOffset = slot->asFFBOffset(2);
-        springConditions[1] = noSpring;
+        int offset = joystickPositionToFFBOffset(joystickValues.second) * -1;//-2;
+        slotSpringConditions[1].lOffset = offset;
+        slotSpringConditions[1].lDeadBand = 750;
+    }
+    else if (slot_state != HeavyTruckSlotState::UNKNOWN) {
+        int slot_num = -1;
+        if (slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK) {
+            slot_num = 0;
+        }
+        else if (slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK) {
+            slot_num = 1;
+        }
+        else if (slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) {
+            slot_num = 2;
+        }
+        slotSpringConditions[0] = keepLRCentered;
+        //springConditions[0].lOffset = slot->asFFBOffset(slot_num);
+        slotSpringConditions[0].lOffset = slot->asFFBOffset(slot_num) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(slot_num)) * -1.3);
+        slotSpringConditions[1] = noSpring;
     }
     
     // Prevent the stick from being pushed too far forward or back when the slot depth is less than 100%
     if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD) && joystickValues.second <= JOY_MIDPOINT - slot->depthAsJoystick()) {
-        springConditions[1] = keepFBCentered;
+        slotSpringConditions[1] = keepFBCentered;
         int offset = slot->depthAsFFBOffsetFwd() + (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetFwd()) * 2.5);
-        springConditions[1].lOffset = offset;
+        slotSpringConditions[1].lOffset = offset;
     }
     else if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) && joystickValues.second >= JOY_MIDPOINT + slot->depthAsJoystick()) {
-        springConditions[1] = keepFBCentered;
+        slotSpringConditions[1] = keepFBCentered;
         int offset = slot->depthAsFFBOffsetBack() - (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetBack()) * 2.5);
-        springConditions[1].lOffset = offset;
+        slotSpringConditions[1].lOffset = offset;
     }
     // Prevent the stick from being pushed too far right at any point
     if ((slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) && joystickValues.first > slot->asJoystickValue(2)) {
-        springConditions[0] = keepLRCentered;
-        springConditions[0].lOffset = slot->asFFBOffset(2);
+        slotSpringConditions[0] = keepLRCentered;
+        slotSpringConditions[0].lOffset = slot->asFFBOffset(2) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(2)) * -1.3);
         //int offset = (FFB_MIDPOINT + 7500) + ((joystickValueToFFBValue(joystickValues.first) - 7500) * -1.5);
         //springConditions[0].lOffset = offset;
     }
     device->updateEffect("slotSpring");
+
+    if ((slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) && joystickValues.first < slot->asJoystickValue(1) - slot->middle_slot_half_width) {
+        rightSlotWallCondition = rightSlotWall;
+        rightSlotWallCondition.lNegativeCoefficient = rightSlotWall.lNegativeCoefficient * scaleRangeValue(joystickValues.first, slot->asJoystickValue(1) - slot->middle_slot_half_width, slot->asJoystickValue(1) - (slot->middle_slot_half_width + 2000));
+        rightSlotWallCondition.lPositiveCoefficient = rightSlotWall.lPositiveCoefficient * scaleRangeValue(joystickValues.first, slot->asJoystickValue(1) - slot->middle_slot_half_width, slot->asJoystickValue(1) - (slot->middle_slot_half_width + 2000));
+        //qDebug() << "rightSlotWallCondition.lPositiveCoefficient: "<< rightSlotWallCondition.lPositiveCoefficient;
+    }
+    else {
+        rightSlotWallCondition = noSpring;
+    }
+    device->updateEffect("rightSlotWall");
 }

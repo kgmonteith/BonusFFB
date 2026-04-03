@@ -32,6 +32,12 @@ void HeavyTruckStateManager::update(QPair<int, int> joystickValues, QPair<int, i
     updateHeavyTruckGrindingState(lrValue, fbValue);
 }
 
+bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
+    if (state == HeavyTruckSlotState::SLOT_LEFT_FWD || state == HeavyTruckSlotState::SLOT_LEFT_BACK || state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || state == HeavyTruckSlotState::SLOT_MIDDLE_BACK || state == HeavyTruckSlotState::SLOT_RIGHT_FWD || state == HeavyTruckSlotState::SLOT_RIGHT_BACK)
+        return true;
+    return false;
+}
+
 void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
@@ -44,7 +50,7 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
         else
             newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
     }
-    else if (lrValue >= slot->asJoystickValue(1) - middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + middle_slot_half_width)
+    else if (lrValue >= slot->asJoystickValue(1) - slot->middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + slot->middle_slot_half_width)
     {
         // In or under center channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
@@ -65,7 +71,9 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     } else if (inNeutral) {
         newState = HeavyTruckSlotState::NEUTRAL;
     }
-    if (newState != HeavyTruckSlotState::UNKNOWN) {
+    // Do not allow state change if it's directly from one gear to another without passing through neutral
+    bool disallowShift = (newState != slotState && stateIsInGear(newState) && stateIsInGear(slotState));
+    if (newState != HeavyTruckSlotState::UNKNOWN && newState != slotState && !disallowShift) {
         slotState = newState;
         emit slotStateChanged(slotState);
     }

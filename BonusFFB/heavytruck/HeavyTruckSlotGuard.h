@@ -36,11 +36,14 @@ private:
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
 	DIEFFECT slotSpringEff = {};
+	DIEFFECT rightSlotWallEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONDITION springConditions[2] = { noSpring, noSpring };
+	DICONDITION slotSpringConditions[2] = { noSpring, noSpring };
+	DICONDITION rightSlotWall = { -10000, -5000, -5000 };
+	DICONDITION rightSlotWallCondition = noSpring;
 
 	long damperStrength = 3000;
 	long inertiaStrength = 1000;

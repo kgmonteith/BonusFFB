@@ -67,6 +67,7 @@ private:
     void updateHeavyTruckSynchroState(long, long, QPair<int, int>);
     void updateHeavyTruckGrindingState(long, long);
     void updateTargetGear();
+    bool stateIsInGear(HeavyTruckSlotState);
 
     Telemetry* telemetry = nullptr;
 
@@ -98,7 +99,6 @@ private:
     
     ///*
     int side_slot_width = 500;
-    int middle_slot_half_width = 1200;
     int neutral_channel_half_width = 1400;
 
     int button_zone_half_width = 2000;
