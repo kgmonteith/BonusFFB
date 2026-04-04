@@ -200,17 +200,22 @@ void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newSta
 }
 
 void HeavyTruckSynchroGuard::setRumbleRPM() {
-    double effectScaling = scaleRangeValue(fbValue, grind_point_depth, grind_point_depth - grindPushbackScalingRange * 0.4) * -1;
+    double effectScaling;
     if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
-        effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange * 0.4));
+        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange * 0.4);
+    }
+    else {
+        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange * 0.4);
     }
     double revMatchRumbleScaling = std::fmax(0, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM * 1.5));
-    DWORD rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
+    unsigned long rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
     if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
     {
-        effectScaling = scaleRangeValue(fbValue, grind_point_depth, grind_point_depth - grindPushbackScalingRange) * -1;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (grind_point_depth), JOY_MAXPOINT - (grind_point_depth - grindPushbackScalingRange));
+            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
+        }
+        else {
+            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
         }
         double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
         rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling;

@@ -104,7 +104,6 @@ private:
     int button_zone_half_width = 2000;
     int button_zone_depth = 4000;
     //int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
-    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
     int finished_exiting_synch_depth = JOY_MIDPOINT * 0.85;
@@ -112,5 +111,5 @@ private:
     
 };
 
-static int grind_point_depth = JOY_MIDPOINT * 0.85;
+//static int grind_point_depth = JOY_MIDPOINT * 0.85;
 

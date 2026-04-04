@@ -106,7 +106,7 @@ void HeavyTruckStateManager::updateTargetGear() {
 
 void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
-    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
+    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE)) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
@@ -114,7 +114,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= JOY_MAXPOINT - button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
+    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE)) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
@@ -152,7 +152,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fbValue) {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (fbValue <= grind_point_depth || fbValue >= JOY_MAXPOINT - grind_point_depth)) {
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (fbValue <= slot->grindPointDepthAsJoystickValueFwd() || fbValue >= slot->grindPointDepthAsJoystickValueBack())) {
         if (fbValue < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else

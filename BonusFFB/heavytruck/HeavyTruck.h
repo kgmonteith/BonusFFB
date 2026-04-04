@@ -85,6 +85,9 @@ private:
 	QGraphicsRectItem* leftSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
 
+	QGraphicsRectItem* grindZoneRect;
+	QGraphicsRectItem* buttonZoneRect;
+
 	// Stateful FFB effect managers
 	SlotParameters* slot = new SlotParameters();
 	HeavyTruckStateManager stateManager;
