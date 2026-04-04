@@ -123,6 +123,7 @@ int Telemetry::getActiveGear() {
 
 float Telemetry::getThrottlePercent() {
 	if (telemetrySource == TelemetrySource::SCS) {
+		qDebug() << "truck_f.gameThrottle:" << pTelemMap->truck_f.gameThrottle;
 		return pTelemMap->truck_f.gameThrottle;
 	}
 	return 0;

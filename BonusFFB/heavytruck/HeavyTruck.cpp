@@ -424,7 +424,7 @@ HRESULT HeavyTruck::startGameLoop() {
     // Initialize FFB
     stateManager.start(telemetry, slot);
     slotGuard.start(joystick, slot);
-    synchroGuard.start(joystick, slot);
+    synchroGuard.start(joystick, slot, telemetry);
     joystick->startEffects();
     return S_OK;
 }
@@ -455,15 +455,10 @@ void HeavyTruck::gameLoop() {
             emit gearValuesChanged(gearValues);
             lastGearValues = gearValues;
         }
-
-        float speed = telemetry->getSpeed();
-        if (speed != lastSpeed) {
-            lastSpeed = speed;
-        }
     }
 
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
-    synchroGuard.updateTorqueLock(pedalValues, joystickValues, lastSpeed);
+    synchroGuard.updateTorqueLock(pedalValues, joystickValues);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
 }

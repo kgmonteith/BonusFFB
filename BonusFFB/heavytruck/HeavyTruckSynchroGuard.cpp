@@ -14,9 +14,11 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
+HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, Telemetry* tPtr) {
     device = devPtr;
     slot = sPtr;
+    telemetry = tPtr;
+
     rumbleUpdateTimer = new QTimer();
     rumbleUpdateTimer->setInterval(20);
 
@@ -105,9 +107,10 @@ void HeavyTruckSynchroGuard::setGrindEffectShape(int index) {
     }
 }
 
-void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair<int, int> joystickValues, float speed) { // int clutchValue, int throttleValue, int fbValue) {
+void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
     clutchPercent = 1 - (double(pedalValues.first) / JOY_MAXPOINT);
-    throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
+    //throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
+    throttlePercent = telemetry->getThrottlePercent();
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
     if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
@@ -118,7 +121,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         if ((FFB_MAX * scaling) < keepInGearSpringIdleCoefficient) {
             // Throttle is not actually applied, scale the keep-in-gear effect by the truck speed
             // If not moving, apply a minimum of 33% of the idle torque lock to keep the stick in gear
-            scaling = std::max(scaleRangeValue(speed, 0, 2.2), 0.33);
+            scaling = std::max(scaleRangeValue(telemetry->getSpeed(), 0, 2.2), 0.33);
             float nearNeutralScaling = scaleRangeValue(std::abs(joystickPositionToFFBOffset(fbValue)), 1000, 2500);
             maxStrength = keepInGearSpringIdleCoefficient * nearNeutralScaling;
             offsetScaling = 0;

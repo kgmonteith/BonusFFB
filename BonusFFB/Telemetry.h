@@ -39,6 +39,7 @@ public:
 	float getTransmissionRPMForGear(int);
 	int getActiveGear();
 	int getGearForSlot(int);
+	float getThrottlePercent();
 
 signals:
 	void telemetryChanged(TelemetrySource);
