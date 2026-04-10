@@ -2,8 +2,9 @@
 
 Do you own a force-feedback joystick? Did you know it can simulate other peripherals using only FFB effects? That's Bonus FFB!
 
-Bonus FFB can simulate these devices using a force-feedback joystick:
+Bonus FFB simulates these devices using a force-feedback joystick:
 
+* Heavy truck shifters
 * H-pattern shifters
 * PRNDL-style automatic shifters
 * Simple handbrakes

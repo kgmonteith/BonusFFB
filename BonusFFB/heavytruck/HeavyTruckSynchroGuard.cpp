@@ -188,8 +188,8 @@ void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newSta
     grindingState = newState;
     if (grindingState != HeavyTruckGrindingState::OFF) {
         // Start rumbling
-        setRumbleRPM();
         rumbleUpdateTimer->start();
+        setRumbleRPM();
     }
     else {
         // Stop rumbling

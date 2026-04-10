@@ -20,7 +20,7 @@ Under Basic Settings, change these settings:
 * `Spring` to `0`
 * `Game Force Feedback Gain` to `100%`
 
-`Damper`, `Inertia`, and `Friction` can be set to personal preference.
+`Damper`, `Inertia`, and `Friction` can be set according to personal preference.
 
 Under Special, change these settings:
 

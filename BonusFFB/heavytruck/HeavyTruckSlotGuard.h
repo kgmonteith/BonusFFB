@@ -28,6 +28,7 @@ public slots:
 	void updateDamper(int);
 	void updateInertia(int);
 	void updateFriction(int);
+	void updateLeftSlotResistance(int);
 
 private:
 	DeviceInfo* device = nullptr;
@@ -36,14 +37,14 @@ private:
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
 	DIEFFECT slotSpringEff = {};
-	DIEFFECT rightSlotWallEff = {};
+	DIEFFECT leftSlotResistanceEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION slotSpringConditions[2] = { noSpring, noSpring };
-	DICONDITION rightSlotWall = { -10000, -5000, -5000 };
-	DICONDITION rightSlotWallCondition = noSpring;
+	DICONDITION leftSlotResistance = { -10000, -5000, -5000 };
+	DICONDITION leftSlotResistanceCondition = noSpring;
 
 	long damperStrength = 3000;
 	long inertiaStrength = 1000;
