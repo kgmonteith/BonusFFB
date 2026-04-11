@@ -6,7 +6,7 @@ The heavy truck mode was built specifically for American Truck Simulator. [Setti
 
 The heavy truck mode features rev-matching effects to enable tactile float shifting, configurable slot throws to support joystick extensions, Eaton-Fuller specific slot layouts, and more.
 
-![H-Shifter](images/hshifter-screenshot.png) 
+![H-Shifter](images/heavytruck-screenshot.png) 
 
 ## Features
 
