@@ -928,6 +928,59 @@
                  </item>
                 </layout>
                </item>
+               <item row="4" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_55">
+                 <item>
+                  <widget class="QLabel" name="label_45">
+                   <property name="text">
+                    <string>Slot rounding factor</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_56">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_slotRoundingFactorSlider">
+                   <property name="minimum">
+                    <number>10</number>
+                   </property>
+                   <property name="maximum">
+                    <number>25</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_slotRoundingFactorSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>10</number>
+                   </property>
+                   <property name="maximum">
+                    <number>25</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
               </layout>
              </widget>
             </item>
@@ -3758,6 +3811,38 @@ shifter</string>
     <hint type="destinationlabel">
      <x>556</x>
      <y>390</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_slotRoundingFactorSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_slotRoundingFactorSpinbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>535</x>
+     <y>332</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>844</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_slotRoundingFactorSpinbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_slotRoundingFactorSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>844</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>332</y>
     </hint>
    </hints>
   </connection>

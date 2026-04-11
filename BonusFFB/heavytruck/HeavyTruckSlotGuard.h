@@ -31,10 +31,13 @@ public slots:
 	void updateLeftSlotResistance(int);
 
 private:
+	bool isInCorner(int slot_num, QPair<int, int> joystickValues);
+	QPair<long, long> getCornerStrength(int slot_num, QPair<int, int> joystickValues);
+	int last_nearest_slot = 1;
+
 	DeviceInfo* device = nullptr;
 	SlotParameters* slot = nullptr;
-	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
-	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
+	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL;
 
 	DIEFFECT slotSpringEff = {};
 	DIEFFECT leftSlotResistanceEff = {};

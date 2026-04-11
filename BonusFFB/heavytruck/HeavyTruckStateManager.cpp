@@ -40,15 +40,15 @@ bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
 
 void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
-    bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
-    if (lrValue <= JOY_MINPOINT + side_slot_width) {
+    if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
+        newState = HeavyTruckSlotState::NEUTRAL;
+    }
+    else if (lrValue <= JOY_MINPOINT + side_slot_width) {
         // In or under left channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_FWD;
         else if(fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_BACK;
-        else
-            newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= slot->asJoystickValue(1) - slot->middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + slot->middle_slot_half_width)
     {
@@ -57,8 +57,6 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
             newState = HeavyTruckSlotState::SLOT_MIDDLE_FWD;
         else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_MIDDLE_BACK;
-        else
-            newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= slot->asJoystickValue(2) - side_slot_width) {
         // In neutral under right channel
@@ -66,10 +64,6 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
             newState = HeavyTruckSlotState::SLOT_RIGHT_FWD;
         else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_BACK;
-        else
-            newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
-    } else if (inNeutral) {
-        newState = HeavyTruckSlotState::NEUTRAL;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
     bool disallowShift = (newState != slotState && stateIsInGear(newState) && stateIsInGear(slotState));
