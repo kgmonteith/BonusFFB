@@ -19,25 +19,23 @@ The heavy truck mode implements effects and features found in American heavy-dut
 
 ### Float shifting and gear grinding
 
-[Float shifting](https://en.wikipedia.org/wiki/Float_shifting) is more strictly controlled by only allowing the stick to fully slot into gear when the engine's output shaft are adequately synchronized with the transmission's input shaft. This is done by computing the difference between the engine's RPMs and the transmission's RPMs, which we call the RPM delta. If the RPM delta is too high, the shifter stick will not be allowed into the gear slot, and a gear grinding effect will play&mdash;faster and stronger for a large delta, slower and weaker when the gears are nearly synchronized. This provides tactile feedback to determine how much throttle needs to be applied to achieve synchronization. No more staring at the tachometer for float shifting, you can actually *feel* it!
+[Float shifting](https://en.wikipedia.org/wiki/Float_shifting) is more strictly controlled by only allowing the stick to fully slot into gear when the engine's output shaft is synchronized with the transmission's input shaft. This is done by computing the difference between the engine's RPMs and the transmission's RPMs, which we call the RPM delta, or rev matching. If the RPM delta is too high, the shifter stick will not be allowed into the gear slot, and a gear grinding effect will play&mdash;faster and stronger for a large RPM delta, slower and weaker when the gears are nearly synchronized. This provides tactile feedback to determine how much throttle needs to be applied to achieve synchronization. No more staring at the tachometer to float shifts, you can actually *feel* it!
 
 The "Rev matching" indicator provides a visual cue of when float shifting is permitted, along with the current computed RPM delta. If the delta is negative, add more throttle. If the delta is positive, reduce throttle.
 
-You can tune the maximum allowed RPM delta for float shifting in the FFB effect settings. Increase the setting to make float shifting easier but less realistic, decrease the setting to make it more challenging. The default setting is recommended based on real-life EF-18 performance.
+You can tune the maximum allowed RPM delta for float shifting in the FFB effect settings, making floating shifts easier or harder.
 
 ### Torque lock
 
-When a real truck is in gear and the transmission is loaded (e.g., the throttle is pressed), it's not physically possible to move the stick. The heavy truck mode simulates this effect by applying a heavy counter-force if the stick is pushed towards neutral while in gear and throttle is applied. The mode uses throttle telemetry values to adjust the effect, so it also applies when using cruise control.
-
-A lighter amount of torque lock is applied any time the wheels are moving.
+When a real truck is in gear and the transmission is loaded (e.g., the throttle is pressed), it's not physically possible to move the stick out of gear. The heavy truck mode simulates this effect by applying a heavy counter-force if the stick is pushed towards neutral while in gear and throttle is applied. The mode uses telemetry values to set the effect, so it also applies when using cruise control. A lighter amount of torque lock is also applied any time the transmission is in gear and the wheels are moving.
 
 ### Configurable slot patterns
 
-To support stick extensions used by hardcore truck simmers, the heavy truck mode supports configurable slot depths and slot channel positioning. The default pattern matches that of a real EF-18 and is intended to be used with an extension, but is also comfortable with direct-mounted truck shifter. Preset buttons are provided for the default Eaton Fuller pattern, and a pattern that utilizes the full range of your joystick base.
+To support stick extensions, the heavy truck mode has configurable slot depths and slot channel positioning. The default slot pattern matches that of a real EF-18 and is intended to be used with an extension, but is also comfortable with direct-mounted truck shifter. Preset buttons are provided for the default Eaton Fuller pattern, and a pattern that utilizes the full range of your joystick base.
 
 ### The left-slot "wall"
 
-On an 18-speed transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To prevent mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot. This is currently implemented with a simple spring force. Its strength can be adjusted in the FFB effect settings.
+On an EF-18 transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To protect from mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot. This effect is currently simulated with a simple configurable spring force.
 
 ## Game configuration
 
@@ -48,7 +46,7 @@ The H-shifter mode sends vJoy button presses when gears are engaged. Bind the in
 
 ### ATS/ETS2 settings
 
-Set these values in the "Controls" menu.
+Install the [required ATS/ETS2 telemetry plugin](getting-started.md#2-install-telemetry-plugins), then set these values in the "Controls" menu.
 
 * In the `Input Types` list, add the vJoy Device
 ![ATS vJoy](images/ats-vjoy.png) 
@@ -81,10 +79,10 @@ TODO: Determine recommended pedal curves for emulating a heavy truck's clutch.
     - **<span id="inertia">Inertia:</span>** Opposes changes in joystick velocity, adding "weight" to the stick
     - **<span id="friction">Friction:</span>** Adds constant resistance, regardless of joystick motion
     - !!! Warning
-        For the Moza AB9, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
+        For the Moza bases, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
     - !!! Note
         New Eaton-Fuller transmissions tend to feel "weighty", increase these settings to simulate a new transmission. Older transmissions tend to feel "looser" with a stick that's easier to move.
 - **<span id="grind-effect-intensity">Grind effect intensity:</span>** Sets the strength of the gear grinding effect. This effect plays when attempting to shift into gear without the clutch applied and the RPM delta is too high.
 - **<span id="grind-effect-shape">Grind effect shape:</span>** Changes the effect shape of the grind effect. 'Triangle' is recommended to simulate the most realistic feel.
 - **<span id="idle-torque-lock-strength">Idle torque lock strength:</span>** When in gear, the torque lock effect pushes the shifter back into the slotted position. This setting adjusts the strength of the effect when throttle is *not* applied. Think of it as the minimum amount of force you need to move the stick from a slotted gear back to neutral.
-- **<span id="max-rpm-delta">Max RPM delta for float shift:</span>** Changes the allowable range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.
+- **<span id="max-rpm-delta">Max RPM delta for float shift:</span>** Changes the allowable RPM delta range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.

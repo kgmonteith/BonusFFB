@@ -106,7 +106,7 @@ void HeavyTruckStateManager::updateTargetGear() {
 
 void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
-    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE)) {
+    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE) || (buttonZoneState && fbValue <= slot->grindPointDepthAsJoystickValueFwd())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
@@ -114,7 +114,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE)) {
+    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE) || (buttonZoneState && fbValue >= slot->grindPointDepthAsJoystickValueBack())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)

@@ -99,7 +99,7 @@ void HeavyTruck::initialize() {
 }
 
 void HeavyTruck::setPresetPatternEatonFuller() {
-    ui->heavytruck_slotDepthSlider->setValue(66);
+    ui->heavytruck_slotDepthSlider->setValue(75);
     ui->heavytruck_centerSlotPositionSlider->setValue(34);
     ui->heavytruck_rightSlotPositionSlider->setValue(66);
 }
@@ -167,6 +167,8 @@ void HeavyTruck::initializeJoystickMap() {
     ui->heavytruck_graphicsView->setScene(scene);
     ui->heavytruck_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->heavytruck_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active

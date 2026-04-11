@@ -31,8 +31,8 @@ public slots:
 
 public:
 	unsigned int slot_count = 3;
-	double pos_pct[4] = { 0, 0.5, 1.0, -1 };
-	double depth = 1.0; // HALF the absolute front-to-back range of the slot
+	double pos_pct[4] = { 0, 0.34, 0.66, -1 };
+	double depth = 0.75; // HALF the absolute front-to-back range of the slot
 
 	double button_zone_depth_telemetry = 0.35;
 	double grind_point_depth = 0.15;
