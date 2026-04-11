@@ -1,7 +1,7 @@
 site_name: Bonus FFB
 site_url: https://kgmonteith.github.io/BonusFFB
 repo_url: https://github.com/kgmonteith/BonusFFB
-copyright: Copyright &copy; 2024 - 2025 Ken Monteith
+copyright: Copyright &copy; 2024 - 2026 Ken Monteith
 theme:
   name: material
   palette: 
@@ -40,6 +40,7 @@ nav:
   - Getting started: getting-started.md
   - Device settings: device-settings.md
   - Applications:
+    - Heavy truck shifter: heavytruck.md
     - H-Shifter: hshifter.md
     - PRNDL: prndl.md
     - Handbrake: handbrake.md

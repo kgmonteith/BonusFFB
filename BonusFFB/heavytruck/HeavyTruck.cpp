@@ -31,6 +31,7 @@ void HeavyTruck::initialize() {
     // UI connections
     connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
     connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
+    connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
     // Graphics connections
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // HeavyTruck joystick connections
@@ -67,7 +68,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
     //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
-    connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
+    connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
     connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
@@ -75,6 +76,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
     connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
     connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
+    connect(ui->heavytruck_leftSlotResistanceStrengthSpinbox, &QSpinBox::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateLeftSlotResistance);
 
     // Populate the device lists
     for (const DeviceInfo& device : *deviceList)
@@ -94,14 +96,10 @@ void HeavyTruck::initialize() {
 
     // Start with axis progress bars hidden
     hideAxisProgressBars();
-
-    // For now, use our EA presets on launch
-    // TODO: Remove this once config settings are saved to disk
-    setPresetPatternEatonFuller();
 }
 
 void HeavyTruck::setPresetPatternEatonFuller() {
-    ui->heavytruck_slotDepthSlider->setValue(66);
+    ui->heavytruck_slotDepthSlider->setValue(75);
     ui->heavytruck_centerSlotPositionSlider->setValue(34);
     ui->heavytruck_rightSlotPositionSlider->setValue(66);
 }
@@ -157,9 +155,20 @@ void HeavyTruck::initializeJoystickMap() {
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
     scene->addItem(joystickCircle);
 
+    grindZoneRect = new QGraphicsRectItem(0, 0, 0, 0);
+    grindZoneRect->setBrush(QBrush(Qt::NoBrush));
+    grindZoneRect->setPen(QPen(Qt::red));
+    scene->addItem(grindZoneRect);
+    buttonZoneRect = new QGraphicsRectItem(0, 0, 0, 0);
+    buttonZoneRect->setBrush(QBrush(Qt::NoBrush));
+    buttonZoneRect->setPen(QPen(Qt::blue));
+    scene->addItem(buttonZoneRect);
+
     ui->heavytruck_graphicsView->setScene(scene);
     ui->heavytruck_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->heavytruck_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active
@@ -192,6 +201,17 @@ void HeavyTruck::redrawJoystickMap() {
     rightSlotRect->setPos(rightSlotPos, 0);
 
     leftSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+
+    if (ui->heavytruck_displayZoneMarkers->isChecked()) {
+        grindZoneRect->setRect(-2, (sceneHeight / 2) - (sceneHeight / 2 * slot->grind_point_depth), sceneWidth + 4, sceneHeight * slot->grind_point_depth);
+        buttonZoneRect->setRect(-2, (sceneHeight / 2) - (sceneHeight / 2 * slot->button_zone_depth_telemetry), sceneWidth + 4, sceneHeight * slot->button_zone_depth_telemetry);
+        grindZoneRect->show();
+        buttonZoneRect->show();
+    }
+    else {
+        grindZoneRect->hide();
+        buttonZoneRect->hide();
+    }
 
     joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
@@ -259,6 +279,25 @@ void HeavyTruck::saveSettings() {
     settings.beginGroup("vjoy");
     settings.setValue("vjoy_device", vjoy->getDeviceIndex());
     settings.endGroup();
+
+    settings.beginGroup("slot_pattern_settings");
+    settings.setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
+    settings.setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
+    settings.setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
+    settings.setValue("leftSlotResistanceStrength", ui->heavytruck_leftSlotResistanceStrengthSpinbox->value());
+    settings.setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
+    settings.setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
+    settings.endGroup();
+
+    settings.beginGroup("ffb_effect_settings");
+    settings.setValue("damper", ui->heavytruck_damperSlider->value());
+    settings.setValue("inertia", ui->heavytruck_inertiaSlider->value());
+    settings.setValue("friction", ui->heavytruck_frictionSlider->value());
+    settings.setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
+    settings.setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
+    settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
+    settings.setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
+    settings.endGroup();
 }
 
 void HeavyTruck::loadSettings() {
@@ -303,6 +342,31 @@ void HeavyTruck::loadSettings() {
     settings.beginGroup("vjoy");
     ui->heavytruck_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
     settings.endGroup();
+
+    if (settings.childGroups().contains("slot_pattern_settings")) {
+        settings.beginGroup("slot_pattern_settings");
+        ui->heavytruck_slotDepthSlider->setValue(settings.value("slotDepth").toInt());
+        ui->heavytruck_centerSlotPositionSlider->setValue(settings.value("centerSlotPosition").toInt());
+        ui->heavytruck_rightSlotPositionSlider->setValue(settings.value("rightSlotPosition").toInt());
+        ui->heavytruck_leftSlotResistanceStrengthSpinbox->setValue(settings.value("leftSlotResistanceStrength").toInt());
+        ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings.value("buttonZoneDepth").toInt());
+        ui->heavytruck_displayZoneMarkers->setChecked(settings.value("displayZoneMarkers").toBool());
+        settings.endGroup();
+    }
+
+    if (settings.childGroups().contains("ffb_effect_settings")) {
+        settings.beginGroup("ffb_effect_settings");
+        ui->heavytruck_damperSlider->setValue(settings.value("damper").toInt());
+        ui->heavytruck_inertiaSlider->setValue(settings.value("inertia").toInt());
+        ui->heavytruck_frictionSlider->setValue(settings.value("friction").toInt());
+        ui->heavytruck_grindIntensitySlider->setValue(settings.value("grindIntensity").toInt());
+        ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings.value("grindEffectShape").toInt());
+        ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());
+        ui->heavytruck_maxRevMatchRPMSlider->setValue(settings.value("maxRevMatchRPM").toInt());
+        settings.endGroup();
+    }
+
+    redrawJoystickMap();
 }
 
 void HeavyTruck::changeJoystickDevice(int deviceIndex) {
@@ -409,7 +473,7 @@ HRESULT HeavyTruck::startGameLoop() {
     // Initialize FFB
     stateManager.start(telemetry, slot);
     slotGuard.start(joystick, slot);
-    synchroGuard.start(joystick, slot);
+    synchroGuard.start(joystick, slot, telemetry);
     joystick->startEffects();
     return S_OK;
 }
@@ -440,15 +504,10 @@ void HeavyTruck::gameLoop() {
             emit gearValuesChanged(gearValues);
             lastGearValues = gearValues;
         }
-
-        float engineRPM = telemetry->getEngineRPM();
-        if (engineRPM != lastEngineRPM) {
-            lastEngineRPM = engineRPM;
-        }
     }
 
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
-    synchroGuard.updatePedalEngagement(pedalValues, joystickValues);
+    synchroGuard.updateTorqueLock(pedalValues, joystickValues);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
 }

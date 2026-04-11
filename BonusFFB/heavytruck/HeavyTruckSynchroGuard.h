@@ -23,10 +23,10 @@ class HeavyTruckSynchroGuard: public QObject
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*, SlotParameters*);
+	HRESULT start(DeviceInfo*, SlotParameters*, Telemetry*);
 
 public slots:
-	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
+	void updateTorqueLock(QPair<int, int>, QPair<int, int>);
 	void setJoystickFBValue(long);
 	void synchroStateChanged(HeavyTruckSynchroState, int);
 	void grindingStateChanged(HeavyTruckGrindingState);
@@ -40,6 +40,7 @@ public slots:
 private:
 	DeviceInfo* device = nullptr;
 	SlotParameters* slot = nullptr;
+	Telemetry* telemetry = nullptr;
 	long fbValue = 0;
 
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;

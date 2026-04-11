@@ -3,7 +3,7 @@
 !!! danger "Using FFB devices for anything other than their intended purpose may result in damage or injury"
     The authors of Bonus FFB accept no liability for any loss or damage including, without limitation, indirect or consequential loss or damage arising out of or in connection with the use of the software. Use Bonus FFB at your own risk.
 
-## Install vJoy
+## 1. Install vJoy
 
 Install [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0).
 
@@ -11,7 +11,7 @@ Run the "Configure vJoy" application. Set up at least one virtual device with a 
 
 ![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
 
-## Install optional telemetry plugins
+## 2. Install telemetry plugins
 
 ### American Truck Simulator/Euro Truck Simulator 2
 
@@ -23,13 +23,13 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
 ??? tip "When installed correctly, ATS/ETS2 will start with a notice that the SDK has been activated."
     Unfortunately this message cannot be deactived, you will have to press OK each time the game is launched.
 
-## Configure your FFB joystick
+## 3. Configure your FFB joystick
 
 Follow the [device settings guide](device-settings.md) for your specific FFB joystick.
 
 !!! warning "Some FFB joysticks will silently fail to work with Bonus FFB until correctly configured."
 
-## Install and configure Bonus FFB
+## 4. Install Bonus FFB
 
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 

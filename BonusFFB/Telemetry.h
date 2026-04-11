@@ -33,11 +33,13 @@ public:
 	void startConnectTimer();
 	TelemetrySource isConnected();
 	QPair<int, int> getGearState();
+	float getSpeed();
 	float getEngineRPM();
 	bool getParkingBrakeState();
 	float getTransmissionRPMForGear(int);
 	int getActiveGear();
 	int getGearForSlot(int);
+	float getThrottlePercent();
 
 signals:
 	void telemetryChanged(TelemetrySource);

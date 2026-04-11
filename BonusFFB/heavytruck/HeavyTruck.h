@@ -85,6 +85,9 @@ private:
 	QGraphicsRectItem* leftSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
 
+	QGraphicsRectItem* grindZoneRect;
+	QGraphicsRectItem* buttonZoneRect;
+
 	// Stateful FFB effect managers
 	SlotParameters* slot = new SlotParameters();
 	HeavyTruckStateManager stateManager;
@@ -93,6 +96,6 @@ private:
 
 	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };
-	float lastEngineRPM = 0.0;
+	float lastSpeed = 0.0;
 };
 

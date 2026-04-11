@@ -93,6 +93,13 @@ QPair<int, int> Telemetry::getGearState() {
 	return QPair<int, int>(slottedGear, selectedGear);
 }
 
+float Telemetry::getSpeed() {
+	if (telemetrySource == TelemetrySource::SCS) {
+		return pTelemMap->truck_f.speed;
+	}
+	return 0;
+}
+
 float Telemetry::getEngineRPM() {
 	if (telemetrySource == TelemetrySource::SCS) {
 		return pTelemMap->truck_f.engineRpm;
@@ -110,6 +117,13 @@ bool Telemetry::getParkingBrakeState() {
 int Telemetry::getActiveGear() {
 	if (telemetrySource == TelemetrySource::SCS) {
 		return pTelemMap->truck_i.gear;
+	}
+	return 0;
+}
+
+float Telemetry::getThrottlePercent() {
+	if (telemetrySource == TelemetrySource::SCS) {
+		return pTelemMap->truck_f.gameThrottle;
 	}
 	return 0;
 }

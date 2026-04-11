@@ -50,8 +50,9 @@ public:
     QButtonGroup appSelectButtonGroup;
     QList<BonusFFBApp*> appList;
     BonusFFBApp* activeApp;
-    HShifter hshifter;
+
     HeavyTruck heavytruck;
+    HShifter hshifter;
     Prndl prndl;
     Handbrake handbrake;
 

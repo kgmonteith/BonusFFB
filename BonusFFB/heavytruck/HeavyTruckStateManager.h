@@ -67,6 +67,7 @@ private:
     void updateHeavyTruckSynchroState(long, long, QPair<int, int>);
     void updateHeavyTruckGrindingState(long, long);
     void updateTargetGear();
+    bool stateIsInGear(HeavyTruckSlotState);
 
     Telemetry* telemetry = nullptr;
 
@@ -98,13 +99,11 @@ private:
     
     ///*
     int side_slot_width = 500;
-    int middle_slot_half_width = 1200;
     int neutral_channel_half_width = 1400;
 
     int button_zone_half_width = 2000;
     int button_zone_depth = 4000;
     //int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
-    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
     int finished_exiting_synch_depth = JOY_MIDPOINT * 0.85;
@@ -112,5 +111,5 @@ private:
     
 };
 
-static int grind_point_depth = JOY_MIDPOINT * 0.85;
+//static int grind_point_depth = JOY_MIDPOINT * 0.85;
 

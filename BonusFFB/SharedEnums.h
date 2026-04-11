@@ -23,11 +23,20 @@ enum class GrindEffectBehavior {
 	OVERRIDE_ENGINE_RPM
 };
 
-class SlotParameters {
+class SlotParameters : public QObject {
+public slots:
+	void setButtonZoneDepth(int t) {
+		button_zone_depth_telemetry = double(t) * 0.01;
+	}
+
 public:
 	unsigned int slot_count = 3;
-	double pos_pct[4] = { 0, 0.5, 1.0, -1 };
-	double depth = 1.0; // HALF the absolute front-to-back range of the slot
+	double pos_pct[4] = { 0, 0.34, 0.66, -1 };
+	double depth = 0.75; // HALF the absolute front-to-back range of the slot
+
+	double button_zone_depth_telemetry = 0.35;
+	double grind_point_depth = 0.15;
+	int middle_slot_half_width = 1200;
 
 	double asFFBOffset(unsigned int slot_num) {  // -10000 to 10000
 		return (20000 * pos_pct[slot_num]) - 10000;
@@ -55,5 +64,21 @@ public:
 
 	double depthAsJoystickValueBack() {
 		return JOY_MIDPOINT + (depth * JOY_MIDPOINT);
+	}
+
+	double grindPointDepthAsJoystickValueFwd() {
+		return JOY_MIDPOINT - (grind_point_depth * JOY_MIDPOINT);
+	}
+
+	double grindPointDepthAsJoystickValueBack() {
+		return JOY_MIDPOINT + (grind_point_depth * JOY_MIDPOINT);
+	}
+
+	double buttonZoneDepthAsJoystickValueFwd() {
+		return JOY_MIDPOINT - (button_zone_depth_telemetry * JOY_MIDPOINT);
+	}
+
+	double buttonZoneDepthAsJoystickValueBack() {
+		return JOY_MIDPOINT + (button_zone_depth_telemetry * JOY_MIDPOINT);
 	}
 };
