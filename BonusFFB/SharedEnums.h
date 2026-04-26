@@ -36,7 +36,6 @@ public:
 
 	double button_zone_depth_telemetry = 0.35;
 	double grind_point_depth = 0.15;
-	int middle_slot_half_width = 5000;
 	double rounding_factor = JOY_MAXPOINT * .10;	// There's a state change issue or something that causes a light tapping when this is reduced to 5000, but good enough for now
 
 	double asFFBOffset(unsigned int slot_num) {  // -10000 to 10000

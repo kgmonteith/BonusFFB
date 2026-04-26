@@ -140,7 +140,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
             keepInGearSpring.lNegativeCoefficient = 0;
             keepInGearSpring.lPositiveCoefficient = 0;
         }
-        qDebug() << "keepInGearSpring.lOffset: " << keepInGearSpring.lOffset << ", keepInGearSpring.lPositiveCoefficient: " << keepInGearSpring.lPositiveCoefficient;
+        //qDebug() << "keepInGearSpring.lOffset: " << keepInGearSpring.lOffset << ", keepInGearSpring.lPositiveCoefficient: " << keepInGearSpring.lPositiveCoefficient;
     }
     else {
         keepInGearSpring.lNegativeCoefficient = 0;

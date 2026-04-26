@@ -98,6 +98,7 @@ private:
     
     ///*
     int side_slot_width = 5000;
+    int middle_slot_half_width = 5000;
     int neutral_channel_half_width = 5000;
 
     int button_zone_half_width = 2000;

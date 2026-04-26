@@ -19,6 +19,7 @@ class PrndlSlotGuard: public QObject {
 
 public:
 	HRESULT start(DeviceInfo*);
+	void updateLRSpring(long);
 
 public slots:
 	void updateSlotSpringCenter(long);

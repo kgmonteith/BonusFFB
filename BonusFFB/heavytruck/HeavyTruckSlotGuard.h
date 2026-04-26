@@ -16,6 +16,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
+#define NOT_IN_CORNER 0
+#define CORNER_ROUNDED 1
+#define CORNER_SQUARE 2
+
 class HeavyTruckSlotGuard: public QObject {
 	Q_OBJECT
 
@@ -28,10 +32,9 @@ public slots:
 	void updateDamper(int);
 	void updateInertia(int);
 	void updateFriction(int);
-	void updateLeftSlotResistance(int);
 
 private:
-	bool isInCorner(int slot_num, QPair<int, int> joystickValues);
+	int isInCorner(int slot_num, QPair<int, int> joystickValues);
 	QPair<long, long> getCornerStrength(int slot_num, QPair<int, int> joystickValues);
 	int last_nearest_slot = 1;
 
@@ -40,14 +43,11 @@ private:
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL;
 
 	DIEFFECT slotSpringEff = {};
-	DIEFFECT leftSlotResistanceEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION slotSpringConditions[2] = { noSpring, noSpring };
-	DICONDITION leftSlotResistance = { -10000, -5000, -5000 };
-	DICONDITION leftSlotResistanceCondition = noSpring;
 
 	long damperStrength = 3000;
 	long inertiaStrength = 1000;

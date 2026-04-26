@@ -40,7 +40,8 @@ bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
 
 void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
-    if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
+    //if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
+    if (fbValue >= JOY_MIDPOINT - neutral_channel_half_width && fbValue <= JOY_MIDPOINT + neutral_channel_half_width) {
         newState = HeavyTruckSlotState::NEUTRAL;
     }
     else if (lrValue <= JOY_MINPOINT + side_slot_width) {
@@ -50,7 +51,7 @@ void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
         else if(fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_BACK;
     }
-    else if (lrValue >= slot->asJoystickValue(1) - slot->middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + slot->middle_slot_half_width)
+    else if (lrValue >= slot->asJoystickValue(1) - middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + middle_slot_half_width)
     {
         // In or under center channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)

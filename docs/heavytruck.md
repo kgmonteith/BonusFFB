@@ -31,11 +31,11 @@ When a real truck is in gear and the transmission is loaded (e.g., the throttle 
 
 ### Configurable slot patterns
 
-To support stick extensions, the heavy truck mode has configurable slot depths and slot channel positioning. The default slot pattern matches that of a real EF-18 and is intended to be used with an extension, but is also comfortable with direct-mounted truck shifter. Preset buttons are provided for the default Eaton Fuller pattern, and a pattern that utilizes the full range of your joystick base.
+To support stick extensions, the heavy truck mode has configurable slot depths and slot channel positioning. The default slot pattern matches that of a real RT-18 and is intended to be used with an extension, but is also comfortable with direct-mounted truck shifter. Preset buttons are provided for the default Eaton Fuller pattern, and a pattern that utilizes the full range of your joystick base.
 
 ### The left-slot "wall"
 
-On an EF-18 transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To protect from mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot. This effect is currently simulated with a simple configurable spring force.
+On an RT-18 transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To protect from mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot.
 
 ## Game configuration
 
@@ -68,8 +68,6 @@ TODO: Determine recommended pedal curves for emulating a heavy truck's clutch.
 ### Slot pattern settings
 
 - Changes to the slot depth and positions are reflected on the joystick map, consult it after making a change.
-- **<span id="left-slot-resistance">Left slot "wall" resistance:</span>** Sets the strength of the "wall" effect between the center and left slots. Protects from mis-shifting to low and reverse while in drive gears.
-    - In real EF-18 shifters this effect is much stronger than the default setting.
 - **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot.
 
 ### Force feedback effect settings

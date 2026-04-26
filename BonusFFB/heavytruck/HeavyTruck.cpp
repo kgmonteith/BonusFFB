@@ -77,7 +77,6 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
     connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
     connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
-    connect(ui->heavytruck_leftSlotResistanceStrengthSpinbox, &QSpinBox::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateLeftSlotResistance);
 
     // Populate the device lists
     for (const DeviceInfo& device : *deviceList)
@@ -289,7 +288,6 @@ void HeavyTruck::saveSettings() {
     settings.setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
     settings.setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
     settings.setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
-    settings.setValue("leftSlotResistanceStrength", ui->heavytruck_leftSlotResistanceStrengthSpinbox->value());
     settings.setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
     settings.setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
     settings.endGroup();
@@ -354,7 +352,6 @@ void HeavyTruck::loadSettings() {
         ui->heavytruck_centerSlotPositionSlider->setValue(settings.value("centerSlotPosition").toInt());
         ui->heavytruck_rightSlotPositionSlider->setValue(settings.value("rightSlotPosition").toInt());
         ui->heavytruck_slotRoundingFactorSlider->setValue(settings.value("slotRoundingFactor").toInt());
-        ui->heavytruck_leftSlotResistanceStrengthSpinbox->setValue(settings.value("leftSlotResistanceStrength").toInt());
         ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings.value("buttonZoneDepth").toInt());
         ui->heavytruck_displayZoneMarkers->setChecked(settings.value("displayZoneMarkers").toBool());
         settings.endGroup();

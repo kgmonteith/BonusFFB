@@ -365,4 +365,5 @@ void Prndl::gameLoop() {
     }
 
     stateManager.update(joystickValues, isShiftLockRelased, isParkingBrakeSet);
+    slotGuard.updateLRSpring(joystickValues.first);
 }
