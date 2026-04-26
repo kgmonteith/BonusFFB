@@ -43,7 +43,7 @@ private:
 	Telemetry* telemetry = nullptr;
 	long fbValue = 0;
 
-	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
+	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL;
 	HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::ENTERING_SYNCH;
 	HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;

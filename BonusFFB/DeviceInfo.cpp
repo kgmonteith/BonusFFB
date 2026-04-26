@@ -35,7 +35,7 @@ HRESULT DeviceInfo::startEffects() {
                 return hr;
             }
 
-
+            /*
             DIEFFECTINFO dei;
             HRESULT hr;
             // 1. Initialize the structure size
@@ -62,6 +62,7 @@ HRESULT DeviceInfo::startEffects() {
 
                 qDebug() << "-------------";
             }
+            */
         }
         hr = i.value().ldpieff->Start(INFINITE, 0);
         if (FAILED(hr))

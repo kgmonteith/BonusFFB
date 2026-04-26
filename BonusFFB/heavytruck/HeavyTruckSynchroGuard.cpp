@@ -38,6 +38,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     keepInGearSpringEff.dwStartDelay = 0;
     device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
 
+    /* Not used in 3.0.0 
     keepInGearEff.dwSize = sizeof(DIEFFECT);
     keepInGearEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     keepInGearEff.dwDuration = INFINITE;
@@ -53,6 +54,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
     keepInGearEff.dwStartDelay = 0;
     //device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
+    */
 
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -69,9 +71,6 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
     device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
-    //device->addEffect("rumble", { GUID_Sine, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
-    //device->addEffect("rumble", { GUID_Square, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
-    //device->addEffect("rumble", { GUID_SawtoothUp, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -117,7 +116,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         // Assume throttle is applied, use pedal values for keep-in-gear force scaling
         double scaling = scaleRangeValue(throttlePercent, 0.01, 0.06);
         int maxStrength = keepInGearSpringMaxCoefficient;
-        float offsetScaling = 1.3;
+        double offsetScaling = 1.3;
         if ((FFB_MAX * scaling) < keepInGearSpringIdleCoefficient) {
             // Throttle is not actually applied, scale the keep-in-gear effect by the truck speed
             // If not moving, apply a minimum of 33% of the idle torque lock to keep the stick in gear

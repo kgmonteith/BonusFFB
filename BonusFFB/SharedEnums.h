@@ -36,7 +36,7 @@ public:
 
 	double button_zone_depth_telemetry = 0.35;
 	double grind_point_depth = 0.15;
-	int middle_slot_half_width = 1200;
+	double rounding_factor = JOY_MAXPOINT * .10;	// There's a state change issue or something that causes a light tapping when this is reduced to 5000, but good enough for now
 
 	double asFFBOffset(unsigned int slot_num) {  // -10000 to 10000
 		return (20000 * pos_pct[slot_num]) - 10000;
@@ -80,5 +80,18 @@ public:
 
 	double buttonZoneDepthAsJoystickValueBack() {
 		return JOY_MIDPOINT + (button_zone_depth_telemetry * JOY_MIDPOINT);
+	}
+
+	int getNearestSlot(int lrValue) {
+		unsigned int closest_slot = 0;
+		int min_distance = std::abs(lrValue - asJoystickValue(0));
+		for (unsigned int i = 1; i < slot_count; i++) {
+			int t = std::abs(lrValue - asJoystickValue(i));
+			if (t < min_distance) {
+				min_distance = t;
+				closest_slot = i;
+			}
+		}
+		return closest_slot;
 	}
 };

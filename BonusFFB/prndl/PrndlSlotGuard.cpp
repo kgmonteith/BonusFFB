@@ -84,3 +84,12 @@ void PrndlSlotGuard::updateShiftLockEffectStrength(double strength) {
         lastShiftLockForce = newStrength;
     }
 }
+
+/// <summary>
+/// Adds additional strengthening to prevent the stick from moving left or right
+/// </summary>
+/// <param name="lrValue"></param>
+void PrndlSlotGuard::updateLRSpring(long lrValue) {
+    keepCenteredSpringConditions[0].lOffset = joystickPositionToFFBOffset(lrValue) * -1.3;
+    device->updateEffect("keepCenteredSpring");
+}

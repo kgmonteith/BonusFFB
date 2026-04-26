@@ -33,7 +33,6 @@ enum class HeavyTruckGrindingState {
 enum class HeavyTruckSlotState {
     UNKNOWN,
     NEUTRAL,
-    NEUTRAL_UNDER_SLOT,
     SLOT_LEFT_FWD,
     SLOT_LEFT_BACK,
     SLOT_MIDDLE_FWD,
@@ -98,8 +97,9 @@ private:
     */
     
     ///*
-    int side_slot_width = 500;
-    int neutral_channel_half_width = 1400;
+    int side_slot_width = 5000;
+    int middle_slot_half_width = 5000;
+    int neutral_channel_half_width = 5000;
 
     int button_zone_half_width = 2000;
     int button_zone_depth = 4000;
