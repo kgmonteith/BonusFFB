@@ -31,6 +31,7 @@ Set these values in the "Keys and buttons" menu:
 * Set `Shift To Reverse` to vJoy button 8
 * Set `Shift To Neutral` to vJoy button 9
 * Set `Parking Brake` to vJoy button 7
+    * Disable the `Simulate Park slot in ATS/ETS2 using telemetry` setting in the "Other settings" tab in order to bind button 7, otherwise it will be overwritten by button 9
 
 ## Settings descriptions
 
