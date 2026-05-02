@@ -84,7 +84,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
     device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
-
+    
     handsOffEff.dwSize = sizeof(DIEFFECT);
     handsOffEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     handsOffEff.dwDuration = INFINITE;
