@@ -123,7 +123,7 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -1063,243 +1063,6 @@
             <string>FFB effect settings</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_21">
-            <item row="1" column="0">
-             <widget class="QGroupBox" name="groupBox_15">
-              <property name="styleSheet">
-               <string notr="true"/>
-              </property>
-              <property name="title">
-               <string/>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-              <layout class="QFormLayout" name="formLayout_8">
-               <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_54">
-                 <item>
-                  <widget class="QLabel" name="label_39">
-                   <property name="text">
-                    <string>Grind effect intensity</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_41">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#grind-effect-intensity&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="0" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_33">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_grindIntensitySlider">
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>15</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_grindingIntensitySpinBox">
-                   <property name="suffix">
-                    <string>%</string>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>15</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_34">
-                 <item>
-                  <widget class="QLabel" name="label_27">
-                   <property name="text">
-                    <string>Grind effect shape</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_28">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#grind-effect-shape&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="heavytruck_grindEffectShapeComboBox">
-                 <item>
-                  <property name="text">
-                   <string>Triangle</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Sine wave</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Sawtooth</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Square wave</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_37">
-                 <item>
-                  <widget class="QLabel" name="label_30">
-                   <property name="text">
-                    <string>Idle torque lock strength</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_31">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#idle-torque-lock-strength&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="2" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_38">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_keepInGearIdleSlider">
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>30</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_keepInGearIdleSpinBox">
-                   <property name="suffix">
-                    <string>%</string>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>30</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="3" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_41">
-                 <item>
-                  <widget class="QLabel" name="label_34">
-                   <property name="text">
-                    <string>Max RPM delta for float shift</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_35">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#max-rpm-delta&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="3" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_42">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_maxRevMatchRPMSlider">
-                   <property name="minimum">
-                    <number>30</number>
-                   </property>
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="value">
-                    <number>90</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_maxRevMatchRPMSpinbox">
-                   <property name="suffix">
-                    <string/>
-                   </property>
-                   <property name="minimum">
-                    <number>30</number>
-                   </property>
-                   <property name="maximum">
-                    <number>300</number>
-                   </property>
-                   <property name="value">
-                    <number>90</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox_18">
               <property name="title">
@@ -1472,6 +1235,300 @@
                    </property>
                    <property name="openExternalLinks">
                     <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="groupBox_15">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+              <layout class="QFormLayout" name="formLayout_8">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_54">
+                 <item>
+                  <widget class="QLabel" name="label_39">
+                   <property name="text">
+                    <string>Grind effect intensity</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_41">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#grind-effect-intensity&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_33">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_grindIntensitySlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>15</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_grindingIntensitySpinBox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>15</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_34">
+                 <item>
+                  <widget class="QLabel" name="label_27">
+                   <property name="text">
+                    <string>Grind effect shape</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_28">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#grind-effect-shape&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="heavytruck_grindEffectShapeComboBox">
+                 <item>
+                  <property name="text">
+                   <string>Triangle</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sine wave</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sawtooth</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Square wave</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_37">
+                 <item>
+                  <widget class="QLabel" name="label_30">
+                   <property name="text">
+                    <string>Idle torque lock strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_31">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#idle-torque-lock-strength&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_38">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_keepInGearIdleSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_keepInGearIdleSpinBox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_57">
+                 <item>
+                  <widget class="QLabel" name="label_50">
+                   <property name="text">
+                    <string>Torque load effect strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_51">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#torque-load-effect-strength&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_58">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_torqueLoadStrengthSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_torqueLoadStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_41">
+                 <item>
+                  <widget class="QLabel" name="label_34">
+                   <property name="text">
+                    <string>Max RPM delta for float shift</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_35">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#max-rpm-delta&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_42">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_maxRevMatchRPMSlider">
+                   <property name="minimum">
+                    <number>30</number>
+                   </property>
+                   <property name="maximum">
+                    <number>300</number>
+                   </property>
+                   <property name="value">
+                    <number>90</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_maxRevMatchRPMSpinbox">
+                   <property name="suffix">
+                    <string/>
+                   </property>
+                   <property name="minimum">
+                    <number>30</number>
+                   </property>
+                   <property name="maximum">
+                    <number>300</number>
+                   </property>
+                   <property name="value">
+                    <number>90</number>
                    </property>
                   </widget>
                  </item>
@@ -3800,6 +3857,38 @@ shifter</string>
     <hint type="destinationlabel">
      <x>535</x>
      <y>332</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_torqueLoadStrengthSpinbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_torqueLoadStrengthSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>841</x>
+     <y>424</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>565</x>
+     <y>423</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heavytruck_torqueLoadStrengthSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heavytruck_torqueLoadStrengthSpinbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>565</x>
+     <y>423</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>841</x>
+     <y>424</y>
     </hint>
    </hints>
   </connection>

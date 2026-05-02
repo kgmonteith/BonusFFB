@@ -69,6 +69,7 @@ void HeavyTruck::initialize() {
     //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
     connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
+    connect(ui->heavytruck_torqueLoadStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setTorqueLoadStrength);
     connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
@@ -299,6 +300,7 @@ void HeavyTruck::saveSettings() {
     settings.setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
     settings.setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
     settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
+    settings.setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
     settings.setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
     settings.endGroup();
 }
@@ -365,6 +367,7 @@ void HeavyTruck::loadSettings() {
         ui->heavytruck_grindIntensitySlider->setValue(settings.value("grindIntensity").toInt());
         ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings.value("grindEffectShape").toInt());
         ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());
+        ui->heavytruck_torqueLoadStrengthSlider->setValue(settings.value("torqueLoadStrength").toInt());
         ui->heavytruck_maxRevMatchRPMSlider->setValue(settings.value("maxRevMatchRPM").toInt());
         settings.endGroup();
     }
