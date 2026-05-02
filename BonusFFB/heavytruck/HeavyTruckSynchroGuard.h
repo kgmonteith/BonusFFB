@@ -36,6 +36,7 @@ public slots:
 	void setKeepInGearIdleIntensity(int);
 	void setRumbleRPM();
 	void setMaxRevMatchRPM(int);
+	void setTorqueLoadStrength(int);
 
 private:
 	DeviceInfo* device = nullptr;
@@ -51,6 +52,7 @@ private:
 
 	int keepInGearSpringIdleCoefficient = 2200;
 	int keepInGearSpringMaxCoefficient = 10000;
+	int torqueLoadSpringStrength = -3000;
 	float engineRPM = 0;
 	float grindEffectRPM = 300;
 	int grindingIntensity = 1500;
@@ -63,16 +65,19 @@ private:
 	int grindPushbackScalingRange = 5000;
 
 	DIEFFECT keepInGearSpringEff = {};
-	DIEFFECT keepInGearEff = {};
+	DIEFFECT torqueLoadSpringEff = {};
 	DIEFFECT rumbleEff = {};
 	DIEFFECT rumblePushbackEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
 	//DICONDITION keepInGearSpring = { 0 , 0, 0 };
 	DICONDITION keepInGearSpring = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
-	DICONSTANTFORCE keepInGearForce = { 0 };
+	DICONDITION torqueLoadSpring = { 0, 0, 0 };
 	DIPERIODIC rumble = { 0, 0, 0, 10000 };
 	DICONSTANTFORCE rumblePushback = { 0 };
+
+	DICONDITION handsOffCondition[2] = { {0, 0, 0}, {0, 0, 0} };
+	DIEFFECT handsOffEff = {};
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;

@@ -38,24 +38,22 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     keepInGearSpringEff.dwStartDelay = 0;
     device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
 
-    /* Not used in 3.0.0 
-    keepInGearEff.dwSize = sizeof(DIEFFECT);
-    keepInGearEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    keepInGearEff.dwDuration = INFINITE;
-    keepInGearEff.dwSamplePeriod = 0;
-    keepInGearEff.dwGain = DI_FFNOMINALMAX;
-    keepInGearEff.dwTriggerButton = DIEB_NOTRIGGER;
-    keepInGearEff.dwTriggerRepeatInterval = 0;
-    keepInGearEff.cAxes = 1;
-    keepInGearEff.rgdwAxes = &AXES[1];
-    keepInGearEff.rglDirection = &FORWARDBACK[1];
-    keepInGearEff.lpEnvelope = 0;
-    keepInGearEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-    keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
-    keepInGearEff.dwStartDelay = 0;
-    //device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
-    */
-
+    torqueLoadSpringEff.dwSize = sizeof(DIEFFECT);
+    torqueLoadSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    torqueLoadSpringEff.dwDuration = INFINITE;
+    torqueLoadSpringEff.dwSamplePeriod = 0;
+    torqueLoadSpringEff.dwGain = DI_FFNOMINALMAX;
+    torqueLoadSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    torqueLoadSpringEff.dwTriggerRepeatInterval = 0;
+    torqueLoadSpringEff.cAxes = 1;
+    torqueLoadSpringEff.rgdwAxes = &AXES[1];
+    torqueLoadSpringEff.rglDirection = &FORWARDBACK[1];
+    torqueLoadSpringEff.lpEnvelope = 0;
+    torqueLoadSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    torqueLoadSpringEff.lpvTypeSpecificParams = &torqueLoadSpring;
+    torqueLoadSpringEff.dwStartDelay = 0;
+    device->addEffect("torqueLoadSpring", { GUID_Spring, &torqueLoadSpringEff });
+    
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     rumbleEff.dwDuration = INFINITE;
@@ -87,6 +85,22 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumblePushbackEff.dwStartDelay = 0;
     device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
 
+    handsOffEff.dwSize = sizeof(DIEFFECT);
+    handsOffEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    handsOffEff.dwDuration = INFINITE;
+    handsOffEff.dwSamplePeriod = 0;
+    handsOffEff.dwGain = DI_FFNOMINALMAX;
+    handsOffEff.dwTriggerButton = DIEB_NOTRIGGER;
+    handsOffEff.dwTriggerRepeatInterval = 0;
+    handsOffEff.cAxes = 2;
+    handsOffEff.rgdwAxes = AXES;
+    handsOffEff.rglDirection = FORWARDBACK;
+    handsOffEff.lpEnvelope = 0;
+    handsOffEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
+    handsOffEff.lpvTypeSpecificParams = &handsOffCondition;
+    handsOffEff.dwStartDelay = 0;
+    device->addEffect("handsOff", { GUID_Damper, &handsOffEff });
+
     QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HeavyTruckSynchroGuard::setRumbleRPM);
     return DI_OK;
 }
@@ -104,6 +118,10 @@ void HeavyTruckSynchroGuard::setGrindEffectShape(int index) {
     else {
         grindEffectShape = GUID_Square;
     }
+}
+
+void HeavyTruckSynchroGuard::setTorqueLoadStrength(int value) {
+    torqueLoadSpringStrength = value * -100;
 }
 
 void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
@@ -130,6 +148,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * offsetScaling);
             keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling;
             keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling;
+            
         }
         else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * offsetScaling);
@@ -141,12 +160,25 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
             keepInGearSpring.lPositiveCoefficient = 0;
         }
         //qDebug() << "keepInGearSpring.lOffset: " << keepInGearSpring.lOffset << ", keepInGearSpring.lPositiveCoefficient: " << keepInGearSpring.lPositiveCoefficient;
+        // Apply engine torque load spring
+        scaling = torqueLoadSpringStrength * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent;
+        torqueLoadSpring.lNegativeCoefficient = scaling;
+        torqueLoadSpring.lPositiveCoefficient = scaling;
+        int handsOffDamper = FFB_MAX * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent;
+        handsOffCondition[0] = { 0, handsOffDamper, handsOffDamper };
+        handsOffCondition[1] = { 0, handsOffDamper, handsOffDamper };
     }
     else {
         keepInGearSpring.lNegativeCoefficient = 0;
         keepInGearSpring.lPositiveCoefficient = 0;
+        torqueLoadSpring.lNegativeCoefficient = 0;
+        torqueLoadSpring.lPositiveCoefficient = 0;
+        handsOffCondition[0] = { 0, 0, 0 };
+        handsOffCondition[1] = { 0, 0, 0 };
     }
     device->updateEffect("keepInGearSpring");
+    device->updateEffect("torqueLoadSpring");
+    device->updateEffect("handsOff");
 }
 
 
