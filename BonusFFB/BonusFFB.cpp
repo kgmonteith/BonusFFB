@@ -122,7 +122,7 @@ void BonusFFB::openUserGuide() {
 }
 
 void BonusFFB::openAbout() {
-    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.";
+    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved. Distributed under the GPLv3 license.";
     QMessageBox::about(this, "About Bonus FFB", about);
 }
 
