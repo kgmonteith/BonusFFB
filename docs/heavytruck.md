@@ -76,10 +76,12 @@ TODO: Determine recommended pedal curves for emulating a heavy truck's clutch.
     - **<span id="damper">Damper:</span>** Adds resistance proportional to joystick movement speed
     - **<span id="inertia">Inertia:</span>** Opposes changes in joystick velocity, adding "weight" to the stick
     - **<span id="friction">Friction:</span>** Adds constant resistance, regardless of joystick motion
-    - !!! Warning
-        For the Moza bases, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
-    - !!! Note
+    !!! Warning
+        For Moza bases, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
+    !!! Note
         New Eaton-Fuller transmissions tend to feel "weighty", increase these settings to simulate a new transmission. Older transmissions tend to feel "looser" with a stick that's easier to move.
+- **<span id="gate-latch-friction">Gate latch friction:</span>** A friction effect that plays when passing through a slot gate latch, simulating the shift fork engaging the synchronizer collar
+    - This value is added to the constant friction resistance&mdash;e.g., 30% constant friction + 40% gate latch friction results in 70% total friction for the effect.
 - **<span id="grind-effect-intensity">Grind effect intensity:</span>** Sets the strength of the gear grinding effect. This effect plays when attempting to shift into gear without the clutch applied and the RPM delta is too high.
 - **<span id="grind-effect-shape">Grind effect shape:</span>** Changes the effect shape of the grind effect. 'Triangle' is recommended to simulate the most realistic feel.
 - **<span id="idle-torque-lock-strength">Idle torque lock strength:</span>** When in gear, the torque lock effect pushes the shifter back into the slotted position. This setting adjusts the strength of the effect when throttle is *not* applied. Think of it as the minimum amount of force you need to move the stick from a slotted gear back to neutral.

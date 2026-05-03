@@ -81,6 +81,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
     connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
     connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
+    connect(ui->heavytruck_gateLatchFrictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateGateLatchFriction);
 
     // Populate the device lists
     for (const DeviceInfo& device : *deviceList)
@@ -300,6 +301,7 @@ void HeavyTruck::saveSettings() {
     settings.setValue("damper", ui->heavytruck_damperSlider->value());
     settings.setValue("inertia", ui->heavytruck_inertiaSlider->value());
     settings.setValue("friction", ui->heavytruck_frictionSlider->value());
+    settings.setValue("gateLatchFriction", ui->heavytruck_gateLatchFrictionSlider->value());
     settings.setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
     settings.setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
     settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
@@ -368,6 +370,7 @@ void HeavyTruck::loadSettings() {
         ui->heavytruck_damperSlider->setValue(settings.value("damper").toInt());
         ui->heavytruck_inertiaSlider->setValue(settings.value("inertia").toInt());
         ui->heavytruck_frictionSlider->setValue(settings.value("friction").toInt());
+        ui->heavytruck_gateLatchFrictionSlider->setValue(settings.value("gateLatchFriction", 30).toInt());
         ui->heavytruck_grindIntensitySlider->setValue(settings.value("grindIntensity").toInt());
         ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings.value("grindEffectShape").toInt());
         ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());

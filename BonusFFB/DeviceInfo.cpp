@@ -70,6 +70,10 @@ HRESULT DeviceInfo::startEffects() {
             qDebug() << "Failed to start effect " << i.key();
             return hr;
         }
+        if (i.value().periodic) {
+            QElapsedTimer* non_const_timer = const_cast<QElapsedTimer*>(&i.value().timer);
+            non_const_timer->start();
+        }
     }
     return hr;
 }

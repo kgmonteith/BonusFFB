@@ -32,6 +32,7 @@ public slots:
 	void updateDamper(int);
 	void updateInertia(int);
 	void updateFriction(int);
+	void updateGateLatchFriction(int);
 
 private:
 	int isInCorner(int slot_num, QPair<int, int> joystickValues);
@@ -52,10 +53,15 @@ private:
 	long damperStrength = 3000;
 	long inertiaStrength = 1000;
 	long frictionStrength = 1000;
+	long gateLatchFrictionStrength = frictionStrength + 3000;
+	//int latchDepth = 5000;
+	int latchDepth = JOY_MAXPOINT;
 	DICONDITION damperCondition[2] = {{0, damperStrength, damperStrength}, {0, damperStrength, damperStrength}};
 	DICONDITION inertiaCondition[2] = { {0, inertiaStrength, inertiaStrength}, {0, inertiaStrength, inertiaStrength} };
 	DICONDITION frictionCondition[2] = { {0, frictionStrength, frictionStrength}, {0, frictionStrength, frictionStrength} };
 	DIEFFECT damperEff = {};
 	DIEFFECT inertiaEff = {};
 	DIEFFECT frictionEff = {};
+
+	int lastFBValue = 0;
 };

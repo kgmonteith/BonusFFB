@@ -21,7 +21,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     telemetry = tPtr;
 
     rumbleUpdateTimer = new QTimer();
-    rumbleUpdateTimer->setInterval(20);
+    rumbleUpdateTimer->setInterval(1);
 
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -37,7 +37,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     keepInGearSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
     keepInGearSpringEff.dwStartDelay = 0;
-    device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
+    device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     torqueLoadSpringEff.dwSize = sizeof(DIEFFECT);
     torqueLoadSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -53,7 +53,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     torqueLoadSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     torqueLoadSpringEff.lpvTypeSpecificParams = &torqueLoadSpring;
     torqueLoadSpringEff.dwStartDelay = 0;
-    device->addEffect("torqueLoadSpring", { GUID_Spring, &torqueLoadSpringEff });
+    device->addEffect("torqueLoadSpring", { GUID_Spring, &torqueLoadSpringEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
     
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -69,7 +69,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART, true });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -84,7 +84,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumblePushbackEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
-    device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
+    device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     handsOffEff.dwSize = sizeof(DIEFFECT);
     handsOffEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -100,7 +100,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     handsOffEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
     handsOffEff.lpvTypeSpecificParams = &handsOffCondition;
     handsOffEff.dwStartDelay = 0;
-    device->addEffect("handsOff", { GUID_Friction, &handsOffEff });
+    device->addEffect("handsOff", { GUID_Friction, &handsOffEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     engineVibrationEff.dwSize = sizeof(DIEFFECT);
     engineVibrationEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -181,7 +181,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         scaling = torqueLoadSpringStrength * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent  * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
         torqueLoadSpring.lNegativeCoefficient = scaling;
         torqueLoadSpring.lPositiveCoefficient = scaling;
-        int handsOffDamper = std::max(5000.0, FFB_MAX * scaleRangeValue(throttlePercent, 0.01, 1)) * clutchPercent;
+        int handsOffDamper = FFB_MAX * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent;
         handsOffCondition[0] = { 0, handsOffDamper, handsOffDamper };
         handsOffCondition[1] = { 0, handsOffDamper, handsOffDamper };
     }
@@ -200,35 +200,6 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
 
 
 void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState, int fbValue) {
-    /*
-    if (newState == HeavyTruckSynchroState::IN_SYNCH) {
-        if (fbValue < JOY_MIDPOINT) {
-            keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd();
-        }
-        else {
-            keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack();
-        }
-        keepInGearSpring.lNegativeCoefficient = 10000;
-        keepInGearSpring.lPositiveCoefficient = 10000;
-        device->updateEffect("keepInGearSpring");
-        // Activate keep-in-gear spring
-        /*
-        float phaseOut = 1.0;
-        if (fbValue <= JOY_MIDPOINT) {
-            phaseOut = scaleRangeValue(fbValue, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
-        }
-        else {
-            phaseOut = scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
-        }
-        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1;
-        device->updateEffect("keepInGearSpring");
-    }
-    else if (newState == HeavyTruckSynchroState::ENTERING_SYNCH) {
-        // Deactivate keep-in-gear spring
-        keepInGearSpring.lNegativeCoefficient = 0;
-        keepInGearSpring.lPositiveCoefficient = 0;
-        device->updateEffect("keepInGearSpring");
-    }*/
     synchroState = newState;
 }
 
@@ -273,41 +244,21 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
         //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         device->updateEffect("rumblePushback");
     }
-    // I need anyone who finds this whole period/phase manipulation stuff to know that
-    // I hate it, but there's something fucky going on with the AB9 when you update
-    // periodic effects too frequently or by too much. It also resets the phase on a
-    // period change, sigh.
     DWORD period = 6e7 / std::abs(grindEffectRPM);
-    period -= period % 10000;
-    if (period > 300000) {
-        period -= period % 100000;
-    }
-    if (period > 1000000) {
-        period -= period % 1000000;
-    }
-    if (period > 10000000) {
-        period = 10000000;
-    }
-    if (rumble.dwPeriod != 0)
-        rumblePhase += 720000000 / rumble.dwPeriod;
-    if (rumblePhase >= 36000)
-        rumblePhase = rumblePhase % 36000;
     if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
     {
-        //qDebug() << "rumble.dwPeriod: " << rumble.dwPeriod << "grindEffectRPM: " << grindEffectRPM << ", rumble.dwPhase: " << rumble.dwPhase << "rumblePhase: " << rumblePhase;
         rumble.dwPeriod = period;
-        rumble.dwPhase = (DWORD)rumblePhase;
         rumble.dwMagnitude = rumbleMag;
-        //qDebug() << "rumble.dwMagnitude: " << rumble.dwMagnitude;
         device->updateEffect("rumble");
     }
 }
 
 void HeavyTruckSynchroGuard::updateEngineRPM(float newRPM) {
     engineVibration.dwPeriod = 6e7 / newRPM;
+    engineVibration.dwMagnitude = engineVibrationIntensity;
     if (device != nullptr && device->isAcquired) {
         device->updateEffect("engineVibration");
-        qDebug() << "engineVibration.dwPeriod: " << engineVibration.dwPeriod;
+        //qDebug() << "newRPM: " << newRPM <<",  engineVibration.dwPeriod: " << engineVibration.dwPeriod << ", engineVibration.dwMagnitude: " << engineVibration.dwMagnitude;
     }
 }
 
@@ -320,7 +271,7 @@ void HeavyTruckSynchroGuard::setGrindEffectIntensity(int value) {
 }
 
 void HeavyTruckSynchroGuard::setEngineVibrationIntensity(int value) {
-    engineVibrationIntensity = value * 10;    // Scale to 1000
+    engineVibrationIntensity = unsigned long(value) * 10;    // Scale to 1000
     if (device != nullptr && device->isAcquired) {
         engineVibration.dwMagnitude = engineVibrationIntensity;
         device->updateEffect("engineVibration");

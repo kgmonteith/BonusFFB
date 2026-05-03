@@ -61,7 +61,6 @@ private:
 	unsigned long engineVibrationIntensity = 60;
 
 	QTimer* rumbleUpdateTimer;
-	long rumblePhase = 0;
 	long rumblePeriod = 10000;
 
 	int grindPushbackScalingRange = 5000;

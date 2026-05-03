@@ -117,6 +117,10 @@ void HeavyTruckSlotGuard::updateFriction(int value) {
     }
 }
 
+void HeavyTruckSlotGuard::updateGateLatchFriction(int value) {
+    gateLatchFrictionStrength = frictionStrength + (value * 100);
+}
+
 void HeavyTruckSlotGuard::updateSlotGuardState(HeavyTruckSlotState state) {
     slot_state = state;
 }
@@ -234,6 +238,23 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
         int offset = slot->depthAsFFBOffsetBack() - (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetBack()) * 2.5);
         slotSpringConditions[1].lOffset = offset;
     }
-
     device->updateEffect("slotSpring");
+
+    // Set the gate latch friction
+    bool inLatchGateZone = (joystickValues.second <= slot->grindPointDepthAsJoystickValueFwd() && joystickValues.second >= slot->grindPointDepthAsJoystickValueFwd() - latchDepth) || (joystickValues.second >= slot->grindPointDepthAsJoystickValueBack() && joystickValues.second <= slot->grindPointDepthAsJoystickValueBack() + latchDepth);
+    if (inLatchGateZone && frictionCondition[0].lPositiveCoefficient != gateLatchFrictionStrength) 
+    {
+        frictionCondition[0] = { 0, gateLatchFrictionStrength, gateLatchFrictionStrength };
+        frictionCondition[1] = { 0, gateLatchFrictionStrength, gateLatchFrictionStrength };
+        qDebug() << "setting gateLatchFrictionStrength " << gateLatchFrictionStrength;
+        device->updateEffect("friction");
+    }
+    else if (!inLatchGateZone && frictionCondition[0].lPositiveCoefficient != frictionStrength) {
+        frictionCondition[0] = { 0, frictionStrength, frictionStrength };
+        frictionCondition[1] = { 0, frictionStrength, frictionStrength };
+        qDebug() << "setting gateLatchFrictionStrength " << frictionStrength;
+        device->updateEffect("friction");
+    }
+
+    lastFBValue = joystickValues.second;
 }

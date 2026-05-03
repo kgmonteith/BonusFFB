@@ -18,10 +18,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QString>
 #include <QUuid>
 
-#include "bonusffb_global.h"
 #include <QObject>
 #include <QList>
 #include <QMap>
+#include <QElapsedTimer>
 
 #define JOY_MINPOINT 0
 #define JOY_MIDPOINT 32767
@@ -43,7 +43,9 @@ struct FFBEffect
     GUID guid;
     DIEFFECT* eff;
     DWORD flags = DIEP_TYPESPECIFICPARAMS;
+    bool periodic = false;
     LPDIRECTINPUTEFFECT ldpieff = nullptr;
+    QElapsedTimer timer;
 };
 
 class DeviceInfo
@@ -56,7 +58,6 @@ public:
     int buttonCount;
     LPDIRECTINPUTDEVICE8 diDevice;
     DIJOYSTATE2 joyState;
-    QMap<QString, FFBEffect> effects;
     bool isAcquired = false;
 
     HRESULT acquire(HWND*, bool = false);
@@ -68,6 +69,7 @@ public:
     long getAxisReading(QUuid);
     bool isButtonPressed(int);
 
+    QMap<QString, FFBEffect> effects;
     void addEffect(QString, FFBEffect);
     HRESULT startEffects();
     HRESULT updateEffect(QString);
