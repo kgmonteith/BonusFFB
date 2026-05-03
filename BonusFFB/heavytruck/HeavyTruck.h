@@ -73,6 +73,7 @@ signals:
 	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
 	void resetClutchAxes();
+	void engineRPMChanged(float);
 
 protected:
 	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/heavytruckDeviceSettings.ini";
@@ -97,5 +98,6 @@ private:
 	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };
 	float lastSpeed = 0.0;
+	float lastEngineRPM = 0.0;
 };
 

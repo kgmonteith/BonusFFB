@@ -33,6 +33,8 @@ public slots:
 	void setGrindEffectShape(int);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
+	void setEngineVibrationIntensity(int);
+	void updateEngineRPM(float);
 	void setKeepInGearIdleIntensity(int);
 	void setRumbleRPM();
 	void setMaxRevMatchRPM(int);
@@ -53,10 +55,10 @@ private:
 	int keepInGearSpringIdleCoefficient = 2200;
 	int keepInGearSpringMaxCoefficient = 10000;
 	int torqueLoadSpringStrength = -3000;
-	float engineRPM = 0;
 	float grindEffectRPM = 300;
 	int grindingIntensity = 1500;
 	int maxRevMatchRPM = 120;
+	unsigned long engineVibrationIntensity = 60;
 
 	QTimer* rumbleUpdateTimer;
 	long rumblePhase = 0;
@@ -68,6 +70,7 @@ private:
 	DIEFFECT torqueLoadSpringEff = {};
 	DIEFFECT rumbleEff = {};
 	DIEFFECT rumblePushbackEff = {};
+	DIEFFECT engineVibrationEff = {};
 
 	DICONDITION noSpring = { 0, 0, 0, 0 , 0 };
 	//DICONDITION keepInGearSpring = { 0 , 0, 0 };
@@ -75,6 +78,7 @@ private:
 	DICONDITION torqueLoadSpring = { 0, 0, 0 };
 	DIPERIODIC rumble = { 0, 0, 0, 10000 };
 	DICONSTANTFORCE rumblePushback = { 0 };
+	DIPERIODIC engineVibration = { engineVibrationIntensity, 0, 0, 0 };
 
 	DICONDITION handsOffCondition[2] = { {0, 0, 0}, {0, 0, 0} };
 	DIEFFECT handsOffEff = {};

@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QDir>
 #include <QDesktopServices>
 #include <stdlib.h>
+#include "MozaCompatibility.h"
 
 BonusFFB::BonusFFB(QWidget *parent)
     : QMainWindow(parent)
@@ -49,6 +50,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
     QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    QObject::connect(ui.actionMoza_legacy_compatibilty, &QAction::triggered, this, &BonusFFB::toggleMozaCompatibility);
     // Game loop connections
     QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
     // Telemetry connections
@@ -132,6 +134,18 @@ void BonusFFB::displayTelemetryState(TelemetrySource newState) {
     }
     else if (newState == TelemetrySource::SCS) {
         ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
+    }
+}
+
+void BonusFFB::toggleMozaCompatibility(bool newValue) {
+    qDebug() << "newValue: " << newValue;
+    if (newValue == true) {
+        QString alert = "Moza legacy compatibility supports AB9 firmware versions prior to 1.1.3.4.\nIf you are using firmware version 1.1.3.4 or later, leave this setting disabled.\n\nUpgrading your Moza firmware is recommended.";
+        QMessageBox::about(this, "Moza compatibility info", alert);
+        MOZA_COMPATIBILITY = MOZA_LEGACY;
+    }
+    else {
+        MOZA_COMPATIBILITY = MOZA_MODERN;
     }
 }
 

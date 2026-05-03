@@ -49,6 +49,7 @@ void HeavyTruck::initialize() {
     connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_ioTabThrottleProgressBar, &QProgressBar::setValue);
     // Telemetry connections
     connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
+    connect(this, &HeavyTruck::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
     // Joystick connections
     connect(this, &HeavyTruck::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
     // Pedal connections
@@ -64,12 +65,14 @@ void HeavyTruck::initialize() {
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);
     connect(&stateManager, &HeavyTruckStateManager::grindingStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::grindingStateChanged);
+    // FFB settings connections
     connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
     //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
     connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
     connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
     connect(ui->heavytruck_torqueLoadStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setTorqueLoadStrength);
+    connect(ui->heavytruck_engineVibrationStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setEngineVibrationIntensity);
     connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
@@ -302,6 +305,7 @@ void HeavyTruck::saveSettings() {
     settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
     settings.setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
     settings.setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
+    settings.setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
     settings.endGroup();
 }
 
@@ -369,6 +373,7 @@ void HeavyTruck::loadSettings() {
         ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());
         ui->heavytruck_torqueLoadStrengthSlider->setValue(settings.value("torqueLoadStrength").toInt());
         ui->heavytruck_maxRevMatchRPMSlider->setValue(settings.value("maxRevMatchRPM").toInt());
+        ui->heavytruck_engineVibrationStrengthSlider->setValue(settings.value("engineVibrationStrength").toInt());
         settings.endGroup();
     }
 
@@ -509,6 +514,11 @@ void HeavyTruck::gameLoop() {
         if (gearValues != lastGearValues) {
             emit gearValuesChanged(gearValues);
             lastGearValues = gearValues;
+        }
+        float engineRPM = telemetry->getEngineRPM();
+        if (engineRPM != lastEngineRPM) {
+            emit engineRPMChanged(engineRPM);
+            lastEngineRPM = engineRPM;
         }
     }
 

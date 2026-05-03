@@ -11,6 +11,7 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "PrndlSlotGuard.h"
+#include "SharedEnums.h"
 
 #include <QDebug>
 
@@ -77,7 +78,7 @@ void PrndlSlotGuard::updateSlotSpringCenter(long newCenter) {
 }
 
 void PrndlSlotGuard::updateShiftLockEffectStrength(double strength) {
-    long newStrength = (long)strength;
+    long newStrength = (long)strength   * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
     if (lastShiftLockForce != newStrength) {
         shiftLockForce.lMagnitude = newStrength;
         device->updateEffect("shiftLock");

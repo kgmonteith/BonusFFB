@@ -11,9 +11,10 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "HShifterSynchroGuard.h"
+#include "MozaCompatibility.h"
 
 #include <QDebug>
-
+    
 HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     device = devPtr;
 
@@ -96,7 +97,7 @@ void HShifterSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QP
             else {
                 scaledCoeff *= scaleRangeValue(fbValue, 0, 6000);
             }
-            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent;
+            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent * MOZA_COMPATIBILITY;  // AB9 1.1.3.4 firmware force inversion
         }
         else {
             keepInGearForce.lMagnitude = 0;
@@ -116,7 +117,7 @@ void HShifterSynchroGuard::synchroStateChanged(SynchroState newState, int fbValu
         else {
             phaseOut = scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
         }
-        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1;
+        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1 * MOZA_COMPATIBILITY;  // AB9 1.1.3.4 firmware force inversion
         device->updateEffect("keepInGearSpring");
     }
     else if (newState == SynchroState::ENTERING_SYNCH) {
@@ -138,7 +139,7 @@ void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbVa
         rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
         if (synchroState == SynchroState::ENTERING_SYNCH)
         {
-            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent;
+            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent     * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
             //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         }
     }

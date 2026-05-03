@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include "DeviceInfo.h"
+#include "MozaCompatibility.h"
 
 class PrndlSlotGuard: public QObject {
 	Q_OBJECT
@@ -34,7 +35,8 @@ private:
 	DICONDITION keepCenteredSpringConditions[2] = { noSpring, noSpring };
 
 	DIEFFECT keepInGearSpringEff = {};
-	DICONDITION keepInGearSpring = { 0 , DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	int direction = MOZA_COMPATIBILITY;		// AB9 1.1.3.4 firmware force inversion
+	DICONDITION keepInGearSpring = { 0 , DI_FFNOMINALMAX * direction, DI_FFNOMINALMAX * direction };
 
 	DIEFFECT shiftLockEff = {};
 	DICONSTANTFORCE shiftLockForce = { 0 };

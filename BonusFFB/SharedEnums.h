@@ -1,5 +1,6 @@
 #pragma once
 
+#define NOT_UNDER_SLOT -1
 
 enum class QUADRANT {
 	NW,
@@ -17,6 +18,7 @@ enum class NEUTRAL_SHAPE {
 static LONG FORWARD[2] = { 0 , 0 };
 static LONG BACK[2] = { 180 * DI_DEGREES , 0 };
 
+
 enum class GrindEffectBehavior {
 	MATCH_ENGINE_RPM,
 	ADD_ENGINE_RPM,
@@ -33,6 +35,10 @@ public:
 	unsigned int slot_count = 3;
 	double pos_pct[4] = { 0, 0.34, 0.66, -1 };
 	double depth = 0.75; // HALF the absolute front-to-back range of the slot
+	
+    int side_slot_width = 5000;
+    int middle_slot_half_width = 5000;
+    int neutral_channel_half_width = 5000;
 
 	double button_zone_depth_telemetry = 0.35;
 	double grind_point_depth = 0.15;
@@ -93,5 +99,26 @@ public:
 			}
 		}
 		return closest_slot;
+	}
+
+	int underSlot(int lrValue) {
+		// Set the slot coverage to the full range between the left and center slots.
+		// Fixes an edge case when the stick is pressed against the left-slot-wall and pushed forwards or back.
+		if (lrValue <= asJoystickValue(1)/2.0)
+		{
+			// Under left slot
+			return 0;
+		}
+		else if (lrValue >= asJoystickValue(1) / 2.0 && lrValue <= asJoystickValue(1) + middle_slot_half_width)
+		{
+			// Under middle slot
+			return 1;
+		}
+		else if (lrValue >= asJoystickValue(2) - side_slot_width)
+		{
+			// Under right slot
+			return 2;
+		}
+		return NOT_UNDER_SLOT;
 	}
 };

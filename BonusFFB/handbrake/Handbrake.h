@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include <QStandardPaths>
 #include "BonusFFBApp.h"
+#include "MozaCompatibility.h"
 
 #define SHIFTER_POSITION_MARKER_DIAMETER_PX 17.0
 
@@ -61,7 +62,7 @@ private:
 	QGraphicsRectItem* centerSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
 
-	int springStrength = DI_FFNOMINALMAX*.5;
+	int springStrength = DI_FFNOMINALMAX*.5 * MOZA_COMPATIBILITY;	// AB9 1.1.3.4 firmware force inversion
 	int springCenter = -10000;
 
 	DIEFFECT keepCenteredSpringEff = {};

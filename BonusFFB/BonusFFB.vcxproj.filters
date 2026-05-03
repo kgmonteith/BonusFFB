@@ -94,6 +94,9 @@
     <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MozaCompatibility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SharedEnums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MozaCompatibility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

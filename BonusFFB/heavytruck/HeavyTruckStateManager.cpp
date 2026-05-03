@@ -41,29 +41,30 @@ bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
 void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     //if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
-    if (fbValue >= JOY_MIDPOINT - neutral_channel_half_width && fbValue <= JOY_MIDPOINT + neutral_channel_half_width) {
+    int under_slot = slot->underSlot(lrValue);
+    if (fbValue >= JOY_MIDPOINT - slot->neutral_channel_half_width && fbValue <= JOY_MIDPOINT + slot->neutral_channel_half_width) {
         newState = HeavyTruckSlotState::NEUTRAL;
     }
-    else if (lrValue <= JOY_MINPOINT + side_slot_width) {
+    else if (under_slot == 0) {
         // In or under left channel
-        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
+        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_FWD;
-        else if(fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
+        else if(fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_BACK;
     }
-    else if (lrValue >= slot->asJoystickValue(1) - middle_slot_half_width && lrValue <= slot->asJoystickValue(1) + middle_slot_half_width)
+    else if (under_slot == 1)
     {
         // In or under center channel
-        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
+        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_MIDDLE_FWD;
-        else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
+        else if (fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_MIDDLE_BACK;
     }
-    else if (lrValue >= slot->asJoystickValue(2) - side_slot_width) {
+    else if (under_slot == 2) {
         // In neutral under right channel
-        if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
+        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_FWD;
-        else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
+        else if (fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_BACK;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
