@@ -69,7 +69,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART, true });
+    device->addEffect("rumble", { grindEffectShape, &rumbleEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;

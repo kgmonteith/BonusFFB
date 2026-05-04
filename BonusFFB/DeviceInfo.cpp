@@ -64,15 +64,29 @@ HRESULT DeviceInfo::startEffects() {
             }
             */
         }
-        hr = i.value().ldpieff->Start(INFINITE, 0);
+        if(i.value().start_on_create) {
+            hr = i.value().ldpieff->Start(INFINITE, 0);
+            if (FAILED(hr))
+            {
+                qDebug() << "Failed to start effect " << i.key();
+                return hr;
+            }
+        }
+    }
+    return hr;
+}
+
+HRESULT DeviceInfo::playEffect(QString effName) {
+    FFBEffect eff = effects.value(effName);
+    HRESULT hr = DI_OK;
+    if (eff.ldpieff != nullptr)
+    {
+        hr = eff.ldpieff->SetParameters(eff.eff, eff.flags);
+        hr = eff.ldpieff->Start(1, 0);
         if (FAILED(hr))
         {
-            qDebug() << "Failed to start effect " << i.key();
+            qDebug() << "Failed to start effect " << effName;
             return hr;
-        }
-        if (i.value().periodic) {
-            QElapsedTimer* non_const_timer = const_cast<QElapsedTimer*>(&i.value().timer);
-            non_const_timer->start();
         }
     }
     return hr;

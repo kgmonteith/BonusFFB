@@ -43,9 +43,8 @@ struct FFBEffect
     GUID guid;
     DIEFFECT* eff;
     DWORD flags = DIEP_TYPESPECIFICPARAMS;
-    bool periodic = false;
+    bool start_on_create = true;
     LPDIRECTINPUTEFFECT ldpieff = nullptr;
-    QElapsedTimer timer;
 };
 
 class DeviceInfo
@@ -73,6 +72,7 @@ public:
     void addEffect(QString, FFBEffect);
     HRESULT startEffects();
     HRESULT updateEffect(QString);
+    HRESULT playEffect(QString);
     void clearEffects();
 };
 

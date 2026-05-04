@@ -83,6 +83,21 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     frictionEff.lpvTypeSpecificParams = &frictionCondition;
     frictionEff.dwStartDelay = 0;
     device->addEffect("friction", { GUID_Friction, &frictionEff });
+    
+    clickForceEff.dwSize = sizeof(clickForceEff);
+    clickForceEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    clickForceEff.dwDuration = .025 * DI_SECONDS;
+    clickForceEff.dwSamplePeriod = 0;
+    clickForceEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
+    clickForceEff.dwTriggerButton = DIEB_NOTRIGGER;
+    clickForceEff.dwTriggerRepeatInterval = 0;
+    clickForceEff.cAxes = 1;
+    clickForceEff.rgdwAxes = &AXES[1];
+    clickForceEff.rglDirection = &FORWARDBACK[1];
+    clickForceEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+    clickForceEff.lpvTypeSpecificParams = &clickForce;
+    clickForceEff.dwStartDelay = 0;
+    device->addEffect("clickForce", { GUID_RampForce, &clickForceEff, false });
 
     return DI_OK;
 }
@@ -242,19 +257,34 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
 
     // Set the gate latch friction
     bool inLatchGateZone = (joystickValues.second <= slot->grindPointDepthAsJoystickValueFwd() && joystickValues.second >= slot->grindPointDepthAsJoystickValueFwd() - latchDepth) || (joystickValues.second >= slot->grindPointDepthAsJoystickValueBack() && joystickValues.second <= slot->grindPointDepthAsJoystickValueBack() + latchDepth);
-    if (inLatchGateZone && frictionCondition[0].lPositiveCoefficient != gateLatchFrictionStrength) 
+    if (inLatchGateZone && frictionCondition[0].lPositiveCoefficient != gateLatchFrictionStrength)
     {
         frictionCondition[0] = { 0, gateLatchFrictionStrength, gateLatchFrictionStrength };
         frictionCondition[1] = { 0, gateLatchFrictionStrength, gateLatchFrictionStrength };
-        qDebug() << "setting gateLatchFrictionStrength " << gateLatchFrictionStrength;
+        //qDebug() << "setting gateLatchFrictionStrength " << gateLatchFrictionStrength;
         device->updateEffect("friction");
     }
     else if (!inLatchGateZone && frictionCondition[0].lPositiveCoefficient != frictionStrength) {
         frictionCondition[0] = { 0, frictionStrength, frictionStrength };
         frictionCondition[1] = { 0, frictionStrength, frictionStrength };
-        qDebug() << "setting gateLatchFrictionStrength " << frictionStrength;
+        //qDebug() << "setting gateLatchFrictionStrength " << frictionStrength;
         device->updateEffect("friction");
     }
 
-    lastFBValue = joystickValues.second;
+    // Play the end-of-slot click effect
+    if (!clickPlayed && (joystickValues.second <= slot->depthAsJoystickValueFwd() + 1000 || joystickValues.second >= slot->depthAsJoystickValueBack() - 1000)) {
+        if (joystickValues.second < JOY_MIDPOINT) {
+            clickForce.lEnd = 2000;
+        }
+        else {
+            clickForce.lEnd = -2000;
+        }
+        device->playEffect("clickForce");
+        clickPlayed = true;
+        //qDebug() << "Playing click";
+    }
+    else if (clickPlayed && joystickValues.second >= slot->grindPointDepthAsJoystickValueFwd() && joystickValues.second <= slot->grindPointDepthAsJoystickValueBack()) {
+        clickPlayed = false;
+        //qDebug() << "Resetting click";
+    }
 }
