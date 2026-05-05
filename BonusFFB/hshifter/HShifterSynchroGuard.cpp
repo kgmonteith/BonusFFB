@@ -11,7 +11,6 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "HShifterSynchroGuard.h"
-#include "MozaCompatibility.h"
 
 #include <QDebug>
     
@@ -92,12 +91,12 @@ void HShifterSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QP
         if (pedalValues.second > 100) {
             int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent);
             if (fbValue > JOY_MIDPOINT) {
-                scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000) * -1;
+                scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000);
             }
             else {
-                scaledCoeff *= scaleRangeValue(fbValue, 0, 6000);
+                scaledCoeff *= scaleRangeValue(fbValue, 0, 6000) * -1;
             }
-            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent * MOZA_COMPATIBILITY;  // AB9 1.1.3.4 firmware force inversion
+            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent ;  // AB9 1.1.3.4 firmware force inversion
         }
         else {
             keepInGearForce.lMagnitude = 0;
@@ -117,7 +116,7 @@ void HShifterSynchroGuard::synchroStateChanged(SynchroState newState, int fbValu
         else {
             phaseOut = scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
         }
-        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent * -1 * MOZA_COMPATIBILITY;  // AB9 1.1.3.4 firmware force inversion
+        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;  // AB9 1.1.3.4 firmware force inversion
         device->updateEffect("keepInGearSpring");
     }
     else if (newState == SynchroState::ENTERING_SYNCH) {
@@ -131,15 +130,15 @@ void HShifterSynchroGuard::synchroStateChanged(SynchroState newState, int fbValu
 void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbValue) {
     if (newState != GrindingState::OFF) {
         // Start rumbling
-        double effectScaling = scaleRangeValue(fbValue, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500) * -1;
+        double effectScaling = scaleRangeValue(fbValue, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500);
         if (newState == GrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500));
+            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500)) * -1;
         }
         rumble.dwPeriod = int(6e7 / computeGrindRPM());
         rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
         if (synchroState == SynchroState::ENTERING_SYNCH)
         {
-            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent     * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent; // AB9 1.1.3.4 firmware force inversion
             //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         }
     }

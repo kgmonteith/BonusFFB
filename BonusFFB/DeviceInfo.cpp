@@ -81,7 +81,6 @@ HRESULT DeviceInfo::playEffect(QString effName) {
     HRESULT hr = DI_OK;
     if (eff.ldpieff != nullptr)
     {
-        hr = eff.ldpieff->SetParameters(eff.eff, eff.flags);
         hr = eff.ldpieff->Start(1, 0);
         if (FAILED(hr))
         {

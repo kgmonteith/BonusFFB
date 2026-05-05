@@ -62,7 +62,6 @@ public slots:
     void openAbout();
     void displayTelemetryState(TelemetrySource);
     void toggleGameLoop(bool);
-    void toggleMozaCompatibility(bool);
 
 protected:
     void resizeEvent(QResizeEvent* event);

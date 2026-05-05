@@ -4,6 +4,9 @@
 
 !!! success "Bonus FFB fully supports the MOZA AB9 FFB base"
 
+!!! danger "Moza firmware version 1.1.3.4 is required"
+    Bonus FFB requires Moza joystick firmware v1.1.3.4 or newer. Please update your joystick firmware before running Bonus FFB.
+
 ??? warning "You must set `Force Feedback Mode` to `DirectInput`"
     If `Force Feedback Mode` is incorrect, Bonus FFB will silently fail to send to force feedback commands to the base, resulting a 'dead stick' effect.
 
@@ -27,10 +30,3 @@ Under Special, change these settings:
 * `Base Force Model Selection` to `Flight Base`
 
 It's recommended to close and fully exit Moza Cockpit after configuring these settings, to avoid any interference from Moza's built-in effects, and to avoid conflicts with Moza Pithouse.
-
-### Bonus FFB settings
-
-!!! danger "Firmware compatibility"
-    Using the incorrect compatibility mode will cause erratic or dangerous behavior. Please update your Moza AB9 firmware to v1.1.3.4 or higher.
-
-Moza modified how some effects are played as of version 1.1.3.4 of the AB9 firmware. If you are using an older version, a compatibility mode is provided in Bonus FFB: `File` --> `Moza legacy compatibility`.

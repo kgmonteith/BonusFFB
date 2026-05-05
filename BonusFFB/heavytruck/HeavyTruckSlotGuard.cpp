@@ -84,20 +84,35 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     frictionEff.dwStartDelay = 0;
     device->addEffect("friction", { GUID_Friction, &frictionEff });
     
-    clickForceEff.dwSize = sizeof(clickForceEff);
-    clickForceEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    clickForceEff.dwDuration = .025 * DI_SECONDS;
-    clickForceEff.dwSamplePeriod = 0;
-    clickForceEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
-    clickForceEff.dwTriggerButton = DIEB_NOTRIGGER;
-    clickForceEff.dwTriggerRepeatInterval = 0;
-    clickForceEff.cAxes = 1;
-    clickForceEff.rgdwAxes = &AXES[1];
-    clickForceEff.rglDirection = &FORWARDBACK[1];
-    clickForceEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
-    clickForceEff.lpvTypeSpecificParams = &clickForce;
-    clickForceEff.dwStartDelay = 0;
-    device->addEffect("clickForce", { GUID_RampForce, &clickForceEff, false });
+    clickPushBackEff.dwSize = sizeof(clickPushBackEff);
+    clickPushBackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    clickPushBackEff.dwDuration = .025 * DI_SECONDS;
+    clickPushBackEff.dwSamplePeriod = 0;
+    clickPushBackEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
+    clickPushBackEff.dwTriggerButton = DIEB_NOTRIGGER;
+    clickPushBackEff.dwTriggerRepeatInterval = 0;
+    clickPushBackEff.cAxes = 1;
+    clickPushBackEff.rgdwAxes = &AXES[1];
+    clickPushBackEff.rglDirection = &FORWARDBACK[1];
+    clickPushBackEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+    clickPushBackEff.lpvTypeSpecificParams = &clickPushBack;
+    clickPushBackEff.dwStartDelay = 0;
+    device->addEffect("clickPushBack", { GUID_RampForce, &clickPushBackEff, false });
+
+    clickPushForwardEff.dwSize = sizeof(clickPushForwardEff);
+    clickPushForwardEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    clickPushForwardEff.dwDuration = .025 * DI_SECONDS;
+    clickPushForwardEff.dwSamplePeriod = 0;
+    clickPushForwardEff.dwGain = DI_FFNOMINALMAX; // Max gain applied to the effect
+    clickPushForwardEff.dwTriggerButton = DIEB_NOTRIGGER;
+    clickPushForwardEff.dwTriggerRepeatInterval = 0;
+    clickPushForwardEff.cAxes = 1;
+    clickPushForwardEff.rgdwAxes = &AXES[1];
+    clickPushForwardEff.rglDirection = &FORWARDBACK[1];
+    clickPushForwardEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+    clickPushForwardEff.lpvTypeSpecificParams = &clickPushForward;
+    clickPushForwardEff.dwStartDelay = 0;
+    device->addEffect("clickPushForward", { GUID_RampForce, &clickPushForwardEff, false });
 
     return DI_OK;
 }
@@ -274,12 +289,14 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
     // Play the end-of-slot click effect
     if (!clickPlayed && (joystickValues.second <= slot->depthAsJoystickValueFwd() + 1000 || joystickValues.second >= slot->depthAsJoystickValueBack() - 1000)) {
         if (joystickValues.second < JOY_MIDPOINT) {
-            clickForce.lEnd = 2000;
+            HRESULT hr = device->playEffect("clickPushBack");
+            if (!SUCCEEDED(hr)) {
+                qDebug() << "device->playEffect(\"clickPushBack\") failed";
+            }
         }
         else {
-            clickForce.lEnd = -2000;
+            device->playEffect("clickPushForward");
         }
-        device->playEffect("clickForce");
         clickPlayed = true;
         //qDebug() << "Playing click";
     }

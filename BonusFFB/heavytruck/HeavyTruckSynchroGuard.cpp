@@ -11,7 +11,6 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "HeavyTruckSynchroGuard.h"
-#include "MozaCompatibility.h"
 
 #include <QDebug>
 
@@ -163,14 +162,14 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         }
         if (fbValue < JOY_MIDPOINT && fbValue > slot->depthAsJoystickValueFwd()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
             
         }
         else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
         }
         else {
             keepInGearSpring.lNegativeCoefficient = 0;
@@ -178,7 +177,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         }
         //qDebug() << "keepInGearSpring.lOffset: " << keepInGearSpring.lOffset << ", keepInGearSpring.lPositiveCoefficient: " << keepInGearSpring.lPositiveCoefficient;
         // Apply engine torque load spring
-        scaling = torqueLoadSpringStrength * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent  * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+        scaling = torqueLoadSpringStrength * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent  * -1; // AB9 1.1.3.4 firmware force inversion
         torqueLoadSpring.lNegativeCoefficient = scaling;
         torqueLoadSpring.lPositiveCoefficient = scaling;
         int handsOffDamper = FFB_MAX * scaleRangeValue(throttlePercent, 0.01, 1) * clutchPercent;
@@ -240,7 +239,7 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
         }
         double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
-        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
         //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         device->updateEffect("rumblePushback");
     }

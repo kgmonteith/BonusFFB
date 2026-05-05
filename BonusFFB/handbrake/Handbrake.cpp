@@ -183,7 +183,7 @@ void Handbrake::springCenterChanged(int value) {
 }
 
 void Handbrake::springStrengthChanged(int value) {
-    springStrength = 100 * value    * MOZA_COMPATIBILITY;   // AB9 1.1.3.4 firmware force inversion
+    springStrength = -100 * value;   // AB9 1.1.3.4 firmware force inversion
     handbrakeSpring.lPositiveCoefficient = springStrength;
     handbrakeSpring.lNegativeCoefficient = springStrength;
     if (joystick != nullptr && joystick->isAcquired) {

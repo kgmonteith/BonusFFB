@@ -124,7 +124,6 @@
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
     <ClCompile Include="hshifter\HShifterSynchroGuard.cpp" />
-    <ClCompile Include="MozaCompatibility.cpp" />
     <ClCompile Include="prndl\Prndl.cpp" />
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
@@ -162,7 +161,6 @@
     <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h" />
     <QtMoc Include="heavytruck\HeavyTruckStateManager.h" />
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
-    <ClInclude Include="MozaCompatibility.h" />
     <ClInclude Include="SharedEnums.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />

@@ -78,7 +78,7 @@ void PrndlSlotGuard::updateSlotSpringCenter(long newCenter) {
 }
 
 void PrndlSlotGuard::updateShiftLockEffectStrength(double strength) {
-    long newStrength = (long)strength   * MOZA_COMPATIBILITY; // AB9 1.1.3.4 firmware force inversion
+    long newStrength = (long)strength  * -1; // AB9 1.1.3.4 firmware force inversion
     if (lastShiftLockForce != newStrength) {
         shiftLockForce.lMagnitude = newStrength;
         device->updateEffect("shiftLock");
