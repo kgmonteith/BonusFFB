@@ -1269,7 +1269,7 @@
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>30</number>
+                    <number>15</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -1291,7 +1291,7 @@
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>30</number>
+                    <number>15</number>
                    </property>
                   </widget>
                  </item>
@@ -1554,7 +1554,7 @@
                  <item>
                   <widget class="QSlider" name="heavytruck_engineVibrationStrengthSlider">
                    <property name="maximum">
-                    <number>100</number>
+                    <number>300</number>
                    </property>
                    <property name="value">
                     <number>6</number>
@@ -1573,10 +1573,13 @@
                  <item>
                   <widget class="QSpinBox" name="heavytruck_engineVibrationStrengthSpinbox">
                    <property name="suffix">
-                    <string>%</string>
+                    <string/>
+                   </property>
+                   <property name="minimum">
+                    <number>30</number>
                    </property>
                    <property name="maximum">
-                    <number>100</number>
+                    <number>300</number>
                    </property>
                    <property name="value">
                     <number>6</number>
