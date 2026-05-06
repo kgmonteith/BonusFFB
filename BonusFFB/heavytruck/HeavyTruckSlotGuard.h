@@ -63,7 +63,7 @@ private:
 	DIEFFECT inertiaEff = {};
 	DIEFFECT frictionEff = {};
 
-	int endOfSlotClickStrength = 3000;
+	int endOfSlotClickStrength = 2750;
 	DIRAMPFORCE clickPushBack = { 0, endOfSlotClickStrength };
 	DIEFFECT clickPushBackEff = {};
 	DIRAMPFORCE clickPushForward = { 0, endOfSlotClickStrength * -1 };

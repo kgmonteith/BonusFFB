@@ -133,14 +133,17 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
         // Gears are synchronized
         newState = HeavyTruckSynchroState::IN_SYNCH;
         */
+        //qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
     }
     else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && (fbValue <= finished_exiting_synch_depth || fbValue >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
         // Gears were synched, but now we are exiting sync on our way back to neutral
         newState = HeavyTruckSynchroState::EXITING_SYNCH;
+        //qDebug() << "HeavyTruckSynchroState::EXITING_SYNCH";
     }
     else {
         // We are out of sync completely and will need to reenter
         newState = HeavyTruckSynchroState::ENTERING_SYNCH;
+        //qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
     }
     synchroState = newState;
     emit synchroStateChanged(synchroState, fbValue);
