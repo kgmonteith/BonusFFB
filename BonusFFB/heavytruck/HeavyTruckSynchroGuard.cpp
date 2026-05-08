@@ -118,6 +118,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     device->addEffect("engineVibration", { GUID_Triangle, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HeavyTruckSynchroGuard::setRumbleRPM);
+    rumbleUpdateTimer->start();
     return DI_OK;
 }
 
@@ -213,51 +214,47 @@ void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState
 
 void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newState) {
     grindingState = newState;
-    if (grindingState != HeavyTruckGrindingState::OFF) {
-        // Start rumbling
-        rumbleUpdateTimer->start();
-        setRumbleRPM();
-    }
-    else {
-        // Stop rumbling
-        rumbleUpdateTimer->stop();
-        rumble.dwMagnitude = 0;
-        rumble.dwPhase = 0;
-        rumblePushback.lMagnitude = 0;
-        device->updateEffect("rumble");
-        device->updateEffect("rumblePushback");
-    }
 }
 
 void HeavyTruckSynchroGuard::setRumbleRPM() {
-    double effectScaling;
-    if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
-        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
-    }
-    else {
-        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange);
-    }
-    double revMatchRumbleScaling = std::fmax(0, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM * 1.5));
-    unsigned long rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
-    {
+    if (grindingState != HeavyTruckGrindingState::OFF) {
+        double effectScaling;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
         }
         else {
-            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
+            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange);
         }
-        double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
-        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
-        //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
-        device->updateEffect("rumblePushback");
+        double revMatchRumbleScaling = std::fmax(0, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM * 1.5));
+        unsigned long rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
+        if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
+        {
+            if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
+                effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
+            }
+            else {
+                effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
+            }
+            double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
+            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
+            //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
+            device->updateEffect("rumblePushback");
+        }
+        DWORD period = 6e7 / std::abs(grindEffectRPM);
+        if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
+        {
+            rumble.dwPeriod = period;
+            rumble.dwMagnitude = rumbleMag;
+            device->updateEffect("rumble");
+        }
     }
-    DWORD period = 6e7 / std::abs(grindEffectRPM);
-    if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
-    {
-        rumble.dwPeriod = period;
-        rumble.dwMagnitude = rumbleMag;
+    else {
+        // Stop rumbling
+        //rumbleUpdateTimer->stop();
+        rumble.dwMagnitude = 0;
+        rumblePushback.lMagnitude = 0;
         device->updateEffect("rumble");
+        device->updateEffect("rumblePushback");
     }
 }
 
