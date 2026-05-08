@@ -216,7 +216,11 @@ void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newSta
     grindingState = newState;
 }
 
+/// <summary>
+/// Invoked via a periodic timer set to run every millisecond
+/// </summary>
 void HeavyTruckSynchroGuard::setRumbleRPM() {
+    // Start rumbling
     if (grindingState != HeavyTruckGrindingState::OFF) {
         double effectScaling;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
@@ -250,11 +254,14 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     }
     else {
         // Stop rumbling
-        //rumbleUpdateTimer->stop();
-        rumble.dwMagnitude = 0;
-        rumblePushback.lMagnitude = 0;
-        device->updateEffect("rumble");
-        device->updateEffect("rumblePushback");
+        if (rumble.dwMagnitude != 0) {
+            rumble.dwMagnitude = 0;
+            device->updateEffect("rumble");
+        }
+        if (rumblePushback.lMagnitude != 0) {
+            rumblePushback.lMagnitude = 0;
+            device->updateEffect("rumblePushback");
+        }
     }
 }
 
