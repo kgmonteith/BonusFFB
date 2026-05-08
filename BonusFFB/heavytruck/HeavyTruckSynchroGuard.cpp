@@ -115,7 +115,7 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     engineVibrationEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     engineVibrationEff.lpvTypeSpecificParams = &engineVibration;
     engineVibrationEff.dwStartDelay = 0;
-    device->addEffect("engineVibration", { GUID_Sine, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
+    device->addEffect("engineVibration", { GUID_Triangle, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HeavyTruckSynchroGuard::setRumbleRPM);
     return DI_OK;
@@ -146,7 +146,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
     throttlePercent = telemetry->getThrottlePercent();
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
-    if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
+    if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && applyIdleTorqueLock) {
         // Assume throttle is applied, use pedal values for keep-in-gear force scaling
         double scaling = scaleRangeValue(throttlePercent, 0.01, 0.06);
         int maxStrength = keepInGearSpringMaxCoefficient;
@@ -162,14 +162,14 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         }
         if (fbValue < JOY_MIDPOINT && fbValue > slot->depthAsJoystickValueFwd()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
             
         }
         else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
         }
         else {
             keepInGearSpring.lNegativeCoefficient = 0;
@@ -185,6 +185,15 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         handsOffCondition[1] = { 0, handsOffDamper, handsOffDamper };
     }
     else {
+        if (synchroState == HeavyTruckSynchroState::IN_SYNCH && !applyIdleTorqueLock && (fbValue <= slot->depthAsJoystickValueFwd() || fbValue >= slot->depthAsJoystickValueBack())) {
+            // Only start applying the idle torque lock if the stick has reached the end of the slot
+            applyIdleTorqueLock = true;
+            //qDebug() << "Enabling idle torque lock";
+        }
+        else {
+            applyIdleTorqueLock = false;
+            //qDebug() << "Disabling idle torque lock";
+        }
         keepInGearSpring.lNegativeCoefficient = 0;
         keepInGearSpring.lPositiveCoefficient = 0;
         torqueLoadSpring.lNegativeCoefficient = 0;

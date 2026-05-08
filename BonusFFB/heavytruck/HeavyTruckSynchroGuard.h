@@ -84,5 +84,5 @@ private:
 
 	double clutchPercent = 0;
 	double throttlePercent = 0;
-
+	bool applyIdleTorqueLock = false;
 };
