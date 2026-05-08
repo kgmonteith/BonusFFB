@@ -245,11 +245,11 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
         int offsetCenter;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
             offsetCenter = joystickPositionToFFBOffset(slot->grindPointDepthAsJoystickValueBack());
-            effectScaling = offsetCenter - (FFB_MAX * scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange) * 1.3);
+            effectScaling = offsetCenter - (FFB_MAX * scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange) * 1.2);
         }
         else {
             offsetCenter = joystickPositionToFFBOffset(slot->grindPointDepthAsJoystickValueFwd());
-            effectScaling = offsetCenter; //scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange);
+            effectScaling = offsetCenter + (FFB_MAX * scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * 1.2);
         }
         double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
         rumblePushback.lPositiveCoefficient = FFB_MAX * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
@@ -263,7 +263,7 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     {
         rumble.dwPeriod = period;
         rumble.dwMagnitude = rumbleMag;
-        //device->updateEffect("rumble");
+        device->updateEffect("rumble");
     }
 }
 
