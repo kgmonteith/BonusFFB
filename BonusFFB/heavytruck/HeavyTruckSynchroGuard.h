@@ -76,7 +76,8 @@ private:
 	DICONDITION keepInGearSpring = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION torqueLoadSpring = { 0, 0, 0 };
 	DIPERIODIC rumble = { 0, 0, 0, 10000 };
-	DICONSTANTFORCE rumblePushback = { 0 };
+	//DICONSTANTFORCE rumblePushback = { 0 };
+	DICONDITION rumblePushback = { 0, 0, 0 };
 	DIPERIODIC engineVibration = { engineVibrationIntensity, 0, 0, 0 };
 
 	DICONDITION handsOffCondition[2] = { {0, 0, 0}, {0, 0, 0} };

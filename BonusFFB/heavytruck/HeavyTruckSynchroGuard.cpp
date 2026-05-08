@@ -80,10 +80,10 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     rumblePushbackEff.cAxes = 1;
     rumblePushbackEff.rgdwAxes = &AXES[1];
     rumblePushbackEff.rglDirection = &FORWARDBACK[1];
-    rumblePushbackEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+    rumblePushbackEff.cbTypeSpecificParams = sizeof(DICONDITION);
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
-    device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
+    device->addEffect("rumblePushback", { GUID_Spring, &rumblePushbackEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     handsOffEff.dwSize = sizeof(DIEFFECT);
     handsOffEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -223,7 +223,8 @@ void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newSta
         rumbleUpdateTimer->stop();
         rumble.dwMagnitude = 0;
         rumble.dwPhase = 0;
-        rumblePushback.lMagnitude = 0;
+        rumblePushback.lPositiveCoefficient = 0;
+        rumblePushback.lNegativeCoefficient = 0;
         device->updateEffect("rumble");
         device->updateEffect("rumblePushback");
     }
@@ -241,15 +242,20 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     unsigned long rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
     if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
     {
+        int offsetCenter;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
+            offsetCenter = joystickPositionToFFBOffset(slot->grindPointDepthAsJoystickValueBack());
+            effectScaling = offsetCenter - (FFB_MAX * scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange) * 1.3);
         }
         else {
-            effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
+            offsetCenter = joystickPositionToFFBOffset(slot->grindPointDepthAsJoystickValueFwd());
+            effectScaling = offsetCenter; //scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange);
         }
         double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
-        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
-        //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
+        rumblePushback.lPositiveCoefficient = FFB_MAX * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
+        rumblePushback.lNegativeCoefficient = FFB_MAX * clutchPercent * revMatchPushbackScaling * -1;
+        rumblePushback.lOffset = effectScaling;
+        qDebug() << "rumblePushback.lPositiveCoefficient: " << rumblePushback.lPositiveCoefficient << ", rumblePushback.lOffset: " << rumblePushback.lOffset;
         device->updateEffect("rumblePushback");
     }
     DWORD period = 6e7 / std::abs(grindEffectRPM);
@@ -257,7 +263,7 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     {
         rumble.dwPeriod = period;
         rumble.dwMagnitude = rumbleMag;
-        device->updateEffect("rumble");
+        //device->updateEffect("rumble");
     }
 }
 
