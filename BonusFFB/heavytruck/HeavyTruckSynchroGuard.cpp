@@ -115,9 +115,10 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr, 
     engineVibrationEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     engineVibrationEff.lpvTypeSpecificParams = &engineVibration;
     engineVibrationEff.dwStartDelay = 0;
-    device->addEffect("engineVibration", { GUID_Sine, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
+    device->addEffect("engineVibration", { GUID_Triangle, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
 
     QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HeavyTruckSynchroGuard::setRumbleRPM);
+    rumbleUpdateTimer->start();
     return DI_OK;
 }
 
@@ -146,7 +147,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
     throttlePercent = telemetry->getThrottlePercent();
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
-    if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH)) {
+    if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && applyIdleTorqueLock) {
         // Assume throttle is applied, use pedal values for keep-in-gear force scaling
         double scaling = scaleRangeValue(throttlePercent, 0.01, 0.06);
         int maxStrength = keepInGearSpringMaxCoefficient;
@@ -162,14 +163,14 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         }
         if (fbValue < JOY_MIDPOINT && fbValue > slot->depthAsJoystickValueFwd()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetFwd()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueFwd(), slot->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
             
         }
         else if (fbValue > JOY_MIDPOINT && fbValue < slot->depthAsJoystickValueBack()) {
             keepInGearSpring.lOffset = slot->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(fbValue) - slot->depthAsFFBOffsetBack()) * offsetScaling);
-            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
-            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            keepInGearSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(fbValue, slot->depthAsJoystickValueBack(), slot->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
         }
         else {
             keepInGearSpring.lNegativeCoefficient = 0;
@@ -185,6 +186,15 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         handsOffCondition[1] = { 0, handsOffDamper, handsOffDamper };
     }
     else {
+        if (synchroState == HeavyTruckSynchroState::IN_SYNCH && !applyIdleTorqueLock && (fbValue <= slot->depthAsJoystickValueFwd() || fbValue >= slot->depthAsJoystickValueBack())) {
+            // Only start applying the idle torque lock if the stick has reached the end of the slot
+            applyIdleTorqueLock = true;
+            //qDebug() << "Enabling idle torque lock";
+        }
+        else {
+            applyIdleTorqueLock = false;
+            //qDebug() << "Disabling idle torque lock";
+        }
         keepInGearSpring.lNegativeCoefficient = 0;
         keepInGearSpring.lPositiveCoefficient = 0;
         torqueLoadSpring.lNegativeCoefficient = 0;
@@ -204,51 +214,42 @@ void HeavyTruckSynchroGuard::synchroStateChanged(HeavyTruckSynchroState newState
 
 void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newState) {
     grindingState = newState;
-    if (grindingState != HeavyTruckGrindingState::OFF) {
-        // Start rumbling
-        rumbleUpdateTimer->start();
-        setRumbleRPM();
-    }
-    else {
-        // Stop rumbling
-        rumbleUpdateTimer->stop();
-        rumble.dwMagnitude = 0;
-        rumble.dwPhase = 0;
-        rumblePushback.lMagnitude = 0;
-        device->updateEffect("rumble");
-        device->updateEffect("rumblePushback");
-    }
 }
 
+/// <summary>
+/// Invoked via a periodic timer set to run every millisecond
+/// </summary>
 void HeavyTruckSynchroGuard::setRumbleRPM() {
-    double effectScaling;
-    if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
-        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
-    }
-    else {
-        effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange);
-    }
-    double revMatchRumbleScaling = std::fmax(0, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM * 1.5));
-    unsigned long rumbleMag = grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH)
-    {
+    // Start rumbling
+    if (grindingState != HeavyTruckGrindingState::OFF) {
+        double effectScaling;
         if (grindingState == HeavyTruckGrindingState::GRINDING_BACK) {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueBack(), slot->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
         }
         else {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
         }
-        double revMatchPushbackScaling = std::fmax(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
+        double revMatchPushbackScaling = scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM);
         rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
-        //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
         device->updateEffect("rumblePushback");
-    }
-    DWORD period = 6e7 / std::abs(grindEffectRPM);
-    if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
-    {
-        rumble.dwPeriod = period;
-        rumble.dwMagnitude = rumbleMag;
+        long smoothedRPM = long(grindEffectRPM) - long(grindEffectRPM) % 10;
+        double revMatchRumbleScaling = scaleRangeValue(std::abs(smoothedRPM), 0, 400);
+        // Apply some smoothing since the AB9 seems to struggle with changing periodic effects too frequently
+        rumble.dwPeriod = 6e7 / std::abs(smoothedRPM);
+        rumble.dwMagnitude = unsigned long(grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling);
+        //qDebug() << "revMatchRumbleScaling: " << revMatchRumbleScaling << "smoothedRPM: " << smoothedRPM <<  "rumble.dwPeriod: " << rumble.dwPeriod << "rumble.dwMagnitude: " << rumble.dwMagnitude;
         device->updateEffect("rumble");
+    }
+    else {
+        // Stop rumbling
+        if (rumble.dwMagnitude != 0) {
+            rumble.dwMagnitude = 0;
+            device->updateEffect("rumble");
+        }
+        if (rumblePushback.lMagnitude != 0) {
+            rumblePushback.lMagnitude = 0;
+            device->updateEffect("rumblePushback");
+        }
     }
 }
 
