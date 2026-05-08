@@ -229,11 +229,11 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
         else {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
         }
-        double revMatchPushbackScaling = scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM);
+        double revMatchPushbackScaling = std::max(0.25, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
         rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
         device->updateEffect("rumblePushback");
         long smoothedRPM = long(grindEffectRPM) - long(grindEffectRPM) % 10;
-        double revMatchRumbleScaling = scaleRangeValue(std::abs(smoothedRPM), 0, 400);
+        double revMatchRumbleScaling = scaleRangeValue(std::abs(smoothedRPM), 0, std::min(300.0, maxRevMatchRPM * 1.5));
         // Apply some smoothing since the AB9 seems to struggle with changing periodic effects too frequently
         rumble.dwPeriod = 6e7 / std::abs(smoothedRPM);
         rumble.dwMagnitude = unsigned long(grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling);
