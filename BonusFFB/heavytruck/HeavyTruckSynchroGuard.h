@@ -62,6 +62,8 @@ private:
 
 	QTimer* rumbleUpdateTimer;
 	long rumblePeriod = 10000;
+	long rumblePhase = 0;
+	QElapsedTimer rumbleIntervalTimer = QElapsedTimer();
 
 	int grindPushbackScalingRange = 5000;
 

@@ -216,6 +216,7 @@ void HeavyTruckSynchroGuard::grindingStateChanged(HeavyTruckGrindingState newSta
     if (grindingState != HeavyTruckGrindingState::OFF) {
         // Start rumbling
         rumbleUpdateTimer->start();
+        rumbleIntervalTimer.start();
         setRumbleRPM();
     }
     else {
@@ -255,8 +256,18 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     DWORD period = 6e7 / std::abs(grindEffectRPM);
     if (period != rumble.dwPeriod || rumbleMag != rumble.dwMagnitude)
     {
+        double updateMilliseconds = rumbleIntervalTimer.nsecsElapsed();
+        rumbleIntervalTimer.restart();
+        int phaseDelta = 0;
+        if (rumble.dwPeriod != 0)
+            phaseDelta = ((updateMilliseconds * 1000) / rumble.dwPeriod) * 36000;
+        rumblePhase = rumble.dwPhase + phaseDelta;
+        if (rumblePhase >= 36000)
+            rumblePhase = rumblePhase % 36000;
+        qDebug() << updateMilliseconds << rumblePhase << rumble.dwPeriod;
         rumble.dwPeriod = period;
         rumble.dwMagnitude = rumbleMag;
+        //rumble.dwPhase = (DWORD)rumblePhase;
         device->updateEffect("rumble");
     }
 }
