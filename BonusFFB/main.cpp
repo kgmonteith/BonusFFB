@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     window.show();
     for (const auto app : window.appList) {
         app->initializeJoystickMap();
-        app->loadSettings();
+        //app->loadSettings();
     }
     qDebug() << "Finished launching";
     return app.exec();

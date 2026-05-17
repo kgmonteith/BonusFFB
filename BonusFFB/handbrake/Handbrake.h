@@ -25,8 +25,8 @@ class Handbrake : public BonusFFBApp
 public:
 	QString getAppName();
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
 	QPair<int, int> getJoystickValues();
@@ -52,9 +52,6 @@ signals:
 	void joystickValueChanged(int, int);
 	void joystickLRValueChanged(int);
 	void joystickFBValueChanged(int);
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/handbrakeDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;

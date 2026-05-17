@@ -21,9 +21,6 @@ QString Prndl::getAppName() {
 }
 
 void Prndl::initialize() {
-    // Menu action connections
-    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &Prndl::saveSettings);
-    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &Prndl::loadSettings);
     // Graphics connections
     QObject::connect(ui->prndlTabWidget, &QTabWidget::currentChanged, this, &Prndl::redrawJoystickMap);
     QObject::connect(&stateManager, &PrndlStateManager::slotChanged, this, &Prndl::changeSlotLabel);
@@ -207,44 +204,43 @@ void Prndl::changeShiftLockDevice(int deviceIndex) {
     }
 }
 
-void Prndl::saveSettings() {
-    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
-    settings.beginGroup("joystick");
-    settings.setValue("device_guid", joystick->instanceGuid.toString());
-    settings.setValue("lr_axis", joystickLRAxisGuid.toString());
-    settings.setValue("fb_axis", joystickFBAxisGuid.toString());
-    settings.endGroup();
+void Prndl::saveSettings(QSettings* settings) {
+    /*
+    settings->beginGroup("joystick");
+    settings->setValue("device_guid", joystick->instanceGuid.toString());
+    settings->setValue("lr_axis", joystickLRAxisGuid.toString());
+    settings->setValue("fb_axis", joystickFBAxisGuid.toString());
+    settings->endGroup();
 
-    settings.beginGroup("shiftlockdevice");
+    settings->beginGroup("vjoy");
+    settings->setValue("vjoy_device", vjoy->getDeviceIndex());
+    settings->endGroup();
+
+    settings->beginGroup("shiftlockdevice");
     if (shiftLockDevice != nullptr) {
-        settings.setValue("device_guid", shiftLockDevice->instanceGuid.toString());
-        settings.setValue("device_button", ui->prndl_shiftLockButtonComboBox->currentIndex());
+        settings->setValue("device_guid", shiftLockDevice->instanceGuid.toString());
+        settings->setValue("device_button", ui->prndl_shiftLockButtonComboBox->currentIndex());
     }
     else {
-        settings.setValue("device_guid", "None");
+        settings->setValue("device_guid", "None");
     }
-    settings.endGroup();
+    settings->endGroup();
+    */
 
-    settings.beginGroup("vjoy");
-    settings.setValue("vjoy_device", vjoy->getDeviceIndex());
-    settings.endGroup();
+    settings->beginGroup(this->getAppName());
 
-    settings.beginGroup("other_settings");
-    settings.setValue("enable_park_slot", ui->prndl_enableParkSlotCheckBox->isChecked());
-    settings.setValue("enable_low_slot", ui->prndl_enableLowSlotCheckBox->isChecked());
-    settings.setValue("simulate_park_atsets2", ui->prndl_simulateParkUsingTelemetryCheckBox->isChecked());
-    settings.setValue("shift_lock_neutral_reverse", ui->prndl_shiftLockFromNeutralToReverseCheckBox->isChecked());
-    settings.endGroup();
+    settings->beginGroup("other_settings");
+    settings->setValue("enable_park_slot", ui->prndl_enableParkSlotCheckBox->isChecked());
+    settings->setValue("enable_low_slot", ui->prndl_enableLowSlotCheckBox->isChecked());
+    settings->setValue("simulate_park_atsets2", ui->prndl_simulateParkUsingTelemetryCheckBox->isChecked());
+    settings->setValue("shift_lock_neutral_reverse", ui->prndl_shiftLockFromNeutralToReverseCheckBox->isChecked());
+    settings->endGroup();
+
+    settings->endGroup();
 }
 
-void Prndl::loadSettings() {
-    qDebug() << "Loading settings";
-    if (!QFile(deviceSettingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(deviceSettingsFile, QSettings::IniFormat);
-
+void Prndl::loadSettings(QSettings* settings) {
+    /*
     settings.beginGroup("joystick");
     int joystick_index = ui->prndl_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
     if (joystick_index == -1 && !g_joystick_warned) {
@@ -276,13 +272,17 @@ void Prndl::loadSettings() {
     settings.beginGroup("vjoy");
     ui->prndl_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
     settings.endGroup();
+    */
+    settings->beginGroup(this->getAppName());
 
-    settings.beginGroup("other_settings");
-    ui->prndl_enableParkSlotCheckBox->setChecked(settings.value("enable_park_slot").toBool());
-    ui->prndl_enableLowSlotCheckBox->setChecked(settings.value("enable_low_slot").toBool());
-    ui->prndl_simulateParkUsingTelemetryCheckBox->setChecked(settings.value("simulate_park_atsets2").toBool());
-    ui->prndl_shiftLockFromNeutralToReverseCheckBox->setChecked(settings.value("shift_lock_neutral_reverse").toBool());
-    settings.endGroup();
+    settings->beginGroup("other_settings");
+    ui->prndl_enableParkSlotCheckBox->setChecked(settings->value("enable_park_slot").toBool());
+    ui->prndl_enableLowSlotCheckBox->setChecked(settings->value("enable_low_slot").toBool());
+    ui->prndl_simulateParkUsingTelemetryCheckBox->setChecked(settings->value("simulate_park_atsets2").toBool());
+    ui->prndl_shiftLockFromNeutralToReverseCheckBox->setChecked(settings->value("shift_lock_neutral_reverse").toBool());
+    settings->endGroup();
+
+    settings->endGroup();
     qDebug() << "Succesfully loaded PRNDL settings";
 }
 

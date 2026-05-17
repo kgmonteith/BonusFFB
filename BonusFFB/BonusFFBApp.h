@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include <QObject>
+#include <QSettings>
 #include "ui_BonusFFB.h"
 #include "DeviceInfo.h"
 #include "vJoyFeeder.h"
@@ -41,8 +42,8 @@ public:
 	virtual void gameLoop() = 0;
 	virtual void initialize() = 0;
 	virtual void initializeJoystickMap() = 0;
-	virtual void saveSettings() = 0;
-	virtual void loadSettings() = 0;
+	virtual void saveSettings(QSettings*) = 0;
+	virtual void loadSettings(QSettings*) = 0;
 	virtual QString getAppName() = 0;
 
 public slots:

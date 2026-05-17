@@ -165,4 +165,9 @@
   <ItemGroup>
     <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="InputOutputSettingsDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
 </Project>

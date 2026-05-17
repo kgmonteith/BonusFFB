@@ -22,9 +22,6 @@ QString Handbrake::getAppName() {
 }
 
 void Handbrake::initialize() {
-    // Menu action connections
-    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &Handbrake::saveSettings);
-    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &Handbrake::loadSettings);
     // Graphics connections
     QObject::connect(ui->handbrakeTabWidget, &QTabWidget::currentChanged, this, &Handbrake::redrawJoystickMap);
     // Joystick connections
@@ -126,28 +123,27 @@ void Handbrake::changeJoystickFBAxis(int axisIndex) {
     joystickFBAxisGuid = ui->handbrake_joystickFBAxisComboBox->currentData().toUuid();
 }
 
-void Handbrake::saveSettings() {
-    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
+void Handbrake::saveSettings(QSettings* settings) {
+    /*
     settings.beginGroup("joystick");
     settings.setValue("device_guid", joystick->instanceGuid.toString());
     settings.setValue("lr_axis", joystickLRAxisGuid.toString());
     settings.setValue("fb_axis", joystickFBAxisGuid.toString());
     settings.endGroup();
+    */
 
-    settings.beginGroup("handbrake");
-    settings.setValue("spring_strength", ui->handbrakeSpringStrengthSlider->value());
-    settings.setValue("spring_center", ui->handbrakeSpringCenterSlider->value());
-    settings.endGroup();
+    settings->beginGroup(this->getAppName());
+
+    settings->beginGroup("ffb_settings");
+    settings->setValue("spring_strength", ui->handbrakeSpringStrengthSlider->value());
+    settings->setValue("spring_center", ui->handbrakeSpringCenterSlider->value());
+    settings->endGroup();
+
+    settings->endGroup();
 }
 
-void Handbrake::loadSettings() {
-    qDebug() << "Loading settings";
-    if (!QFile(deviceSettingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(deviceSettingsFile, QSettings::IniFormat);
-
+void Handbrake::loadSettings(QSettings* settings) {
+    /*
     settings.beginGroup("joystick");
     int joystick_index = ui->handbrake_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
     if (joystick_index == -1 && !g_joystick_warned) {
@@ -161,15 +157,20 @@ void Handbrake::loadSettings() {
         ui->handbrake_joystickFBAxisComboBox->setCurrentIndex(ui->handbrake_joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
     }
     settings.endGroup();
+    */
 
-    settings.beginGroup("handbrake");
-    int t_int = settings.value("spring_strength").toInt();
+    settings->beginGroup(this->getAppName());
+
+    settings->beginGroup("ffb_settings");
+    int t_int = settings->value("spring_strength").toInt();
     if(t_int)
         ui->handbrakeSpringStrengthSlider->setValue(t_int);
-    t_int = settings.value("spring_center").toInt();
+    t_int = settings->value("spring_center").toInt();
     if (t_int)
         ui->handbrakeSpringCenterSlider->setValue(t_int);
-    settings.endGroup();
+    settings->endGroup();
+
+    settings->endGroup();
 
     qDebug() << "Succesfully loaded Handbrake settings";
 }

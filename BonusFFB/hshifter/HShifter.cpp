@@ -25,9 +25,6 @@ QString HShifter::getAppName() {
 }
 
 void HShifter::initialize() {
-    // Menu action connections
-    QObject::connect(ui->actionSaveSettings, &QAction::triggered, this, &HShifter::saveSettings);
-    QObject::connect(ui->actionLoadSettings, &QAction::triggered, this, &HShifter::loadSettings);
     // Graphics connections
     QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
     // HShifter joystick connections
@@ -188,8 +185,11 @@ void HShifter::hideAxisProgressBars() {
     ui->ioTabThrottleProgressBar->hide();
 }
 
-void HShifter::saveSettings() {
-    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
+void HShifter::saveSettings(QSettings* settings) {
+    settings->beginGroup(this->getAppName());
+
+    settings->endGroup();
+    /*
     settings.beginGroup("joystick");
     settings.setValue("device_guid", joystick->instanceGuid.toString());
     settings.setValue("lr_axis", joystickLRAxisGuid.toString());
@@ -209,16 +209,14 @@ void HShifter::saveSettings() {
     settings.beginGroup("vjoy");
     settings.setValue("vjoy_device", vjoy->getDeviceIndex());
     settings.endGroup();
+    */
 }
 
-void HShifter::loadSettings() {
-    qDebug() << "Loading settings";
-    if (!QFile(deviceSettingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(deviceSettingsFile, QSettings::IniFormat);
+void HShifter::loadSettings(QSettings* settings) {
+    settings->beginGroup(this->getAppName());
 
+    settings->endGroup();
+    /*
     settings.beginGroup("joystick");
     int joystick_index = ui->hshifter_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
     if (joystick_index == -1 && !g_joystick_warned) {
@@ -253,6 +251,7 @@ void HShifter::loadSettings() {
     settings.beginGroup("vjoy");
     ui->hshifter_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
     settings.endGroup();
+    */
 }
 
 void HShifter::changeJoystickDevice(int deviceIndex) {

@@ -25,9 +25,6 @@ QString HeavyTruck::getAppName() {
 }
 
 void HeavyTruck::initialize() {
-    // Menu action connections
-    connect(ui->actionSaveSettings, &QAction::triggered, this, &HeavyTruck::saveSettings);
-    connect(ui->actionLoadSettings, &QAction::triggered, this, &HeavyTruck::loadSettings);
     // UI connections
     connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
     connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
@@ -266,8 +263,8 @@ void HeavyTruck::hideAxisProgressBars() {
     ui->ioTabThrottleProgressBar->hide();
 }
 
-void HeavyTruck::saveSettings() {
-    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
+void HeavyTruck::saveSettings(QSettings* settings) {
+    /*
     settings.beginGroup("joystick");
     settings.setValue("device_guid", joystick->instanceGuid.toString());
     settings.setValue("lr_axis", joystickLRAxisGuid.toString());
@@ -287,38 +284,37 @@ void HeavyTruck::saveSettings() {
     settings.beginGroup("vjoy");
     settings.setValue("vjoy_device", vjoy->getDeviceIndex());
     settings.endGroup();
+    */
 
-    settings.beginGroup("slot_pattern_settings");
-    settings.setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
-    settings.setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
-    settings.setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
-    settings.setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
-    settings.setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
-    settings.setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
-    settings.endGroup();
+    settings->beginGroup(this->getAppName());
 
-    settings.beginGroup("ffb_effect_settings");
-    settings.setValue("damper", ui->heavytruck_damperSlider->value());
-    settings.setValue("inertia", ui->heavytruck_inertiaSlider->value());
-    settings.setValue("friction", ui->heavytruck_frictionSlider->value());
-    settings.setValue("gateLatchFriction", ui->heavytruck_gateLatchFrictionSlider->value());
-    settings.setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
-    settings.setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
-    settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
-    settings.setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
-    settings.setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
-    settings.setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
-    settings.endGroup();
+    settings->beginGroup("slot_pattern_settings");
+    settings->setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
+    settings->setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
+    settings->setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
+    settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
+    settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
+    settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
+    settings->endGroup();
+
+    settings->beginGroup("ffb_effect_settings");
+    settings->setValue("damper", ui->heavytruck_damperSlider->value());
+    settings->setValue("inertia", ui->heavytruck_inertiaSlider->value());
+    settings->setValue("friction", ui->heavytruck_frictionSlider->value());
+    settings->setValue("gateLatchFriction", ui->heavytruck_gateLatchFrictionSlider->value());
+    settings->setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
+    settings->setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
+    settings->setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
+    settings->setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
+    settings->setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
+    settings->setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
+    settings->endGroup();
+
+    settings->endGroup();
 }
 
-void HeavyTruck::loadSettings() {
-    qDebug() << "Loading settings";
-    if (!QFile(deviceSettingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(deviceSettingsFile, QSettings::IniFormat);
-
+void HeavyTruck::loadSettings(QSettings* settings) {
+    /*
     settings.beginGroup("joystick");
     int joystick_index = ui->heavytruck_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
     if (joystick_index == -1 && !g_joystick_warned) {
@@ -353,33 +349,33 @@ void HeavyTruck::loadSettings() {
     settings.beginGroup("vjoy");
     ui->heavytruck_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
     settings.endGroup();
+    */
 
-    if (settings.childGroups().contains("slot_pattern_settings")) {
-        settings.beginGroup("slot_pattern_settings");
-        ui->heavytruck_slotDepthSlider->setValue(settings.value("slotDepth").toInt());
-        ui->heavytruck_centerSlotPositionSlider->setValue(settings.value("centerSlotPosition").toInt());
-        ui->heavytruck_rightSlotPositionSlider->setValue(settings.value("rightSlotPosition").toInt());
-        ui->heavytruck_slotRoundingFactorSlider->setValue(settings.value("slotRoundingFactor").toInt());
-        ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings.value("buttonZoneDepth").toInt());
-        ui->heavytruck_displayZoneMarkers->setChecked(settings.value("displayZoneMarkers").toBool());
-        settings.endGroup();
-    }
+    settings->beginGroup(this->getAppName());
 
-    if (settings.childGroups().contains("ffb_effect_settings")) {
-        settings.beginGroup("ffb_effect_settings");
-        ui->heavytruck_damperSlider->setValue(settings.value("damper").toInt());
-        ui->heavytruck_inertiaSlider->setValue(settings.value("inertia").toInt());
-        ui->heavytruck_frictionSlider->setValue(settings.value("friction").toInt());
-        ui->heavytruck_gateLatchFrictionSlider->setValue(settings.value("gateLatchFriction", 30).toInt());
-        ui->heavytruck_grindIntensitySlider->setValue(settings.value("grindIntensity").toInt());
-        ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings.value("grindEffectShape").toInt());
-        ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());
-        ui->heavytruck_torqueLoadStrengthSlider->setValue(settings.value("torqueLoadStrength").toInt());
-        ui->heavytruck_maxRevMatchRPMSlider->setValue(settings.value("maxRevMatchRPM").toInt());
-        ui->heavytruck_engineVibrationStrengthSlider->setValue(settings.value("engineVibrationStrength").toInt());
-        settings.endGroup();
-    }
+    settings->beginGroup("slot_pattern_settings");
+    ui->heavytruck_slotDepthSlider->setValue(settings->value("slotDepth").toInt());
+    ui->heavytruck_centerSlotPositionSlider->setValue(settings->value("centerSlotPosition").toInt());
+    ui->heavytruck_rightSlotPositionSlider->setValue(settings->value("rightSlotPosition").toInt());
+    ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor").toInt());
+    ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth").toInt());
+    ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers").toBool());
+    settings->endGroup();
 
+    settings->beginGroup("ffb_effect_settings");
+    ui->heavytruck_damperSlider->setValue(settings->value("damper").toInt());
+    ui->heavytruck_inertiaSlider->setValue(settings->value("inertia").toInt());
+    ui->heavytruck_frictionSlider->setValue(settings->value("friction").toInt());
+    ui->heavytruck_gateLatchFrictionSlider->setValue(settings->value("gateLatchFriction", 30).toInt());
+    ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity").toInt());
+    ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape").toInt());
+    ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle").toInt());
+    ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength").toInt());
+    ui->heavytruck_maxRevMatchRPMSlider->setValue(settings->value("maxRevMatchRPM").toInt());
+    ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength").toInt());
+    settings->endGroup();
+
+    settings->endGroup();
     redrawJoystickMap();
 }
 

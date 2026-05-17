@@ -19,6 +19,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsEllipseItem>
 #include <QDir>
 #include <QDesktopServices>
+#include <QInputDialog>
+#include <QRegularExpression>
+#include <QFileDialog>
+
 #include <stdlib.h>
 
 BonusFFB::BonusFFB(QWidget *parent)
@@ -46,6 +50,12 @@ BonusFFB::BonusFFB(QWidget *parent)
     ui.handbrakeTabWidget->setCurrentIndex(0);
 
     // Menu action connections
+    connect(ui.actionSaveSettings, &QAction::triggered, this, &BonusFFB::saveActiveProfile);
+    connect(ui.actionSaveSettingsNew, &QAction::triggered, this, &BonusFFB::saveNewProfile);
+    connect(ui.actionOpen_profile_directory, &QAction::triggered, this, &BonusFFB::openProfileFolder);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::openInputOutputSettings);
+    connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
+    connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
     QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
     QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
     QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
@@ -97,6 +107,10 @@ BonusFFB::BonusFFB(QWidget *parent)
         ui.toggleGameLoopButton->setText("🚫");
         ui.toggleGameLoopButton->setToolTip("Cannot start without FFB joystick and vJoy");
     }
+
+    // Load active profile. Defaults will be loaded if the active profile is invalid.
+    loadActiveProfile();
+
     qDebug("BonusFFBApplication constructor finished");
 }
 
@@ -115,6 +129,109 @@ void BonusFFB::changeApp(int appSelectButtonIndex) {
 void BonusFFB::resizeEvent(QResizeEvent* e)
 {
     activeApp->redrawJoystickMap();
+}
+
+void BonusFFB::saveNewProfile() {
+    QInputDialog dialog(this);
+    dialog.setWindowTitle("Save new profile");
+    dialog.setLabelText("New profile name:");
+    if (dialog.exec() == QDialog::Accepted) {
+        saveProfile(dialog.textValue());
+    }
+}
+
+void BonusFFB::saveProfile(QString profileName) {
+    if (profileName.isEmpty()) {
+        saveNewProfile();
+        return;
+    }
+    QString safeName = profileName;
+    safeName.remove(QRegularExpression("[\\\\/:*?\"<>|]"));
+    QDir profileDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles/");
+    QSettings settings = QSettings(profileDir.filePath(safeName + ".ini"), QSettings::IniFormat);
+
+    if (!settings.isWritable()) {
+        QMessageBox::warning(this, "Failed to save profile", "Unable to write to profile configuration file.");
+        return;
+    }
+
+    settings.setValue("profile_name", profileName);
+    settings.setValue("app_version", QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION).toString());
+
+    for (auto app : appList) {
+        app->saveSettings(&settings);
+    }
+
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings activeProfile = QSettings(appSettingsDir.filePath("active_profile.ini"), QSettings::IniFormat);
+    activeProfile.setValue("profile_path", settings.fileName());
+    active_profile_path = settings.fileName();
+    active_profile_name = profileName;
+    setProfileDisplayName();
+}
+
+void BonusFFB::loadActiveProfile() {
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings settings = QSettings(appSettingsDir.filePath("active_profile.ini"), QSettings::IniFormat);
+    loadProfile(settings.value("profile_path").toString());
+}
+
+void BonusFFB::loadDefaultProfile() {
+    loadProfile("");
+}
+
+void BonusFFB::loadProfileDialog() {
+    QString profilePath = QFileDialog::getOpenFileName(this,
+        tr("Load profile"), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles/", tr("Profile configs (*.ini)"));
+    if (!profilePath.isEmpty()) {
+        loadProfile(profilePath);
+    }
+}
+
+void BonusFFB::loadProfile(QString profilePath) {
+    // If profilePath is empty, default values will be loaded
+    QSettings activeProfile = QSettings(profilePath, QSettings::IniFormat);
+    if (!profilePath.isEmpty()) {
+        active_profile_name = activeProfile.value("profile_name").toString();
+    }
+
+    for (auto app : appList) {
+        app->loadSettings(&activeProfile);
+    }
+    setProfileDisplayName();
+}
+
+void BonusFFB::saveActiveProfile() {
+    QSettings profile = QSettings(active_profile_path, QSettings::IniFormat);
+    QString profileName = profile.value("profile_name").toString();
+    saveProfile(profileName);
+}
+
+void BonusFFB::setProfileDisplayName() {
+    QString saveProfileText = "Save profile";
+    if (!active_profile_name.isEmpty()) {
+        saveProfileText += " (" + active_profile_name + ")";
+    }
+    ui.actionSaveSettings->setText(saveProfileText);
+}
+
+void BonusFFB::openProfileFolder() {
+    QString folderName = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/profiles";
+    QDir dir;
+
+    if (!dir.exists(folderName)) {
+        dir.mkdir(folderName);
+    }
+    QDesktopServices::openUrl(QUrl("file:///" + folderName));
+}
+
+void BonusFFB::openInputOutputSettings() {
+    Ui_InputOutputSettingsDialog dialog;
+    QDialog d;
+    dialog.setupUi(&d);
+    if (d.exec() == QDialog::Accepted) {
+        qDebug() << "Accepted";
+    }
 }
 
 void BonusFFB::openUserGuide() {

@@ -26,8 +26,8 @@ class HeavyTruck : public BonusFFBApp
 public:
 	QString getAppName();
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 	HRESULT startGameLoop();
 	void stopGameLoop();
@@ -74,9 +74,6 @@ signals:
 	void gearValuesChanged(QPair<int, int>);
 	void resetClutchAxes();
 	void engineRPMChanged(float);
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/heavytruckDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;

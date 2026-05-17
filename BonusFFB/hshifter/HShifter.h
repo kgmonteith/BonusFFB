@@ -26,8 +26,8 @@ class HShifter : public BonusFFBApp
 public:
 	QString getAppName();
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 	HRESULT startGameLoop();
 	void stopGameLoop();
@@ -68,9 +68,6 @@ signals:
 	void gearValuesChanged(QPair<int, int>);
 	void engineRPMChanged(float);
 	void resetClutchAxes();
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/hshifterDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;

@@ -22,6 +22,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QVersionNumber>
 #include <QButtonGroup>
 #include "ui_BonusFFB.h"
+#include "ui_InputOutputSettingsDialog.h"
 #include "Telemetry.h"
 #include "version.h"
 #include "vJoyFeeder.h"
@@ -63,10 +64,25 @@ public slots:
     void displayTelemetryState(TelemetrySource);
     void toggleGameLoop(bool);
 
+    void saveNewProfile();
+    void saveActiveProfile();
+    void loadActiveProfile();
+    void loadDefaultProfile();
+    void loadProfileDialog();
+    void openProfileFolder();
+    void openInputOutputSettings();
+
 protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
+    void loadProfile(QString);
+    void saveProfile(QString);
+    void setProfileDisplayName();
+
+    QString active_profile_path;
+    QString active_profile_name;
+
     QTimer gameLoopTimer;
 
     QTimer telemetryTimer;

@@ -27,8 +27,8 @@ class Prndl : public BonusFFBApp
 public:
 	QString getAppName();
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
 	QPair<int, int> getJoystickValues();
@@ -61,9 +61,6 @@ signals:
 	void joystickLRValueChanged(int);
 	void joystickFBValueChanged(int);
 	void shiftLockStateChanged(bool);
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/prndlDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;
