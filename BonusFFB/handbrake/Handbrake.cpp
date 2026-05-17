@@ -162,17 +162,13 @@ void Handbrake::loadSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_settings");
-    int t_int = settings->value("spring_strength").toInt();
-    if(t_int)
-        ui->handbrakeSpringStrengthSlider->setValue(t_int);
-    t_int = settings->value("spring_center").toInt();
-    if (t_int)
-        ui->handbrakeSpringCenterSlider->setValue(t_int);
+    ui->handbrakeSpringStrengthSlider->setValue(settings->value("spring_strength", 75).toInt());
+    ui->handbrakeSpringCenterSlider->setValue(settings->value("spring_center", 0).toInt());
     settings->endGroup();
 
     settings->endGroup();
 
-    qDebug() << "Succesfully loaded Handbrake settings";
+    qDebug() << "Succesfully loaded " << this->getAppName() << " settings";
 }
 
 void Handbrake::springCenterChanged(int value) {

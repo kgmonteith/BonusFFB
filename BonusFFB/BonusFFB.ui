@@ -136,14 +136,14 @@ shifter</string>
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -1718,7 +1718,7 @@ shifter</string>
            <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="monitorTab">
            <attribute name="title">
@@ -2490,7 +2490,7 @@ shifter</string>
         <item row="0" column="0">
          <widget class="QTabWidget" name="prndlTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">

@@ -40,7 +40,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     appList.append(&hshifter);
     appList.append(&prndl);
     appList.append(&handbrake);
-    QObject::connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
+    connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
     ui.appStackedWidget->setCurrentIndex(0);
 
     // Ensure the monitor is the default tab
@@ -56,13 +56,13 @@ BonusFFB::BonusFFB(QWidget *parent)
     connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::openInputOutputSettings);
     connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
     connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
-    QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
-    QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
-    QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
+    connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
+    connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
     // Game loop connections
-    QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
+    connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
     // Telemetry connections
-    QObject::connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
+    connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
 
     // Initialize Direct Input, get the list of connected devices
     initDirectInput(&deviceList);
@@ -190,9 +190,11 @@ void BonusFFB::loadProfileDialog() {
 
 void BonusFFB::loadProfile(QString profilePath) {
     // If profilePath is empty, default values will be loaded
+    qDebug() << "Loading profile: " << profilePath;
     QSettings activeProfile = QSettings(profilePath, QSettings::IniFormat);
     if (!profilePath.isEmpty()) {
         active_profile_name = activeProfile.value("profile_name").toString();
+        active_profile_path = profilePath;
     }
 
     for (auto app : appList) {
@@ -264,7 +266,7 @@ void BonusFFB::toggleGameLoop(bool newState) {
             emit toggleGameLoop(false);
             return;
         }
-        QObject::connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
+        connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
     }
     else
     {

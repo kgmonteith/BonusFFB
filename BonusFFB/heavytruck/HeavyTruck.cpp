@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruck.h"
 
 QString HeavyTruck::getAppName() {
-    return "hshifter";
+    return "heavytruck";
 }
 
 void HeavyTruck::initialize() {
@@ -354,25 +354,25 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("slot_pattern_settings");
-    ui->heavytruck_slotDepthSlider->setValue(settings->value("slotDepth").toInt());
-    ui->heavytruck_centerSlotPositionSlider->setValue(settings->value("centerSlotPosition").toInt());
-    ui->heavytruck_rightSlotPositionSlider->setValue(settings->value("rightSlotPosition").toInt());
-    ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor").toInt());
-    ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth").toInt());
-    ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers").toBool());
+    ui->heavytruck_slotDepthSlider->setValue(settings->value("slotDepth", 75).toInt());
+    ui->heavytruck_centerSlotPositionSlider->setValue(settings->value("centerSlotPosition", 34).toInt());
+    ui->heavytruck_rightSlotPositionSlider->setValue(settings->value("rightSlotPosition", 66).toInt());
+    ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
+    ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
+    ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
     settings->endGroup();
 
     settings->beginGroup("ffb_effect_settings");
-    ui->heavytruck_damperSlider->setValue(settings->value("damper").toInt());
-    ui->heavytruck_inertiaSlider->setValue(settings->value("inertia").toInt());
-    ui->heavytruck_frictionSlider->setValue(settings->value("friction").toInt());
+    ui->heavytruck_damperSlider->setValue(settings->value("damper", 30).toInt());
+    ui->heavytruck_inertiaSlider->setValue(settings->value("inertia", 10).toInt());
+    ui->heavytruck_frictionSlider->setValue(settings->value("friction", 10).toInt());
     ui->heavytruck_gateLatchFrictionSlider->setValue(settings->value("gateLatchFriction", 30).toInt());
-    ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity").toInt());
-    ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape").toInt());
-    ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle").toInt());
-    ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength").toInt());
-    ui->heavytruck_maxRevMatchRPMSlider->setValue(settings->value("maxRevMatchRPM").toInt());
-    ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength").toInt());
+    ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
+    ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape", 0).toInt());
+    ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle", 30).toInt());
+    ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength", 30).toInt());
+    ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength", 0).toInt());
+    ui->heavytruck_maxRevMatchRPMSlider->setValue(settings->value("maxRevMatchRPM", 90).toInt());
     settings->endGroup();
 
     settings->endGroup();

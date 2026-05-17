@@ -276,10 +276,10 @@ void Prndl::loadSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("other_settings");
-    ui->prndl_enableParkSlotCheckBox->setChecked(settings->value("enable_park_slot").toBool());
-    ui->prndl_enableLowSlotCheckBox->setChecked(settings->value("enable_low_slot").toBool());
-    ui->prndl_simulateParkUsingTelemetryCheckBox->setChecked(settings->value("simulate_park_atsets2").toBool());
-    ui->prndl_shiftLockFromNeutralToReverseCheckBox->setChecked(settings->value("shift_lock_neutral_reverse").toBool());
+    ui->prndl_enableParkSlotCheckBox->setChecked(settings->value("enable_park_slot", true).toBool());
+    ui->prndl_enableLowSlotCheckBox->setChecked(settings->value("enable_low_slot", true).toBool());
+    ui->prndl_simulateParkUsingTelemetryCheckBox->setChecked(settings->value("simulate_park_atsets2", true).toBool());
+    ui->prndl_shiftLockFromNeutralToReverseCheckBox->setChecked(settings->value("shift_lock_neutral_reverse", true).toBool());
     settings->endGroup();
 
     settings->endGroup();

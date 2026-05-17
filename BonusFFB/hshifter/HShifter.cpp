@@ -188,6 +188,13 @@ void HShifter::hideAxisProgressBars() {
 void HShifter::saveSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
+    settings->beginGroup("ffb_effect_settings");
+    settings->setValue("grindIntensity", ui->grindIntensitySlider->value());
+    settings->setValue("grindEffectBehavior", ui->grindEffectBehaviorComboBox->currentIndex());
+    settings->setValue("grindEffectRPM", ui->grindRPMSlider->value());
+    settings->setValue("idleLockIntensity", ui->keepInGearIdleSlider->value());
+    settings->endGroup();
+
     settings->endGroup();
     /*
     settings.beginGroup("joystick");
@@ -214,6 +221,13 @@ void HShifter::saveSettings(QSettings* settings) {
 
 void HShifter::loadSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
+
+    settings->beginGroup("ffb_effect_settings");
+    ui->grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
+    ui->grindEffectBehaviorComboBox->setCurrentIndex(settings->value("grindEffectBehavior", 0).toInt());
+    ui->grindRPMSlider->setValue(settings->value("grindEffectRPM", 3000).toInt());
+    ui->keepInGearIdleSlider->setValue(settings->value("idleLockIntensity", 25).toInt());
+    settings->endGroup();
 
     settings->endGroup();
     /*
