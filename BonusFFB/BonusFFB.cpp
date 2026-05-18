@@ -268,6 +268,7 @@ void BonusFFB::updateStartButton() {
 }
 
 void BonusFFB::startButtonClicked() {
+    qDebug() << "startButtonClicked";
     if (ui.startButton->text() == "▶️") {
         startGameLoop();
     }
@@ -300,10 +301,9 @@ void BonusFFB::startGameLoop() {
 }
 
 void BonusFFB::stopGameLoop() {
-    //if(ui.toggleGameLoopButton->isEnabled())
-    //    toggleGameLoop(false);
     if (gameLoopTimer.isActive())
     {
+        gameLoopTimer.stop();
         QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
         activeApp->stopGameLoop();
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
