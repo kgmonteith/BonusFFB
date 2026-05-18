@@ -79,6 +79,7 @@ HRESULT DeviceConfiguration::acquire(int flags) {
             return hr;
         };
     }
+    return S_OK;
 }
 
 void DeviceConfiguration::release() {
@@ -194,7 +195,6 @@ void DeviceConfiguration::openConfigurationDialog() {
     connect(dialog.pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updatePedalsAxisList);
     connect(dialog.pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
     connect(dialog.shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeShiftLockDevice);
-    //connect(dialog.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, &vjoy, &vJoyFeeder::setDeviceIndex);
     connect(dialog.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
 
     // Populate the device lists

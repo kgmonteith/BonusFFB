@@ -29,20 +29,25 @@ Follow the [device settings guide](device-settings.md) for your specific FFB joy
 
 !!! warning "Some FFB joysticks will silently fail to work with Bonus FFB until correctly configured."
 
-## 4. Install Bonus FFB
+## 4. Install and configure Bonus FFB
 
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 
+Configure your input and output devices in the `Settings > Input/output device configuration` menu. Select each device and axis in the dropdown menus.
+
+* A force-feedback enabled joystick and vJoy are required for all Bonus FFB modes
+* Pedals are required for the heavy truck and H-shifter modes
+* A shift lock device is optionally used by the PRNDL mode
+
 Bonus FFB installs as a single application with a few modes:
 
+* [Heavy truck shifter](heavytruck.md) for simulating heavy duty truck transmissions in ATS/ETS2
 * [H-pattern shifter](hshifter.md) for simulating manual transmissions
 * ["PRNDL"-style shifter](prndl.md) for simulating automatic transmissions
 * A simple [handbrake](handbrake.md) lever
 
-Select your desired mode and open the `Input/output settings` tab. Select your FFB joystick and other devices as required by the application. Select the vJoy device you configured earlier. Choose `File > Save device settings` when you're happy with the device and axis settings.
+Please read the mode's guide for app-specific configuration, options, and features.
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
-
-Please read the application's guide for app-specific configuration, options, and features.
 
 If you'd like other modes or have ideas for Bonus FFB, reach out on [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
