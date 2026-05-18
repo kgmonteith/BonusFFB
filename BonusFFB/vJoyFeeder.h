@@ -24,7 +24,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "public.h"
 #include "vjoyinterface.h"
 
-
 class vJoyFeeder : public QObject
 {
 	Q_OBJECT
@@ -44,6 +43,7 @@ public slots:
 	void setDeviceIndex(unsigned int);
 	void shortPressButton(int);
 	void updateButtons(int);
+	void setAxisValue(long, int);
 private:
 	unsigned int deviceNum = 1;
 	bool acquired = false;

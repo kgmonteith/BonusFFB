@@ -101,3 +101,7 @@ void vJoyFeeder::updateButtons(int newState) {
 	}
 	pressedButton = newState;
 }
+
+void vJoyFeeder::setAxisValue(long value, int axis) {
+	SetAxis(value, deviceNum, axis);
+}

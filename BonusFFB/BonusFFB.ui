@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>892</width>
-    <height>676</height>
+    <height>692</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,25 +15,18 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="0">
-     <widget class="QPushButton" name="hshifter_appSelectButton">
-      <property name="font">
-       <font>
-        <family>Bahnschrift</family>
-        <pointsize>12</pointsize>
-       </font>
+    <item row="8" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
-      <property name="text">
-       <string>H-pattern
-shifter</string>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
       </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
+     </spacer>
     </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -47,7 +40,7 @@ shifter</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
+          <width>100</width>
           <height>16777215</height>
          </size>
         </property>
@@ -84,7 +77,7 @@ shifter</string>
            <property name="font">
             <font>
              <family>Bahnschrift</family>
-             <pointsize>22</pointsize>
+             <pointsize>24</pointsize>
             </font>
            </property>
            <property name="text">
@@ -991,7 +984,7 @@ shifter</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_grindingIntensitySpinBox">
+                  <widget class="QSpinBox" name="heavytruck_grindIntensitySpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -1093,7 +1086,7 @@ shifter</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_keepInGearIdleSpinBox">
+                  <widget class="QSpinBox" name="heavytruck_keepInGearIdleSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -1551,7 +1544,7 @@ shifter</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="grindingIntensitySpinBox">
+                  <widget class="QSpinBox" name="grindIntensitySpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -1647,7 +1640,7 @@ shifter</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="grindRPMSpinBox">
+                  <widget class="QSpinBox" name="grindRPMSpinbox">
                    <property name="suffix">
                     <string/>
                    </property>
@@ -1707,7 +1700,7 @@ shifter</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="keepInGearIdleSpinBox">
+                  <widget class="QSpinBox" name="keepInGearIdleSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -2046,6 +2039,751 @@ shifter</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="page_5">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="pphcTabWidget">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab_4">
+           <attribute name="title">
+            <string>Monitor</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_14">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupBox_21">
+              <property name="title">
+               <string>Brake</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QProgressBar" name="pphc_brakeProgressBar">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>32767</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="pphc_brakeLabel">
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="2" rowspan="2">
+             <widget class="QGroupBox" name="shifterMapGroupBox_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Joystick map</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_21">
+               <item row="0" column="0">
+                <widget class="QGraphicsView" name="pphc_graphicsView">
+                 <property name="styleSheet">
+                  <string notr="true">background: transparent</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                 </property>
+                 <property name="renderHints">
+                  <set>QPainter::RenderHint::Antialiasing|QPainter::RenderHint::SmoothPixmapTransform|QPainter::RenderHint::TextAntialiasing</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QGroupBox" name="groupBox_22">
+              <property name="title">
+               <string>Throttle</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QProgressBar" name="pphc_throttleProgressBar">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>32767</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="pphc_throttleLabel">
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>FFB effect settings</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_12">
+            <item>
+             <widget class="QGroupBox" name="groupBox_24">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_13">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_62">
+                 <item>
+                  <widget class="QLabel" name="label_52">
+                   <property name="text">
+                    <string>Damper</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_53">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#damper&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_63">
+                 <item>
+                  <widget class="QSlider" name="pphc_damperSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_damperSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_64">
+                 <item>
+                  <widget class="QLabel" name="label_56">
+                   <property name="text">
+                    <string>Inertia</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_57">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#inertia&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_65">
+                 <item>
+                  <widget class="QSlider" name="pphc_inertiaSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_inertiaSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_66">
+                 <item>
+                  <widget class="QLabel" name="label_58">
+                   <property name="text">
+                    <string>Friction</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_59">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#friction&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_67">
+                 <item>
+                  <widget class="QSlider" name="pphc_frictionSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_frictionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_26">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_80">
+                 <item>
+                  <widget class="QLabel" name="label_72">
+                   <property name="text">
+                    <string>Brake spring scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_73">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#brake-spring-scaling&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_81">
+                 <item>
+                  <widget class="QSlider" name="pphc_brakeSpringScalingSlider">
+                   <property name="minimum">
+                    <number>100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>100</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_brakeSpringScalingSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_70">
+                 <item>
+                  <widget class="QLabel" name="label_62">
+                   <property name="text">
+                    <string>Brake axis deadzone</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_63">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_72">
+                 <item>
+                  <widget class="QSlider" name="pphc_brakeAxisDeadzoneSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_brakeAxisDeadzoneSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="displayIntegerBase">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_85">
+                 <item>
+                  <widget class="QLabel" name="label_76">
+                   <property name="text">
+                    <string>Brake axis scaling</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_77">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_84">
+                 <item>
+                  <widget class="QSlider" name="pphc_brakeAxisScalingSlider">
+                   <property name="minimum">
+                    <number>100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>100</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_brakeAxisScalingSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_27">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_5">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_82">
+                 <item>
+                  <widget class="QLabel" name="label_74">
+                   <property name="text">
+                    <string>Throttle spring strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_75">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-spring-strength&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_83">
+                 <item>
+                  <widget class="QSlider" name="pphc_throttleSpringStrengthSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_throttleSpringStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_77">
+                 <item>
+                  <widget class="QLabel" name="label_70">
+                   <property name="text">
+                    <string>Throttle axis deadzone</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_71">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_79">
+                 <item>
+                  <widget class="QSlider" name="pphc_throttleAxisDeadzoneSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_throttleAxisDeadzoneSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="displayIntegerBase">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_69">
+                 <item>
+                  <widget class="QLabel" name="label_60">
+                   <property name="text">
+                    <string>Throttle slot depth</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_61">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_68">
+                 <item>
+                  <widget class="QSlider" name="pphc_throttleSlotDepthSlider">
+                   <property name="minimum">
+                    <number>33</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>75</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="pphc_throttleSlotDepthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>33</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>75</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="page_3">
        <layout class="QGridLayout" name="gridLayout_16">
         <item row="0" column="1">
@@ -2102,7 +2840,7 @@ shifter</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
-                <widget class="QSpinBox" name="handbrakeSpringStrengthSpinBox">
+                <widget class="QSpinBox" name="handbrakeSpringStrengthSpinbox">
                  <property name="suffix">
                   <string>%</string>
                  </property>
@@ -2149,7 +2887,7 @@ shifter</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <item>
-                <widget class="QSpinBox" name="handbrakeSpringCenterSpinBox">
+                <widget class="QSpinBox" name="handbrakeSpringCenterSpinbox">
                  <property name="suffix">
                   <string>%</string>
                  </property>
@@ -2201,17 +2939,20 @@ shifter</string>
      </widget>
     </item>
     <item row="6" column="0">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
+     <widget class="QPushButton" name="handbrake_appSelectButton">
+      <property name="font">
+       <font>
+        <family>Bahnschrift</family>
+        <pointsize>12</pointsize>
+       </font>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
+      <property name="text">
+       <string>Handbrake</string>
       </property>
-     </spacer>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="4" column="0">
      <widget class="QPushButton" name="prndl_appSelectButton">
@@ -2227,6 +2968,26 @@ shifter</string>
       </property>
       <property name="checkable">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="hshifter_appSelectButton">
+      <property name="font">
+       <font>
+        <family>Bahnschrift</family>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>H-pattern
+shifter</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -2267,7 +3028,7 @@ shifter</string>
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QPushButton" name="handbrake_appSelectButton">
+     <widget class="QPushButton" name="pphc_appSelectButton">
       <property name="font">
        <font>
         <family>Bahnschrift</family>
@@ -2275,7 +3036,8 @@ shifter</string>
        </font>
       </property>
       <property name="text">
-       <string>Handbrake</string>
+       <string>Push-pull
+hand control</string>
       </property>
       <property name="checkable">
        <bool>true</bool>
@@ -2420,582 +3182,5 @@ shifter</string>
  <resources>
   <include location="BonusFFB.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>heavytruck_grindIntensitySlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_grindingIntensitySpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>556</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>202</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_grindingIntensitySpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_grindIntensitySlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>202</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>556</x>
-     <y>201</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_slotDepthSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_slotDepthSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>553</x>
-     <y>233</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>234</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_slotDepthSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_slotDepthSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>234</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>553</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_rightSlotPositionSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_rightSlotPositionSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>553</x>
-     <y>266</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>267</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_rightSlotPositionSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_rightSlotPositionSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>267</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>553</x>
-     <y>266</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_centerSlotPositionSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_centerSlotPositionSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>557</x>
-     <y>299</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>844</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_centerSlotPositionSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_centerSlotPositionSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>844</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>557</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_damperSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_damperSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>511</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>202</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_damperSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_damperSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>202</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>511</x>
-     <y>201</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_frictionSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_frictionSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>511</x>
-     <y>267</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>268</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_frictionSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_frictionSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>268</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>511</x>
-     <y>267</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_inertiaSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_inertiaSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>511</x>
-     <y>234</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>235</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_inertiaSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_inertiaSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>235</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>511</x>
-     <y>234</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_keepInGearIdleSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_keepInGearIdleSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>556</x>
-     <y>390</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>391</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_keepInGearIdleSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_keepInGearIdleSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>391</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>556</x>
-     <y>390</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_slotRoundingFactorSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_slotRoundingFactorSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>535</x>
-     <y>332</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>844</x>
-     <y>333</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_slotRoundingFactorSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_slotRoundingFactorSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>844</x>
-     <y>333</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>535</x>
-     <y>332</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_torqueLoadStrengthSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_torqueLoadStrengthSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>424</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>565</x>
-     <y>423</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_torqueLoadStrengthSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_torqueLoadStrengthSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>565</x>
-     <y>423</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>424</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_engineVibrationStrengthSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_engineVibrationStrengthSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>565</x>
-     <y>489</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>490</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_engineVibrationStrengthSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_engineVibrationStrengthSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>490</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>565</x>
-     <y>489</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_maxRevMatchRPMSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_maxRevMatchRPMSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>570</x>
-     <y>516</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>846</x>
-     <y>517</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_maxRevMatchRPMSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_maxRevMatchRPMSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>846</x>
-     <y>517</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>570</x>
-     <y>516</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_gateLatchFrictionSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_gateLatchFrictionSpinbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>552</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>841</x>
-     <y>301</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>heavytruck_gateLatchFrictionSpinbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>heavytruck_gateLatchFrictionSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>841</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>552</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>handbrakeSpringStrengthSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>handbrakeSpringStrengthSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>721</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>721</x>
-     <y>214</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>handbrakeSpringCenterSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>handbrakeSpringCenterSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>832</x>
-     <y>214</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>832</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>handbrakeSpringCenterSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>handbrakeSpringCenterSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>832</x>
-     <y>421</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>832</x>
-     <y>214</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>handbrakeSpringStrengthSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>handbrakeSpringStrengthSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>721</x>
-     <y>214</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>721</x>
-     <y>421</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>keepInGearIdleSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>keepInGearIdleSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>426</x>
-     <y>238</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>741</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>grindingIntensitySpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>grindIntensitySlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>740</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>665</x>
-     <y>205</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>grindRPMSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>grindRPMSpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>469</x>
-     <y>305</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>746</x>
-     <y>306</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>keepInGearIdleSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>keepInGearIdleSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>756</x>
-     <y>229</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>681</x>
-     <y>234</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>grindIntensitySlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>grindingIntensitySpinBox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>461</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>737</x>
-     <y>210</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>grindRPMSpinBox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>grindRPMSlider</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>753</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>668</x>
-     <y>301</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -11,19 +11,11 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "BonusFFB.h"
-#include <QSettings>
 #include <QMessageBox>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsRectItem>
-#include <QGraphicsEllipseItem>
 #include <QDir>
 #include <QDesktopServices>
 #include <QInputDialog>
-#include <QRegularExpression>
 #include <QFileDialog>
-
-#include <stdlib.h>
 
 BonusFFB::BonusFFB(QWidget *parent)
     : QMainWindow(parent)
@@ -35,10 +27,12 @@ BonusFFB::BonusFFB(QWidget *parent)
     appSelectButtonGroup.addButton(ui.heavytruck_appSelectButton, 0);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 1);
     appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 2);
-    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.pphc_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 4);
     appList.append(&heavytruck);
     appList.append(&hshifter);
     appList.append(&prndl);
+    appList.append(&pphc);
     appList.append(&handbrake);
     connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
     ui.appStackedWidget->setCurrentIndex(0);
@@ -47,6 +41,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     ui.heavytruckTabWidget->setCurrentIndex(0);
     ui.hshifterTabWidget->setCurrentIndex(0);
     ui.prndlTabWidget->setCurrentIndex(0);
+    ui.pphcTabWidget->setCurrentIndex(0);
     ui.handbrakeTabWidget->setCurrentIndex(0);
 
     // Menu action connections
@@ -65,6 +60,8 @@ BonusFFB::BonusFFB(QWidget *parent)
     connect(ui.startButton, &QPushButton::clicked, this, &BonusFFB::startButtonClicked);
     // Telemetry connections
     connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
+    // Connect sliders to spinboxes
+    connectSlidersToSpinBoxes();
 
     // Initialize Direct Input, get the list of connected devices
     devices.initialize((HWND)(winId()));
@@ -120,6 +117,22 @@ void BonusFFB::changeApp(int appSelectButtonIndex) {
 
     // Check if device configuration is suitable for the app
     updateStartButton();
+}
+
+void BonusFFB::connectSlidersToSpinBoxes() {
+    QList<QSlider*> sliders = ui.centralWidget->findChildren<QSlider*>();
+    for (QSlider* slider : sliders) {
+        QString sliderName = slider->objectName();
+        QString targetSpinBoxName = sliderName.replace("Slider", "Spinbox");
+        QSpinBox* matchingSpinBox = ui.centralWidget->findChild<QSpinBox*>(targetSpinBoxName);
+        if (matchingSpinBox) {
+            QObject::connect(slider, &QSlider::valueChanged, matchingSpinBox, &QSpinBox::setValue);
+            QObject::connect(matchingSpinBox, qOverload<int>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
+        }
+        else {
+            qDebug() << "No matching QSpinBox found for" << sliderName;
+        }
+    }
 }
 
 void BonusFFB::resizeEvent(QResizeEvent* e)
@@ -232,7 +245,7 @@ void BonusFFB::openUserGuide() {
 }
 
 void BonusFFB::openAbout() {
-    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.";
+    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see < https://www.gnu.org/licenses/>.";
     QMessageBox::about(this, "About Bonus FFB", about);
 }
 

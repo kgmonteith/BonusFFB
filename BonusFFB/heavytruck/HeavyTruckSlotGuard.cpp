@@ -128,7 +128,7 @@ void HeavyTruckSlotGuard::updateDamper(int value) {
 }
 
 void HeavyTruckSlotGuard::updateInertia(int value) {
-    inertiaStrength = FFB_MAX * value * 0.1;
+    inertiaStrength = FFB_MAX * value * 0.01;
     inertiaCondition[0] = { 0, inertiaStrength, inertiaStrength };
     inertiaCondition[1] = { 0, inertiaStrength, inertiaStrength };
     if (device != nullptr && device->isAcquired) {

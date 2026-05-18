@@ -94,6 +94,12 @@
     <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeviceConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pphc\Pphc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -139,6 +145,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="heavytruck\HeavyTruck.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DeviceConfiguration.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="pphc\Pphc.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
