@@ -13,33 +13,23 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsRectItem>
 #include <QMessageBox>
 #include <QSettings>
-#include <QFile>
 #include "Handbrake.h"
-#include "SharedEnums.h"
 
 QString Handbrake::getAppName() {
     return "handbrake";
 }
 
 void Handbrake::initialize() {
+    // Set flags for required and desired devices
+    appDeviceFlags = FLAG_DEVICES_REQUIRED;
+
     // Graphics connections
     QObject::connect(ui->handbrakeTabWidget, &QTabWidget::currentChanged, this, &Handbrake::redrawJoystickMap);
     // Joystick connections
-    QObject::connect(ui->handbrake_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &Handbrake::changeJoystickDevice);
-    QObject::connect(ui->handbrake_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &Handbrake::changeJoystickLRAxis);
-    QObject::connect(ui->handbrake_joystickFBAxisComboBox, &QComboBox::currentIndexChanged, this, &Handbrake::changeJoystickFBAxis);
-    QObject::connect(this, &Handbrake::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
+    QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
     // Additional settings connections
     QObject::connect(ui->handbrakeSpringCenterSlider, &QSlider::valueChanged, this, &Handbrake::springCenterChanged);
     QObject::connect(ui->handbrakeSpringStrengthSlider, &QSlider::valueChanged, this, &Handbrake::springStrengthChanged);
-
-    // Populate the device lists
-    for (const DeviceInfo& device : *deviceList)
-    {
-        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
-            ui->handbrake_joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
-        }
-    }
 }
 
 void Handbrake::initializeJoystickMap() {
@@ -96,42 +86,7 @@ void Handbrake::updateJoystickCircle(int LRValue, int FBValue) {
     ui->handbrake_graphicsView->setUpdatesEnabled(true);
 }
 
-void Handbrake::changeJoystickDevice(int deviceIndex) {
-    // Release previous joystick
-    if (joystick != nullptr && joystick->isAcquired) {
-        joystick->release();
-    }
-    QUuid deviceGuid = ui->handbrake_joystickDeviceComboBox->currentData().toUuid();
-    qDebug() << "Device UUID: " << deviceGuid;
-    joystick = getDeviceFromGuid(deviceList, deviceGuid);
-    qDebug() << "New joystick device: " << joystick->name;
-    ui->handbrake_joystickLRAxisComboBox->clear();
-    ui->handbrake_joystickFBAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = joystick->getDeviceAxes();
-    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
-    {
-        ui->handbrake_joystickLRAxisComboBox->addItem(axis.value(), axis.key());
-        ui->handbrake_joystickFBAxisComboBox->addItem(axis.value(), axis.key());
-    }
-}
-
-void Handbrake::changeJoystickLRAxis(int axisIndex) {
-    joystickLRAxisGuid = ui->handbrake_joystickLRAxisComboBox->currentData().toUuid();
-}
-
-void Handbrake::changeJoystickFBAxis(int axisIndex) {
-    joystickFBAxisGuid = ui->handbrake_joystickFBAxisComboBox->currentData().toUuid();
-}
-
 void Handbrake::saveSettings(QSettings* settings) {
-    /*
-    settings.beginGroup("joystick");
-    settings.setValue("device_guid", joystick->instanceGuid.toString());
-    settings.setValue("lr_axis", joystickLRAxisGuid.toString());
-    settings.setValue("fb_axis", joystickFBAxisGuid.toString());
-    settings.endGroup();
-    */
-
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_settings");
@@ -143,22 +98,6 @@ void Handbrake::saveSettings(QSettings* settings) {
 }
 
 void Handbrake::loadSettings(QSettings* settings) {
-    /*
-    settings.beginGroup("joystick");
-    int joystick_index = ui->handbrake_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1 && !g_joystick_warned) {
-        QMessageBox::warning(nullptr, "Joystick not found", "Saved handbrake joystick device is not connected.\nReconnect the device or update the input/output settings.");
-        g_joystick_warned = true;
-    }
-    else
-    {
-        ui->handbrake_joystickDeviceComboBox->setCurrentIndex(joystick_index);
-        ui->handbrake_joystickLRAxisComboBox->setCurrentIndex(ui->handbrake_joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
-        ui->handbrake_joystickFBAxisComboBox->setCurrentIndex(ui->handbrake_joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
-    }
-    settings.endGroup();
-    */
-
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_settings");
@@ -174,8 +113,8 @@ void Handbrake::loadSettings(QSettings* settings) {
 void Handbrake::springCenterChanged(int value) {
     springCenter = -10000 + (value * 200);
     handbrakeSpring.lOffset = springCenter;
-    if (joystick != nullptr && joystick->isAcquired) {
-        joystick->updateEffect("handbrakeSpring");
+    if (devices->joystick != nullptr && devices->joystick->isAcquired) {
+        devices->joystick->updateEffect("handbrakeSpring");
     }
 }
 
@@ -183,30 +122,15 @@ void Handbrake::springStrengthChanged(int value) {
     springStrength = -100 * value;   // AB9 1.1.3.4 firmware force inversion
     handbrakeSpring.lPositiveCoefficient = springStrength;
     handbrakeSpring.lNegativeCoefficient = springStrength;
-    if (joystick != nullptr && joystick->isAcquired) {
-        joystick->updateEffect("handbrakeSpring");
+    if (devices->joystick != nullptr && devices->joystick->isAcquired) {
+        devices->joystick->updateEffect("handbrakeSpring");
     }
-}
-
-QPair<int, int> Handbrake::getJoystickValues() {
-    HRESULT hr = joystick->updateState();
-    if (hr != DI_OK) {
-        qDebug() << "updateState failed, reacquiring joystick. Return code " << unsigned long(hr);
-        joystick->reacquire();
-    }
-    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
-    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
-    emit joystickLRValueChanged(joystickLRValue);
-    emit joystickFBValueChanged(joystickFBValue);
-    emit joystickValueChanged(joystickLRValue, joystickFBValue);
-    return QPair<int, int>(joystickLRValue, joystickFBValue);
 }
 
 HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     qDebug() << "Acquiring joystick...";
-    HRESULT hr = joystick->acquire(&hwnd, true);
+    HRESULT hr = devices->acquire(appDeviceFlags);
     if (FAILED(hr)) {
-        QMessageBox::critical(nullptr, "Error", "Could not acquire exclusive use of FFB joystick. Please close other games or applications and try again.");
         return hr;
     };
 
@@ -224,7 +148,7 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     keepCenteredSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     keepCenteredSpringEff.lpvTypeSpecificParams = &keepLRCentered;
     keepCenteredSpringEff.dwStartDelay = 0;
-    joystick->addEffect("handbrakeKeepCenteredSpring", { GUID_Spring, &keepCenteredSpringEff });
+    devices->joystick->addEffect("handbrakeKeepCenteredSpring", { GUID_Spring, &keepCenteredSpringEff });
 
     handbrakeSpringEff.dwSize = sizeof(DIEFFECT);
     handbrakeSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -241,25 +165,25 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     handbrakeSpringEff.lpvTypeSpecificParams = &handbrakeSpring;
     handbrakeSpringEff.dwStartDelay = 0;
     qDebug() << "Adding handbrakeSpring effect...";
-    joystick->addEffect("handbrakeSpring", { GUID_Spring, &handbrakeSpringEff });
+    devices->joystick->addEffect("handbrakeSpring", { GUID_Spring, &handbrakeSpringEff });
 
-    joystick->startEffects();
+    devices->joystick->startEffects();
     return S_OK;
 }
 
 void Handbrake::stopGameLoop() {
     // Release devices
-    joystick->release();
+    devices->release();
     return;
 }
 
 void Handbrake::gameLoop() {
-    if (joystick == nullptr || !joystick->isAcquired ) {
+    if (devices->joystick == nullptr || !devices->joystick->isAcquired ) {
         return;
     }
     // Get new joystick values
-    QPair<int, int> joystickValues = getJoystickValues();
+    QPair<int, int> joystickValues = devices->getJoystickValues();
 
     // Update the effect, just to ensure the device gets reacquired. Should be harmless, right?
-    joystick->updateEffect("handbrakeSpring");
+    devices->joystick->updateEffect("handbrakeSpring");
 }

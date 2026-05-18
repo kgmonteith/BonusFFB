@@ -12,8 +12,6 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QStandardPaths>
 #include "BonusFFBApp.h"
 #include "HeavyTruckStateManager.h"
 #include "HeavyTruckSlotGuard.h"
@@ -33,25 +31,7 @@ public:
 	void stopGameLoop();
 	void gameLoop();
 
-	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
-
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
-	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	QUuid throttleAxisGuid;
-
 public slots:
-	void changeJoystickDevice(int);
-	void changePedalsDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
-	void changeClutchAxis(int);
-	void changeThrottleAxis(int);
-
 	void setPresetPatternEatonFuller();
 	void setPresetPatternFullRange();
 	void slotParameterChanged(int);
@@ -60,17 +40,9 @@ public slots:
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
 	void updateRpmDeltaText(float);
-	void showAxisProgressBars();
-	void hideAxisProgressBars();
 
 signals:
 	void slotPositionsChanged(int slotDepth, int rightSlot, int centerSlot);
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
-	void clutchValueChanged(int);
-	void throttleValueChanged(int);
-	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
 	void resetClutchAxes();
 	void engineRPMChanged(float);

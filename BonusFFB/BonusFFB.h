@@ -16,17 +16,17 @@ You should have received a copy of the GNU General Public License along with Bon
 #define DIRECTINPUT_VERSION 0x0800
 
 #define GAMELOOP_INTERVAL_MS 1
+#define QT_FATAL_WARNINGS
 
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
 #include <QVersionNumber>
 #include <QButtonGroup>
 #include "ui_BonusFFB.h"
-#include "ui_InputOutputSettingsDialog.h"
 #include "Telemetry.h"
 #include "version.h"
-#include "vJoyFeeder.h"
-#include "DeviceInfo.h"
+#include "DeviceConfiguration.h"
+
 #include "hshifter/HShifter.h"
 #include "heavytruck/HeavyTruck.h"
 #include "prndl/Prndl.h"
@@ -39,12 +39,10 @@ class BonusFFB : public QMainWindow
 public:
     BonusFFB(QWidget *parent = nullptr);
     ~BonusFFB();
-    DeviceInfo* getDeviceFromGuid(QUuid);
 
     Ui::BonusFFBClass ui;
 
-    vJoyFeeder vjoy = vJoyFeeder();
-    QList<DeviceInfo> deviceList;
+    DeviceConfiguration devices;
 
     QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
     
@@ -62,7 +60,9 @@ public slots:
     void openUserGuide();
     void openAbout();
     void displayTelemetryState(TelemetrySource);
-    void toggleGameLoop(bool);
+    void startGameLoop();
+    void stopGameLoop();
+    void startButtonClicked();
 
     void saveNewProfile();
     void saveActiveProfile();
@@ -70,8 +70,7 @@ public slots:
     void loadDefaultProfile();
     void loadProfileDialog();
     void openProfileFolder();
-    void openInputOutputSettings();
-
+    void updateStartButton();
 protected:
     void resizeEvent(QResizeEvent* event);
 

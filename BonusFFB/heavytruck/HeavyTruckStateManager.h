@@ -11,8 +11,6 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #pragma once
-#include <QObject>
-#include "vJoyFeeder.h"
 #include "Telemetry.h"
 #include "DeviceInfo.h"
 #include "SharedEnums.h"

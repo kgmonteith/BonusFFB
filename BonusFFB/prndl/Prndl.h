@@ -12,8 +12,6 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QStandardPaths>
 #include "BonusFFBApp.h"
 #include "PrndlSlotGuard.h"
 #include "PrndlStateManager.h"
@@ -31,35 +29,19 @@ public:
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
-	QPair<int, int> getJoystickValues();
-
 	HRESULT startGameLoop();
 	void stopGameLoop();
 	void gameLoop();
 
 	bool getShiftLockReleased();
 
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
-	DeviceInfo* shiftLockDevice = nullptr;
-	QUuid shiftLockButtonGuid;
-
 public slots:
 	void redrawJoystickMap();
 	void changeSlotLabel(PrndlSlot slot);
-	void changeJoystickDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
-	void changeShiftLockDevice(int);
 	void updateJoystickCircle(int, int);
 
 
 signals:
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
 	void shiftLockStateChanged(bool);
 
 private:
@@ -67,7 +49,6 @@ private:
 	QGraphicsRectItem* centerSlotRect;
 	QList<QGraphicsEllipseItem*> slotCircles;
 	QGraphicsEllipseItem* joystickCircle;
-
 
 	// Stateful FFB effect managers
 	PrndlSlotGuard slotGuard;

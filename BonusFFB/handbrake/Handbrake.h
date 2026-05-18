@@ -29,29 +29,15 @@ public:
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
-	QPair<int, int> getJoystickValues();
-
 	HRESULT startGameLoop();
 	void stopGameLoop();
 	void gameLoop();
 
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
 public slots:
 	void redrawJoystickMap();
-	void changeJoystickDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
 	void updateJoystickCircle(int, int);
 	void springCenterChanged(int);
 	void springStrengthChanged(int);
-
-signals:
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
 
 private:
 	QGraphicsScene* scene = nullptr;

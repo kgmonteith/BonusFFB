@@ -33,38 +33,13 @@ public:
 	void stopGameLoop();
 	void gameLoop();
 
-	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
-
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
-	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	QUuid throttleAxisGuid;
-
 public slots:
-	void changeJoystickDevice(int);
-	void changePedalsDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
-	void changeClutchAxis(int);
-	void changeThrottleAxis(int);
 
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
-	void showAxisProgressBars();
-	void hideAxisProgressBars();
 
 signals:
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
-	void clutchValueChanged(int);
-	void throttleValueChanged(int);
-	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
 	void engineRPMChanged(float);
 	void resetClutchAxes();

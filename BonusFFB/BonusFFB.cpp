@@ -53,29 +53,25 @@ BonusFFB::BonusFFB(QWidget *parent)
     connect(ui.actionSaveSettings, &QAction::triggered, this, &BonusFFB::saveActiveProfile);
     connect(ui.actionSaveSettingsNew, &QAction::triggered, this, &BonusFFB::saveNewProfile);
     connect(ui.actionOpen_profile_directory, &QAction::triggered, this, &BonusFFB::openProfileFolder);
-    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::openInputOutputSettings);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::stopGameLoop);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, &devices, &DeviceConfiguration::openConfigurationDialog);
     connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
     connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
     connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
     connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
     connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    connect(&devices, &DeviceConfiguration::deviceConfigurationChanged, this, &BonusFFB::updateStartButton);
     // Game loop connections
-    connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
+    connect(ui.startButton, &QPushButton::clicked, this, &BonusFFB::startButtonClicked);
     // Telemetry connections
     connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
 
     // Initialize Direct Input, get the list of connected devices
-    initDirectInput(&deviceList);
+    devices.initialize((HWND)(winId()));
 
     // Set FFB device detection label
-    bool ffbDeviceFound = false;
-    for (const DeviceInfo device : deviceList)
-    {
-        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
-            ui.ffbDeviceFoundLabel->setText("🟢 FFB-enabled device detected");
-            ffbDeviceFound = true;
-            break;
-        }
+    if (devices.isFFBDeviceInstalled()) {
+        ui.ffbDeviceFoundLabel->setText("🟢 FFB-enabled device detected");
     }
 
     // Initialize vJoyFeeder
@@ -94,7 +90,7 @@ BonusFFB::BonusFFB(QWidget *parent)
 
     // Initialize application GUIs
     for (auto app : appList) {
-        app->setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
+        app->setPointers(&ui, &devices, &telemetry);
         app->initialize();
     }
     changeApp(0);
@@ -102,14 +98,11 @@ BonusFFB::BonusFFB(QWidget *parent)
     // Start telemetry receiver
     telemetry.startConnectTimer();
 
-    if (!ffbDeviceFound || !vJoyFeeder::isDriverEnabled()) {
-        ui.toggleGameLoopButton->setDisabled(true);
-        ui.toggleGameLoopButton->setText("🚫");
-        ui.toggleGameLoopButton->setToolTip("Cannot start without FFB joystick and vJoy");
-    }
-
     // Load active profile. Defaults will be loaded if the active profile is invalid.
     loadActiveProfile();
+
+    // Disable start button if app isn't happy
+    updateStartButton();
 
     qDebug("BonusFFBApplication constructor finished");
 }
@@ -117,13 +110,16 @@ BonusFFB::BonusFFB(QWidget *parent)
 BonusFFB::~BonusFFB()
 {
     if (gameLoopTimer.isActive())
-        emit toggleGameLoop(false);
+        stopGameLoop();
 }
 
 void BonusFFB::changeApp(int appSelectButtonIndex) {
     ui.appStackedWidget->setCurrentIndex(appSelectButtonIndex);
     activeApp = appList[appSelectButtonIndex];
     activeApp->redrawJoystickMap();
+
+    // Check if device configuration is suitable for the app
+    updateStartButton();
 }
 
 void BonusFFB::resizeEvent(QResizeEvent* e)
@@ -181,8 +177,13 @@ void BonusFFB::loadDefaultProfile() {
 }
 
 void BonusFFB::loadProfileDialog() {
+    QString profileFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
+    QDir dir;
+    if (!dir.exists(profileFolder)) {
+        dir.mkdir(profileFolder);
+    }
     QString profilePath = QFileDialog::getOpenFileName(this,
-        tr("Load profile"), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles/", tr("Profile configs (*.ini)"));
+        tr("Load profile"), profileFolder, tr("Profile configs (*.ini)"));
     if (!profilePath.isEmpty()) {
         loadProfile(profilePath);
     }
@@ -218,22 +219,12 @@ void BonusFFB::setProfileDisplayName() {
 }
 
 void BonusFFB::openProfileFolder() {
-    QString folderName = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/profiles";
+    QString folderName = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
     QDir dir;
-
     if (!dir.exists(folderName)) {
         dir.mkdir(folderName);
     }
     QDesktopServices::openUrl(QUrl("file:///" + folderName));
-}
-
-void BonusFFB::openInputOutputSettings() {
-    Ui_InputOutputSettingsDialog dialog;
-    QDialog d;
-    dialog.setupUi(&d);
-    if (d.exec() == QDialog::Accepted) {
-        qDebug() << "Accepted";
-    }
 }
 
 void BonusFFB::openUserGuide() {
@@ -254,37 +245,72 @@ void BonusFFB::displayTelemetryState(TelemetrySource newState) {
     }
 }
 
-void BonusFFB::toggleGameLoop(bool newState) {
-    ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
-    if (newState == true) {
+void BonusFFB::updateStartButton() {
+    qDebug() << "updateStartButton invoked";
+    int deviceStatus = devices.ready(activeApp->appDeviceFlags);
+    if (deviceStatus == DEVICES_NOT_AVAILABLE) {
+        ui.startButton->setDisabled(true);
+        ui.startButton->setText("🚫");
+        ui.startButton->setToolTip("Cannot start without FFB joystick and vJoy");
+        ui.startButton->setCheckable(false);
+    }
+    else if (deviceStatus == DEVICES_NOT_CONFIGURED) {
+        ui.startButton->setDisabled(false);
+        ui.startButton->setText("🛠️");
+        ui.startButton->setToolTip("Devices must be configured before " + activeApp->getAppName() + " can run");
+        ui.startButton->setCheckable(false);
+    }
+    else {
+        ui.startButton->setDisabled(false);
+        ui.startButton->setText("▶️");
+        ui.startButton->setToolTip("");
+    }
+}
+
+void BonusFFB::startButtonClicked() {
+    if (ui.startButton->text() == "▶️") {
+        startGameLoop();
+    }
+    else if (ui.startButton->text() == "🛑") {
+        stopGameLoop();
+    }
+    else if (ui.startButton->text() == "🛠️") {
+        devices.openConfigurationDialog();
+    }
+}
+
+void BonusFFB::startGameLoop() {
+    if (!gameLoopTimer.isActive())
+    {
         gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
             button->setEnabled(false);
         }
         qDebug() << "Active app: " << activeApp->getAppName();
         if (FAILED(activeApp->startGameLoop())) {
-            emit toggleGameLoop(false);
+            qDebug() << "Failed to start game loop, stopping";
+            stopGameLoop();
             return;
         }
+        ui.startButton->setText("🛑");
+        ui.startButton->setCheckable(true);
+        ui.startButton->setChecked(true);
         connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
     }
-    else
+}
+
+void BonusFFB::stopGameLoop() {
+    //if(ui.toggleGameLoopButton->isEnabled())
+    //    toggleGameLoop(false);
+    if (gameLoopTimer.isActive())
     {
         QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
         activeApp->stopGameLoop();
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
             button->setEnabled(true);
         }
+        ui.startButton->setText("▶️");
+        ui.startButton->setCheckable(true);
+        ui.startButton->setChecked(false);
     }
-}
-
-DeviceInfo* BonusFFB::getDeviceFromGuid(QUuid guid) {
-    for (QList<DeviceInfo>::iterator it = deviceList.begin(); it != deviceList.end(); it++)
-    {
-        if (it->instanceGuid == guid) {
-            return &*it;
-        }
-    }
-    qDebug() << "Device not found: " << guid;
-    return nullptr;
 }

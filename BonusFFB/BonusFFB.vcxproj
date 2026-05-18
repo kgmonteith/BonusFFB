@@ -36,12 +36,12 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.11.0_msvc2022_64</QtInstall>
+    <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.11.0_msvc2022_64</QtInstall>
+    <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BonusFFBApp.cpp" />
+    <ClCompile Include="DeviceConfiguration.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="handbrake\Handbrake.cpp" />
     <ClCompile Include="heavytruck\HeavyTruck.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="..\include\scs-telemetry-common.hpp" />
     <ClInclude Include="..\include\vjoyinterface.h" />
     <QtMoc Include="BonusFFBApp.h" />
+    <QtMoc Include="DeviceConfiguration.h" />
     <ClInclude Include="DeviceInfo.h" />
     <QtMoc Include="hshifter\HShifter.h" />
     <QtMoc Include="hshifter\HShifterSlotGuard.h" />

@@ -13,7 +13,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsRectItem>
 #include <QMessageBox>
 #include <QSettings>
-#include <QFile>
 #include "Prndl.h"
 
 QString Prndl::getAppName() {
@@ -21,45 +20,29 @@ QString Prndl::getAppName() {
 }
 
 void Prndl::initialize() {
+    // Set flags for required and desired devices
+    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_SHIFTLOCK;
+
     // Graphics connections
     QObject::connect(ui->prndlTabWidget, &QTabWidget::currentChanged, this, &Prndl::redrawJoystickMap);
     QObject::connect(&stateManager, &PrndlStateManager::slotChanged, this, &Prndl::changeSlotLabel);
     // Joystick connections
-    QObject::connect(ui->prndl_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &Prndl::changeJoystickDevice);
-    QObject::connect(ui->prndl_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &Prndl::changeJoystickLRAxis);
-    QObject::connect(ui->prndl_joystickFBAxisComboBox, &QComboBox::currentIndexChanged, this, &Prndl::changeJoystickFBAxis);
-    QObject::connect(this, &Prndl::joystickValueChanged, this, &Prndl::updateJoystickCircle);
+    QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Prndl::updateJoystickCircle);
     QObject::connect(&stateManager, &PrndlStateManager::slotSpringChanged, &slotGuard, &PrndlSlotGuard::updateSlotSpringCenter);
     // vJoy connections
-    QObject::connect(&stateManager, &PrndlStateManager::buttonZoneChanged, vjoy, &vJoyFeeder::updateButtons);
-    QObject::connect(&stateManager, &PrndlStateManager::buttonShortPress, vjoy, &vJoyFeeder::shortPressButton);
+    QObject::connect(&stateManager, &PrndlStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
+    QObject::connect(&stateManager, &PrndlStateManager::buttonShortPress, &devices->vjoy, &vJoyFeeder::shortPressButton);
     // Shift lock connections
-    QObject::connect(ui->prndl_shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, this, &Prndl::changeShiftLockDevice);
-    QObject::connect(ui->prndl_shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, &stateManager, &PrndlStateManager::toggleUsingShiftLock);
     QObject::connect(&stateManager, &PrndlStateManager::updateShiftLockEffectStrength, &slotGuard, &PrndlSlotGuard::updateShiftLockEffectStrength);
     QObject::connect(ui->prndl_shiftLockFromNeutralToReverseCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleLockShiftsFromNeutralToReverse);
     // Additional settings connections
     QObject::connect(ui->prndl_enableParkSlotCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleParkSlot);
     QObject::connect(ui->prndl_enableLowSlotCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleLastSlot);
     QObject::connect(ui->prndl_simulateParkUsingTelemetryCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleAtsTelemetryPark);
-    
 
-    // Populate the device lists
-    for (const DeviceInfo& device : *deviceList)
-    {
-        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
-            ui->prndl_joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
-        }
-        if (device.buttonCount > 0) {
-            ui->prndl_shiftLockDeviceComboBox->addItem(device.name, device.instanceGuid);
-        }
-    }
-
-    // Populate vJoy combo boxes
-    if (vJoyFeeder::isDriverEnabled()) {
-        for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
-            ui->prndl_vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i + 1)), i + 1);
-        }
+    if (devices->shiftLockDevice != nullptr) {
+        ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
+        stateManager.toggleUsingShiftLock(true);
     }
 }
 
@@ -153,80 +136,7 @@ void Prndl::changeSlotLabel(PrndlSlot slot) {
     }
 }
 
-void Prndl::changeJoystickDevice(int deviceIndex) {
-    // Release previous joystick
-    if (joystick != nullptr && joystick->isAcquired) {
-        joystick->release();
-    }
-    QUuid deviceGuid = ui->prndl_joystickDeviceComboBox->currentData().toUuid();
-    qDebug() << "Device UUID: " << deviceGuid;
-    joystick = getDeviceFromGuid(deviceList, deviceGuid);
-    qDebug() << "New joystick device: " << joystick->name;
-    ui->prndl_joystickLRAxisComboBox->clear();
-    ui->prndl_joystickFBAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = joystick->getDeviceAxes();
-    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
-    {
-        ui->prndl_joystickLRAxisComboBox->addItem(axis.value(), axis.key());
-        ui->prndl_joystickFBAxisComboBox->addItem(axis.value(), axis.key());
-    }
-}
-
-void Prndl::changeJoystickLRAxis(int axisIndex) {
-    joystickLRAxisGuid = ui->prndl_joystickLRAxisComboBox->currentData().toUuid();
-}
-
-void Prndl::changeJoystickFBAxis(int axisIndex) {
-    joystickFBAxisGuid = ui->prndl_joystickFBAxisComboBox->currentData().toUuid();
-}
-
-void Prndl::changeShiftLockDevice(int deviceIndex) {
-    if (shiftLockDevice != nullptr && shiftLockDevice->isAcquired) {
-        shiftLockDevice->release();
-    }
-    if (deviceIndex > 0) {
-        QVariant data = ui->prndl_shiftLockDeviceComboBox->currentData();
-        QUuid deviceGuid = ui->prndl_shiftLockDeviceComboBox->currentData().toUuid();
-        shiftLockDevice = getDeviceFromGuid(deviceList, deviceGuid);
-        shiftLockDevice->acquire(&hwnd);
-        ui->prndl_shiftLockButtonComboBox->setEnabled(true);
-        ui->prndl_shiftLockButtonComboBox->clear();
-        ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
-        for (int i = 1; i <= shiftLockDevice->buttonCount; i++) {
-            ui->prndl_shiftLockButtonComboBox->addItem(QString::number(i));
-        }
-    }
-    else {
-        shiftLockDevice = nullptr;
-        ui->prndl_shiftLockButtonComboBox->clear();
-        ui->prndl_shiftLockButtonComboBox->setEnabled(false);
-        ui->prndl_shiftLockButtonMonitorLabel->setText("✖️");
-    }
-}
-
 void Prndl::saveSettings(QSettings* settings) {
-    /*
-    settings->beginGroup("joystick");
-    settings->setValue("device_guid", joystick->instanceGuid.toString());
-    settings->setValue("lr_axis", joystickLRAxisGuid.toString());
-    settings->setValue("fb_axis", joystickFBAxisGuid.toString());
-    settings->endGroup();
-
-    settings->beginGroup("vjoy");
-    settings->setValue("vjoy_device", vjoy->getDeviceIndex());
-    settings->endGroup();
-
-    settings->beginGroup("shiftlockdevice");
-    if (shiftLockDevice != nullptr) {
-        settings->setValue("device_guid", shiftLockDevice->instanceGuid.toString());
-        settings->setValue("device_button", ui->prndl_shiftLockButtonComboBox->currentIndex());
-    }
-    else {
-        settings->setValue("device_guid", "None");
-    }
-    settings->endGroup();
-    */
-
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("other_settings");
@@ -240,39 +150,6 @@ void Prndl::saveSettings(QSettings* settings) {
 }
 
 void Prndl::loadSettings(QSettings* settings) {
-    /*
-    settings.beginGroup("joystick");
-    int joystick_index = ui->prndl_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1 && !g_joystick_warned) {
-        QMessageBox::warning(nullptr, "Joystick not found", "Saved PRNDL joystick device is not connected.\nReconnect the device or update the input/output settings.");
-        g_joystick_warned = true;
-    }
-    else
-    {
-        ui->prndl_joystickDeviceComboBox->setCurrentIndex(joystick_index);
-        ui->prndl_joystickLRAxisComboBox->setCurrentIndex(ui->prndl_joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
-        ui->prndl_joystickFBAxisComboBox->setCurrentIndex(ui->prndl_joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
-    }
-    settings.endGroup();
-
-    settings.beginGroup("shiftlockdevice");
-    if (settings.value("device_guid").toString() != "None") {
-        int shiftlockdevice_index = ui->prndl_shiftLockDeviceComboBox->findData(settings.value("device_guid").toUuid());
-        if (shiftlockdevice_index == -1) {
-            QMessageBox::warning(nullptr, "Shift lock device not found", "Saved shift lock device is not connected.\nReconnect the device or update the input/output settings.");
-        }
-        else
-        {
-            ui->prndl_shiftLockDeviceComboBox->setCurrentIndex(shiftlockdevice_index);
-            ui->prndl_shiftLockButtonComboBox->setCurrentIndex(settings.value("device_button").toInt());
-        }
-    }
-    settings.endGroup();
-
-    settings.beginGroup("vjoy");
-    ui->prndl_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
-    settings.endGroup();
-    */
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("other_settings");
@@ -287,11 +164,11 @@ void Prndl::loadSettings(QSettings* settings) {
 }
 
 bool Prndl::getShiftLockReleased() {
-    if (shiftLockDevice == nullptr || !shiftLockDevice->isAcquired || !ui->prndl_shiftLockButtonComboBox->isEnabled()) {
+    if (devices->shiftLockDevice == nullptr || !devices->shiftLockDevice->isAcquired) {
         return false;
     }
-    shiftLockDevice->updateState();
-    bool shiftLockReleased = shiftLockDevice->isButtonPressed(ui->prndl_shiftLockButtonComboBox->currentIndex());
+    devices->shiftLockDevice->updateState();
+    bool shiftLockReleased = devices->shiftLockDevice->isButtonPressed(devices->shiftLockButton);
     if (shiftLockReleased != lastShiftLockReleased) {
         if (shiftLockReleased) {
             ui->prndl_shiftLockButtonMonitorLabel->setText("🟢");
@@ -306,56 +183,32 @@ bool Prndl::getShiftLockReleased() {
     return shiftLockReleased;
 }
 
-QPair<int, int> Prndl::getJoystickValues() {
-    HRESULT hr = joystick->updateState();
-    if (hr != DI_OK) {
-        qDebug() << "updateState failed, reacquiring joystick. Return code " << unsigned long(hr);
-        joystick->reacquire();
-        slotGuard.start(joystick);
-    }
-    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
-    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
-    emit joystickLRValueChanged(joystickLRValue);
-    emit joystickFBValueChanged(joystickFBValue);
-    emit joystickValueChanged(joystickLRValue, joystickFBValue);
-    return QPair<int, int>(joystickLRValue, joystickFBValue);
-}
-
-HRESULT Prndl::startGameLoop() {    // Acquire joystick
-    qDebug() << "Acquiring joystick...";
-    HRESULT hr = joystick->acquire(&hwnd, true);
+HRESULT Prndl::startGameLoop() {
+    // Acquire joystick
+    HRESULT hr = devices->acquire(appDeviceFlags);
     if (FAILED(hr)) {
-        QMessageBox::critical(nullptr, "Error", "Could not acquire exclusive use of FFB joystick. Please close other games or applications and try again.");
         return hr;
     };
 
-    // Acquire vJoy for feeding
-    if (!vjoy->acquire()) {
-        QMessageBox::critical(nullptr, "Error", "Could not acquire vJoy device. Only one program may feed each vJoy device, please close other games or applications and try again.");
-        return E_FAIL;
-    }
-
-    // TODO: Initialize FFB
-    if (FAILED(slotGuard.start(joystick))) {
+    if (FAILED(slotGuard.start(devices->joystick))) {
         qDebug() << "Failed to start slotGuard effects";
     }
-    joystick->startEffects();
+    devices->joystick->startEffects();
     return S_OK;
 }
 
 void Prndl::stopGameLoop() {
     // Release devices
-    vjoy->release();
-    joystick->release();
+    devices->release();
     return;
 }
 
 void Prndl::gameLoop() {
-    if (joystick == nullptr || !joystick->isAcquired ) {
+    if (devices->joystick == nullptr || !devices->joystick->isAcquired ) {
         return;
     }
     // Get new joystick values
-    QPair<int, int> joystickValues = getJoystickValues();
+    QPair<int, int> joystickValues = devices->getJoystickValues();
     bool isShiftLockRelased = getShiftLockReleased();
 
     // Get telemetry values

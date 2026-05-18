@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>889</width>
-    <height>496</height>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,12 +47,15 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="hshifter_joystickDeviceComboBox_2">
+       <widget class="QComboBox" name="joystickDeviceComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="placeholderText">
+         <string>Select...</string>
         </property>
        </widget>
       </item>
@@ -66,7 +69,7 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QComboBox" name="hshifter_joystickLRAxisComboBox_2">
+         <widget class="QComboBox" name="joystickLRAxisComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -131,7 +134,7 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_13">
         <item>
-         <widget class="QComboBox" name="hshifter_joystickFBAxisComboBox_2">
+         <widget class="QComboBox" name="joystickFBAxisComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -187,6 +190,42 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="vjoyGroupBox">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QFormLayout" name="formLayout_5">
+      <item row="0" column="0">
+       <widget class="QLabel" name="vJoyOutputDeviceLabel_2">
+        <property name="text">
+         <string>vJoy output device</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="vjoyDeviceComboBox">
+        <property name="placeholderText">
+         <string>Select...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <family>Bahnschrift</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Required devices for manual shifters</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="pedalsGroupBox">
      <property name="title">
       <string/>
@@ -206,7 +245,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="hshifter_pedalsDeviceComboBox_2">
+       <widget class="QComboBox" name="pedalsDeviceComboBox">
         <property name="font">
          <font>
           <family>Segoe UI</family>
@@ -214,7 +253,7 @@
          </font>
         </property>
         <property name="placeholderText">
-         <string/>
+         <string>Select...</string>
         </property>
        </widget>
       </item>
@@ -234,7 +273,7 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
-         <widget class="QComboBox" name="hshifter_clutchAxisComboBox_2">
+         <widget class="QComboBox" name="clutchAxisComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -262,7 +301,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="invertClutchAxisBox_2">
+         <widget class="QCheckBox" name="invertClutchAxisBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -311,7 +350,7 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_12">
         <item>
-         <widget class="QComboBox" name="hshifter_throttleAxisComboBox_2">
+         <widget class="QComboBox" name="throttleAxisComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -333,7 +372,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="invertThrottleAxisBox_2">
+         <widget class="QCheckBox" name="invertThrottleAxisBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -376,25 +415,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="vjoyGroupBox">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QFormLayout" name="formLayout_5">
-      <item row="0" column="0">
-       <widget class="QLabel" name="vJoyOutputDeviceLabel_2">
-        <property name="text">
-         <string>vJoy output device</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="hshifter_vjoyDeviceComboBox_2"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
@@ -427,7 +447,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="prndl_shiftLockDeviceComboBox">
+       <widget class="QComboBox" name="shiftLockDeviceComboBox">
         <property name="font">
          <font>
           <family>Segoe UI</family>
@@ -460,7 +480,7 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
-         <widget class="QComboBox" name="prndl_shiftLockButtonComboBox">
+         <widget class="QComboBox" name="shiftLockButtonComboBox">
           <property name="enabled">
            <bool>false</bool>
           </property>

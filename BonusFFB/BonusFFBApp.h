@@ -15,14 +15,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include <QSettings>
 #include "ui_BonusFFB.h"
-#include "DeviceInfo.h"
-#include "vJoyFeeder.h"
+#include "DeviceConfiguration.h"
 #include "Telemetry.h"
 
 #define SLOT_WIDTH_PX 5.0
 #define JOYSTICK_MARKER_DIAMETER_PX 21.0
-
-extern bool g_joystick_warned;
 
 class BonusFFBApp :
     public QObject
@@ -31,12 +28,11 @@ class BonusFFBApp :
 
 public:
 	Ui::BonusFFBClass* ui;
-	QList<DeviceInfo>* deviceList;
-	vJoyFeeder* vjoy;
-	HWND hwnd;
+	DeviceConfiguration* devices;
 	Telemetry* telemetry;
+	int appDeviceFlags = FLAG_DEVICES_REQUIRED;
 
-	void setPointers(Ui::BonusFFBClass*, QList<DeviceInfo>*, vJoyFeeder*, Telemetry*, HWND);
+	void setPointers(Ui::BonusFFBClass*, DeviceConfiguration*, Telemetry*);
 	virtual HRESULT startGameLoop() = 0;
 	virtual void stopGameLoop() = 0;
 	virtual void gameLoop() = 0;
