@@ -33,7 +33,7 @@ Follow the [device settings guide](device-settings.md) for your specific FFB joy
 
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 
-Configure your input and output devices in the `Settings > Input/output device configuration` menu. Select each device and axis in the dropdown menus.
+Configure your input and output devices in the `Settings > Configure input/output devices` menu. Select each device and axis in the dropdown menus.
 
 * A force-feedback enabled joystick and vJoy are required for all Bonus FFB modes
 * Pedals are required for the heavy truck and H-shifter modes
