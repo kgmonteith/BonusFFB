@@ -27,7 +27,7 @@ void Pphc::initialize() {
     // Joystick connections
     QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Pphc::updateJoystickCircle);
     // Static FFB effect connections
-    connect(ui->pphc_damperSlider, &QSlider::valueChanged, this, &Pphc::updateDamper);
+    connect(ui->pphc_damperSlider, &QSlider::valueChanged, this, &BonusFFBApp::updateDamper);
     connect(ui->pphc_inertiaSlider, &QSlider::valueChanged, this, &Pphc::updateInertia);
     connect(ui->pphc_frictionSlider, &QSlider::valueChanged, this, &Pphc::updateFriction);
     // Additional settings connections
@@ -116,13 +116,9 @@ void Pphc::updateJoystickCircle(int LRValue, int FBValue) {
 }
 
 void Pphc::saveSettings(QSettings* settings) {
-    settings->beginGroup(getAppName());
+    BonusFFBApp::saveSettings(settings);
 
-    settings->beginGroup("ffb_effect_settings");
-    settings->setValue("damper", ui->pphc_damperSlider->value());
-    settings->setValue("inertia", ui->pphc_inertiaSlider->value());
-    settings->setValue("friction", ui->pphc_frictionSlider->value());
-    settings->endGroup();
+    settings->beginGroup(getAppName());
 
     settings->beginGroup("ffb_effect_settings");
     settings->setValue("brakeSpringScaling", ui->pphc_brakeSpringScalingSlider->value());
@@ -155,61 +151,7 @@ void Pphc::loadSettings(QSettings* settings) {
     qDebug() << "Succesfully loaded" << getAppName() << "settings";
 }
 
-HRESULT Pphc::startGameLoop() {
-    // Acquire joystick
-    HRESULT hr = devices->acquire(appDeviceFlags);
-    if (FAILED(hr)) {
-        return hr;
-    };
-
-    damperEff.dwSize = sizeof(DIEFFECT);
-    damperEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    damperEff.dwDuration = INFINITE;
-    damperEff.dwSamplePeriod = 0;
-    damperEff.dwGain = DI_FFNOMINALMAX;
-    damperEff.dwTriggerButton = DIEB_NOTRIGGER;
-    damperEff.dwTriggerRepeatInterval = 0;
-    damperEff.cAxes = 2;
-    damperEff.rgdwAxes = AXES;
-    damperEff.rglDirection = FORWARDBACK;
-    damperEff.lpEnvelope = 0;
-    damperEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    damperEff.lpvTypeSpecificParams = &damperCondition;
-    damperEff.dwStartDelay = 0;
-    devices->joystick->addEffect("damper", { GUID_Damper, &damperEff });
-
-    inertiaEff.dwSize = sizeof(DIEFFECT);
-    inertiaEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    inertiaEff.dwDuration = INFINITE;
-    inertiaEff.dwSamplePeriod = 0;
-    inertiaEff.dwGain = DI_FFNOMINALMAX;
-    inertiaEff.dwTriggerButton = DIEB_NOTRIGGER;
-    inertiaEff.dwTriggerRepeatInterval = 0;
-    inertiaEff.cAxes = 2;
-    inertiaEff.rgdwAxes = AXES;
-    inertiaEff.rglDirection = FORWARDBACK;
-    inertiaEff.lpEnvelope = 0;
-    inertiaEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    inertiaEff.lpvTypeSpecificParams = &inertiaCondition;
-    inertiaEff.dwStartDelay = 0;
-    devices->joystick->addEffect("inertia", { GUID_Inertia, &inertiaEff });
-
-    frictionEff.dwSize = sizeof(DIEFFECT);
-    frictionEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    frictionEff.dwDuration = INFINITE;
-    frictionEff.dwSamplePeriod = 0;
-    frictionEff.dwGain = DI_FFNOMINALMAX;
-    frictionEff.dwTriggerButton = DIEB_NOTRIGGER;
-    frictionEff.dwTriggerRepeatInterval = 0;
-    frictionEff.cAxes = 2;
-    frictionEff.rgdwAxes = AXES;
-    frictionEff.rglDirection = FORWARDBACK;
-    frictionEff.lpEnvelope = 0;
-    frictionEff.cbTypeSpecificParams = sizeof(DICONDITION) * 2;
-    frictionEff.lpvTypeSpecificParams = &frictionCondition;
-    frictionEff.dwStartDelay = 0;
-    devices->joystick->addEffect("friction", { GUID_Friction, &frictionEff });
-
+HRESULT Pphc::startMode() {
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     slotSpringEff.dwDuration = INFINITE;
@@ -242,14 +184,7 @@ HRESULT Pphc::startGameLoop() {
     pphcSpringEff.dwStartDelay = 0;
     devices->joystick->addEffect("pphcSpring", { GUID_Spring, &pphcSpringEff });
 
-    devices->joystick->startEffects();
     return S_OK;
-}
-
-void Pphc::stopGameLoop() {
-    // Release devices
-    devices->release();
-    return;
 }
 
 void Pphc::gameLoop() {
@@ -268,10 +203,10 @@ void Pphc::updateBrake(int fbValue) {
     float brakeSpringOffset = joystickPositionToFFBOffset(fbValue) * brakeSpringScaling * -1;
     int brakeAxisOutput = VJOY_AXIS_MAX_VALUE * (scaleRangeValue(brakeSpringOffset, 10000 * brakeDeadzone, 10000.0 / brakeAxisScaling));
     devices->vjoy.setAxisValue(brakeAxisOutput, HID_USAGE_RY);
+    ui->pphc_brakeLabel->setText(QString::number(brakeAxisOutput));
+    ui->pphc_brakeProgressBar->setValue(brakeAxisOutput);
 
     if (fbValue <= JOY_MIDPOINT) {
-        ui->pphc_brakeLabel->setText(QString::number(brakeAxisOutput));
-        ui->pphc_brakeProgressBar->setValue(brakeAxisOutput);
         pphcSpring.lOffset = brakeSpringOffset;
         pphcSpring.lNegativeCoefficient = FFB_MAX * -1;
         pphcSpring.lPositiveCoefficient = FFB_MAX * -1;
@@ -282,10 +217,10 @@ void Pphc::updateBrake(int fbValue) {
 void Pphc::updateThrottle(int fbValue) {
     int throttleAxisOutput = VJOY_AXIS_MAX_VALUE * scaleRangeValue(fbValue, JOY_MIDPOINT + (JOY_MAXPOINT * throttleDeadzone), JOY_MIDPOINT + (JOY_MIDPOINT * throttleSlotDepth));
     devices->vjoy.setAxisValue(throttleAxisOutput, HID_USAGE_RX);
+    ui->pphc_throttleLabel->setText(QString::number(throttleAxisOutput));
+    ui->pphc_throttleProgressBar->setValue(throttleAxisOutput);
 
     if (fbValue > JOY_MIDPOINT) {
-        ui->pphc_throttleLabel->setText(QString::number(throttleAxisOutput));
-        ui->pphc_throttleProgressBar->setValue(throttleAxisOutput);
         if (pphcSpring.lPositiveCoefficient != throttleSpringStrength || pphcSpring.lOffset != 0) {
             pphcSpring.lPositiveCoefficient = throttleSpringStrength;
             pphcSpring.lNegativeCoefficient = throttleSpringStrength;
@@ -307,37 +242,6 @@ void Pphc::updateSlotSpring(QPair<int, int> joystickValues) {
         slotSpringConditions[1] = noSpring;
     }
     devices->joystick->updateEffect("slotSpring");
-}
-
-
-void Pphc::updateDamper(int value) {
-    damperStrength = FFB_MAX * value * 0.01;
-    damperCondition[0] = { 0, damperStrength, damperStrength };
-    damperCondition[1] = { 0, damperStrength, damperStrength };
-    if (devices->joystick != nullptr && devices->joystick->isAcquired) {
-        devices->joystick->updateEffect("damper");
-        qDebug() << "damperStrength: " << damperStrength;
-    }
-}
-
-void Pphc::updateInertia(int value) {
-    inertiaStrength = FFB_MAX * value * 0.01;
-    inertiaCondition[0] = { 0, inertiaStrength, inertiaStrength };
-    inertiaCondition[1] = { 0, inertiaStrength, inertiaStrength };
-    if (devices->joystick != nullptr && devices->joystick->isAcquired) {
-        devices->joystick->updateEffect("inertia");
-        qDebug() << "inertiaStrength: " << inertiaStrength;
-    }
-}
-
-void Pphc::updateFriction(int value) {
-    frictionStrength = FFB_MAX * value * 0.01;
-    frictionCondition[0] = { 0, frictionStrength, frictionStrength };
-    frictionCondition[1] = { 0, frictionStrength, frictionStrength };
-    if (devices->joystick != nullptr && devices->joystick->isAcquired) {
-        devices->joystick->updateEffect("friction");
-        qDebug() << "frictionStrength: " << frictionStrength;
-    }
 }
 
 void Pphc::setThrottleSlotDepth(int value) {

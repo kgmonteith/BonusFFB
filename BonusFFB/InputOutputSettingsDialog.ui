@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>889</width>
-    <height>503</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,7 +195,7 @@
      <property name="title">
       <string/>
      </property>
-     <layout class="QFormLayout" name="formLayout_4">
+     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="cluckDeviceLabel_2">
         <property name="minimumSize">
@@ -209,20 +209,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="pedalsDeviceComboBox">
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>9</pointsize>
-         </font>
-        </property>
-        <property name="placeholderText">
-         <string>Select...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="clutchAxisLabel_2">
         <property name="minimumSize">
          <size>
@@ -235,7 +222,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_10">
         <item>
          <widget class="QComboBox" name="clutchAxisComboBox">
@@ -302,14 +289,14 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
          <string>Throttle axis</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_12">
         <item>
          <widget class="QComboBox" name="throttleAxisComboBox">
@@ -369,6 +356,87 @@
          </spacer>
         </item>
        </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Brake axis</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_15">
+        <item>
+         <widget class="QComboBox" name="brakeAxisComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="invertBrakeAxisBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Invert axis</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="pedalsDeviceComboBox">
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="placeholderText">
+         <string>Select...</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

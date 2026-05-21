@@ -137,6 +137,8 @@ void Prndl::changeSlotLabel(PrndlSlot slot) {
 }
 
 void Prndl::saveSettings(QSettings* settings) {
+    BonusFFBApp::saveSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("other_settings");
@@ -183,24 +185,11 @@ bool Prndl::getShiftLockReleased() {
     return shiftLockReleased;
 }
 
-HRESULT Prndl::startGameLoop() {
-    // Acquire joystick
-    HRESULT hr = devices->acquire(appDeviceFlags);
-    if (FAILED(hr)) {
-        return hr;
-    };
-
+HRESULT Prndl::startMode() {
     if (FAILED(slotGuard.start(devices->joystick))) {
         qDebug() << "Failed to start slotGuard effects";
     }
-    devices->joystick->startEffects();
     return S_OK;
-}
-
-void Prndl::stopGameLoop() {
-    // Release devices
-    devices->release();
-    return;
 }
 
 void Prndl::gameLoop() {

@@ -7,6 +7,7 @@ Bonus FFB simulates these devices using a force-feedback joystick:
 * Heavy truck shifters
 * H-pattern shifters
 * PRNDL-style automatic shifters
+* Push/pull hand controls
 * Simple handbrakes
 
 [Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started. If you have suggestions, [open a ticket](https://github.com/kgmonteith/BonusFFB/issues).

@@ -25,8 +25,7 @@ public:
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
-	HRESULT startGameLoop();
-	void stopGameLoop();
+	HRESULT startMode();
 	void gameLoop();
 
 public slots:
@@ -36,16 +35,13 @@ public slots:
 	void updateThrottle(int);
 	void updateSlotSpring(QPair<int, int>);
 
-	void updateDamper(int);
-	void updateInertia(int);
-	void updateFriction(int);
-
 	void setBrakeSpringScaling(int);
 	void setBrakeAxisDeadzone(int);
 	void setBrakeAxisScaling(int);
 	void setThrottleSlotDepth(int);
 	void setThrottleSpringStrength(int);
 	void setThrottleAxisDeadzone(int);
+
 private:
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem* centerSlotRect;
@@ -61,15 +57,6 @@ private:
 	DIEFFECT pphcSpringEff = {};
 	DICONDITION pphcSpring = { 0, -5000, -5000 };
 
-	long damperStrength = 0;
-	long inertiaStrength = 0;
-	long frictionStrength = 0;
-	DICONDITION damperCondition[2] = { {0, damperStrength, damperStrength}, {0, damperStrength, damperStrength} };
-	DICONDITION inertiaCondition[2] = { {0, inertiaStrength, inertiaStrength}, {0, inertiaStrength, inertiaStrength} };
-	DICONDITION frictionCondition[2] = { {0, frictionStrength, frictionStrength}, {0, frictionStrength, frictionStrength} };
-	DIEFFECT damperEff = {};
-	DIEFFECT inertiaEff = {};
-	DIEFFECT frictionEff = {};
 
 	int throttleSpringStrength = -0.3 * FFB_MAX;
 	double throttleDeadzone = 0.05;

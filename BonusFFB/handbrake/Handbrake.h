@@ -29,8 +29,8 @@ public:
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
-	HRESULT startGameLoop();
-	void stopGameLoop();
+	HRESULT startMode();
+	void stopMode();
 	void gameLoop();
 
 public slots:

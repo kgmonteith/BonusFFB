@@ -143,6 +143,8 @@ void HShifter::updateGearText(int button) {
 }
 
 void HShifter::saveSettings(QSettings* settings) {
+    BonusFFBApp::saveSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_effect_settings");
@@ -168,24 +170,12 @@ void HShifter::loadSettings(QSettings* settings) {
     settings->endGroup();
 }
 
-HRESULT HShifter::startGameLoop() {
-    // Acquire joystick
-    qDebug() << "Acquiring joystick for hshifter...";
-    HRESULT hr = devices->acquire(appDeviceFlags);
-    if (FAILED(hr)) {
-        return hr;
-    };
-
+HRESULT HShifter::startMode() {
     // Initialize FFB
     slotGuard.start(devices->joystick);
     synchroGuard.start(devices->joystick);
-    devices->joystick->startEffects();
-    return S_OK;
-}
 
-void HShifter::stopGameLoop() {
-    // Release devices
-    devices->release();
+    return S_OK;
 }
 
 void HShifter::gameLoop() {

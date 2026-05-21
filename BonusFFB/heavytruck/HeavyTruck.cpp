@@ -61,11 +61,6 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    // Static FFB effect connections
-    connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
-    connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
-    connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
-    connect(ui->heavytruck_gateLatchFrictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateGateLatchFriction);
 }
 
 void HeavyTruck::setPresetPatternEatonFuller() {
@@ -218,6 +213,8 @@ void HeavyTruck::updateRpmDeltaText(float rpm) {
 }
 
 void HeavyTruck::saveSettings(QSettings* settings) {
+    BonusFFBApp::saveSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("slot_pattern_settings");
@@ -230,10 +227,6 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->endGroup();
 
     settings->beginGroup("ffb_effect_settings");
-    settings->setValue("damper", ui->heavytruck_damperSlider->value());
-    settings->setValue("inertia", ui->heavytruck_inertiaSlider->value());
-    settings->setValue("friction", ui->heavytruck_frictionSlider->value());
-    settings->setValue("gateLatchFriction", ui->heavytruck_gateLatchFrictionSlider->value());
     settings->setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
     settings->setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
     settings->setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
@@ -258,10 +251,6 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     settings->endGroup();
 
     settings->beginGroup("ffb_effect_settings");
-    ui->heavytruck_damperSlider->setValue(settings->value("damper", 30).toInt());
-    ui->heavytruck_inertiaSlider->setValue(settings->value("inertia", 10).toInt());
-    ui->heavytruck_frictionSlider->setValue(settings->value("friction", 10).toInt());
-    ui->heavytruck_gateLatchFrictionSlider->setValue(settings->value("gateLatchFriction", 30).toInt());
     ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
     ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape", 0).toInt());
     ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle", 30).toInt());
@@ -274,24 +263,13 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     redrawJoystickMap();
 }
 
-HRESULT HeavyTruck::startGameLoop() {
-    // Acquire joystick
-    HRESULT hr = devices->acquire(appDeviceFlags);
-    if (FAILED(hr)) {
-        return hr;
-    };
-
+HRESULT HeavyTruck::startMode() {
     // Initialize FFB
     stateManager.start(telemetry, slot);
     slotGuard.start(devices->joystick, slot);
     synchroGuard.start(devices->joystick, slot, telemetry);
-    devices->joystick->startEffects();
-    return S_OK;
-}
 
-void HeavyTruck::stopGameLoop() {
-    // Release devices
-    devices->release();
+    return S_OK;
 }
 
 void HeavyTruck::gameLoop() {

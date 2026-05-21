@@ -48,7 +48,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     connect(ui.actionSaveSettings, &QAction::triggered, this, &BonusFFB::saveActiveProfile);
     connect(ui.actionSaveSettingsNew, &QAction::triggered, this, &BonusFFB::saveNewProfile);
     connect(ui.actionOpen_profile_directory, &QAction::triggered, this, &BonusFFB::openProfileFolder);
-    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::stopGameLoop);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::stop);
     connect(ui.actionConfigure_input_output_devices, &QAction::triggered, &devices, &DeviceConfiguration::openConfigurationDialog);
     connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
     connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
@@ -107,7 +107,7 @@ BonusFFB::BonusFFB(QWidget *parent)
 BonusFFB::~BonusFFB()
 {
     if (gameLoopTimer.isActive())
-        stopGameLoop();
+        stop();
 }
 
 void BonusFFB::changeApp(int appSelectButtonIndex) {
@@ -283,17 +283,17 @@ void BonusFFB::updateStartButton() {
 void BonusFFB::startButtonClicked() {
     qDebug() << "startButtonClicked";
     if (ui.startButton->text() == "▶️") {
-        startGameLoop();
+        start();
     }
     else if (ui.startButton->text() == "🛑") {
-        stopGameLoop();
+        stop();
     }
     else if (ui.startButton->text() == "🛠️") {
         devices.openConfigurationDialog();
     }
 }
 
-void BonusFFB::startGameLoop() {
+void BonusFFB::start() {
     if (!gameLoopTimer.isActive())
     {
         gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
@@ -301,9 +301,9 @@ void BonusFFB::startGameLoop() {
             button->setEnabled(false);
         }
         qDebug() << "Active app: " << activeApp->getAppName();
-        if (FAILED(activeApp->startGameLoop())) {
+        if (FAILED(activeApp->start())) {
             qDebug() << "Failed to start game loop, stopping";
-            stopGameLoop();
+            stop();
             return;
         }
         ui.startButton->setText("🛑");
@@ -313,12 +313,12 @@ void BonusFFB::startGameLoop() {
     }
 }
 
-void BonusFFB::stopGameLoop() {
+void BonusFFB::stop() {
     if (gameLoopTimer.isActive())
     {
         gameLoopTimer.stop();
         QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
-        activeApp->stopGameLoop();
+        activeApp->stop();
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
             button->setEnabled(true);
         }

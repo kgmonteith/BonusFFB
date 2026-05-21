@@ -24,12 +24,12 @@ void Handbrake::initialize() {
     appDeviceFlags = FLAG_DEVICES_REQUIRED;
 
     // Graphics connections
-    QObject::connect(ui->handbrakeTabWidget, &QTabWidget::currentChanged, this, &Handbrake::redrawJoystickMap);
+    connect(ui->handbrakeTabWidget, &QTabWidget::currentChanged, this, &Handbrake::redrawJoystickMap);
     // Joystick connections
-    QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
+    connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Handbrake::updateJoystickCircle);
     // Additional settings connections
-    QObject::connect(ui->handbrakeSpringCenterSlider, &QSlider::valueChanged, this, &Handbrake::springCenterChanged);
-    QObject::connect(ui->handbrakeSpringStrengthSlider, &QSlider::valueChanged, this, &Handbrake::springStrengthChanged);
+    connect(ui->handbrakeSpringCenterSlider, &QSlider::valueChanged, this, &Handbrake::springCenterChanged);
+    connect(ui->handbrakeSpringStrengthSlider, &QSlider::valueChanged, this, &Handbrake::springStrengthChanged);
 }
 
 void Handbrake::initializeJoystickMap() {
@@ -87,9 +87,11 @@ void Handbrake::updateJoystickCircle(int LRValue, int FBValue) {
 }
 
 void Handbrake::saveSettings(QSettings* settings) {
+    BonusFFBApp::saveSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
-    settings->beginGroup("ffb_settings");
+    settings->beginGroup("ffb_effect_settings");
     settings->setValue("spring_strength", ui->handbrakeSpringStrengthSlider->value());
     settings->setValue("spring_center", ui->handbrakeSpringCenterSlider->value());
     settings->endGroup();
@@ -98,9 +100,11 @@ void Handbrake::saveSettings(QSettings* settings) {
 }
 
 void Handbrake::loadSettings(QSettings* settings) {
+    BonusFFBApp::loadSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
-    settings->beginGroup("ffb_settings");
+    settings->beginGroup("ffb_effect_settings");
     ui->handbrakeSpringStrengthSlider->setValue(settings->value("spring_strength", 75).toInt());
     ui->handbrakeSpringCenterSlider->setValue(settings->value("spring_center", 0).toInt());
     settings->endGroup();
@@ -127,13 +131,7 @@ void Handbrake::springStrengthChanged(int value) {
     }
 }
 
-HRESULT Handbrake::startGameLoop() {    // Acquire joystick
-    qDebug() << "Acquiring joystick...";
-    HRESULT hr = devices->acquire(appDeviceFlags);
-    if (FAILED(hr)) {
-        return hr;
-    };
-
+HRESULT Handbrake::startMode() {
     keepCenteredSpringEff.dwSize = sizeof(DIEFFECT);
     keepCenteredSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     keepCenteredSpringEff.dwDuration = INFINITE;
@@ -167,14 +165,7 @@ HRESULT Handbrake::startGameLoop() {    // Acquire joystick
     qDebug() << "Adding handbrakeSpring effect...";
     devices->joystick->addEffect("handbrakeSpring", { GUID_Spring, &handbrakeSpringEff });
 
-    devices->joystick->startEffects();
     return S_OK;
-}
-
-void Handbrake::stopGameLoop() {
-    // Release devices
-    devices->release();
-    return;
 }
 
 void Handbrake::gameLoop() {

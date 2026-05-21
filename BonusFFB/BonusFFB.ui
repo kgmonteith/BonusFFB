@@ -132,7 +132,7 @@
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
@@ -870,61 +870,7 @@
                 </layout>
                </item>
                <item row="3" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_59">
-                 <item>
-                  <widget class="QLabel" name="label_43">
-                   <property name="text">
-                    <string>Gate latch friction</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_49">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#friction&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="3" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_61">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_gateLatchFrictionSlider">
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>30</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_gateLatchFrictionSpinbox">
-                   <property name="suffix">
-                    <string>%</string>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>30</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <layout class="QHBoxLayout" name="horizontalLayout_59"/>
                </item>
               </layout>
              </widget>
@@ -1500,6 +1446,156 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
+             <widget class="QGroupBox" name="groupBox_28">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_15">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_86">
+                 <item>
+                  <widget class="QLabel" name="label_65">
+                   <property name="text">
+                    <string>Damper</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_87">
+                 <item>
+                  <widget class="QSlider" name="hshifter_damperSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_damperSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_88">
+                 <item>
+                  <widget class="QLabel" name="label_67">
+                   <property name="text">
+                    <string>Inertia</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_89">
+                 <item>
+                  <widget class="QSlider" name="hshifter_inertiaSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_inertiaSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_90">
+                 <item>
+                  <widget class="QLabel" name="label_69">
+                   <property name="text">
+                    <string>Friction</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_91">
+                 <item>
+                  <widget class="QSlider" name="hshifter_frictionSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_frictionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_3">
               <property name="styleSheet">
                <string notr="true"/>
@@ -1717,6 +1813,19 @@
               </layout>
              </widget>
             </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </widget>
          </widget>
@@ -1859,6 +1968,176 @@
                </item>
               </layout>
              </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_8">
+           <attribute name="title">
+            <string>FFB effect settings</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_13">
+            <item>
+             <widget class="QGroupBox" name="groupBox_29">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_16">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_92">
+                 <item>
+                  <widget class="QLabel" name="label_78">
+                   <property name="text">
+                    <string>Damper</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_93">
+                 <item>
+                  <widget class="QSlider" name="prndl_damperSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="prndl_damperSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_94">
+                 <item>
+                  <widget class="QLabel" name="label_79">
+                   <property name="text">
+                    <string>Inertia</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_95">
+                 <item>
+                  <widget class="QSlider" name="prndl_inertiaSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="prndl_inertiaSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_96">
+                 <item>
+                  <widget class="QLabel" name="label_80">
+                   <property name="text">
+                    <string>Friction</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_97">
+                 <item>
+                  <widget class="QSlider" name="prndl_frictionSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="prndl_frictionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -2789,7 +3068,7 @@
         <item row="0" column="1">
          <widget class="QTabWidget" name="handbrakeTabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">
@@ -2932,6 +3211,176 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="tab_7">
+           <attribute name="title">
+            <string>FFB effect settings</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QGroupBox" name="groupBox_25">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_14">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_71">
+                 <item>
+                  <widget class="QLabel" name="label_64">
+                   <property name="text">
+                    <string>Damper</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_73">
+                 <item>
+                  <widget class="QSlider" name="handbrake_damperSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="handbrake_damperSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>30</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_74">
+                 <item>
+                  <widget class="QLabel" name="label_66">
+                   <property name="text">
+                    <string>Inertia</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_75">
+                 <item>
+                  <widget class="QSlider" name="handbrake_inertiaSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="handbrake_inertiaSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_76">
+                 <item>
+                  <widget class="QLabel" name="label_68">
+                   <property name="text">
+                    <string>Friction</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_78">
+                 <item>
+                  <widget class="QSlider" name="handbrake_frictionSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="handbrake_frictionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -3036,7 +3485,7 @@ shifter</string>
        </font>
       </property>
       <property name="text">
-       <string>Push-pull
+       <string>Push/pull
 hand control</string>
       </property>
       <property name="checkable">

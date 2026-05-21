@@ -62,8 +62,8 @@ public slots:
     void openUserGuide();
     void openAbout();
     void displayTelemetryState(TelemetrySource);
-    void startGameLoop();
-    void stopGameLoop();
+    void start();
+    void stop();
     void startButtonClicked();
 
     void saveNewProfile();
