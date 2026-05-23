@@ -185,7 +185,7 @@ void HShifter::gameLoop() {
     QPair<int, int> joystickValues = devices->getJoystickValues();
 
     // Get new pedal values
-    QPair<int, int> pedalValues = devices->getPedalValues();
+    PedalValues pedalValues = devices->getPedalValues();
 
     // Get telemetry values
     if (telemetry->isConnected() != TelemetrySource::NONE) {

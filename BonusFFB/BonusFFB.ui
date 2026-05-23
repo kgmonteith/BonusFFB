@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>892</width>
-    <height>692</height>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -697,7 +697,7 @@
               <property name="title">
                <string/>
               </property>
-              <layout class="QFormLayout" name="formLayout_10">
+              <layout class="QFormLayout" name="formLayout_4">
                <item row="0" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_35">
                  <item>
@@ -868,9 +868,6 @@
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item row="3" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_59"/>
                </item>
               </layout>
              </widget>
@@ -1168,7 +1165,7 @@
               <property name="title">
                <string/>
               </property>
-              <layout class="QFormLayout" name="formLayout_12">
+              <layout class="QFormLayout" name="formLayout_3">
                <item row="0" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_41">
                  <item>
@@ -1232,6 +1229,43 @@
                     <number>90</number>
                    </property>
                   </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_61">
+                 <item>
+                  <widget class="QCheckBox" name="heavytruck_throttleOnShiftingCheckbox">
+                   <property name="text">
+                    <string>Enable throttle-on shifting</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="heavytruck_throttleOnShiftingLabel">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#throttle-on-shifting&quot; style=&quot;text-decoration: none;&quot;&gt;⚠️ Additional game configuration is required, click for details&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>
@@ -3647,5 +3681,22 @@ hand control</string>
  <resources>
   <include location="BonusFFB.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>heavytruck_throttleOnShiftingCheckbox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>heavytruck_throttleOnShiftingLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>411</x>
+     <y>554</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>554</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -12,9 +12,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include <QObject>
-#include "vJoyFeeder.h"
+#include "DeviceConfiguration.h"
 #include "Telemetry.h"
-#include "DeviceInfo.h"
 
 
 enum class SynchroState {
@@ -47,7 +46,7 @@ class HShifterStateManager: public QObject
     Q_OBJECT;
 
 public:
-    void update(QPair<int, int>, QPair<int, int>, QPair<int, int>);
+    void update(QPair<int, int>, PedalValues, QPair<int, int>);
 
 public slots:
     void setTelemetryState(TelemetrySource);

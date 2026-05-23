@@ -125,6 +125,7 @@
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
     <ClCompile Include="hshifter\HShifterSynchroGuard.cpp" />
+    <ClCompile Include="PedalsManager.cpp" />
     <ClCompile Include="pphc\Pphc.cpp" />
     <ClCompile Include="prndl\Prndl.cpp" />
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
@@ -166,6 +167,7 @@
     <QtMoc Include="heavytruck\HeavyTruckStateManager.h" />
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
     <QtMoc Include="pphc\Pphc.h" />
+    <QtMoc Include="PedalsManager.h" />
     <ClInclude Include="SharedEnums.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />

@@ -45,7 +45,7 @@ class HeavyTruckStateManager: public QObject
 
 public:
     void start(Telemetry*, SlotParameters*);
-    void update(QPair<int, int>, QPair<int, int>, QPair<int, int>);
+    void update(QPair<int, int>, QPair<int, int>);
 
 public slots:
     void setTelemetryState(TelemetrySource);
@@ -57,6 +57,7 @@ signals:
     void grindingStateChanged(HeavyTruckGrindingState, int);
     void targetGearChanged(int);
     void rpmDeltaChanged(float);
+    void unblipThrottle();
 
 private:
     void updateSlotState(long, long);
@@ -71,6 +72,9 @@ private:
     int buttonZoneState = 0;
     float rpmDelta = 0;
     float rpmMaxForFloat = 120;
+
+    float lastEngineRPM = 0;
+    bool rpmIncreasing = false;
 
     SlotParameters* slot = nullptr;
 

@@ -100,6 +100,9 @@
     <ClCompile Include="pphc\Pphc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PedalsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -151,6 +154,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="pphc\Pphc.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PedalsManager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

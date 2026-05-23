@@ -191,7 +191,7 @@ void Pphc::gameLoop() {
 void Pphc::updateBrake(int fbValue) {
     float brakeSpringOffset = joystickPositionToFFBOffset(fbValue) * brakeSpringScaling * -1;
     int brakeAxisOutput = VJOY_AXIS_MAX_VALUE * (scaleRangeValue(brakeSpringOffset, 10000 * brakeDeadzone, 10000.0 / brakeAxisScaling));
-    devices->vjoy.setAxisValue(brakeAxisOutput, HID_USAGE_RY);
+    devices->vjoy.setAxisValue(brakeAxisOutput, HID_USAGE_Y);
     ui->pphc_brakeLabel->setText(QString::number(brakeAxisOutput));
     ui->pphc_brakeProgressBar->setValue(brakeAxisOutput);
 
@@ -205,7 +205,7 @@ void Pphc::updateBrake(int fbValue) {
 
 void Pphc::updateThrottle(int fbValue) {
     int throttleAxisOutput = VJOY_AXIS_MAX_VALUE * scaleRangeValue(fbValue, JOY_MIDPOINT + (JOY_MAXPOINT * throttleDeadzone), JOY_MIDPOINT + (JOY_MIDPOINT * throttleSlotDepth));
-    devices->vjoy.setAxisValue(throttleAxisOutput, HID_USAGE_RX);
+    devices->vjoy.setAxisValue(throttleAxisOutput, HID_USAGE_X);
     ui->pphc_throttleLabel->setText(QString::number(throttleAxisOutput));
     ui->pphc_throttleProgressBar->setValue(throttleAxisOutput);
 
@@ -235,7 +235,6 @@ void Pphc::updateSlotSpring(QPair<int, int> joystickValues) {
 
 void Pphc::setThrottleSlotDepth(int value) {
     throttleSlotDepth = value * 0.01;
-    qDebug() << "throttleSlotDepth: " << throttleSlotDepth;
 }
 
 

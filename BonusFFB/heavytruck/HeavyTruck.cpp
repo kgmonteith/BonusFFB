@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
+#include <QMessageBox>
 #include <QSettings>
 #include "HeavyTruck.h"
 
@@ -26,6 +27,8 @@ QString HeavyTruck::getAppName(bool readable) {
 void HeavyTruck::initialize() {
     // Set flags for required and desired devices
     appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_PEDALS;
+
+    ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
 
     // UI connections
     connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
@@ -51,6 +54,7 @@ void HeavyTruck::initialize() {
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);
     connect(&stateManager, &HeavyTruckStateManager::grindingStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::grindingStateChanged);
+    connect(&stateManager, &HeavyTruckStateManager::unblipThrottle, &pedalsManager, &PedalsManager::unblipThrottle);
     // FFB settings connections
     connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
@@ -63,6 +67,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    connect(ui->heavytruck_throttleOnShiftingCheckbox, &QCheckBox::toggled, &pedalsManager, &PedalsManager::toggleVirtualPedals);
 }
 
 void HeavyTruck::setPresetPatternEatonFuller() {
@@ -264,6 +269,7 @@ HRESULT HeavyTruck::startMode() {
     stateManager.start(telemetry, slot);
     slotGuard.start(devices->joystick, slot);
     synchroGuard.start(devices->joystick, slot, telemetry);
+    pedalsManager.start(devices);
 
     return S_OK;
 }
@@ -277,7 +283,7 @@ void HeavyTruck::gameLoop() {
     QPair<int, int> joystickValues = devices->getJoystickValues();
 
     // Get new pedal values
-    QPair<int, int> pedalValues = devices->getPedalValues();
+    PedalValues pedalValues = devices->getPedalValues();
 
     // Get telemetry values
     if (telemetry->isConnected() != TelemetrySource::NONE) {
@@ -297,5 +303,6 @@ void HeavyTruck::gameLoop() {
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updateTorqueLock(pedalValues, joystickValues);
-    stateManager.update(joystickValues, pedalValues, lastGearValues);
+    stateManager.update(joystickValues, lastGearValues);
+    pedalsManager.updateVirtualPedals();
 }

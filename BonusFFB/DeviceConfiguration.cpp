@@ -114,10 +114,12 @@ void DeviceConfiguration::saveDeviceConfiguration() {
     if (pedals != nullptr) {
         config.beginGroup("pedals");
         config.setValue("device_guid", pedals->instanceGuid.toString());
-        config.setValue("clutch_axis", clutchAxisGuid.toString());
-        config.setValue("invert_clutch_axis", invertClutchAxis);
         config.setValue("throttle_axis", throttleAxisGuid.toString());
         config.setValue("invert_throttle_axis", invertThrottleAxis);
+        config.setValue("brake_axis", brakeAxisGuid.toString());
+        config.setValue("invert_brake_axis", invertBrakeAxis);
+        config.setValue("clutch_axis", clutchAxisGuid.toString());
+        config.setValue("invert_clutch_axis", invertClutchAxis);
         config.endGroup();
     }
 
@@ -155,10 +157,12 @@ void DeviceConfiguration::loadDeviceConfiguration() {
     if (config.childGroups().contains("pedals")) {
         config.beginGroup("pedals");
         pedals = getDeviceFromGuid(config.value("device_guid").toUuid());
-        clutchAxisGuid = config.value("clutch_axis").toUuid();
-        invertClutchAxis = config.value("invert_clutch_axis").toBool();
         throttleAxisGuid = config.value("throttle_axis").toUuid();
         invertThrottleAxis = config.value("invert_throttle_axis").toBool();
+        brakeAxisGuid = config.value("brake_axis").toUuid();
+        invertBrakeAxis = config.value("invert_brake_axis").toBool();
+        clutchAxisGuid = config.value("clutch_axis").toUuid();
+        invertClutchAxis = config.value("invert_clutch_axis").toBool();
         if (pedals == nullptr) {
             QMessageBox::warning(nullptr, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output device configuration.");
         }
@@ -224,10 +228,12 @@ void DeviceConfiguration::openConfigurationDialog() {
     }
     if(pedals != nullptr) {
         dialog.pedalsDeviceComboBox->setCurrentIndex(dialog.pedalsDeviceComboBox->findData(pedals->instanceGuid));
-        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(clutchAxisGuid));
         dialog.throttleAxisComboBox->setCurrentIndex(dialog.throttleAxisComboBox->findData(throttleAxisGuid));
-        dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
+        dialog.brakeAxisComboBox->setCurrentIndex(dialog.brakeAxisComboBox->findData(brakeAxisGuid));
+        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(clutchAxisGuid));
         dialog.invertThrottleAxisBox->setChecked(invertThrottleAxis);
+        dialog.invertBrakeAxisBox->setChecked(invertBrakeAxis);
+        dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
     }
     dialog.vjoyDeviceComboBox->setCurrentIndex(vjoy.getDeviceIndex());
     if (shiftLockDevice != nullptr) {
@@ -246,10 +252,12 @@ void DeviceConfiguration::openConfigurationDialog() {
         qDebug() << "New joystick: " << joystick->name;
 
         pedals = getDeviceFromGuid(dialog.pedalsDeviceComboBox->currentData().toUuid());
-        clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
         throttleAxisGuid = dialog.throttleAxisComboBox->currentData().toUuid();
-        invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
+        brakeAxisGuid = dialog.brakeAxisComboBox->currentData().toUuid();
+        clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
         invertThrottleAxis = dialog.invertThrottleAxisBox->isChecked();
+        invertBrakeAxis = dialog.invertBrakeAxisBox->isChecked();
+        invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
         qDebug() << "New pedals: " << joystick->name;
 
         vjoy.setDeviceIndex(dialog.vjoyDeviceComboBox->currentIndex());
@@ -316,17 +324,19 @@ void DeviceConfiguration::updatePedalsAxisList(int deviceIndex) {
     QUuid deviceGuid = dialog.pedalsDeviceComboBox->currentData().toUuid();
     auto selectedPedals = getDeviceFromGuid(deviceGuid);
 
-    dialog.clutchAxisComboBox->clear();
     dialog.throttleAxisComboBox->clear();
+    dialog.brakeAxisComboBox->clear();
+    dialog.clutchAxisComboBox->clear();
     QMap<QUuid, QString> axisMap = selectedPedals->getDeviceAxes();
     for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
     {
-        dialog.clutchAxisComboBox->addItem(axis.value(), axis.key());
         dialog.throttleAxisComboBox->addItem(axis.value(), axis.key());
+        dialog.brakeAxisComboBox->addItem(axis.value(), axis.key());
+        dialog.clutchAxisComboBox->addItem(axis.value(), axis.key());
     }
 }
 
-QPair<int, int> DeviceConfiguration::getPedalValues() {
+PedalValues DeviceConfiguration::getPedalValues() {
     pedals->updateState();
     long clutchValue = pedals->getAxisReading(clutchAxisGuid);
     if (invertClutchAxis) {
@@ -339,7 +349,9 @@ QPair<int, int> DeviceConfiguration::getPedalValues() {
     }
     emit throttleValueChanged(throttleValue);
     emit pedalValuesChanged(clutchValue, throttleValue);
-    return QPair<int, int>(clutchValue , throttleValue);
+
+    long brakeValue = pedals->getAxisReading(brakeAxisGuid);
+    return { throttleValue, brakeValue, clutchValue };
 }
 
 void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {

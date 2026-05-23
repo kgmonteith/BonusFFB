@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include "HeavyTruckSlotGuard.h"
 #include "HeavyTruckSynchroGuard.h"
+#include "PedalsManager.h"
 
 class HeavyTruck : public BonusFFBApp
 {
@@ -62,6 +63,7 @@ private:
 	HeavyTruckStateManager stateManager;
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
+	PedalsManager pedalsManager;
 
 	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };

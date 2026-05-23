@@ -23,6 +23,12 @@ You should have received a copy of the GNU General Public License along with Bon
 #define DEVICES_NOT_CONFIGURED 1
 #define DEVICES_OK 2
 
+struct PedalValues {
+	long throttle;
+	long brake;
+	long clutch;
+};
+
 class DeviceConfiguration : public QObject
 {
 	Q_OBJECT;
@@ -57,7 +63,7 @@ public:
 	DeviceInfo* getDeviceFromGuid(QUuid);
 
 	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
+	PedalValues getPedalValues();
 
 	QList<DeviceInfo> deviceList;
 	HWND hwnd;
@@ -67,10 +73,12 @@ public:
 	QUuid joystickFBAxisGuid;
 
 	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	bool invertClutchAxis = false;
 	QUuid throttleAxisGuid;
 	bool invertThrottleAxis = false;
+	QUuid brakeAxisGuid;
+	bool invertBrakeAxis = false;
+	QUuid clutchAxisGuid;
+	bool invertClutchAxis = false;
 
 	DeviceInfo* shiftLockDevice = nullptr;
 	int shiftLockButton;
