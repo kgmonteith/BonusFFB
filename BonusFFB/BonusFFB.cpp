@@ -311,7 +311,6 @@ void BonusFFB::setStartOnLaunch(bool value) {
 }
 
 void BonusFFB::updateStartButton() {
-    qDebug() << "updateStartButton invoked";
     int deviceStatus = devices.ready(activeApp->appDeviceFlags);
     if (deviceStatus == DEVICES_NOT_AVAILABLE) {
         ui.startButton->setDisabled(true);
@@ -333,7 +332,6 @@ void BonusFFB::updateStartButton() {
 }
 
 void BonusFFB::startButtonClicked() {
-    qDebug() << "startButtonClicked";
     if (ui.startButton->text() == "▶️") {
         start();
     }

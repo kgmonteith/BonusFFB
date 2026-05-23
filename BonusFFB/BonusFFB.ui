@@ -132,7 +132,7 @@
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
@@ -2763,7 +2763,7 @@
                  <item>
                   <widget class="QLabel" name="label_63">
                    <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#brake-axis-deadzone&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                    </property>
                    <property name="openExternalLinks">
                     <bool>true</bool>
@@ -2829,7 +2829,7 @@
                  <item>
                   <widget class="QLabel" name="label_77">
                    <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#brake-axis-scaling&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                    </property>
                    <property name="openExternalLinks">
                     <bool>true</bool>
@@ -2958,7 +2958,7 @@
                  <item>
                   <widget class="QLabel" name="label_71">
                    <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-slot-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/pphc/#throttle-axis-deadzone&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                    </property>
                    <property name="openExternalLinks">
                     <bool>true</bool>
@@ -3038,7 +3038,7 @@
                  <item>
                   <widget class="QSlider" name="pphc_throttleSlotDepthSlider">
                    <property name="minimum">
-                    <number>33</number>
+                    <number>30</number>
                    </property>
                    <property name="maximum">
                     <number>100</number>
@@ -3063,7 +3063,7 @@
                     <string>%</string>
                    </property>
                    <property name="minimum">
-                    <number>33</number>
+                    <number>30</number>
                    </property>
                    <property name="maximum">
                     <number>100</number>

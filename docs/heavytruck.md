@@ -4,7 +4,7 @@ The heavy truck mode simulates an Eaton-Fuller 18-speed heavy truck transmission
 
 The heavy truck mode was built specifically for American Truck Simulator. [Setting up telemetry](getting-started.md#2-install-telemetry-plugins) is required, it will not work without it.
 
-The heavy truck mode features rev-matching effects to enable tactile float shifting, configurable slot throws to support joystick extensions, Eaton-Fuller specific slot layouts, and more.
+The heavy truck mode features rev-matching effects to enable tactile float shifting, configurable slot throws to support joystick extensions, Eaton-Fuller specific slot layouts, throttle-on shifting, and more.
 
 ![Heavy truck mode](images/heavytruck-screenshot.png) 
 
@@ -42,14 +42,20 @@ To support stick extensions, the heavy truck mode has configurable slot depths a
 
 On an RT-18 transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To protect from mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot.
 
+### Throttle-on shifting
+
+In a real manual transmission truck, it's possible to float gears while applying the throttle. This is particularly useful for downshifting and hill climbing. ATS and ETS2 do not natively support throttle-on shifting; the throttle must be completely released in order to float gears.
+
+Bonus FFB adds support for throttle-on shifting by mapping your pedal axes onto virtual axes, detecting when a throttle-on shift should be allowed in real life, and momentarily cutting off the virtual throttle output. This throttle "un-blip" is only 10 milliseconds, completely undetectable when driving, but long enough to trick the game into recognizing the shift.
+
 ## Game configuration
 
-The H-shifter mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the heavy truck mode's input/output settings.
+The heavy truck mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the heavy truck mode's input/output settings.
 
 !!! Note
     If you have difficulty binding buttons while in heavy truck mode, bind them while using [H-shifter mode](hshifter.md) instead. The same button numbers are used by both modes.
 
-### ATS/ETS2 settings
+### Basic game settings
 
 Install the [required ATS/ETS2 telemetry plugin](getting-started.md#2-install-telemetry-plugins), then set these values in the "Controls" menu.
 
@@ -64,9 +70,23 @@ Install the [required ATS/ETS2 telemetry plugin](getting-started.md#2-install-te
 ![ATS Hshifter settings](images/ats-hshifter.png)
 (Your device number will be different than in the above screenshot)
 
-### Recommended device configurations
+### Advanced game settings for throttle-on shifting
 
-TODO: Determine recommended pedal curves for emulating a heavy truck's clutch.
+Throttle-on shifting in the heavy truck mode works by duplicating your pedals' axis outputs on corresponding vJoy virtual axes, then tweaking the values when a throttle-on float shift should be allowed in a real truck.
+
+To use throttle-on shifting, you will need to bind the vJoy axes to the throttle, brake, and clutch axes in the game's control settings. Doing that is tricky, since the game will likely default to using your physical pedals' axes when using the in-game controls configuration menu.
+
+To bind the vJoy virtual axes, there are two options:
+
+1. Determine the vJoy device number and manually modify the `controls.sii`[^1] file. In the above example, the vJoy Device is the fourth input in the "Input Type" list, so the device number is 4. Change these lines in the `controls.sii` to match the below axes, updating the device number accordingly:
+    ```
+    config_lines[11]: "input j_throttle `joy4.x`"
+    config_lines[12]: "input j_brake `joy4.sl1`"
+    config_lines[13]: "input j_clutch `joy4.y`"
+    ```
+2. Use [HidHide](https://docs.nefarius.at/projects/HidHide/) to mask your physical pedals from the game. Consult the [HidHide documentation](https://docs.nefarius.at/projects/HidHide/Simple-Setup-Guide/#setting-up-hidhide-quick-guide) for instructions. You only need to mask your pedals when binding the axes, they can be unmasked afterward.
+
+[^1]: Usually located at `C:\Users\[Your Username]\Documents\[Euro Truck Simulator 2 or American Truck Simulator]\profiles\[Profile ID]\controls.sii`
 
 ## Settings descriptions
 
