@@ -11,6 +11,7 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "BonusFFB.h"
+#include <QActionGroup>
 #include <QMessageBox>
 #include <QDir>
 #include <QDesktopServices>
@@ -52,6 +53,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     connect(ui.actionConfigure_input_output_devices, &QAction::triggered, &devices, &DeviceConfiguration::openConfigurationDialog);
     connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
     connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
+    connect(ui.actionStart_on_launch, &QAction::toggled, this, &BonusFFB::setStartOnLaunch);
     connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
     connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
     connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
@@ -85,12 +87,36 @@ BonusFFB::BonusFFB(QWidget *parent)
         ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
     }
 
+    // Create startup mode menu
+    QString startupMode = loadSetting("startup_mode").toString();
+    qDebug() << "Startup mode: " << startupMode;
+    if (startupMode.isEmpty()) {
+        startupMode = appList.at(0)->getAppName();
+    }
+    QMenu* startupModeMenu = new QMenu();
+    ui.actionSet_startup_mode->setMenu(startupModeMenu);
+    QActionGroup* startupModeActionGroup = new QActionGroup(this);
+    startupModeActionGroup->setExclusive(true);
+
     // Initialize application GUIs
     for (auto app : appList) {
         app->setPointers(&ui, &devices, &telemetry);
         app->initialize();
+        QAction* startupAction = startupModeMenu->addAction(app->getAppName(true));
+        startupAction->setData(app->getAppName());
+        startupAction->setCheckable(true);
+        startupModeActionGroup->addAction(startupAction);
+        connect(startupAction, &QAction::triggered, this, &BonusFFB::setStartupMode);
+        if (app->getAppName() == startupMode)
+        {
+            startupAction->setChecked(true);
+            // Load default app
+            appSelectButtonGroup.button(appList.indexOf(app))->click();
+        } else {
+            qDebug() << app->getAppName();
+            startupAction->setChecked(false);
+        }
     }
-    changeApp(0);
 
     // Start telemetry receiver
     telemetry.startConnectTimer();
@@ -100,6 +126,13 @@ BonusFFB::BonusFFB(QWidget *parent)
 
     // Disable start button if app isn't happy
     updateStartButton();
+
+    // Start mode if configured to do so
+    bool startOnLaunch = loadSetting("start_on_launch").toBool();
+    if (startOnLaunch) {
+        ui.actionStart_on_launch->setChecked(startOnLaunch);
+        ui.startButton->click();
+    }
 
     qDebug("BonusFFBApplication constructor finished");
 }
@@ -140,6 +173,18 @@ void BonusFFB::resizeEvent(QResizeEvent* e)
     activeApp->redrawJoystickMap();
 }
 
+void BonusFFB::saveSetting(QString key, QVariant value) {
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings settings = QSettings(appSettingsDir.filePath("settings.ini"), QSettings::IniFormat);
+    settings.setValue(key, value);
+}
+
+QVariant BonusFFB::loadSetting(QString key) {
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings settings = QSettings(appSettingsDir.filePath("settings.ini"), QSettings::IniFormat);
+    return settings.value(key);
+}
+
 void BonusFFB::saveNewProfile() {
     QInputDialog dialog(this);
     dialog.setWindowTitle("Save new profile");
@@ -171,18 +216,14 @@ void BonusFFB::saveProfile(QString profileName) {
         app->saveSettings(&settings);
     }
 
-    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    QSettings activeProfile = QSettings(appSettingsDir.filePath("active_profile.ini"), QSettings::IniFormat);
-    activeProfile.setValue("profile_path", settings.fileName());
+    saveSetting("profile_path", settings.fileName());
     active_profile_path = settings.fileName();
     active_profile_name = profileName;
     setProfileDisplayName();
 }
 
 void BonusFFB::loadActiveProfile() {
-    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-    QSettings settings = QSettings(appSettingsDir.filePath("active_profile.ini"), QSettings::IniFormat);
-    loadProfile(settings.value("profile_path").toString());
+    loadProfile(loadSetting("profile_path").toString());
 }
 
 void BonusFFB::loadDefaultProfile() {
@@ -256,6 +297,17 @@ void BonusFFB::displayTelemetryState(TelemetrySource newState) {
     else if (newState == TelemetrySource::SCS) {
         ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
     }
+}
+
+void BonusFFB::setStartupMode() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        saveSetting("startup_mode", action->data().toString());
+    }
+}
+
+void BonusFFB::setStartOnLaunch(bool value) {
+    saveSetting("start_on_launch", value);
 }
 
 void BonusFFB::updateStartButton() {

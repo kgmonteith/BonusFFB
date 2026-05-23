@@ -20,7 +20,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QFile>
 #include "HShifter.h"
 
-QString HShifter::getAppName() {
+QString HShifter::getAppName(bool readable) {
+    if (readable)
+        return "H-pattern shifter";
     return "hshifter";
 }
 
@@ -60,28 +62,24 @@ void HShifter::initializeJoystickMap() {
     long sceneHeight = ui->hshifter_graphicsView->viewport()->rect().height();
     QPointF center = scene->sceneRect().center();
 
-    neutralChannelRect = new QGraphicsRectItem(0, 0, sceneWidth, SLOT_WIDTH_PX);
+    neutralChannelRect = new QGraphicsRectItem();
     neutralChannelRect->setBrush(QBrush(Qt::black));
     neutralChannelRect->setPen(Qt::NoPen);
-    neutralChannelRect->setPos(center - QPointF(sceneWidth / 2, SLOT_WIDTH_PX / 2));
     scene->addItem(neutralChannelRect);
 
-    centerSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
     scene->addItem(centerSlotRect);
 
-    rightSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    rightSlotRect = new QGraphicsRectItem();
     rightSlotRect->setBrush(QBrush(Qt::black));
     rightSlotRect->setPen(Qt::NoPen);
-    rightSlotRect->setPos(QPointF(sceneWidth - SLOT_WIDTH_PX, 0));
     scene->addItem(rightSlotRect);
 
-    leftSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    leftSlotRect = new QGraphicsRectItem();
     leftSlotRect->setBrush(QBrush(Qt::black));
     leftSlotRect->setPen(Qt::NoPen);
-    leftSlotRect->setPos(QPointF(0, 0));
     scene->addItem(leftSlotRect);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
@@ -89,13 +87,13 @@ void HShifter::initializeJoystickMap() {
     seethroughWhite.setAlphaF(float(0.15));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
-    QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
-    joystickCircle->setPos(circlePos);
     scene->addItem(joystickCircle);
 
     ui->hshifter_graphicsView->setScene(scene);
     ui->hshifter_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->hshifter_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 

@@ -15,7 +15,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QSettings>
 #include "Prndl.h"
 
-QString Prndl::getAppName() {
+QString Prndl::getAppName(bool readable) {
+    if (readable)
+        return "PRNDL shifter";
     return "prndl";
 }
 
@@ -52,12 +54,10 @@ void Prndl::initializeJoystickMap() {
 
     long sceneWidth = ui->prndl_graphicsView->viewport()->rect().width();
     long sceneHeight = ui->prndl_graphicsView->viewport()->rect().height();
-    QPointF center = scene->sceneRect().center();
 
-    centerSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
     scene->addItem(centerSlotRect);
 
     int slotCenter = 0;
@@ -66,7 +66,6 @@ void Prndl::initializeJoystickMap() {
         QGraphicsEllipseItem* scPtr = new QGraphicsEllipseItem(0, 0, SHIFTER_POSITION_MARKER_DIAMETER_PX, SHIFTER_POSITION_MARKER_DIAMETER_PX);
         scPtr->setBrush(QBrush(Qt::black));
         scPtr->setPen(Qt::NoPen);
-        scPtr->setPos(QPointF((sceneWidth / 2) - (SHIFTER_POSITION_MARKER_DIAMETER_PX / 2), (slotCircleStepSize * i) - SHIFTER_POSITION_MARKER_DIAMETER_PX / 2));
         scene->addItem(scPtr);
         slotCircles.push_back(scPtr);
     }
@@ -76,13 +75,13 @@ void Prndl::initializeJoystickMap() {
     seethroughWhite.setAlphaF(float(0.15));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
-    QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
-    joystickCircle->setPos(circlePos);
     scene->addItem(joystickCircle);
 
     ui->prndl_graphicsView->setScene(scene);
     ui->prndl_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->prndl_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active

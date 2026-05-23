@@ -3528,6 +3528,9 @@ hand control</string>
     </property>
     <addaction name="actionConfigure_input_output_devices"/>
     <addaction name="actionReset_profile_to_default_settings"/>
+    <addaction name="separator"/>
+    <addaction name="actionSet_startup_mode"/>
+    <addaction name="actionStart_on_launch"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -3624,6 +3627,19 @@ hand control</string>
    </property>
    <property name="text">
     <string>Reset profile to default settings</string>
+   </property>
+  </action>
+  <action name="actionSet_startup_mode">
+   <property name="text">
+    <string>Set startup mode</string>
+   </property>
+  </action>
+  <action name="actionStart_on_launch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Start on launch</string>
    </property>
   </action>
  </widget>

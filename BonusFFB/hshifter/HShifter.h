@@ -24,7 +24,7 @@ class HShifter : public BonusFFBApp
 	Q_OBJECT;
 
 public:
-	QString getAppName();
+	QString getAppName(bool = false);
 	void initialize();
 	void saveSettings(QSettings*);
 	void loadSettings(QSettings*);

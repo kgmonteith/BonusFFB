@@ -15,7 +15,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QSettings>
 #include "Handbrake.h"
 
-QString Handbrake::getAppName() {
+QString Handbrake::getAppName(bool readable) {
+    if (readable) {
+        return "Handbrake";
+    }
     return "handbrake";
 }
 
@@ -38,12 +41,10 @@ void Handbrake::initializeJoystickMap() {
 
     long sceneWidth = ui->handbrake_graphicsView->viewport()->rect().width();
     long sceneHeight = ui->handbrake_graphicsView->viewport()->rect().height();
-    QPointF center = scene->sceneRect().center();
 
-    centerSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
     scene->addItem(centerSlotRect);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
@@ -51,13 +52,13 @@ void Handbrake::initializeJoystickMap() {
     seethroughWhite.setAlphaF(float(0.15));
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
-    QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
-    joystickCircle->setPos(circlePos);
     scene->addItem(joystickCircle);
 
     ui->handbrake_graphicsView->setScene(scene);
     ui->handbrake_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->handbrake_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active

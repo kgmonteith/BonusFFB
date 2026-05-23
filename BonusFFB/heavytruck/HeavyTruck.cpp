@@ -17,7 +17,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QSettings>
 #include "HeavyTruck.h"
 
-QString HeavyTruck::getAppName() {
+QString HeavyTruck::getAppName(bool readable) {
+    if (readable)
+        return "Heavy truck shifter";
     return "heavytruck";
 }
 
@@ -90,28 +92,22 @@ void HeavyTruck::initializeJoystickMap() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
 
-    long sceneWidth = ui->heavytruck_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->heavytruck_graphicsView->viewport()->rect().height();
-    long slotHeight = sceneHeight * slot->depth;
-    long slotTop = (sceneHeight / 2) - (slotHeight / 2);
-    QPointF center = scene->sceneRect().center();
-
-    neutralChannelRect = new QGraphicsRectItem(0, 0, sceneWidth, SLOT_WIDTH_PX);
+    neutralChannelRect = new QGraphicsRectItem();
     neutralChannelRect->setBrush(QBrush(Qt::black));
     neutralChannelRect->setPen(Qt::NoPen);
     scene->addItem(neutralChannelRect);
 
-    centerSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
     scene->addItem(centerSlotRect);
 
-    rightSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    rightSlotRect = new QGraphicsRectItem();
     rightSlotRect->setBrush(QBrush(Qt::black));
     rightSlotRect->setPen(Qt::NoPen);
     scene->addItem(rightSlotRect);
 
-    leftSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    leftSlotRect = new QGraphicsRectItem();
     leftSlotRect->setBrush(QBrush(Qt::black));
     leftSlotRect->setPen(Qt::NoPen);
     scene->addItem(leftSlotRect);

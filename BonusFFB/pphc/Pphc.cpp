@@ -14,7 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsRectItem>
 #include <QLinearGradient>
 
-QString Pphc::getAppName() {
+QString Pphc::getAppName(bool readable) {
+    if (readable)
+        return "Push/pull hand control";
     return "pphc";
 }
 
@@ -43,36 +45,28 @@ void Pphc::initializeJoystickMap() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui->pphc_graphicsView->viewport()->rect());
 
-    long sceneWidth = ui->pphc_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->pphc_graphicsView->viewport()->rect().height();
-    QPointF center = scene->sceneRect().center();
-
-    QColor seethroughWhite = Qt::transparent;
-    seethroughWhite.setAlphaF(float(0.15));
-
-    QColor partWhite = Qt::white;
-    partWhite.setAlphaF(float(0.8));
-
-    centerSlotRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
     scene->addItem(centerSlotRect);
 
-    deadzoneRect = new QGraphicsRectItem(0, 0, SLOT_WIDTH_PX, sceneHeight * (brakeDeadzone + throttleDeadzone));
-    deadzoneRect->setBrush(QBrush(partWhite));
+    deadzoneRect = new QGraphicsRectItem();
     deadzoneRect->setPen(Qt::NoPen);
     scene->addItem(deadzoneRect);
+
+    QColor seethroughWhite = Qt::transparent;
+    seethroughWhite.setAlphaF(float(0.15));
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
-    QPointF circlePos = center - QPointF(JOYSTICK_MARKER_DIAMETER_PX / 2.0, JOYSTICK_MARKER_DIAMETER_PX / 2.0);
-    joystickCircle->setPos(circlePos);
     scene->addItem(joystickCircle);
 
     ui->pphc_graphicsView->setScene(scene);
     ui->pphc_graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->pphc_graphicsView->show();
+
+    redrawJoystickMap();
 }
 
 // Separate call because the event doesn't trigger if another tab is active
@@ -90,17 +84,12 @@ void Pphc::redrawJoystickMap() {
     centerSlotRect->setRect(0, 0, SLOT_WIDTH_PX, (sceneHeight / 2.0) + ((sceneHeight / 2.0) * throttleSlotDepth));
     centerSlotRect->setPos(sceneWidth / 2.0 - SLOT_WIDTH_PX / 2.0, 0);
 
-
     deadzoneRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight * (brakeDeadzone + throttleDeadzone));
     deadzoneRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2.0, sceneHeight * brakeDeadzone));
     QLinearGradient gradient(deadzoneRect->rect().topLeft(), deadzoneRect->rect().bottomLeft());
-
-    // 3. Add color stops (position from 0.0 to 1.0)
     gradient.setColorAt(0.0, Qt::black);
     gradient.setColorAt(0.5, Qt::lightGray);
     gradient.setColorAt(1.0, Qt::lightGray);
-
-    // 4. Apply the gradient to the item's brush
     deadzoneRect->setBrush(QBrush(gradient));
 
     joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));

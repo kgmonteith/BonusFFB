@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
+#include <QVariant>
 #include <QVersionNumber>
 #include <QButtonGroup>
 #include "ui_BonusFFB.h"
@@ -73,10 +74,14 @@ public slots:
     void loadProfileDialog();
     void openProfileFolder();
     void updateStartButton();
+    void setStartupMode();
+    void setStartOnLaunch(bool);
 protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
+    void saveSetting(QString, QVariant);
+    QVariant loadSetting(QString);
     void loadProfile(QString);
     void saveProfile(QString);
     void setProfileDisplayName();

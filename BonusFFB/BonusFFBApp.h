@@ -50,7 +50,7 @@ public:
 	virtual void initializeJoystickMap() = 0;
 	virtual void saveSettings(QSettings*);
 	virtual void loadSettings(QSettings*);
-	virtual QString getAppName() = 0;
+	virtual QString getAppName(bool readable = false) = 0;
 
 protected:
 	virtual HRESULT startMode() = 0;
