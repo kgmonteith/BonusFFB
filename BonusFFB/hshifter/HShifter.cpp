@@ -172,6 +172,7 @@ HRESULT HShifter::startMode() {
     // Initialize FFB
     slotGuard.start(devices->joystick);
     synchroGuard.start(devices->joystick);
+    pedalsManager.start(devices);
 
     return S_OK;
 }
@@ -205,4 +206,5 @@ void HShifter::gameLoop() {
     slotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updatePedalEngagement(pedalValues, joystickValues);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
+    pedalsManager.updateVirtualPedals();
 }

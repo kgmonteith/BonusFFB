@@ -16,7 +16,7 @@ The PPHC mode should work in every game. It's been tested in Assetto Corsa, ACC,
 
 ## Game configuration
 
-Enable the PPHC mode, then bind the axes in game as you would a regular pedal, by selecting the axis and moving the joystick. Push forward to assign the brake axis, pull back to assign the throttle axis.
+Start the PPHC mode, then bind the axes in game as you would a regular pedal, by selecting the axis and moving the joystick. Push forward to assign the brake axis, pull back to assign the throttle axis.
 
 ## Settings descriptions
 

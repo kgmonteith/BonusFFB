@@ -337,7 +337,8 @@ void DeviceConfiguration::updatePedalsAxisList(int deviceIndex) {
 }
 
 PedalValues DeviceConfiguration::getPedalValues() {
-    pedals->updateState();
+    if (!SUCCEEDED(pedals->updateState()))
+        return {0, 0, 0};
     long clutchValue = pedals->getAxisReading(clutchAxisGuid);
     if (invertClutchAxis) {
         clutchValue = abs(65535 - clutchValue);

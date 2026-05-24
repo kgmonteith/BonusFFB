@@ -44,6 +44,7 @@ Bonus FFB installs as a single application with a few modes:
 * [Heavy truck shifter](heavytruck.md) for simulating heavy duty truck transmissions in ATS/ETS2
 * [H-pattern shifter](hshifter.md) for simulating manual transmissions
 * ["PRNDL"-style shifter](prndl.md) for simulating automatic transmissions
+* [Push-pull hand control](pphc.md), simulating an assistive driving device for operating a vehicle's throttle and brakes with a single hand lever
 * A simple [handbrake](handbrake.md) lever
 
 Please read the mode's guide for app-specific configuration, options, and features.

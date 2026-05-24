@@ -12,12 +12,11 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QStandardPaths>
 #include "BonusFFBApp.h"
 #include "HShifterStateManager.h"
 #include "HShifterSlotGuard.h"
 #include "HShifterSynchroGuard.h"
+#include "PedalsManager.h"
 
 class HShifter : public BonusFFBApp
 {
@@ -30,7 +29,6 @@ public:
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 	HRESULT startMode();
-	void stopMode();
 	void gameLoop();
 
 public slots:
@@ -56,9 +54,9 @@ private:
 	HShifterStateManager stateManager;
 	HShifterSlotGuard slotGuard;
 	HShifterSynchroGuard synchroGuard;
+	PedalsManager pedalsManager;
 
 	QPair<int, int> lastGearValues = { 0, 0 };
-	QPair<int, int> lastPedalValues = { 0, 0 };
 	float lastEngineRPM = 0.0;
 };
 

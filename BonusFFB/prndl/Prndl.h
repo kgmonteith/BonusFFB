@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "BonusFFBApp.h"
 #include "PrndlSlotGuard.h"
 #include "PrndlStateManager.h"
+#include "PedalsManager.h"
 
 #define SHIFTER_POSITION_MARKER_DIAMETER_PX 17.0
 
@@ -53,6 +54,7 @@ private:
 	// Stateful FFB effect managers
 	PrndlSlotGuard slotGuard;
 	PrndlStateManager stateManager = PrndlStateManager();
+	PedalsManager pedalsManager;
 
 	bool lastShiftLockReleased = false;
 };

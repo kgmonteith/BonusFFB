@@ -132,7 +132,7 @@
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
@@ -1871,7 +1871,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="prndlTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
@@ -2285,7 +2285,7 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/prndl/#simulate-park-slot-in-atsets2-using-parking-brake-telemetry&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/prndl/#simulate-park-slot&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>

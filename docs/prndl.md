@@ -33,20 +33,11 @@ Set these values in the "Keys and buttons" menu:
 * Set `Parking Brake` to vJoy button 7
     * Disable the `Simulate Park slot in ATS/ETS2 using telemetry` setting in the "Other settings" tab in order to bind button 7, otherwise it will be overwritten by button 9
 
+The PRNDL mode will also output your pedals' values on vJoy virtual axes, to preserve compatibility with the heavy truck and H-shifter modes.
+
 ## Settings descriptions
 
-### Enable Park slot
-
-This option enables the park slot. ATS/ETS2 does not have a park gear, so if you're not using telemetry, you may want to disable this option.
-
-### Enable Low slot
-
-Similar to the above, if your game of choice does not have a low gear, this option should be disabled.
-
-### Simulate Park slot in ATS/ETS2 using parking brake telemetry
-
-ATS/ETS2 does not implement a park gear in the game. When this option is enabled and ATS/ETS2 telemetry is active, the PRNDL mode will simulate a park gear by enabling the parking brake and setting the gear to neutral. Disable this option if this behavior is not desired.
-
-### Enable shift lock between Neutral and Reverse
-
-When this option is enabled and a shift lock device and button are set in the `Input/output settings` tab, the shift lock button must be pressed in order to shift from neutral to reverse. (This is in addition to shift lock button's default behavior of preventing shifting from park to reverse.)
+- **<span id="enable-park-slot">Enable park slot:</span>** This option enables the park slot. ATS/ETS2 does not have a park gear, so if you're not using telemetry, you may want to disable this option.
+- **<span id="enable-low-slot">Enable Low slot:</span>** Similar to the above, if your game of choice does not have a low gear, this option should be disabled.
+- **<span id="simulate-park-slot">Simulate Park slot in ATS/ETS2 using parking brake telemetry:</span>** ATS/ETS2 does not implement a park gear in the game. When this option is enabled and ATS/ETS2 telemetry is active, the PRNDL mode will simulate a park gear by enabling the parking brake and setting the gear to neutral. Disable this option if this behavior is not desired.
+- **<span id="enable-shift-lock-between-neutral-and-reverse">Enable shift lock between Neutral and Reverse:</span>** When this option is enabled and a shift lock device and button are configured, the shift lock button must be pressed in order to shift from neutral to reverse. (This is in addition to shift lock button's default behavior of preventing shifting from park to reverse.)

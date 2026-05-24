@@ -1,6 +1,6 @@
 # Bonus FFB 🕹️
 
-Do you own a force-feedback joystick? Did you know it can simulate other peripherals using only FFB effects? That's Bonus FFB!
+Do you own a force-feedback joystick? Did you know that it can simulate other advanced gaming peripherals using FFB effects and game telemetry? That's Bonus FFB!
 
 Bonus FFB simulates these devices using a force-feedback joystick:
 

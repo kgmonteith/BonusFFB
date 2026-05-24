@@ -160,6 +160,8 @@ HRESULT DeviceInfo::reacquire() {
 }
 
 HRESULT DeviceInfo::updateState() {
+    if (this == nullptr)
+        return ERROR_NOT_READY;
     HRESULT hr = diDevice->GetDeviceState(sizeof(DIJOYSTATE2), &joyState);
     return hr;
 }

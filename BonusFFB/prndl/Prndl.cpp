@@ -24,6 +24,8 @@ QString Prndl::getAppName(bool readable) {
 void Prndl::initialize() {
     // Set flags for required and desired devices
     appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_SHIFTLOCK;
+    if (devices->pedals != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_PEDALS;
 
     // Graphics connections
     QObject::connect(ui->prndlTabWidget, &QTabWidget::currentChanged, this, &Prndl::redrawJoystickMap);
@@ -188,6 +190,7 @@ HRESULT Prndl::startMode() {
     if (FAILED(slotGuard.start(devices->joystick))) {
         qDebug() << "Failed to start slotGuard effects";
     }
+    pedalsManager.start(devices);
     return S_OK;
 }
 
@@ -207,4 +210,5 @@ void Prndl::gameLoop() {
 
     stateManager.update(joystickValues, isShiftLockRelased, isParkingBrakeSet);
     slotGuard.updateLRSpring(joystickValues.first);
+    pedalsManager.updateVirtualPedals();
 }
