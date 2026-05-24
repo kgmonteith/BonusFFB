@@ -141,8 +141,8 @@ void HeavyTruckSynchroGuard::setTorqueLoadStrength(int value) {
     torqueLoadSpringStrength = value * -100;
 }
 
-void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
-    clutchPercent = 1 - (double(pedalValues.first) / JOY_MAXPOINT);
+void HeavyTruckSynchroGuard::updateTorqueLock(PedalValues pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
+    clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
     //throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
     throttlePercent = telemetry->getThrottlePercent();
     int fbValue = joystickValues.second;
@@ -155,7 +155,7 @@ void HeavyTruckSynchroGuard::updateTorqueLock(QPair<int, int> pedalValues, QPair
         if ((FFB_MAX * scaling) < keepInGearSpringIdleCoefficient) {
             // Throttle is not actually applied, scale the keep-in-gear effect by the truck speed
             // If not moving, apply a minimum of 33% of the idle torque lock to keep the stick in gear
-            scaling = std::max(scaleRangeValue(telemetry->getSpeed(), 0, 2.2), 0.33);
+            scaling = max(scaleRangeValue(telemetry->getSpeed(), 0, 2.2), 0.33);
             float nearNeutralScaling = scaleRangeValue(std::abs(joystickPositionToFFBOffset(fbValue)), 1000, 2500);
             maxStrength = keepInGearSpringIdleCoefficient * nearNeutralScaling;
             offsetScaling = 0;
@@ -229,11 +229,11 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
         else {
             effectScaling = scaleRangeValue(fbValue, slot->grindPointDepthAsJoystickValueFwd(), slot->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
         }
-        double revMatchPushbackScaling = std::max(0.20, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
+        double revMatchPushbackScaling = max(0.20, scaleRangeValue(std::abs(grindEffectRPM), 0, maxRevMatchRPM));
         rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * revMatchPushbackScaling * -1; // AB9 1.1.3.4 firmware force inversion
         device->updateEffect("rumblePushback");
         long smoothedRPM = long(grindEffectRPM) - long(grindEffectRPM) % 10;
-        double revMatchRumbleScaling = scaleRangeValue(std::abs(smoothedRPM), 0, std::min(300.0, maxRevMatchRPM * 2.0));
+        double revMatchRumbleScaling = scaleRangeValue(std::abs(smoothedRPM), 0, min(300.0, maxRevMatchRPM * 2.0));
         // Apply some smoothing since the AB9 seems to struggle with changing periodic effects too frequently
         rumble.dwPeriod = 6e7 / std::abs(smoothedRPM);
         rumble.dwMagnitude = unsigned long(grindingIntensity * clutchPercent * std::abs(effectScaling) * revMatchRumbleScaling);

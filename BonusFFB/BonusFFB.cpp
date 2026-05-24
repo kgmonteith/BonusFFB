@@ -11,15 +11,12 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #include "BonusFFB.h"
-#include <QSettings>
+#include <QActionGroup>
 #include <QMessageBox>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsRectItem>
-#include <QGraphicsEllipseItem>
 #include <QDir>
 #include <QDesktopServices>
-#include <stdlib.h>
+#include <QInputDialog>
+#include <QFileDialog>
 
 BonusFFB::BonusFFB(QWidget *parent)
     : QMainWindow(parent)
@@ -31,41 +28,49 @@ BonusFFB::BonusFFB(QWidget *parent)
     appSelectButtonGroup.addButton(ui.heavytruck_appSelectButton, 0);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 1);
     appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 2);
-    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.pphc_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 4);
     appList.append(&heavytruck);
     appList.append(&hshifter);
     appList.append(&prndl);
+    appList.append(&pphc);
     appList.append(&handbrake);
-    QObject::connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
+    connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
     ui.appStackedWidget->setCurrentIndex(0);
 
     // Ensure the monitor is the default tab
     ui.heavytruckTabWidget->setCurrentIndex(0);
     ui.hshifterTabWidget->setCurrentIndex(0);
     ui.prndlTabWidget->setCurrentIndex(0);
+    ui.pphcTabWidget->setCurrentIndex(0);
     ui.handbrakeTabWidget->setCurrentIndex(0);
 
     // Menu action connections
-    QObject::connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
-    QObject::connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
-    QObject::connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    connect(ui.actionSaveSettings, &QAction::triggered, this, &BonusFFB::saveActiveProfile);
+    connect(ui.actionSaveSettingsNew, &QAction::triggered, this, &BonusFFB::saveNewProfile);
+    connect(ui.actionOpen_profile_directory, &QAction::triggered, this, &BonusFFB::openProfileFolder);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, this, &BonusFFB::stop);
+    connect(ui.actionConfigure_input_output_devices, &QAction::triggered, &devices, &DeviceConfiguration::openConfigurationDialog);
+    connect(ui.actionReset_profile_to_default_settings, &QAction::triggered, this, &BonusFFB::loadDefaultProfile);
+    connect(ui.actionLoad_profile, &QAction::triggered, this, &BonusFFB::loadProfileDialog);
+    connect(ui.actionStart_on_launch, &QAction::toggled, this, &BonusFFB::setStartOnLaunch);
+    connect(ui.actionExit, &QAction::triggered, this, &BonusFFB::close);
+    connect(ui.actionUserGuide, &QAction::triggered, this, &BonusFFB::openUserGuide);
+    connect(ui.actionAbout, &QAction::triggered, this, &BonusFFB::openAbout);
+    connect(&devices, &DeviceConfiguration::deviceConfigurationChanged, this, &BonusFFB::updateStartButton);
     // Game loop connections
-    QObject::connect(ui.toggleGameLoopButton, &QPushButton::toggled, this, &BonusFFB::toggleGameLoop);
+    connect(ui.startButton, &QPushButton::clicked, this, &BonusFFB::startButtonClicked);
     // Telemetry connections
-    QObject::connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
+    connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
+    // Connect sliders to spinboxes
+    connectSlidersToSpinBoxes();
 
     // Initialize Direct Input, get the list of connected devices
-    initDirectInput(&deviceList);
+    devices.initialize((HWND)(winId()));
 
     // Set FFB device detection label
-    bool ffbDeviceFound = false;
-    for (const DeviceInfo device : deviceList)
-    {
-        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
-            ui.ffbDeviceFoundLabel->setText("🟢 FFB-enabled device detected");
-            ffbDeviceFound = true;
-            break;
-        }
+    if (devices.isFFBDeviceInstalled()) {
+        ui.ffbDeviceFoundLabel->setText("🟢 FFB-enabled device detected");
     }
 
     // Initialize vJoyFeeder
@@ -82,34 +87,85 @@ BonusFFB::BonusFFB(QWidget *parent)
         ui.vjoyDeviceFoundLabel->setText("🟢 vJoy device found");
     }
 
+    // Create startup mode menu
+    QString startupMode = loadSetting("startup_mode").toString();
+    qDebug() << "Startup mode: " << startupMode;
+    if (startupMode.isEmpty()) {
+        startupMode = appList.at(0)->getAppName();
+    }
+    QMenu* startupModeMenu = new QMenu();
+    ui.actionSet_startup_mode->setMenu(startupModeMenu);
+    QActionGroup* startupModeActionGroup = new QActionGroup(this);
+    startupModeActionGroup->setExclusive(true);
+
     // Initialize application GUIs
     for (auto app : appList) {
-        app->setPointers(&ui, &deviceList, &vjoy, &telemetry, (HWND)(winId()));
+        app->setPointers(&ui, &devices, &telemetry);
         app->initialize();
+        QAction* startupAction = startupModeMenu->addAction(app->getAppName(true));
+        startupAction->setData(app->getAppName());
+        startupAction->setCheckable(true);
+        startupModeActionGroup->addAction(startupAction);
+        connect(startupAction, &QAction::triggered, this, &BonusFFB::setStartupMode);
+        if (app->getAppName() == startupMode)
+        {
+            startupAction->setChecked(true);
+            // Load default app
+            appSelectButtonGroup.button(appList.indexOf(app))->click();
+        } else {
+            qDebug() << app->getAppName();
+            startupAction->setChecked(false);
+        }
     }
-    changeApp(0);
 
     // Start telemetry receiver
     telemetry.startConnectTimer();
 
-    if (!ffbDeviceFound || !vJoyFeeder::isDriverEnabled()) {
-        ui.toggleGameLoopButton->setDisabled(true);
-        ui.toggleGameLoopButton->setText("🚫");
-        ui.toggleGameLoopButton->setToolTip("Cannot start without FFB joystick and vJoy");
+    // Load active profile. Defaults will be loaded if the active profile is invalid.
+    loadActiveProfile();
+
+    // Disable start button if app isn't happy
+    updateStartButton();
+
+    // Start mode if configured to do so
+    bool startOnLaunch = loadSetting("start_on_launch").toBool();
+    if (startOnLaunch) {
+        ui.actionStart_on_launch->setChecked(startOnLaunch);
+        ui.startButton->click();
     }
+
     qDebug("BonusFFBApplication constructor finished");
 }
 
 BonusFFB::~BonusFFB()
 {
     if (gameLoopTimer.isActive())
-        emit toggleGameLoop(false);
+        stop();
 }
 
 void BonusFFB::changeApp(int appSelectButtonIndex) {
     ui.appStackedWidget->setCurrentIndex(appSelectButtonIndex);
     activeApp = appList[appSelectButtonIndex];
     activeApp->redrawJoystickMap();
+
+    // Check if device configuration is suitable for the app
+    updateStartButton();
+}
+
+void BonusFFB::connectSlidersToSpinBoxes() {
+    QList<QSlider*> sliders = ui.centralWidget->findChildren<QSlider*>();
+    for (QSlider* slider : sliders) {
+        QString sliderName = slider->objectName();
+        QString targetSpinBoxName = sliderName.replace("Slider", "Spinbox");
+        QSpinBox* matchingSpinBox = ui.centralWidget->findChild<QSpinBox*>(targetSpinBoxName);
+        if (matchingSpinBox) {
+            QObject::connect(slider, &QSlider::valueChanged, matchingSpinBox, &QSpinBox::setValue);
+            QObject::connect(matchingSpinBox, qOverload<int>(&QSpinBox::valueChanged), slider, &QSlider::setValue);
+        }
+        else {
+            qDebug() << "No matching QSpinBox found for" << sliderName;
+        }
+    }
 }
 
 void BonusFFB::resizeEvent(QResizeEvent* e)
@@ -117,12 +173,120 @@ void BonusFFB::resizeEvent(QResizeEvent* e)
     activeApp->redrawJoystickMap();
 }
 
+void BonusFFB::saveSetting(QString key, QVariant value) {
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings settings = QSettings(appSettingsDir.filePath("settings.ini"), QSettings::IniFormat);
+    settings.setValue(key, value);
+}
+
+QVariant BonusFFB::loadSetting(QString key) {
+    QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QSettings settings = QSettings(appSettingsDir.filePath("settings.ini"), QSettings::IniFormat);
+    return settings.value(key);
+}
+
+void BonusFFB::saveNewProfile() {
+    QInputDialog dialog(this);
+    dialog.setWindowTitle("Save new profile");
+    dialog.setLabelText("New profile name:");
+    if (dialog.exec() == QDialog::Accepted) {
+        saveProfile(dialog.textValue());
+    }
+}
+
+void BonusFFB::saveProfile(QString profileName) {
+    if (profileName.isEmpty()) {
+        saveNewProfile();
+        return;
+    }
+    QString safeName = profileName;
+    safeName.remove(QRegularExpression("[\\\\/:*?\"<>|]"));
+    QDir profileDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles/");
+    QSettings settings = QSettings(profileDir.filePath(safeName + ".ini"), QSettings::IniFormat);
+
+    if (!settings.isWritable()) {
+        QMessageBox::warning(this, "Failed to save profile", "Unable to write to profile configuration file.");
+        return;
+    }
+
+    settings.setValue("profile_name", profileName);
+    settings.setValue("app_version", QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION).toString());
+
+    for (auto app : appList) {
+        app->saveSettings(&settings);
+    }
+
+    saveSetting("profile_path", settings.fileName());
+    active_profile_path = settings.fileName();
+    active_profile_name = profileName;
+    setProfileDisplayName();
+}
+
+void BonusFFB::loadActiveProfile() {
+    loadProfile(loadSetting("profile_path").toString());
+}
+
+void BonusFFB::loadDefaultProfile() {
+    loadProfile("");
+}
+
+void BonusFFB::loadProfileDialog() {
+    QString profileFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
+    QDir dir;
+    if (!dir.exists(profileFolder)) {
+        dir.mkdir(profileFolder);
+    }
+    QString profilePath = QFileDialog::getOpenFileName(this,
+        tr("Load profile"), profileFolder, tr("Profile configs (*.ini)"));
+    if (!profilePath.isEmpty()) {
+        loadProfile(profilePath);
+    }
+}
+
+void BonusFFB::loadProfile(QString profilePath) {
+    // If profilePath is empty, default values will be loaded
+    qDebug() << "Loading profile: " << profilePath;
+    QSettings activeProfile = QSettings(profilePath, QSettings::IniFormat);
+    if (!profilePath.isEmpty()) {
+        active_profile_name = activeProfile.value("profile_name").toString();
+        active_profile_path = profilePath;
+    }
+
+    for (auto app : appList) {
+        app->loadSettings(&activeProfile);
+    }
+    setProfileDisplayName();
+}
+
+void BonusFFB::saveActiveProfile() {
+    QSettings profile = QSettings(active_profile_path, QSettings::IniFormat);
+    QString profileName = profile.value("profile_name").toString();
+    saveProfile(profileName);
+}
+
+void BonusFFB::setProfileDisplayName() {
+    QString saveProfileText = "Save profile";
+    if (!active_profile_name.isEmpty()) {
+        saveProfileText += " (" + active_profile_name + ")";
+    }
+    ui.actionSaveSettings->setText(saveProfileText);
+}
+
+void BonusFFB::openProfileFolder() {
+    QString folderName = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/profiles";
+    QDir dir;
+    if (!dir.exists(folderName)) {
+        dir.mkdir(folderName);
+    }
+    QDesktopServices::openUrl(QUrl("file:///" + folderName));
+}
+
 void BonusFFB::openUserGuide() {
     QDesktopServices::openUrl(QUrl("https://kgmonteith.github.io/BonusFFB/", QUrl::TolerantMode));
 }
 
 void BonusFFB::openAbout() {
-    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.";
+    QString about = "Bonus FFB v" + version.toString() + "\n\nCopyright 2024-" + QString::number(QDate::currentDate().year()) + ", Ken Monteith. All rights reserved.\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see < https://www.gnu.org/licenses/ >.";
     QMessageBox::about(this, "About Bonus FFB", about);
 }
 
@@ -135,37 +299,81 @@ void BonusFFB::displayTelemetryState(TelemetrySource newState) {
     }
 }
 
-void BonusFFB::toggleGameLoop(bool newState) {
-    ui.toggleGameLoopButton->setText(newState ? "🛑" : "▶️");
-    if (newState == true) {
+void BonusFFB::setStartupMode() {
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        saveSetting("startup_mode", action->data().toString());
+    }
+}
+
+void BonusFFB::setStartOnLaunch(bool value) {
+    saveSetting("start_on_launch", value);
+}
+
+void BonusFFB::updateStartButton() {
+    int deviceStatus = devices.ready(activeApp->appDeviceFlags);
+    if (deviceStatus == DEVICES_NOT_AVAILABLE) {
+        ui.startButton->setDisabled(true);
+        ui.startButton->setText("🚫");
+        ui.startButton->setToolTip("Cannot start without FFB joystick and vJoy");
+        ui.startButton->setCheckable(false);
+    }
+    else if (deviceStatus == DEVICES_NOT_CONFIGURED) {
+        ui.startButton->setDisabled(false);
+        ui.startButton->setText("🛠️");
+        ui.startButton->setToolTip("Devices must be configured before " + activeApp->getAppName() + " can run");
+        ui.startButton->setCheckable(false);
+    }
+    else {
+        ui.startButton->setDisabled(false);
+        ui.startButton->setText("▶️");
+        ui.startButton->setToolTip("");
+    }
+}
+
+void BonusFFB::startButtonClicked() {
+    if (ui.startButton->text() == "▶️") {
+        start();
+    }
+    else if (ui.startButton->text() == "🛑") {
+        stop();
+    }
+    else if (ui.startButton->text() == "🛠️") {
+        devices.openConfigurationDialog();
+    }
+}
+
+void BonusFFB::start() {
+    if (!gameLoopTimer.isActive())
+    {
         gameLoopTimer.start(GAMELOOP_INTERVAL_MS);
         for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
             button->setEnabled(false);
         }
         qDebug() << "Active app: " << activeApp->getAppName();
-        if (FAILED(activeApp->startGameLoop())) {
-            emit toggleGameLoop(false);
+        if (FAILED(activeApp->start())) {
+            qDebug() << "Failed to start game loop, stopping";
+            stop();
             return;
         }
-        QObject::connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
-    }
-    else
-    {
-        QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
-        activeApp->stopGameLoop();
-        for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
-            button->setEnabled(true);
-        }
+        ui.startButton->setText("🛑");
+        ui.startButton->setCheckable(true);
+        ui.startButton->setChecked(true);
+        connect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
     }
 }
 
-DeviceInfo* BonusFFB::getDeviceFromGuid(QUuid guid) {
-    for (QList<DeviceInfo>::iterator it = deviceList.begin(); it != deviceList.end(); it++)
+void BonusFFB::stop() {
+    if (gameLoopTimer.isActive())
     {
-        if (it->instanceGuid == guid) {
-            return &*it;
+        gameLoopTimer.stop();
+        QObject::disconnect(&gameLoopTimer, &QTimer::timeout, activeApp, &BonusFFBApp::gameLoop);
+        activeApp->stop();
+        for (QAbstractButton* button : appSelectButtonGroup.buttons()) {
+            button->setEnabled(true);
         }
+        ui.startButton->setText("▶️");
+        ui.startButton->setCheckable(true);
+        ui.startButton->setChecked(false);
     }
-    qDebug() << "Device not found: " << guid;
-    return nullptr;
 }

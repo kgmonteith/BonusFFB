@@ -94,6 +94,15 @@
     <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeviceConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pphc\Pphc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PedalsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Telemetry.h">
@@ -141,6 +150,15 @@
     <QtMoc Include="heavytruck\HeavyTruck.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="DeviceConfiguration.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="pphc\Pphc.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PedalsManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="version.h">
@@ -164,5 +182,10 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\lib\vJoyInterface.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="InputOutputSettingsDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

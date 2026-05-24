@@ -35,7 +35,6 @@ private:
 	DIEFFECT slotSpringEff = {};
 	DIEFFECT neutralSpringEff = {};
 	long neutral_spring_strength = 1500;
-	//long neutral_spring_strength = 00;
 	DICONDITION neutralSpring = { 0, neutral_spring_strength, neutral_spring_strength };
 	DICONDITION neutralSpringConditions[2] = { neutralSpring, neutralSpring };
 
@@ -52,8 +51,8 @@ private:
 
 	DIEFFECT lrSlotPushEff = {};
 	DIEFFECT fbSlotPushEff = {};
-	DICONSTANTFORCE lrcf;
-	DICONSTANTFORCE fbcf;
+	DICONSTANTFORCE lrcf = {};
+	DICONSTANTFORCE fbcf = {};
 	DICONSTANTFORCE slotPush[2] = { lrcf, fbcf };
 
 	DIEFFECT safetyDamper = {};

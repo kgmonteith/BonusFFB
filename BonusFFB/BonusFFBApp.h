@@ -13,15 +13,13 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include <QObject>
+#include <QSettings>
 #include "ui_BonusFFB.h"
-#include "DeviceInfo.h"
-#include "vJoyFeeder.h"
+#include "DeviceConfiguration.h"
 #include "Telemetry.h"
 
 #define SLOT_WIDTH_PX 5.0
 #define JOYSTICK_MARKER_DIAMETER_PX 21.0
-
-extern bool g_joystick_warned;
 
 class BonusFFBApp :
     public QObject
@@ -29,23 +27,38 @@ class BonusFFBApp :
 	Q_OBJECT;
 
 public:
-	Ui::BonusFFBClass* ui;
-	QList<DeviceInfo>* deviceList;
-	vJoyFeeder* vjoy;
-	HWND hwnd;
-	Telemetry* telemetry;
+	long damperStrength = FFB_MAX;
+	long inertiaStrength = FFB_MAX;
+	long frictionStrength = FFB_MAX;
+	DICONDITION damperCondition[2] = { {0, damperStrength, damperStrength}, {0, damperStrength, damperStrength} };
+	DICONDITION inertiaCondition[2] = { {0, inertiaStrength, inertiaStrength}, {0, inertiaStrength, inertiaStrength} };
+	DICONDITION frictionCondition[2] = { {0, frictionStrength, frictionStrength}, {0, frictionStrength, frictionStrength} };
+	DIEFFECT damperEff = {};
+	DIEFFECT inertiaEff = {};
+	DIEFFECT frictionEff = {};
 
-	void setPointers(Ui::BonusFFBClass*, QList<DeviceInfo>*, vJoyFeeder*, Telemetry*, HWND);
-	virtual HRESULT startGameLoop() = 0;
-	virtual void stopGameLoop() = 0;
+	Ui::BonusFFBClass* ui;
+	DeviceConfiguration* devices;
+	Telemetry* telemetry;
+	int appDeviceFlags = FLAG_DEVICES_REQUIRED;
+
+	void setPointers(Ui::BonusFFBClass*, DeviceConfiguration*, Telemetry*);
+	HRESULT start();
+	void stop();
 	virtual void gameLoop() = 0;
 	virtual void initialize() = 0;
 	virtual void initializeJoystickMap() = 0;
-	virtual void saveSettings() = 0;
-	virtual void loadSettings() = 0;
-	virtual QString getAppName() = 0;
+	virtual void saveSettings(QSettings*);
+	virtual void loadSettings(QSettings*);
+	virtual QString getAppName(bool readable = false) = 0;
+
+protected:
+	virtual HRESULT startMode() = 0;
 
 public slots:
 	virtual void redrawJoystickMap() = 0;
+	void updateDamper(int);
+	void updateInertia(int);
+	void updateFriction(int);
 };
 

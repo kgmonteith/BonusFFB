@@ -12,46 +12,26 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QStandardPaths>
 #include "BonusFFBApp.h"
 #include "HeavyTruckStateManager.h"
 #include "HeavyTruckSlotGuard.h"
 #include "HeavyTruckSynchroGuard.h"
+#include "PedalsManager.h"
 
 class HeavyTruck : public BonusFFBApp
 {
 	Q_OBJECT;
 
 public:
-	QString getAppName();
+	QString getAppName(bool = false);
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
-	HRESULT startGameLoop();
-	void stopGameLoop();
+	HRESULT startMode();
 	void gameLoop();
 
-	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
-
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
-	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	QUuid throttleAxisGuid;
-
 public slots:
-	void changeJoystickDevice(int);
-	void changePedalsDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
-	void changeClutchAxis(int);
-	void changeThrottleAxis(int);
-
 	void setPresetPatternEatonFuller();
 	void setPresetPatternFullRange();
 	void slotParameterChanged(int);
@@ -60,23 +40,12 @@ public slots:
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
 	void updateRpmDeltaText(float);
-	void showAxisProgressBars();
-	void hideAxisProgressBars();
 
 signals:
 	void slotPositionsChanged(int slotDepth, int rightSlot, int centerSlot);
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
-	void clutchValueChanged(int);
-	void throttleValueChanged(int);
-	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
 	void resetClutchAxes();
 	void engineRPMChanged(float);
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/heavytruckDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;
@@ -94,6 +63,7 @@ private:
 	HeavyTruckStateManager stateManager;
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
+	PedalsManager pedalsManager;
 
 	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };

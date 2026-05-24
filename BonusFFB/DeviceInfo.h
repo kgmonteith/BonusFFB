@@ -68,7 +68,7 @@ public:
     long getAxisReading(QUuid);
     bool isButtonPressed(int);
 
-    QMap<QString, FFBEffect> effects;
+    QMap<QString, FFBEffect> effects = {};
     void addEffect(QString, FFBEffect);
     HRESULT startEffects();
     HRESULT updateEffect(QString);

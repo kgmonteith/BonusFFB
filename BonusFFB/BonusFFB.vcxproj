@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BonusFFBApp.cpp" />
+    <ClCompile Include="DeviceConfiguration.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="handbrake\Handbrake.cpp" />
     <ClCompile Include="heavytruck\HeavyTruck.cpp" />
@@ -124,6 +125,8 @@
     <ClCompile Include="hshifter\HShifterSlotGuard.cpp" />
     <ClCompile Include="hshifter\HShifterStateManager.cpp" />
     <ClCompile Include="hshifter\HShifterSynchroGuard.cpp" />
+    <ClCompile Include="PedalsManager.cpp" />
+    <ClCompile Include="pphc\Pphc.cpp" />
     <ClCompile Include="prndl\Prndl.cpp" />
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
@@ -138,6 +141,7 @@
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <None Include="BonusFFB.ico" />
+    <QtUic Include="InputOutputSettingsDialog.ui" />
     <ResourceCompile Include="BonusFFB.rc" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +152,7 @@
     <ClInclude Include="..\include\scs-telemetry-common.hpp" />
     <ClInclude Include="..\include\vjoyinterface.h" />
     <QtMoc Include="BonusFFBApp.h" />
+    <QtMoc Include="DeviceConfiguration.h" />
     <ClInclude Include="DeviceInfo.h" />
     <QtMoc Include="hshifter\HShifter.h" />
     <QtMoc Include="hshifter\HShifterSlotGuard.h" />
@@ -161,6 +166,8 @@
     <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h" />
     <QtMoc Include="heavytruck\HeavyTruckStateManager.h" />
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
+    <QtMoc Include="pphc\Pphc.h" />
+    <QtMoc Include="PedalsManager.h" />
     <ClInclude Include="SharedEnums.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />

@@ -82,13 +82,13 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     return DI_OK;
 }
 
-void HShifterSynchroGuard::updatePedalEngagement(QPair<int, int> pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
-    clutchPercent = 1 - (double(pedalValues.first) / JOY_MAXPOINT);
-    throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
+void HShifterSynchroGuard::updatePedalEngagement(PedalValues pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
+    clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
+    throttlePercent = double(pedalValues.throttle) / JOY_MAXPOINT;
     int fbValue = joystickValues.second;
     // Update keep-in-gear spring
     if ((synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH)) {
-        if (pedalValues.second > 100) {
+        if (pedalValues.throttle > 100) {
             int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent);
             if (fbValue > JOY_MIDPOINT) {
                 scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000);

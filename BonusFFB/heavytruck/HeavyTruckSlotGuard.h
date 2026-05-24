@@ -29,10 +29,6 @@ public:
 public slots:
 	void updateSlotGuardEffects(QPair<int, int>);
 	void updateSlotGuardState(HeavyTruckSlotState);
-	void updateDamper(int);
-	void updateInertia(int);
-	void updateFriction(int);
-	void updateGateLatchFriction(int);
 
 private:
 	int isInCorner(int slot_num, QPair<int, int> joystickValues);
@@ -50,18 +46,8 @@ private:
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION slotSpringConditions[2] = { noSpring, noSpring };
 
-	long damperStrength = 3000;
-	long inertiaStrength = 1000;
-	long frictionStrength = 1000;
-	long gateLatchFrictionStrength = frictionStrength + 3000;
-	//int latchDepth = 5000;
-	int latchDepth = JOY_MAXPOINT;
-	DICONDITION damperCondition[2] = {{0, damperStrength, damperStrength}, {0, damperStrength, damperStrength}};
-	DICONDITION inertiaCondition[2] = { {0, inertiaStrength, inertiaStrength}, {0, inertiaStrength, inertiaStrength} };
-	DICONDITION frictionCondition[2] = { {0, frictionStrength, frictionStrength}, {0, frictionStrength, frictionStrength} };
-	DIEFFECT damperEff = {};
-	DIEFFECT inertiaEff = {};
-	DIEFFECT frictionEff = {};
+	//long gateLatchFrictionStrength = 5000;
+	//int latchDepth = JOY_MAXPOINT;
 
 	int endOfSlotClickStrength = 2750;
 	DIRAMPFORCE clickPushBack = { 0, endOfSlotClickStrength };

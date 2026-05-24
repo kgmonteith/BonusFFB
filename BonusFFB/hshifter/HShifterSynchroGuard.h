@@ -13,8 +13,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include <QObject>
-#include "DeviceInfo.h"
-#include "vJoyFeeder.h"
+#include "DeviceConfiguration.h"
 #include "HShifterStateManager.h"
 #include "SharedEnums.h"
 
@@ -26,7 +25,7 @@ public:
 	HRESULT start(DeviceInfo*);
 
 public slots:
-	void updatePedalEngagement(QPair<int, int>, QPair<int, int>);
+	void updatePedalEngagement(PedalValues, QPair<int, int>);
 	void synchroStateChanged(SynchroState, int);
 	void grindingStateChanged(GrindingState, int);
 	void updateEngineRPM(float);

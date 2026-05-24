@@ -16,19 +16,22 @@ You should have received a copy of the GNU General Public License along with Bon
 #define DIRECTINPUT_VERSION 0x0800
 
 #define GAMELOOP_INTERVAL_MS 1
+#define QT_FATAL_WARNINGS
 
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
+#include <QVariant>
 #include <QVersionNumber>
 #include <QButtonGroup>
 #include "ui_BonusFFB.h"
 #include "Telemetry.h"
 #include "version.h"
-#include "vJoyFeeder.h"
-#include "DeviceInfo.h"
+#include "DeviceConfiguration.h"
+
 #include "hshifter/HShifter.h"
 #include "heavytruck/HeavyTruck.h"
 #include "prndl/Prndl.h"
+#include "pphc/Pphc.h"
 #include "handbrake/Handbrake.h"
 
 class BonusFFB : public QMainWindow
@@ -38,12 +41,10 @@ class BonusFFB : public QMainWindow
 public:
     BonusFFB(QWidget *parent = nullptr);
     ~BonusFFB();
-    DeviceInfo* getDeviceFromGuid(QUuid);
 
     Ui::BonusFFBClass ui;
 
-    vJoyFeeder vjoy = vJoyFeeder();
-    QList<DeviceInfo> deviceList;
+    DeviceConfiguration devices;
 
     QVersionNumber version = QVersionNumber(MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
     
@@ -54,6 +55,7 @@ public:
     HeavyTruck heavytruck;
     HShifter hshifter;
     Prndl prndl;
+    Pphc pphc;
     Handbrake handbrake;
 
 public slots:
@@ -61,12 +63,33 @@ public slots:
     void openUserGuide();
     void openAbout();
     void displayTelemetryState(TelemetrySource);
-    void toggleGameLoop(bool);
+    void start();
+    void stop();
+    void startButtonClicked();
 
+    void saveNewProfile();
+    void saveActiveProfile();
+    void loadActiveProfile();
+    void loadDefaultProfile();
+    void loadProfileDialog();
+    void openProfileFolder();
+    void updateStartButton();
+    void setStartupMode();
+    void setStartOnLaunch(bool);
 protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
+    void saveSetting(QString, QVariant);
+    QVariant loadSetting(QString);
+    void loadProfile(QString);
+    void saveProfile(QString);
+    void setProfileDisplayName();
+    void connectSlidersToSpinBoxes();
+
+    QString active_profile_path;
+    QString active_profile_name;
+
     QTimer gameLoopTimer;
 
     QTimer telemetryTimer;

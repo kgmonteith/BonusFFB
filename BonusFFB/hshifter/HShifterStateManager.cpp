@@ -18,7 +18,7 @@ void HShifterStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void HShifterStateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
+void HShifterStateManager::update(QPair<int, int> joystickValues, PedalValues pedalValues, QPair<int, int> gearValues) {
     long lrValue = joystickValues.first;
     long fbValue = joystickValues.second;
     updateSlotState(lrValue, fbValue);

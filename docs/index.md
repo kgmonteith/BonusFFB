@@ -7,6 +7,7 @@ Bonus FFB is free, open-source software that simulates these devices using force
 * [Heavy truck shifters](heavytruck.md), modeled on Eaton-Fuller 18 speed manual transmissions
 * [H-pattern manual shifters](hshifter.md)
 * ["PRNDL"-style automatic transmission shifters](prndl.md)
+* [Push/pull hand controls](pphc.md)
 * [Simple handbrakes](handbrake.md)
 * Got an idea? [Make a suggestion :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues)
 

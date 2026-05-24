@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024-
+Copyright (C) 2024-2026
 Ken Monteith.
 
 This file is part of Bonus FFB.
@@ -23,7 +23,7 @@ void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void HeavyTruckStateManager::update(QPair<int, int> joystickValues, QPair<int, int> pedalValues, QPair<int, int> gearValues) {
+void HeavyTruckStateManager::update(QPair<int, int> joystickValues, QPair<int, int> gearValues) {
     long lrValue = joystickValues.first;
     long fbValue = joystickValues.second;
     updateSlotState(lrValue, fbValue);
@@ -95,6 +95,12 @@ void HeavyTruckStateManager::updateTargetGear() {
     float engineRPM = telemetry->getEngineRPM();
     float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
 
+    if (engineRPM > lastEngineRPM)
+        rpmIncreasing = true;
+    else
+        rpmIncreasing = false;
+    lastEngineRPM = engineRPM;
+
     rpmDelta = engineRPM - transmissionRPM;
     emit targetGearChanged(targetGear);
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
@@ -117,6 +123,11 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
             newState = 4;
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
             newState = 6;
+    }
+    // Blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
+    if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH) {
+        qDebug() << "Triggering throttle blip";
+        emit unblipThrottle();
     }
     if (buttonZoneState != newState) {
         buttonZoneState = newState;

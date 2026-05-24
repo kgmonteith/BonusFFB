@@ -12,65 +12,35 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include <QObject>
-#include <QStandardPaths>
 #include "BonusFFBApp.h"
 #include "HShifterStateManager.h"
 #include "HShifterSlotGuard.h"
 #include "HShifterSynchroGuard.h"
+#include "PedalsManager.h"
 
 class HShifter : public BonusFFBApp
 {
 	Q_OBJECT;
 
 public:
-	QString getAppName();
+	QString getAppName(bool = false);
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
-	HRESULT startGameLoop();
-	void stopGameLoop();
+	HRESULT startMode();
 	void gameLoop();
 
-	QPair<int, int> getJoystickValues();
-	QPair<int, int> getPedalValues();
-
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
-
-	DeviceInfo* pedals = nullptr;
-	QUuid clutchAxisGuid;
-	QUuid throttleAxisGuid;
-
 public slots:
-	void changeJoystickDevice(int);
-	void changePedalsDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
-	void changeClutchAxis(int);
-	void changeThrottleAxis(int);
 
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
-	void showAxisProgressBars();
-	void hideAxisProgressBars();
 
 signals:
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
-	void clutchValueChanged(int);
-	void throttleValueChanged(int);
-	void pedalValuesChanged(int, int);
 	void gearValuesChanged(QPair<int, int>);
 	void engineRPMChanged(float);
 	void resetClutchAxes();
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/hshifterDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;
@@ -84,9 +54,9 @@ private:
 	HShifterStateManager stateManager;
 	HShifterSlotGuard slotGuard;
 	HShifterSynchroGuard synchroGuard;
+	PedalsManager pedalsManager;
 
 	QPair<int, int> lastGearValues = { 0, 0 };
-	QPair<int, int> lastPedalValues = { 0, 0 };
 	float lastEngineRPM = 0.0;
 };
 

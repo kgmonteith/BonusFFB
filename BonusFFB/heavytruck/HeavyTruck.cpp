@@ -14,50 +14,39 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
-#include <QGraphicsEllipseItem>
 #include <QMessageBox>
 #include <QSettings>
-#include <QFile>
 #include "HeavyTruck.h"
 
-QString HeavyTruck::getAppName() {
-    return "hshifter";
+QString HeavyTruck::getAppName(bool readable) {
+    if (readable)
+        return "Heavy truck shifter";
+    return "heavytruck";
 }
 
 void HeavyTruck::initialize() {
-    // Menu action connections
-    connect(ui->actionSaveSettings, &QAction::triggered, this, &HeavyTruck::saveSettings);
-    connect(ui->actionLoadSettings, &QAction::triggered, this, &HeavyTruck::loadSettings);
+    // Set flags for required and desired devices
+    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_PEDALS;
+
+    ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
+
     // UI connections
     connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
     connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
     // Graphics connections
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
-    // HeavyTruck joystick connections
-    connect(ui->heavytruck_joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickDevice);
-    connect(ui->heavytruck_joystickLRAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickLRAxis);
-    connect(ui->heavytruck_joystickFBAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeJoystickFBAxis);
-    connect(this, &HeavyTruck::joystickLRValueChanged, ui->heavytruck_ioTabJoystickLRProgressBar, &QProgressBar::setValue);
-    connect(this, &HeavyTruck::joystickFBValueChanged, ui->heavytruck_ioTabJoystickFBProgressBar, &QProgressBar::setValue);
-    connect(this, &HeavyTruck::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
-    // HeavyTruck pedal connections
-    connect(ui->heavytruck_pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changePedalsDevice);
-    connect(ui->heavytruck_clutchAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeClutchAxis);
-    connect(ui->heavytruck_throttleAxisComboBox, &QComboBox::currentIndexChanged, this, &HeavyTruck::changeThrottleAxis);
-    connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_ioTabClutchProgressBar, &QProgressBar::setValue);
-    connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_ioTabThrottleProgressBar, &QProgressBar::setValue);
     // Telemetry connections
     connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
     connect(this, &HeavyTruck::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
     // Joystick connections
-    connect(this, &HeavyTruck::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
+    connect(devices, &DeviceConfiguration::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
+    connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
     // Pedal connections
-    connect(this, &HeavyTruck::clutchValueChanged, ui->heavytruck_clutchProgressBar, &QProgressBar::setValue);
-    connect(this, &HeavyTruck::throttleValueChanged, ui->heavytruck_throttleProgressBar, &QProgressBar::setValue);
+    connect(devices, &DeviceConfiguration::clutchValueChanged, ui->heavytruck_clutchProgressBar, &QProgressBar::setValue);
+    connect(devices, &DeviceConfiguration::throttleValueChanged, ui->heavytruck_throttleProgressBar, &QProgressBar::setValue);
     // vJoy connections
-    connect(ui->heavytruck_vjoyDeviceComboBox, &QComboBox::currentIndexChanged, vjoy, &vJoyFeeder::setDeviceIndex);
-    connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, vjoy, &vJoyFeeder::updateButtons);
+    connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
     connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, this, &HeavyTruck::updateGearText);
     // FFB effect connections
     connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
@@ -65,6 +54,7 @@ void HeavyTruck::initialize() {
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);
     connect(&stateManager, &HeavyTruckStateManager::grindingStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::grindingStateChanged);
+    connect(&stateManager, &HeavyTruckStateManager::unblipThrottle, &pedalsManager, &PedalsManager::unblipThrottle);
     // FFB settings connections
     connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
@@ -77,30 +67,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    // Static FFB effect connections
-    connect(ui->heavytruck_damperSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateDamper);
-    connect(ui->heavytruck_inertiaSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateInertia);
-    connect(ui->heavytruck_frictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateFriction);
-    connect(ui->heavytruck_gateLatchFrictionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::updateGateLatchFriction);
-
-    // Populate the device lists
-    for (const DeviceInfo& device : *deviceList)
-    {
-        ui->heavytruck_pedalsDeviceComboBox->addItem(device.name, device.instanceGuid);
-        if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
-            ui->heavytruck_joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
-        }
-    }
-
-    // Populate vJoy combo boxes
-    if (vJoyFeeder::isDriverEnabled()) {
-        for (int i = 0; i < vJoyFeeder::deviceCount(); i++) {
-            ui->heavytruck_vjoyDeviceComboBox->addItem(QString("vJoy Device ").append(QString(" %1").arg(i + 1)), i + 1);
-        }
-    }
-
-    // Start with axis progress bars hidden
-    hideAxisProgressBars();
+    connect(ui->heavytruck_throttleOnShiftingCheckbox, &QCheckBox::toggled, &pedalsManager, &PedalsManager::toggleVirtualPedals);
 }
 
 void HeavyTruck::setPresetPatternEatonFuller() {
@@ -130,28 +97,22 @@ void HeavyTruck::initializeJoystickMap() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
 
-    long sceneWidth = ui->heavytruck_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->heavytruck_graphicsView->viewport()->rect().height();
-    long slotHeight = sceneHeight * slot->depth;
-    long slotTop = (sceneHeight / 2) - (slotHeight / 2);
-    QPointF center = scene->sceneRect().center();
-
-    neutralChannelRect = new QGraphicsRectItem(0, 0, sceneWidth, SLOT_WIDTH_PX);
+    neutralChannelRect = new QGraphicsRectItem();
     neutralChannelRect->setBrush(QBrush(Qt::black));
     neutralChannelRect->setPen(Qt::NoPen);
     scene->addItem(neutralChannelRect);
 
-    centerSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    centerSlotRect = new QGraphicsRectItem();
     centerSlotRect->setBrush(QBrush(Qt::black));
     centerSlotRect->setPen(Qt::NoPen);
     scene->addItem(centerSlotRect);
 
-    rightSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    rightSlotRect = new QGraphicsRectItem();
     rightSlotRect->setBrush(QBrush(Qt::black));
     rightSlotRect->setPen(Qt::NoPen);
     scene->addItem(rightSlotRect);
 
-    leftSlotRect = new QGraphicsRectItem(0, slotTop, SLOT_WIDTH_PX, slotHeight);
+    leftSlotRect = new QGraphicsRectItem();
     leftSlotRect->setBrush(QBrush(Qt::black));
     leftSlotRect->setPen(Qt::NoPen);
     scene->addItem(leftSlotRect);
@@ -252,263 +213,77 @@ void HeavyTruck::updateRpmDeltaText(float rpm) {
     }
 }
 
-void HeavyTruck::showAxisProgressBars() {
-    ui->ioTabJoystickLRProgressBar->show();
-    ui->ioTabJoystickFBProgressBar->show();
-    ui->ioTabClutchProgressBar->show();
-    ui->ioTabThrottleProgressBar->show();
+void HeavyTruck::saveSettings(QSettings* settings) {
+    BonusFFBApp::saveSettings(settings);
+
+    settings->beginGroup(this->getAppName());
+
+    settings->beginGroup("slot_pattern_settings");
+    settings->setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
+    settings->setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
+    settings->setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
+    settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
+    settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
+    settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
+    settings->endGroup();
+
+    settings->beginGroup("ffb_effect_settings");
+    settings->setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
+    settings->setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
+    settings->setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
+    settings->setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
+    settings->setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
+    settings->setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
+    settings->endGroup();
+
+    settings->endGroup();
 }
 
-void HeavyTruck::hideAxisProgressBars() {
-    ui->ioTabJoystickLRProgressBar->hide();
-    ui->ioTabJoystickFBProgressBar->hide();
-    ui->ioTabClutchProgressBar->hide();
-    ui->ioTabThrottleProgressBar->hide();
-}
+void HeavyTruck::loadSettings(QSettings* settings) {
+    settings->beginGroup(this->getAppName());
 
-void HeavyTruck::saveSettings() {
-    QSettings settings = QSettings(this->deviceSettingsFile, QSettings::IniFormat);
-    settings.beginGroup("joystick");
-    settings.setValue("device_guid", joystick->instanceGuid.toString());
-    settings.setValue("lr_axis", joystickLRAxisGuid.toString());
-    //settings.setValue("invert_lr_axis", ui.invertJoystickLRAxisBox->isChecked());
-    settings.setValue("fb_axis", joystickFBAxisGuid.toString());
-    //settings.setValue("invert_fb_axis", ui.invertJoystickFBAxisBox->isChecked());
-    settings.endGroup();
+    settings->beginGroup("slot_pattern_settings");
+    ui->heavytruck_slotDepthSlider->setValue(settings->value("slotDepth", 75).toInt());
+    ui->heavytruck_centerSlotPositionSlider->setValue(settings->value("centerSlotPosition", 34).toInt());
+    ui->heavytruck_rightSlotPositionSlider->setValue(settings->value("rightSlotPosition", 66).toInt());
+    ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
+    ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
+    ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
+    settings->endGroup();
 
-    settings.beginGroup("pedals");
-    settings.setValue("device_guid", pedals->instanceGuid.toString());
-    settings.setValue("clutch_axis", clutchAxisGuid.toString());
-    settings.setValue("invert_clutch_axis", ui->invertClutchAxisBox->isChecked());
-    settings.setValue("throttle_axis", throttleAxisGuid.toString());
-    settings.setValue("invert_throttle_axis", ui->invertThrottleAxisBox->isChecked());
-    settings.endGroup();
+    settings->beginGroup("ffb_effect_settings");
+    ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
+    ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape", 0).toInt());
+    ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle", 30).toInt());
+    ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength", 30).toInt());
+    ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength", 0).toInt());
+    ui->heavytruck_maxRevMatchRPMSlider->setValue(settings->value("maxRevMatchRPM", 90).toInt());
+    settings->endGroup();
 
-    settings.beginGroup("vjoy");
-    settings.setValue("vjoy_device", vjoy->getDeviceIndex());
-    settings.endGroup();
-
-    settings.beginGroup("slot_pattern_settings");
-    settings.setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
-    settings.setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
-    settings.setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
-    settings.setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
-    settings.setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
-    settings.setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
-    settings.endGroup();
-
-    settings.beginGroup("ffb_effect_settings");
-    settings.setValue("damper", ui->heavytruck_damperSlider->value());
-    settings.setValue("inertia", ui->heavytruck_inertiaSlider->value());
-    settings.setValue("friction", ui->heavytruck_frictionSlider->value());
-    settings.setValue("gateLatchFriction", ui->heavytruck_gateLatchFrictionSlider->value());
-    settings.setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
-    settings.setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
-    settings.setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
-    settings.setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
-    settings.setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
-    settings.setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
-    settings.endGroup();
-}
-
-void HeavyTruck::loadSettings() {
-    qDebug() << "Loading settings";
-    if (!QFile(deviceSettingsFile).exists()) {
-        qDebug() << "Settings file does not exist";
-        return;
-    }
-    QSettings settings = QSettings(deviceSettingsFile, QSettings::IniFormat);
-
-    settings.beginGroup("joystick");
-    int joystick_index = ui->heavytruck_joystickDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (joystick_index == -1 && !g_joystick_warned) {
-        QMessageBox::warning(nullptr, "Joystick not found", "Saved heavy truck joystick device is not connected.\nReconnect the device or update the input/output settings.");
-        g_joystick_warned = true;
-    }
-    else
-    {
-        ui->heavytruck_joystickDeviceComboBox->setCurrentIndex(joystick_index);
-        ui->heavytruck_joystickLRAxisComboBox->setCurrentIndex(ui->heavytruck_joystickLRAxisComboBox->findData(settings.value("lr_axis").toUuid()));
-        //ui.invertJoystickLRAxisBox->setChecked(settings.value("invert_lr_axis").toBool());
-        ui->heavytruck_joystickFBAxisComboBox->setCurrentIndex(ui->heavytruck_joystickFBAxisComboBox->findData(settings.value("fb_axis").toUuid()));
-        //ui.invertJoystickFBAxisBox->setChecked(settings.value("invert_fb_axis").toBool());
-    }
-    settings.endGroup();
-
-    settings.beginGroup("pedals");
-    int pedals_index = ui->heavytruck_pedalsDeviceComboBox->findData(settings.value("device_guid").toUuid());
-    if (pedals_index == -1) {
-        QMessageBox::warning(nullptr, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output settings.");
-    }
-    else
-    {
-        ui->heavytruck_pedalsDeviceComboBox->setCurrentIndex(pedals_index);
-        ui->heavytruck_clutchAxisComboBox->setCurrentIndex(ui->heavytruck_clutchAxisComboBox->findData(settings.value("clutch_axis").toUuid()));
-        ui->invertClutchAxisBox->setChecked(settings.value("invert_clutch_axis").toBool());
-        ui->heavytruck_throttleAxisComboBox->setCurrentIndex(ui->heavytruck_throttleAxisComboBox->findData(settings.value("throttle_axis").toUuid()));
-        ui->invertThrottleAxisBox->setChecked(settings.value("invert_throttle_axis").toBool());
-    }
-    settings.endGroup();
-
-    settings.beginGroup("vjoy");
-    ui->heavytruck_vjoyDeviceComboBox->setCurrentIndex(settings.value("vjoy_device").toInt());
-    settings.endGroup();
-
-    if (settings.childGroups().contains("slot_pattern_settings")) {
-        settings.beginGroup("slot_pattern_settings");
-        ui->heavytruck_slotDepthSlider->setValue(settings.value("slotDepth").toInt());
-        ui->heavytruck_centerSlotPositionSlider->setValue(settings.value("centerSlotPosition").toInt());
-        ui->heavytruck_rightSlotPositionSlider->setValue(settings.value("rightSlotPosition").toInt());
-        ui->heavytruck_slotRoundingFactorSlider->setValue(settings.value("slotRoundingFactor").toInt());
-        ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings.value("buttonZoneDepth").toInt());
-        ui->heavytruck_displayZoneMarkers->setChecked(settings.value("displayZoneMarkers").toBool());
-        settings.endGroup();
-    }
-
-    if (settings.childGroups().contains("ffb_effect_settings")) {
-        settings.beginGroup("ffb_effect_settings");
-        ui->heavytruck_damperSlider->setValue(settings.value("damper").toInt());
-        ui->heavytruck_inertiaSlider->setValue(settings.value("inertia").toInt());
-        ui->heavytruck_frictionSlider->setValue(settings.value("friction").toInt());
-        ui->heavytruck_gateLatchFrictionSlider->setValue(settings.value("gateLatchFriction", 30).toInt());
-        ui->heavytruck_grindIntensitySlider->setValue(settings.value("grindIntensity").toInt());
-        ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings.value("grindEffectShape").toInt());
-        ui->heavytruck_keepInGearIdleSlider->setValue(settings.value("keepInGearIdle").toInt());
-        ui->heavytruck_torqueLoadStrengthSlider->setValue(settings.value("torqueLoadStrength").toInt());
-        ui->heavytruck_maxRevMatchRPMSlider->setValue(settings.value("maxRevMatchRPM").toInt());
-        ui->heavytruck_engineVibrationStrengthSlider->setValue(settings.value("engineVibrationStrength").toInt());
-        settings.endGroup();
-    }
-
+    settings->endGroup();
     redrawJoystickMap();
 }
 
-void HeavyTruck::changeJoystickDevice(int deviceIndex) {
-    // Release previous joystick
-    if (joystick != nullptr && joystick->isAcquired) {
-        joystick->release();
-    }
-    QUuid deviceGuid = ui->heavytruck_joystickDeviceComboBox->currentData().toUuid();
-    qDebug() << "Device UUID: " << deviceGuid;
-    joystick = getDeviceFromGuid(deviceList, deviceGuid);
-    qDebug() << "New joystick device: " << joystick->name;
-    ui->heavytruck_joystickLRAxisComboBox->clear();
-    ui->heavytruck_joystickFBAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = joystick->getDeviceAxes();
-    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
-    {
-        ui->heavytruck_joystickLRAxisComboBox->addItem(axis.value(), axis.key());
-        ui->heavytruck_joystickFBAxisComboBox->addItem(axis.value(), axis.key());
-    }
-}
-
-void HeavyTruck::changePedalsDevice(int deviceIndex) {
-    if (pedals != nullptr && pedals->isAcquired) {
-        pedals->release();
-    }
-    QUuid deviceGuid = ui->heavytruck_pedalsDeviceComboBox->currentData().toUuid();
-    pedals = getDeviceFromGuid(deviceList, deviceGuid);
-    pedals->acquire(&hwnd);
-    qDebug() << "New pedals device acquired: " << pedals->name;
-
-    ui->heavytruck_clutchAxisComboBox->clear();
-    ui->heavytruck_throttleAxisComboBox->clear();
-    QMap<QUuid, QString> axisMap = pedals->getDeviceAxes();
-    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
-    {
-        ui->heavytruck_clutchAxisComboBox->addItem(axis.value(), axis.key());
-        ui->heavytruck_throttleAxisComboBox->addItem(axis.value(), axis.key());
-    }
-}
-
-void HeavyTruck::changeJoystickLRAxis(int axisIndex) {
-    joystickLRAxisGuid = ui->heavytruck_joystickLRAxisComboBox->currentData().toUuid();
-}
-
-void HeavyTruck::changeJoystickFBAxis(int axisIndex) {
-    joystickFBAxisGuid = ui->heavytruck_joystickFBAxisComboBox->currentData().toUuid();
-}
-
-void HeavyTruck::changeClutchAxis(int axisIndex) {
-    clutchAxisGuid = ui->heavytruck_clutchAxisComboBox->currentData().toUuid();
-}
-
-void HeavyTruck::changeThrottleAxis(int axisIndex) {
-    throttleAxisGuid = ui->heavytruck_throttleAxisComboBox->currentData().toUuid();
-}
-
-QPair<int, int> HeavyTruck::getJoystickValues() {
-    joystick->updateState();
-    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
-    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
-    emit joystickLRValueChanged(joystickLRValue);
-    emit joystickFBValueChanged(joystickFBValue);
-    emit joystickValueChanged(joystickLRValue, joystickFBValue);
-    return QPair<int, int>(joystickLRValue, joystickFBValue);
-}
-
-QPair<int, int> HeavyTruck::getPedalValues() {
-    pedals->updateState();
-    long clutchValue = pedals->getAxisReading(clutchAxisGuid);
-    if (ui->heavytruck_invertClutchAxisBox->isChecked()) {
-        clutchValue = abs(65535 - clutchValue);
-    }
-    emit clutchValueChanged(clutchValue);
-    long throttleValue = pedals->getAxisReading(throttleAxisGuid);
-    if (ui->heavytruck_invertThrottleAxisBox->isChecked()) {
-        throttleValue = abs(65535 - throttleValue);
-    }
-    emit throttleValueChanged(throttleValue);
-    QPair<int, int> pedalValues = { clutchValue , throttleValue };
-    if (lastPedalValues != pedalValues) {
-        emit pedalValuesChanged(clutchValue, throttleValue);
-        lastPedalValues = pedalValues;
-    }
-    return pedalValues;
-}
-
-HRESULT HeavyTruck::startGameLoop() {
-    showAxisProgressBars();
-
-    // Acquire joystick
-    qDebug() << "Acquiring joystick for hshifter...";
-    HRESULT hr = joystick->acquire(&hwnd, true);
-    if (FAILED(hr)) {
-        QMessageBox::critical(nullptr, "Error", "Could not acquire exclusive use of FFB joystick. Please close other games or applications and try again.");
-        return hr;
-    };
-
-    // Acquire vJoy for feeding
-    if (!vjoy->acquire()) {
-        QMessageBox::critical(nullptr, "Error", "Could not acquire vJoy device. Only one program may feed each vJoy device, please close other games or applications and try again.");
-        return E_FAIL;
-    }
-
+HRESULT HeavyTruck::startMode() {
     // Initialize FFB
     stateManager.start(telemetry, slot);
-    slotGuard.start(joystick, slot);
-    synchroGuard.start(joystick, slot, telemetry);
-    joystick->startEffects();
+    slotGuard.start(devices->joystick, slot);
+    synchroGuard.start(devices->joystick, slot, telemetry);
+    pedalsManager.start(devices);
+
     return S_OK;
 }
 
-void HeavyTruck::stopGameLoop() {
-    hideAxisProgressBars();
-    // Release devices
-    vjoy->release();
-    joystick->release();
-}
-
 void HeavyTruck::gameLoop() {
-    if (pedals == nullptr || joystick == nullptr || !joystick->isAcquired || !pedals->isAcquired) {
+    if (devices->pedals == nullptr || devices->joystick == nullptr || !devices->joystick->isAcquired || !devices->pedals->isAcquired) {
         return;
     }
 
     // Get new joystick values
-    QPair<int, int> joystickValues = getJoystickValues();
+    QPair<int, int> joystickValues = devices->getJoystickValues();
 
     // Get new pedal values
-    QPair<int, int> pedalValues = getPedalValues();
+    PedalValues pedalValues = devices->getPedalValues();
 
     // Get telemetry values
     if (telemetry->isConnected() != TelemetrySource::NONE) {
@@ -528,5 +303,6 @@ void HeavyTruck::gameLoop() {
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updateTorqueLock(pedalValues, joystickValues);
-    stateManager.update(joystickValues, pedalValues, lastGearValues);
+    stateManager.update(joystickValues, lastGearValues);
+    pedalsManager.updateVirtualPedals();
 }

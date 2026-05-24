@@ -1,5 +1,6 @@
 /*
-Copyright (C) 2024-2026 Ken Monteith.
+Copyright (C) 2024-2026
+Ken Monteith.
 
 This file is part of Bonus FFB.
 
@@ -9,44 +10,28 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
+#include <QObject>
+#include <QTimer>
+
+#include "DeviceConfiguration.h"
 
 #pragma once
-
-#ifndef __wtypes_h__
-#include <wtypes.h>
-#endif
-
-#ifndef __WINDEF_
-#include <windef.h>
-#endif
-
-#include <QObject>
-#include "public.h"
-#include "vjoyinterface.h"
-
-class vJoyFeeder : public QObject
+class PedalsManager : public QObject
 {
-	Q_OBJECT
+	Q_OBJECT;
+
+public slots:
+	void toggleVirtualPedals(bool);
+	void updateVirtualPedals();
+	void unblipThrottle();
+
+private:
+	bool enabled = false;
 
 public:
-	static bool isDriverEnabled();
-	static bool checkVersionMatch();
-	static int deviceCount();
-	int getDeviceIndex();
-	bool acquire();
-	bool is_acquired();
-	void release();
+	void start(DeviceConfiguration*);
 
-	void pressButton(int);
-	void releaseButton(int);
-public slots:
-	void setDeviceIndex(unsigned int);
-	void shortPressButton(int);
-	void updateButtons(int);
-	void setAxisValue(long, int);
-private:
-	unsigned int deviceNum = 1;
-	bool acquired = false;
-	int pressedButton = 0;
+	DeviceConfiguration* devices;
+	QTimer unblipTimer;
+	QPair<int, int> lastPedalValues;
 };
-

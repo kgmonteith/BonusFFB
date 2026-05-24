@@ -52,13 +52,8 @@ bool PrndlStateManager::isParkEnabled() {
     return false;
 }
 
-void PrndlStateManager::toggleUsingShiftLock(int index) {
-    if (index > 0) {
-        using_shift_lock = true;
-    }
-    else {
-        using_shift_lock = false;
-    }
+void PrndlStateManager::toggleUsingShiftLock(bool newState) {
+    using_shift_lock = newState;
 }
 
 void PrndlStateManager::toggleParkSlot(bool parkEnabled) {

@@ -13,13 +13,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include "BonusFFBApp.h"
-#include "PrndlSlotGuard.h"
-#include "PrndlStateManager.h"
-#include "PedalsManager.h"
 
-#define SHIFTER_POSITION_MARKER_DIAMETER_PX 17.0
-
-class Prndl : public BonusFFBApp
+class Pphc : public BonusFFBApp
 {
 	Q_OBJECT;
 
@@ -31,31 +26,43 @@ public:
 	void initializeJoystickMap();
 
 	HRESULT startMode();
-	void stopMode();
 	void gameLoop();
-
-	bool getShiftLockReleased();
 
 public slots:
 	void redrawJoystickMap();
-	void changeSlotLabel(PrndlSlot slot);
 	void updateJoystickCircle(int, int);
+	void updateBrake(int);
+	void updateThrottle(int);
+	void updateSlotSpring(QPair<int, int>);
 
-
-signals:
-	void shiftLockStateChanged(bool);
+	void setBrakeSpringScaling(int);
+	void setBrakeAxisDeadzone(int);
+	void setBrakeAxisScaling(int);
+	void setThrottleSlotDepth(int);
+	void setThrottleSpringStrength(int);
+	void setThrottleAxisDeadzone(int);
 
 private:
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem* centerSlotRect;
-	QList<QGraphicsEllipseItem*> slotCircles;
 	QGraphicsEllipseItem* joystickCircle;
+	QGraphicsRectItem* deadzoneRect;
 
-	// Stateful FFB effect managers
-	PrndlSlotGuard slotGuard;
-	PrndlStateManager stateManager = PrndlStateManager();
-	PedalsManager pedalsManager;
+	DIEFFECT slotSpringEff = {};
+	DICONDITION noSpring = { 0, 0, 0 };
+	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
+	DICONDITION slotSpringConditions[2] = { keepLRCentered, noSpring };
 
-	bool lastShiftLockReleased = false;
+	DIEFFECT pphcSpringEff = {};
+	DICONDITION pphcSpring = { 0, -5000, -5000 };
+
+
+	int throttleSpringStrength = -0.3 * FFB_MAX;
+	double throttleDeadzone = 0.05;
+	float throttleSlotDepth = 0.75;
+
+	float brakeSpringScaling = 2;
+	double brakeDeadzone = 0.05;
+	int brakeAxisScaling = 2;
 };
-

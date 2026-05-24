@@ -23,38 +23,21 @@ class Handbrake : public BonusFFBApp
 	Q_OBJECT;
 
 public:
-	QString getAppName();
+	QString getAppName(bool = false);
 	void initialize();
-	void saveSettings();
-	void loadSettings();
+	void saveSettings(QSettings*);
+	void loadSettings(QSettings*);
 	void initializeJoystickMap();
 
-	QPair<int, int> getJoystickValues();
-
-	HRESULT startGameLoop();
-	void stopGameLoop();
+	HRESULT startMode();
+	void stopMode();
 	void gameLoop();
-
-	DeviceInfo* joystick = nullptr;
-	QUuid joystickLRAxisGuid;
-	QUuid joystickFBAxisGuid;
 
 public slots:
 	void redrawJoystickMap();
-	void changeJoystickDevice(int);
-	void changeJoystickLRAxis(int);
-	void changeJoystickFBAxis(int);
 	void updateJoystickCircle(int, int);
 	void springCenterChanged(int);
 	void springStrengthChanged(int);
-
-signals:
-	void joystickValueChanged(int, int);
-	void joystickLRValueChanged(int);
-	void joystickFBValueChanged(int);
-
-protected:
-	QString deviceSettingsFile = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation)[0] + "/handbrakeDeviceSettings.ini";
 
 private:
 	QGraphicsScene* scene = nullptr;

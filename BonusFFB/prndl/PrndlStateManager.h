@@ -41,7 +41,7 @@ public:
 
 public slots:
     void setTelemetryState(TelemetrySource);
-    void toggleUsingShiftLock(int);
+    void toggleUsingShiftLock(bool);
     void toggleLockShiftsFromNeutralToReverse(bool);
     void toggleParkSlot(bool);
     void toggleLastSlot(bool);

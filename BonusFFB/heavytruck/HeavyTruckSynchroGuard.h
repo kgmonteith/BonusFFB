@@ -13,8 +13,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 
 #include <QObject>
-#include "DeviceInfo.h"
-#include "vJoyFeeder.h"
+#include "DeviceConfiguration.h"
 #include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
@@ -26,7 +25,7 @@ public:
 	HRESULT start(DeviceInfo*, SlotParameters*, Telemetry*);
 
 public slots:
-	void updateTorqueLock(QPair<int, int>, QPair<int, int>);
+	void updateTorqueLock(PedalValues, QPair<int, int>);
 	void setJoystickFBValue(long);
 	void synchroStateChanged(HeavyTruckSynchroState, int);
 	void grindingStateChanged(HeavyTruckGrindingState);
