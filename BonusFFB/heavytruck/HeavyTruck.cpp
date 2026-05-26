@@ -234,6 +234,7 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
     settings->setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
     settings->setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
+    settings->setValue("throttleOnShifting", ui->heavytruck_throttleOnShiftingCheckbox->isChecked());
     settings->endGroup();
 
     settings->endGroup();
@@ -258,6 +259,7 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength", 30).toInt());
     ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength", 0).toInt());
     ui->heavytruck_maxRevMatchRPMSlider->setValue(settings->value("maxRevMatchRPM", 90).toInt());
+    ui->heavytruck_throttleOnShiftingCheckbox->setChecked(settings->value("throttleOnShifting", false).toBool());
     settings->endGroup();
 
     settings->endGroup();
