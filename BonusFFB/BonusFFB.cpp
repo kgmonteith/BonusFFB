@@ -131,7 +131,8 @@ BonusFFB::BonusFFB(QWidget *parent)
     bool startOnLaunch = loadSetting("start_on_launch").toBool();
     if (startOnLaunch) {
         ui.actionStart_on_launch->setChecked(startOnLaunch);
-        ui.startButton->click();
+        if (ui.startButton->text() == "▶️")
+            ui.startButton->click();
     }
 
     qDebug("BonusFFBApplication constructor finished");
