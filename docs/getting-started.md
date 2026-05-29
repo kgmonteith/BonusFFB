@@ -51,4 +51,4 @@ Please read the mode's guide for app-specific configuration, options, and featur
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 
-If you'd like other modes or have ideas for Bonus FFB, reach out on [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
+If you'd like other modes or have ideas for Bonus FFB, reach out on [Discord :fontawesome-brands-discord:](https://discord.com/channels/438688364359581707/1509778353836658778) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).

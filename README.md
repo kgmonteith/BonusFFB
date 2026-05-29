@@ -10,7 +10,7 @@ Bonus FFB simulates these devices using a force-feedback joystick:
 * Push/pull hand controls
 * Simple handbrakes
 
-[Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started. If you have suggestions, [open a ticket](https://github.com/kgmonteith/BonusFFB/issues).
+[Check out the documentation](https://kgmonteith.github.io/BonusFFB/) to get started. If you have suggestions or need help, [open a ticket](https://github.com/kgmonteith/BonusFFB/issues), or chat with us on the [HOTAS Discord](https://discord.com/channels/438688364359581707/1509778353836658778).
 
 ---
 
