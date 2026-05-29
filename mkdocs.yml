@@ -25,7 +25,7 @@ extra:
     property: G-24NFE8C173
   social:
     - icon: fontawesome/brands/discord 
-      link: https://discord.com/users/447499151337324574
+      link: https://discord.com/channels/438688364359581707/1509778353836658778
 markdown_extensions:
   - admonition
   - pymdownx.details

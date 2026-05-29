@@ -27,7 +27,7 @@ Follow the [Getting Started](getting-started.md) guide for complete installation
 * [MOZA AB9 FFB Base](device-settings.md#moza-ab9)
 
 !!! tip "Help us support more devices"
-    Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other powerful FFB joystick and would like to test Bonus FFB, please get in touch via [Discord :fontawesome-brands-discord:](https://discord.com/users/447499151337324574) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).
+    Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other powerful FFB joystick and would like to test Bonus FFB, please get in touch via [Discord :fontawesome-brands-discord:](https://discord.com/channels/438688364359581707/1509778353836658778) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).
 
 ## Dependencies
 
