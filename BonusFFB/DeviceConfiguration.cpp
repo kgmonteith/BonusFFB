@@ -28,7 +28,11 @@ int DeviceConfiguration::ready(int flags = FLAG_DEVICES_REQUIRED) {
     }
     if (flags & FLAG_DEVICES_REQUIRED && (joystick == nullptr))
         return DEVICES_NOT_CONFIGURED;
-    if (flags & FLAG_DEVICES_PEDALS && (pedals == nullptr))
+    if (flags & FLAG_DEVICES_THROTTLE && (throttle == nullptr))
+        return DEVICES_NOT_CONFIGURED;
+    if (flags & FLAG_DEVICES_BRAKE && (brake == nullptr))
+        return DEVICES_NOT_CONFIGURED;
+    if (flags & FLAG_DEVICES_CLUTCH && (clutch == nullptr))
         return DEVICES_NOT_CONFIGURED;
     return DEVICES_OK;
 }
@@ -42,8 +46,16 @@ HRESULT DeviceConfiguration::acquire(int flags) {
         QMessageBox::critical(nullptr, "Error", "vJoy driver is not detected.");
         return E_FAIL;
     }
-    if (flags & FLAG_DEVICES_PEDALS && pedals == nullptr) {
-        QMessageBox::critical(nullptr, "Error", "Pedals are not configured or are disconnected.");
+    if (flags & FLAG_DEVICES_THROTTLE && throttle == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Throttle is not configured or is disconnected.");
+        return E_FAIL;
+    }
+    if (flags & FLAG_DEVICES_BRAKE && brake == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Brake is not configured or is disconnected.");
+        return E_FAIL;
+    }
+    if (flags & FLAG_DEVICES_CLUTCH && clutch == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Clutch is not configured or is disconnected.");
         return E_FAIL;
     }
 
@@ -62,11 +74,27 @@ HRESULT DeviceConfiguration::acquire(int flags) {
         return E_FAIL;
     }
 
-    if (flags & FLAG_DEVICES_PEDALS) {
-        qDebug() << "Acquiring pedals...";
-        pedals->acquire(&hwnd);
+    if (flags & FLAG_DEVICES_THROTTLE) {
+        qDebug() << "Acquiring throttle...";
+        throttle->acquire(&hwnd);
         if (FAILED(hr)) {
-            QMessageBox::critical(nullptr, "Error", "Could not acquire pedals device. Please ensure the pedals are connected and configured.");
+            QMessageBox::critical(nullptr, "Error", "Could not acquire throttle device. Please ensure the throttle is connected and configured.");
+            return hr;
+        };
+    }
+    if (flags & FLAG_DEVICES_BRAKE) {
+        qDebug() << "Acquiring brake...";
+        brake->acquire(&hwnd);
+        if (FAILED(hr)) {
+            QMessageBox::critical(nullptr, "Error", "Could not acquire brake device. Please ensure the brake is connected and configured.");
+            return hr;
+        };
+    }
+    if (flags & FLAG_DEVICES_CLUTCH) {
+        qDebug() << "Acquiring clutch...";
+        clutch->acquire(&hwnd);
+        if (FAILED(hr)) {
+            QMessageBox::critical(nullptr, "Error", "Could not acquire clutch device. Please ensure the clutch is connected and configured.");
             return hr;
         };
     }
@@ -87,9 +115,17 @@ void DeviceConfiguration::release() {
     vjoy.release();
     qDebug() << "Releasing joystick...";
     joystick->release();
-    if (pedals != nullptr && pedals->isAcquired) {
-        qDebug() << "Releasing pedals...";
-        pedals->release();
+    if (throttle != nullptr && throttle->isAcquired) {
+        qDebug() << "Releasing throttle...";
+        throttle->release();
+    }
+    if (brake != nullptr && brake->isAcquired) {
+        qDebug() << "Releasing brake...";
+        brake->release();
+    }
+    if (clutch != nullptr && clutch->isAcquired) {
+        qDebug() << "Releasing clutch...";
+        clutch->release();
     }
     if (shiftLockDevice != nullptr && shiftLockDevice->isAcquired) {
         qDebug() << "Releasing shift lock device...";
@@ -111,13 +147,23 @@ void DeviceConfiguration::saveDeviceConfiguration() {
     config.setValue("vjoy_device", vjoy.getDeviceIndex());
     config.endGroup();
 
-    if (pedals != nullptr) {
-        config.beginGroup("pedals");
-        config.setValue("device_guid", pedals->instanceGuid.toString());
+    if (throttle != nullptr) {
+        config.beginGroup("throttle");
+        config.setValue("device_guid", throttle->instanceGuid.toString());
         config.setValue("throttle_axis", throttleAxisGuid.toString());
         config.setValue("invert_throttle_axis", invertThrottleAxis);
+        config.endGroup();
+    }
+    if (brake != nullptr) {
+        config.beginGroup("brake");
+        config.setValue("device_guid", brake->instanceGuid.toString());
         config.setValue("brake_axis", brakeAxisGuid.toString());
         config.setValue("invert_brake_axis", invertBrakeAxis);
+        config.endGroup();
+    }
+    if (clutch != nullptr) {
+        config.beginGroup("clutch");
+        config.setValue("device_guid", clutch->instanceGuid.toString());
         config.setValue("clutch_axis", clutchAxisGuid.toString());
         config.setValue("invert_clutch_axis", invertClutchAxis);
         config.endGroup();
@@ -154,19 +200,38 @@ void DeviceConfiguration::loadDeviceConfiguration() {
     vjoy.setDeviceIndex(config.value("vjoy_device").toInt());
     config.endGroup();
 
-    if (config.childGroups().contains("pedals")) {
-        config.beginGroup("pedals");
-        pedals = getDeviceFromGuid(config.value("device_guid").toUuid());
+    if (config.childGroups().contains("throttle")) {
+        config.beginGroup("throttle");
+        throttle = getDeviceFromGuid(config.value("device_guid").toUuid());
         throttleAxisGuid = config.value("throttle_axis").toUuid();
         invertThrottleAxis = config.value("invert_throttle_axis").toBool();
+        config.endGroup();
+
+        if (throttle == nullptr) {
+            QMessageBox::warning(nullptr, "Throttle not found", "Saved throttle device is not connected.\nReconnect the device or update the input/output device configuration.");
+        }
+    }
+    if (config.childGroups().contains("brake")) {
+        config.beginGroup("brake");
+        brake = getDeviceFromGuid(config.value("device_guid").toUuid());
         brakeAxisGuid = config.value("brake_axis").toUuid();
         invertBrakeAxis = config.value("invert_brake_axis").toBool();
+        config.endGroup();
+
+        if (brake == nullptr) {
+            QMessageBox::warning(nullptr, "Brake not found", "Saved brake device is not connected.\nReconnect the device or update the input/output device configuration.");
+        }
+    }
+    if (config.childGroups().contains("clutch")) {
+        config.beginGroup("clutch");
+        clutch = getDeviceFromGuid(config.value("device_guid").toUuid());
         clutchAxisGuid = config.value("clutch_axis").toUuid();
         invertClutchAxis = config.value("invert_clutch_axis").toBool();
-        if (pedals == nullptr) {
-            QMessageBox::warning(nullptr, "Pedals not found", "Saved pedals device is not connected.\nReconnect the device or update the input/output device configuration.");
-        }
         config.endGroup();
+
+        if (clutch == nullptr) {
+            QMessageBox::warning(nullptr, "Clutch not found", "Saved clutch device is not connected.\nReconnect the device or update the input/output device configuration.");
+        }
     }
 
     config.beginGroup("shiftlockdevice");
@@ -196,15 +261,21 @@ void DeviceConfiguration::openConfigurationDialog() {
 
     connect(dialog.joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updateJoystickAxisList);
     connect(dialog.joystickDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
-    connect(dialog.pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updatePedalsAxisList);
-    connect(dialog.pedalsDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
+    connect(dialog.throttleDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updateThrottleAxisList);
+    connect(dialog.throttleDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
+    connect(dialog.brakeDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updateBrakeAxisList);
+    connect(dialog.brakeDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
+    connect(dialog.clutchDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updateClutchAxisList);
+    connect(dialog.clutchDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
     connect(dialog.shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeShiftLockDevice);
     connect(dialog.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
 
     // Populate the device lists
     for (auto device : deviceList)
     {
-        dialog.pedalsDeviceComboBox->addItem(device.name, device.instanceGuid);
+        dialog.throttleDeviceComboBox->addItem(device.name, device.instanceGuid);
+        dialog.brakeDeviceComboBox->addItem(device.name, device.instanceGuid);
+        dialog.clutchDeviceComboBox->addItem(device.name, device.instanceGuid);
         if (device.supportsFfb && device.productGuid.data1 != VJOY_PRODUCT_GUID) {
             dialog.joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
         }
@@ -226,13 +297,19 @@ void DeviceConfiguration::openConfigurationDialog() {
         dialog.joystickLRAxisComboBox->setCurrentIndex(dialog.joystickLRAxisComboBox->findData(joystickLRAxisGuid));
         dialog.joystickFBAxisComboBox->setCurrentIndex(dialog.joystickFBAxisComboBox->findData(joystickFBAxisGuid));
     }
-    if(pedals != nullptr) {
-        dialog.pedalsDeviceComboBox->setCurrentIndex(dialog.pedalsDeviceComboBox->findData(pedals->instanceGuid));
+    if (throttle != nullptr) {
+        dialog.throttleDeviceComboBox->setCurrentIndex(dialog.throttleDeviceComboBox->findData(throttle->instanceGuid));
         dialog.throttleAxisComboBox->setCurrentIndex(dialog.throttleAxisComboBox->findData(throttleAxisGuid));
-        dialog.brakeAxisComboBox->setCurrentIndex(dialog.brakeAxisComboBox->findData(brakeAxisGuid));
-        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(clutchAxisGuid));
         dialog.invertThrottleAxisBox->setChecked(invertThrottleAxis);
+    }
+    if (brake != nullptr) {
+        dialog.brakeDeviceComboBox->setCurrentIndex(dialog.brakeDeviceComboBox->findData(brake->instanceGuid));
+        dialog.brakeAxisComboBox->setCurrentIndex(dialog.brakeAxisComboBox->findData(brakeAxisGuid));
         dialog.invertBrakeAxisBox->setChecked(invertBrakeAxis);
+    }
+    if (clutch != nullptr) {
+        dialog.clutchDeviceComboBox->setCurrentIndex(dialog.clutchDeviceComboBox->findData(clutch->instanceGuid));
+        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(clutchAxisGuid));
         dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
     }
     dialog.vjoyDeviceComboBox->setCurrentIndex(vjoy.getDeviceIndex());
@@ -251,14 +328,18 @@ void DeviceConfiguration::openConfigurationDialog() {
         joystickFBAxisGuid = dialog.joystickFBAxisComboBox->currentData().toUuid();
         qDebug() << "New joystick: " << joystick->name;
 
-        pedals = getDeviceFromGuid(dialog.pedalsDeviceComboBox->currentData().toUuid());
+        throttle = getDeviceFromGuid(dialog.throttleDeviceComboBox->currentData().toUuid());
         throttleAxisGuid = dialog.throttleAxisComboBox->currentData().toUuid();
-        brakeAxisGuid = dialog.brakeAxisComboBox->currentData().toUuid();
-        clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
         invertThrottleAxis = dialog.invertThrottleAxisBox->isChecked();
+        qDebug() << "New throttle: " << throttle->name;
+        brake = getDeviceFromGuid(dialog.brakeDeviceComboBox->currentData().toUuid());
+        brakeAxisGuid = dialog.brakeAxisComboBox->currentData().toUuid();
         invertBrakeAxis = dialog.invertBrakeAxisBox->isChecked();
+        qDebug() << "New brake: " << brake->name;
+        clutch = getDeviceFromGuid(dialog.clutchDeviceComboBox->currentData().toUuid());
+        clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
         invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
-        qDebug() << "New pedals: " << joystick->name;
+        qDebug() << "New clutch: " << clutch->name;
 
         vjoy.setDeviceIndex(dialog.vjoyDeviceComboBox->currentIndex());
         qDebug() << "New vJoy device: " << vjoy.getDeviceIndex();
@@ -320,39 +401,72 @@ QPair<int, int> DeviceConfiguration::getJoystickValues() {
     return QPair<int, int>(joystickLRValue, joystickFBValue);
 }
 
-void DeviceConfiguration::updatePedalsAxisList(int deviceIndex) {
-    QUuid deviceGuid = dialog.pedalsDeviceComboBox->currentData().toUuid();
+void DeviceConfiguration::updateThrottleAxisList(int deviceIndex) {
+    QUuid deviceGuid = dialog.throttleDeviceComboBox->currentData().toUuid();
     auto selectedPedals = getDeviceFromGuid(deviceGuid);
 
     dialog.throttleAxisComboBox->clear();
-    dialog.brakeAxisComboBox->clear();
-    dialog.clutchAxisComboBox->clear();
     QMap<QUuid, QString> axisMap = selectedPedals->getDeviceAxes();
     for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
     {
         dialog.throttleAxisComboBox->addItem(axis.value(), axis.key());
+    }
+}
+
+
+void DeviceConfiguration::updateBrakeAxisList(int deviceIndex) {
+    QUuid deviceGuid = dialog.brakeDeviceComboBox->currentData().toUuid();
+    auto selectedPedals = getDeviceFromGuid(deviceGuid);
+
+    dialog.brakeAxisComboBox->clear();
+    QMap<QUuid, QString> axisMap = selectedPedals->getDeviceAxes();
+    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
+    {
         dialog.brakeAxisComboBox->addItem(axis.value(), axis.key());
+    }
+}
+
+
+void DeviceConfiguration::updateClutchAxisList(int deviceIndex) {
+    QUuid deviceGuid = dialog.clutchDeviceComboBox->currentData().toUuid();
+    auto selectedPedals = getDeviceFromGuid(deviceGuid);
+
+    dialog.clutchAxisComboBox->clear();
+    QMap<QUuid, QString> axisMap = selectedPedals->getDeviceAxes();
+    for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
+    {
         dialog.clutchAxisComboBox->addItem(axis.value(), axis.key());
     }
 }
 
 PedalValues DeviceConfiguration::getPedalValues() {
-    if (!SUCCEEDED(pedals->updateState()))
-        return {0, 0, 0};
-    long clutchValue = pedals->getAxisReading(clutchAxisGuid);
-    if (invertClutchAxis) {
-        clutchValue = abs(65535 - clutchValue);
+    PedalValues values = { 0, 0, 0 };
+    if (SUCCEEDED(throttle->updateState()))
+    {
+        values.throttle = throttle->getAxisReading(throttleAxisGuid);
+        if (invertThrottleAxis) {
+            values.throttle = abs(65535 - values.throttle);
+        }
+        emit throttleValueChanged(values.throttle);
     }
-    emit clutchValueChanged(clutchValue);
-    long throttleValue = pedals->getAxisReading(throttleAxisGuid);
-    if (invertThrottleAxis) {
-        throttleValue = abs(65535 - throttleValue);
+    if (SUCCEEDED(clutch->updateState()))
+    {
+        values.clutch = clutch->getAxisReading(clutchAxisGuid);
+        if (invertClutchAxis) {
+            values.clutch = abs(65535 - values.clutch);
+        }
+        emit clutchValueChanged(values.clutch);
     }
-    emit throttleValueChanged(throttleValue);
-    emit pedalValuesChanged(clutchValue, throttleValue);
 
-    long brakeValue = pedals->getAxisReading(brakeAxisGuid);
-    return { throttleValue, brakeValue, clutchValue };
+    if (SUCCEEDED(brake->updateState()))
+    {
+        values.brake = brake->getAxisReading(brakeAxisGuid);
+        if (invertBrakeAxis) {
+            values.brake = abs(65535 - values.brake);
+        }
+    }
+    emit pedalValuesChanged(values.clutch, values.throttle);    // TODO: Deprecate this
+    return values;
 }
 
 void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {

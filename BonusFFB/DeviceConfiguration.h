@@ -15,9 +15,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "DeviceInfo.h"
 #include "vJoyFeeder.h"
 
-#define FLAG_DEVICES_REQUIRED	0x0001
-#define FLAG_DEVICES_PEDALS		0x0010
-#define FLAG_DEVICES_SHIFTLOCK	0x0100
+#define FLAG_DEVICES_REQUIRED	0b0000001
+#define FLAG_DEVICES_THROTTLE	0b0000010
+#define FLAG_DEVICES_BRAKE		0b0000100
+#define FLAG_DEVICES_CLUTCH		0b0001000
+#define FLAG_DEVICES_SHIFTLOCK	0b0010000
 
 #define DEVICES_NOT_AVAILABLE 0
 #define DEVICES_NOT_CONFIGURED 1
@@ -39,7 +41,9 @@ protected:
 public slots:
 	void openConfigurationDialog();
 	void updateJoystickAxisList(int);
-	void updatePedalsAxisList(int);
+	void updateThrottleAxisList(int);
+	void updateBrakeAxisList(int);
+	void updateClutchAxisList(int);
 	void changeShiftLockDevice(int);
 	void testEnableAcceptButton();
 
@@ -72,11 +76,13 @@ public:
 	QUuid joystickLRAxisGuid;
 	QUuid joystickFBAxisGuid;
 
-	DeviceInfo* pedals = nullptr;
+	DeviceInfo* throttle = nullptr;
 	QUuid throttleAxisGuid;
 	bool invertThrottleAxis = false;
+	DeviceInfo* brake = nullptr;
 	QUuid brakeAxisGuid;
 	bool invertBrakeAxis = false;
+	DeviceInfo* clutch = nullptr;
 	QUuid clutchAxisGuid;
 	bool invertClutchAxis = false;
 

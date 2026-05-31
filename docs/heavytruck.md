@@ -78,15 +78,9 @@ To use throttle-on shifting, you will need to bind the vJoy axes to the throttle
 
 To bind the vJoy virtual axes, there are two options:
 
-1. Determine the vJoy device number and manually modify the `controls.sii`[^1] file. In the above example, the vJoy Device is the fourth input in the "Input Type" list, so the device number is 4. Change these lines in the `controls.sii` to match the below axes, updating the device number accordingly:
-    ```
-    config_lines[11]: "input j_throttle `joy4.x`"
-    config_lines[12]: "input j_brake `joy4.sl1`"
-    config_lines[13]: "input j_clutch `joy4.y`"
-    ```
+1. Remove your physical pedals as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the pedal axes as you would normally. This will cause the game to recognize the vJoy axes as the pedal axes.
+    - This will work if your pedals are connected to your steering wheel, just be sure to add your steering wheel back to the "Input type" list after binding the pedal axes.
 2. Use [HidHide](https://docs.nefarius.at/projects/HidHide/) to mask your physical pedals from the game. Consult the [HidHide documentation](https://docs.nefarius.at/projects/HidHide/Simple-Setup-Guide/#setting-up-hidhide-quick-guide) for instructions. You only need to mask your pedals when binding the axes, they can be unmasked afterward.
-
-[^1]: Usually located at `C:\Users\[Your Username]\Documents\[Euro Truck Simulator 2 or American Truck Simulator]\profiles\[Profile ID]\controls.sii`
 
 ## Settings descriptions
 
