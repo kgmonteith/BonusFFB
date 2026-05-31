@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
+    <width>787</width>
     <height>511</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
        <widget class="QLabel" name="label_4">
         <property name="minimumSize">
          <size>
-          <width>99</width>
+          <width>100</width>
           <height>0</height>
          </size>
         </property>
@@ -70,22 +70,10 @@
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <widget class="QComboBox" name="joystickLRAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
+            <width>0</width>
             <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
            </size>
           </property>
          </widget>
@@ -103,6 +91,19 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindJoystickLRButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind joystick L/R axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="2" column="0">
@@ -115,26 +116,7 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_13">
         <item>
-         <widget class="QComboBox" name="joystickFBAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="joystickFBAxisComboBox"/>
         </item>
         <item>
          <spacer name="horizontalSpacer_2">
@@ -149,6 +131,19 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindJoystickFBButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind joystick F/B axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -162,6 +157,12 @@
      <layout class="QFormLayout" name="formLayout_5">
       <item row="0" column="0">
        <widget class="QLabel" name="vJoyOutputDeviceLabel_2">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>vJoy output device</string>
         </property>
@@ -212,26 +213,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="throttleAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="throttleAxisComboBox"/>
         </item>
         <item>
          <widget class="QCheckBox" name="invertThrottleAxisBox">
@@ -240,12 +222,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -267,6 +243,19 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bindThrottleButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind throttle axis</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -293,26 +282,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="brakeAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="brakeAxisComboBox"/>
         </item>
         <item>
          <widget class="QCheckBox" name="invertBrakeAxisBox">
@@ -321,12 +291,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -348,6 +312,19 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bindBrakeButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind brake axis</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -381,24 +358,6 @@
         </item>
         <item>
          <widget class="QComboBox" name="clutchAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="toolTip">
            <string/>
           </property>
@@ -414,12 +373,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -442,10 +395,29 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindClutchButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind clutch axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_8">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Throttle axis</string>
         </property>

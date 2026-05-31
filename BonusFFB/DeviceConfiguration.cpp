@@ -269,6 +269,30 @@ void DeviceConfiguration::openConfigurationDialog() {
     connect(dialog.clutchDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
     connect(dialog.shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeShiftLockDevice);
     connect(dialog.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
+    // Connect bind axis buttons
+    connect(dialog.bindJoystickLRButton, &QPushButton::clicked, this, [=]() {
+        AxisBinding binding = bindAxis();
+        if(joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
+            updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_LR, binding);
+        else
+            QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
+    });
+    connect(dialog.bindJoystickFBButton, &QPushButton::clicked, this, [=]() {
+        AxisBinding binding = bindAxis();
+        if (joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
+            updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_FB, binding);
+        else
+            QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
+    });
+    connect(dialog.bindThrottleButton, &QPushButton::clicked, this, [=]() {
+        updateDeviceComboBoxes(FLAG_DEVICES_THROTTLE, bindAxis());
+    });
+    connect(dialog.bindBrakeButton, &QPushButton::clicked, this, [=]() {
+        updateDeviceComboBoxes(FLAG_DEVICES_BRAKE, bindAxis());
+    });
+    connect(dialog.bindClutchButton, &QPushButton::clicked, this, [=]() {
+        updateDeviceComboBoxes(FLAG_DEVICES_CLUTCH, bindAxis());
+    });
 
     // Populate the device lists
     for (auto device : deviceList)
@@ -282,6 +306,9 @@ void DeviceConfiguration::openConfigurationDialog() {
         if (device.buttonCount > 0) {
             dialog.shiftLockDeviceComboBox->addItem(device.name, device.instanceGuid);
         }
+        if (FAILED(device.acquire(&hwnd))) {
+            qDebug() << "Failed to acquire " << device.name;
+        }
     }
 
     // Populate vJoy combo boxes
@@ -292,26 +319,17 @@ void DeviceConfiguration::openConfigurationDialog() {
     }
 
     // Set the combobox indices
-    if (joystick != nullptr) {
-        dialog.joystickDeviceComboBox->setCurrentIndex(dialog.joystickDeviceComboBox->findData(joystick->instanceGuid));
-        dialog.joystickLRAxisComboBox->setCurrentIndex(dialog.joystickLRAxisComboBox->findData(joystickLRAxisGuid));
-        dialog.joystickFBAxisComboBox->setCurrentIndex(dialog.joystickFBAxisComboBox->findData(joystickFBAxisGuid));
+    if(joystick != nullptr)
+    {
+        updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_LR, { joystick->instanceGuid, joystickLRAxisGuid });
+        updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_FB, { joystick->instanceGuid, joystickFBAxisGuid });
     }
-    if (throttle != nullptr) {
-        dialog.throttleDeviceComboBox->setCurrentIndex(dialog.throttleDeviceComboBox->findData(throttle->instanceGuid));
-        dialog.throttleAxisComboBox->setCurrentIndex(dialog.throttleAxisComboBox->findData(throttleAxisGuid));
-        dialog.invertThrottleAxisBox->setChecked(invertThrottleAxis);
-    }
-    if (brake != nullptr) {
-        dialog.brakeDeviceComboBox->setCurrentIndex(dialog.brakeDeviceComboBox->findData(brake->instanceGuid));
-        dialog.brakeAxisComboBox->setCurrentIndex(dialog.brakeAxisComboBox->findData(brakeAxisGuid));
-        dialog.invertBrakeAxisBox->setChecked(invertBrakeAxis);
-    }
-    if (clutch != nullptr) {
-        dialog.clutchDeviceComboBox->setCurrentIndex(dialog.clutchDeviceComboBox->findData(clutch->instanceGuid));
-        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(clutchAxisGuid));
-        dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
-    }
+    if(throttle != nullptr)
+        updateDeviceComboBoxes(FLAG_DEVICES_THROTTLE, {throttle->instanceGuid, throttleAxisGuid});
+    if(brake != nullptr)
+        updateDeviceComboBoxes(FLAG_DEVICES_BRAKE, { brake->instanceGuid, brakeAxisGuid });
+    if(clutch != nullptr)
+        updateDeviceComboBoxes(FLAG_DEVICES_CLUTCH, { clutch->instanceGuid, clutchAxisGuid });
     dialog.vjoyDeviceComboBox->setCurrentIndex(vjoy.getDeviceIndex());
     if (shiftLockDevice != nullptr) {
         dialog.shiftLockDeviceComboBox->setCurrentIndex(dialog.shiftLockDeviceComboBox->findData(shiftLockDevice->instanceGuid));
@@ -353,6 +371,9 @@ void DeviceConfiguration::openConfigurationDialog() {
             shiftLockDevice = nullptr;
         }
 
+        for (auto device : deviceList)
+            device.release();
+
         saveDeviceConfiguration();
     }
 
@@ -388,6 +409,34 @@ void DeviceConfiguration::updateJoystickAxisList(int deviceIndex) {
     {
         dialog.joystickLRAxisComboBox->addItem(axis.value(), axis.key());
         dialog.joystickFBAxisComboBox->addItem(axis.value(), axis.key());
+    }
+}
+
+void DeviceConfiguration::updateDeviceComboBoxes(int flag, AxisBinding binding) {
+    if (binding.axisUuid.isNull() || binding.deviceUuid.isNull())
+        return;
+    if (flag & FLAG_DEVICES_JOYSTICK_LR) {
+        dialog.joystickDeviceComboBox->setCurrentIndex(dialog.joystickDeviceComboBox->findData(binding.deviceUuid));
+        dialog.joystickLRAxisComboBox->setCurrentIndex(dialog.joystickLRAxisComboBox->findData(binding.axisUuid));
+    }
+    else if (flag & FLAG_DEVICES_JOYSTICK_FB) {
+        dialog.joystickDeviceComboBox->setCurrentIndex(dialog.joystickDeviceComboBox->findData(binding.deviceUuid));
+        dialog.joystickFBAxisComboBox->setCurrentIndex(dialog.joystickFBAxisComboBox->findData(binding.axisUuid));
+    }
+    else if (flag & FLAG_DEVICES_THROTTLE) {
+        dialog.throttleDeviceComboBox->setCurrentIndex(dialog.throttleDeviceComboBox->findData(binding.deviceUuid));
+        dialog.throttleAxisComboBox->setCurrentIndex(dialog.throttleAxisComboBox->findData(binding.axisUuid));
+        dialog.invertThrottleAxisBox->setChecked(invertThrottleAxis);
+    }
+    else if (flag & FLAG_DEVICES_BRAKE) {
+        dialog.brakeDeviceComboBox->setCurrentIndex(dialog.brakeDeviceComboBox->findData(binding.deviceUuid));
+        dialog.brakeAxisComboBox->setCurrentIndex(dialog.brakeAxisComboBox->findData(binding.axisUuid));
+        dialog.invertBrakeAxisBox->setChecked(invertBrakeAxis);
+    }
+    else if (flag & FLAG_DEVICES_CLUTCH) {
+        dialog.clutchDeviceComboBox->setCurrentIndex(dialog.clutchDeviceComboBox->findData(binding.deviceUuid));
+        dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(binding.axisUuid));
+        dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
     }
 }
 
@@ -487,4 +536,13 @@ void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {
         dialog.shiftLockButtonComboBox->setEnabled(false);
         //ui->prndl_shiftLockButtonMonitorLabel->setText("✖️");
     }
+}
+
+AxisBinding DeviceConfiguration::bindAxis() {
+    BindAxisWindow popup(&deviceList);
+
+    if (popup.exec() == QDialog::Accepted) {
+        return popup.getSelectedAxis();
+    }
+    return { QUuid(), QUuid()};
 }
