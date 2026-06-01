@@ -90,7 +90,7 @@ void HeavyTruckStateManager::updateTargetGear() {
         targetSlot = 4;
     else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
         targetSlot = 6;
-    int targetGear = telemetry->getGearForSlot(targetSlot);
+    targetGear = telemetry->getGearForSlot(targetSlot);
     
     float engineRPM = telemetry->getEngineRPM();
     float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
@@ -137,7 +137,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
 
 void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbValue, QPair<int, int> gearValues) {
     HeavyTruckSynchroState newState = HeavyTruckSynchroState::UNKNOWN;
-    if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second != 0) {
+    if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second == targetGear) {
         // Gears are synchronized from telemetry reading
         newState = HeavyTruckSynchroState::IN_SYNCH;
     /* } else if (fbValue <= in_synch_depth || fbValue >= JOY_MAXPOINT - in_synch_depth) {
@@ -149,15 +149,23 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
     else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && (fbValue <= finished_exiting_synch_depth || fbValue >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
         // Gears were synched, but now we are exiting sync on our way back to neutral
         newState = HeavyTruckSynchroState::EXITING_SYNCH;
-        //qDebug() << "HeavyTruckSynchroState::EXITING_SYNCH";
     }
     else {
         // We are out of sync completely and will need to reenter
         newState = HeavyTruckSynchroState::ENTERING_SYNCH;
-        //qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
     }
-    synchroState = newState;
-    emit synchroStateChanged(synchroState, fbValue);
+    if(synchroState != newState) 
+    {
+        if (newState == HeavyTruckSynchroState::IN_SYNCH)
+            qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
+        else if (newState == HeavyTruckSynchroState::EXITING_SYNCH)
+            qDebug() << "HeavyTruckSynchroState::EXITING_SYNCH";
+        else if (newState == HeavyTruckSynchroState::ENTERING_SYNCH) {
+            qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
+        }
+        synchroState = newState;
+        emit synchroStateChanged(synchroState, fbValue);
+    }
 }
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fbValue) {

@@ -106,6 +106,8 @@ private:
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;
     int finished_exiting_synch_depth = JOY_MIDPOINT * 0.85;
+
+    int targetGear = 0;
     //*/
     
 };
