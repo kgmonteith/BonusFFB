@@ -28,7 +28,9 @@ QString HShifter::getAppName(bool readable) {
 
 void HShifter::initialize() {
     // Set flags for required and desired devices
-    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_PEDALS;
+    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_THROTTLE | FLAG_DEVICES_CLUTCH;
+    if (devices->brake != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
     // Graphics connections
     QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
@@ -178,10 +180,6 @@ HRESULT HShifter::startMode() {
 }
 
 void HShifter::gameLoop() {
-    if (devices->pedals == nullptr || devices->joystick == nullptr || !devices->joystick->isAcquired || !devices->pedals->isAcquired) {
-        return;
-    }
-
     // Get new joystick values
     QPair<int, int> joystickValues = devices->getJoystickValues();
 

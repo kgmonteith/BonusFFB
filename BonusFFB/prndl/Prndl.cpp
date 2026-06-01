@@ -24,8 +24,12 @@ QString Prndl::getAppName(bool readable) {
 void Prndl::initialize() {
     // Set flags for required and desired devices
     appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_SHIFTLOCK;
-    if (devices->pedals != nullptr)
-        appDeviceFlags |= FLAG_DEVICES_PEDALS;
+    if (devices->throttle != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_THROTTLE;
+    if (devices->brake != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_BRAKE;
+    if (devices->clutch != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_CLUTCH;
 
     // Graphics connections
     QObject::connect(ui->prndlTabWidget, &QTabWidget::currentChanged, this, &Prndl::redrawJoystickMap);

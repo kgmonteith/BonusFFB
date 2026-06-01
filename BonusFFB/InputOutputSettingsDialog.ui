@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
-    <height>547</height>
+    <width>787</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
        <widget class="QLabel" name="label_4">
         <property name="minimumSize">
          <size>
-          <width>99</width>
+          <width>100</width>
           <height>0</height>
          </size>
         </property>
@@ -70,22 +70,10 @@
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <widget class="QComboBox" name="joystickLRAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
           <property name="minimumSize">
            <size>
-            <width>120</width>
+            <width>0</width>
             <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
            </size>
           </property>
          </widget>
@@ -103,6 +91,19 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindJoystickLRButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind joystick L/R axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="2" column="0">
@@ -115,26 +116,7 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_13">
         <item>
-         <widget class="QComboBox" name="joystickFBAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
+         <widget class="QComboBox" name="joystickFBAxisComboBox"/>
         </item>
         <item>
          <spacer name="horizontalSpacer_2">
@@ -149,6 +131,19 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindJoystickFBButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind joystick F/B axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -162,6 +157,12 @@
      <layout class="QFormLayout" name="formLayout_5">
       <item row="0" column="0">
        <widget class="QLabel" name="vJoyOutputDeviceLabel_2">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>vJoy output device</string>
         </property>
@@ -196,129 +197,23 @@
       <string/>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="cluckDeviceLabel_2">
-        <property name="minimumSize">
-         <size>
-          <width>99</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Pedals device</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="clutchAxisLabel_2">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Clutch axis</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout_10">
-        <item>
-         <widget class="QComboBox" name="clutchAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="invertClutchAxisBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-          <property name="text">
-           <string>Invert axis</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Orientation::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Throttle axis</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
+      <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_12">
         <item>
-         <widget class="QComboBox" name="throttleAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QComboBox" name="throttleDeviceComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
+          <property name="placeholderText">
+           <string>Select...</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="throttleAxisComboBox"/>
         </item>
         <item>
          <widget class="QCheckBox" name="invertThrottleAxisBox">
@@ -327,12 +222,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -355,6 +244,19 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindThrottleButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind throttle axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="2" column="0">
@@ -367,26 +269,20 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_15">
         <item>
-         <widget class="QComboBox" name="brakeAxisComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QComboBox" name="brakeDeviceComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>16777215</height>
-           </size>
+          <property name="placeholderText">
+           <string>Select...</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="brakeAxisComboBox"/>
         </item>
         <item>
          <widget class="QCheckBox" name="invertBrakeAxisBox">
@@ -395,12 +291,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -423,18 +313,113 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QPushButton" name="bindBrakeButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind brake axis</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="pedalsDeviceComboBox">
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>9</pointsize>
-         </font>
+      <item row="3" column="0">
+       <widget class="QLabel" name="clutchAxisLabel_2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
-        <property name="placeholderText">
-         <string>Select...</string>
+        <property name="text">
+         <string>Clutch axis</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <item>
+         <widget class="QComboBox" name="clutchDeviceComboBox">
+          <property name="font">
+           <font>
+            <family>Segoe UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="placeholderText">
+           <string>Select...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="clutchAxisComboBox">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="invertClutchAxisBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Invert axis</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bindClutchButton">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Bind clutch axis</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Throttle axis</string>
         </property>
        </widget>
       </item>

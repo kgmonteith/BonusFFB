@@ -26,7 +26,9 @@ QString HeavyTruck::getAppName(bool readable) {
 
 void HeavyTruck::initialize() {
     // Set flags for required and desired devices
-    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_PEDALS;
+    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_THROTTLE | FLAG_DEVICES_CLUTCH;
+    if (devices->brake != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
     ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
 
@@ -277,10 +279,6 @@ HRESULT HeavyTruck::startMode() {
 }
 
 void HeavyTruck::gameLoop() {
-    if (devices->pedals == nullptr || devices->joystick == nullptr || !devices->joystick->isAcquired || !devices->pedals->isAcquired) {
-        return;
-    }
-
     // Get new joystick values
     QPair<int, int> joystickValues = devices->getJoystickValues();
 
