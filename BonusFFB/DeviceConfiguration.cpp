@@ -274,14 +274,14 @@ void DeviceConfiguration::openConfigurationDialog() {
         AxisBinding binding = bindAxis();
         if(joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
             updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_LR, binding);
-        else
+        else if (!binding.deviceUuid.isNull())
             QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
     });
     connect(dialog.bindJoystickFBButton, &QPushButton::clicked, this, [=]() {
         AxisBinding binding = bindAxis();
         if (joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
             updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_FB, binding);
-        else
+        else if (!binding.deviceUuid.isNull())
             QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
     });
     connect(dialog.bindThrottleButton, &QPushButton::clicked, this, [=]() {
