@@ -32,9 +32,14 @@ void HeavyTruck::initialize() {
 
     ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
 
+    // Set default slot pattern
+    setSlotPattern(ui->heavytruck_slotPatternComboBox->currentText());
+
     // UI connections
-    connect(ui->heavytruck_setPresetEatonFullerButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternEatonFuller);
-    connect(ui->heavytruck_setPresetFullRangeButton, &QPushButton::clicked, this, &HeavyTruck::setPresetPatternFullRange);
+    connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentTextChanged, this, &HeavyTruck::setSlotPattern);
+    connect(ui->heavytruck_slotPatternPositionComboBox, &QComboBox::currentIndexChanged, &slotPattern, &SlotPattern::setAlignment);
+    connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
+    connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
     // Graphics connections
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
@@ -65,59 +70,58 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
     connect(ui->heavytruck_torqueLoadStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setTorqueLoadStrength);
     connect(ui->heavytruck_engineVibrationStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setEngineVibrationIntensity);
-    connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    //connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    //connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
+    //connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_throttleOnShiftingCheckbox, &QCheckBox::toggled, &pedalsManager, &PedalsManager::toggleVirtualPedals);
 }
 
-void HeavyTruck::setPresetPatternEatonFuller() {
-    ui->heavytruck_slotDepthSlider->setValue(75);
-    ui->heavytruck_centerSlotPositionSlider->setValue(34);
-    ui->heavytruck_rightSlotPositionSlider->setValue(66);
-    ui->heavytruck_slotRoundingFactorSlider->setValue(10);
-}
-
-
-void HeavyTruck::setPresetPatternFullRange() {
-    ui->heavytruck_slotDepthSlider->setValue(100);
-    ui->heavytruck_centerSlotPositionSlider->setValue(50);
-    ui->heavytruck_rightSlotPositionSlider->setValue(100);
-    ui->heavytruck_slotRoundingFactorSlider->setValue(25);
+void HeavyTruck::setSlotPattern(QString newPattern) {
+    slotPattern.setName(newPattern);
+    slotPattern.setSlotWalls(SLOT_WALL_LEFT);
+    if (newPattern == "Eaton-Fuller 18/13") {
+        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, -1});
+    }
+    else if (newPattern == "Eaton-Fuller 10") {
+        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, -1});
+        slotPattern.setSlotWalls(0);
+    }
+    else if (newPattern == "Scania 12") {
+        slotPattern.setPattern(QList<int>{1, 0, 0, 4, 5, -1});
+    }
+    else if (newPattern == "Scania 12+2") {
+        slotPattern.setPattern(QList<int>{1, 2, 0, 4, 5, -1});
+    }
+    else if (newPattern == "Volvo 12") {
+        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, 0});
+    }
+    else if (newPattern == "Volvo 12+2") {
+        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, 0});
+    }
+    else if (newPattern == "ZF 12") {
+        slotPattern.setPattern(QList<int>{0, 2, 3, 0, 5, -1});
+    }
+    else if (newPattern == "ZF 16 (Modern)") {
+        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, -1});
+    }
+    else if (newPattern == "ZF 16 (Double-H)") {
+        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, -1, 3, 4, 5, -1});
+    }
 }
 
 void HeavyTruck::slotParameterChanged(int t) {
     // Either right or center slot position changed, so we need to update both
-    slot->depth = (double)ui->heavytruck_slotDepthSlider->value() * .01;
-    slot->pos_pct[1] = ui->heavytruck_centerSlotPositionSlider->value() * .01;
-    slot->pos_pct[2] = ui->heavytruck_rightSlotPositionSlider->value() * .01;
+    //slot->depth = (double)ui->heavytruck_slotDepthSlider->value() * .01;
+    //slot->pos_pct[1] = ui->heavytruck_centerSlotPositionSlider->value() * .01;
+    //slot->pos_pct[2] = ui->heavytruck_rightSlotPositionSlider->value() * .01;
     slot->rounding_factor = JOY_MAXPOINT * ui->heavytruck_slotRoundingFactorSlider->value() * 0.01;
 }
 
 void HeavyTruck::initializeJoystickMap() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
-
-    neutralChannelRect = new QGraphicsRectItem();
-    neutralChannelRect->setBrush(QBrush(Qt::black));
-    neutralChannelRect->setPen(Qt::NoPen);
-    scene->addItem(neutralChannelRect);
-
-    centerSlotRect = new QGraphicsRectItem();
-    centerSlotRect->setBrush(QBrush(Qt::black));
-    centerSlotRect->setPen(Qt::NoPen);
-    scene->addItem(centerSlotRect);
-
-    rightSlotRect = new QGraphicsRectItem();
-    rightSlotRect->setBrush(QBrush(Qt::black));
-    rightSlotRect->setPen(Qt::NoPen);
-    scene->addItem(rightSlotRect);
-
-    leftSlotRect = new QGraphicsRectItem();
-    leftSlotRect->setBrush(QBrush(Qt::black));
-    leftSlotRect->setPen(Qt::NoPen);
-    scene->addItem(leftSlotRect);
+    slotPattern.setScene(scene);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
     QColor seethroughWhite = Qt::transparent;
@@ -150,32 +154,12 @@ void HeavyTruck::redrawJoystickMap() {
 
     ui->heavytruck_graphicsView->scene()->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
 
-    long sceneWidth = ui->heavytruck_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->heavytruck_graphicsView->viewport()->rect().height();
-    long slotHeight = sceneHeight * slot->depth;
-    long slotTop = (sceneHeight / 2) - (slotHeight / 2);
-    long centerSlotPos = sceneWidth * slot->pos_pct[1] - SLOT_WIDTH_PX / 2;
-    long rightSlotPos = sceneWidth * slot->pos_pct[2] - SLOT_WIDTH_PX / 2;
-    if (rightSlotPos > sceneWidth - SLOT_WIDTH_PX) {
-        rightSlotPos = sceneWidth - SLOT_WIDTH_PX;
-    }
-    
-    QPointF center = scene->sceneRect().center();
+    slotPattern.renderScene();
 
-    neutralChannelRect->setRect(0, 0, rightSlotPos, SLOT_WIDTH_PX);
-    neutralChannelRect->setPos(0, sceneHeight / 2  - SLOT_WIDTH_PX / 2);
-
-    centerSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
-    centerSlotRect->setPos(centerSlotPos, 0);
-
-    rightSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
-    rightSlotRect->setPos(rightSlotPos, 0);
-
-    leftSlotRect->setRect(0, slotTop, SLOT_WIDTH_PX, slotHeight);
 
     if (ui->heavytruck_displayZoneMarkers->isChecked()) {
-        grindZoneRect->setRect(-2, (sceneHeight / 2) - (sceneHeight / 2 * slot->grind_point_depth), sceneWidth + 4, sceneHeight * slot->grind_point_depth);
-        buttonZoneRect->setRect(-2, (sceneHeight / 2) - (sceneHeight / 2 * slot->button_zone_depth_telemetry), sceneWidth + 4, sceneHeight * slot->button_zone_depth_telemetry);
+        grindZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slot->grind_point_depth), scene->width() + 4, scene->height() * slot->grind_point_depth);
+        buttonZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slot->button_zone_depth_telemetry), scene->width() + 4, scene->height() * slot->button_zone_depth_telemetry);
         grindZoneRect->show();
         buttonZoneRect->show();
     }
@@ -184,7 +168,7 @@ void HeavyTruck::redrawJoystickMap() {
         buttonZoneRect->hide();
     }
 
-    joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
+    joystickCircle->setPos(scene->sceneRect().center() - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
 
 void HeavyTruck::updateJoystickCircle(int LRValue, int FBValue) {
@@ -221,9 +205,10 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("slot_pattern_settings");
-    settings->setValue("slotDepth", ui->heavytruck_slotDepthSlider->value());
-    settings->setValue("centerSlotPosition", ui->heavytruck_centerSlotPositionSlider->value());
-    settings->setValue("rightSlotPosition", ui->heavytruck_rightSlotPositionSlider->value());
+    settings->setValue("slotPattern", ui->heavytruck_slotPatternComboBox->currentText());
+    settings->setValue("slotPatternPosition", ui->heavytruck_slotPatternPositionComboBox->currentIndex());
+    settings->setValue("slotPatternDepthScale", ui->heavytruck_slotPatternDepthScaleSlider->value());
+    settings->setValue("slotPatternWidthScale", ui->heavytruck_slotPatternWidthScaleSlider->value());
     settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
     settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
     settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
@@ -246,9 +231,10 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("slot_pattern_settings");
-    ui->heavytruck_slotDepthSlider->setValue(settings->value("slotDepth", 75).toInt());
-    ui->heavytruck_centerSlotPositionSlider->setValue(settings->value("centerSlotPosition", 34).toInt());
-    ui->heavytruck_rightSlotPositionSlider->setValue(settings->value("rightSlotPosition", 66).toInt());
+    ui->heavytruck_slotPatternComboBox->setCurrentIndex(ui->heavytruck_slotPatternComboBox->findText(settings->value("slotPattern", "Eaton-Fuller 18/13").toString()));
+    ui->heavytruck_slotPatternPositionComboBox->setCurrentIndex(settings->value("slotPatternPosition", 0).toInt());
+    ui->heavytruck_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 75).toInt());
+    ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 66).toInt());
     ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
     ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
     ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());

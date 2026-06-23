@@ -81,9 +81,9 @@ HRESULT BonusFFBApp::start() {
     frictionEff.dwStartDelay = 0;
     devices->joystick->addEffect("friction", { GUID_Friction, &frictionEff });
 
-    qDebug() << "damperStrength: " << damperStrength;
-    qDebug() << "inertiaStrength: " << inertiaStrength;
-    qDebug() << "frictionStrength: " << frictionStrength;
+    updateDamper(ui->centralWidget->findChild<QSlider*>(getAppName() + "_damperSlider")->value());
+    updateInertia(ui->centralWidget->findChild<QSlider*>(getAppName() + "_inertiaSlider")->value());
+    updateFriction(ui->centralWidget->findChild<QSlider*>(getAppName() + "_frictionSlider")->value());
 
     hr = startMode();
 

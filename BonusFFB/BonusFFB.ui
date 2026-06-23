@@ -139,7 +139,7 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -374,7 +374,7 @@
                  <item>
                   <widget class="QLabel" name="label_42">
                    <property name="text">
-                    <string>Slot pattern presets</string>
+                    <string>Slot pattern</string>
                    </property>
                   </widget>
                  </item>
@@ -383,97 +383,98 @@
                <item row="0" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_25">
                  <item>
-                  <widget class="QPushButton" name="heavytruck_setPresetEatonFullerButton">
-                   <property name="text">
-                    <string>Eaton-Fuller</string>
+                  <widget class="QComboBox" name="heavytruck_slotPatternComboBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
+                   <item>
+                    <property name="text">
+                     <string>Eaton-Fuller 18/13</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Eaton-Fuller 10</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Scania 12</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Scania 12+2</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Volvo 12</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Volvo 12+2</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ZF 12</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ZF 16 (Modern)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>ZF 16 (Double-H)</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="heavytruck_setPresetFullRangeButton">
-                   <property name="text">
-                    <string>Full joystick range</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_45">
-                 <item>
-                  <widget class="QLabel" name="label_38">
-                   <property name="text">
-                    <string>Slot depth</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="1" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_46">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_slotDepthSlider">
-                   <property name="minimum">
-                    <number>33</number>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>75</number>
-                   </property>
+                  <spacer name="horizontalSpacer_2">
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
                    </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
                    </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_slotDepthSpinbox">
-                   <property name="suffix">
-                    <string>%</string>
-                   </property>
-                   <property name="minimum">
-                    <number>33</number>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>75</number>
-                   </property>
-                  </widget>
+                  </spacer>
                  </item>
                 </layout>
                </item>
                <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_47">
+                <layout class="QHBoxLayout" name="horizontalLayout_45">
                  <item>
-                  <widget class="QLabel" name="label_40">
+                  <widget class="QLabel" name="label_38">
                    <property name="text">
-                    <string>Center slot position</string>
+                    <string>Slot depth scale</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
                <item row="2" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_48">
+                <layout class="QHBoxLayout" name="horizontalLayout_46">
                  <item>
-                  <widget class="QSlider" name="heavytruck_centerSlotPositionSlider">
+                  <widget class="QSlider" name="heavytruck_slotPatternDepthScaleSlider">
                    <property name="minimum">
-                    <number>0</number>
+                    <number>50</number>
                    </property>
                    <property name="maximum">
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>34</number>
+                    <number>75</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -487,40 +488,40 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_centerSlotPositionSpinbox">
+                  <widget class="QSpinBox" name="heavytruck_slotPatternDepthScaleSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
                    <property name="minimum">
-                    <number>0</number>
+                    <number>50</number>
                    </property>
                    <property name="maximum">
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>34</number>
+                    <number>75</number>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
                <item row="3" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_50">
+                <layout class="QHBoxLayout" name="horizontalLayout_47">
                  <item>
-                  <widget class="QLabel" name="label_44">
+                  <widget class="QLabel" name="label_40">
                    <property name="text">
-                    <string>Right slot position</string>
+                    <string>Pattern width scale</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
                <item row="3" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_51">
+                <layout class="QHBoxLayout" name="horizontalLayout_48">
                  <item>
-                  <widget class="QSlider" name="heavytruck_rightSlotPositionSlider">
+                  <widget class="QSlider" name="heavytruck_slotPatternWidthScaleSlider">
                    <property name="minimum">
-                    <number>0</number>
+                    <number>50</number>
                    </property>
                    <property name="maximum">
                     <number>100</number>
@@ -540,7 +541,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_rightSlotPositionSpinbox">
+                  <widget class="QSpinBox" name="heavytruck_slotPatternWidthScaleSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -557,7 +558,7 @@
                  </item>
                 </layout>
                </item>
-               <item row="4" column="0">
+               <item row="7" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_55">
                  <item>
                   <widget class="QLabel" name="label_45">
@@ -568,7 +569,7 @@
                  </item>
                 </layout>
                </item>
-               <item row="4" column="1">
+               <item row="7" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_56">
                  <item>
                   <widget class="QSlider" name="heavytruck_slotRoundingFactorSlider">
@@ -607,6 +608,67 @@
                     <number>10</number>
                    </property>
                   </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="8" column="1">
+                <widget class="QCheckBox" name="checkBox">
+                 <property name="text">
+                  <string>Enable synchronized transmission neutral spring</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="1">
+                <widget class="QCheckBox" name="checkBox_2">
+                 <property name="text">
+                  <string>Enable reverse/low slot guard spring</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_50">
+                 <item>
+                  <widget class="QLabel" name="label_44">
+                   <property name="text">
+                    <string>Slot pattern position</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_51">
+                 <item>
+                  <widget class="QComboBox" name="heavytruck_slotPatternPositionComboBox">
+                   <item>
+                    <property name="text">
+                     <string>Left-hand drive</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Centered</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Right-hand drive</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>

@@ -130,6 +130,7 @@
     <ClCompile Include="prndl\Prndl.cpp" />
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
+    <ClCompile Include="SlotPattern.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
     <QtRcc Include="BonusFFB.qrc" />
@@ -169,6 +170,7 @@
     <QtMoc Include="pphc\Pphc.h" />
     <QtMoc Include="PedalsManager.h" />
     <ClInclude Include="SharedEnums.h" />
+    <QtMoc Include="SlotPattern.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>

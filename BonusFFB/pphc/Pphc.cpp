@@ -28,10 +28,6 @@ void Pphc::initialize() {
     QObject::connect(ui->pphcTabWidget, &QTabWidget::currentChanged, this, &Pphc::redrawJoystickMap);
     // Joystick connections
     QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &Pphc::updateJoystickCircle);
-    // Static FFB effect connections
-    connect(ui->pphc_damperSlider, &QSlider::valueChanged, this, &BonusFFBApp::updateDamper);
-    connect(ui->pphc_inertiaSlider, &QSlider::valueChanged, this, &Pphc::updateInertia);
-    connect(ui->pphc_frictionSlider, &QSlider::valueChanged, this, &Pphc::updateFriction);
     // Additional settings connections
     connect(ui->pphc_brakeSpringScalingSlider, &QSlider::valueChanged, this, &Pphc::setBrakeSpringScaling);
     connect(ui->pphc_brakeAxisDeadzoneSlider, &QSlider::valueChanged, this, &Pphc::setBrakeAxisDeadzone);

@@ -11,12 +11,14 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #pragma once
+#include <QMap>
 
 #include "BonusFFBApp.h"
 #include "HeavyTruckStateManager.h"
 #include "HeavyTruckSlotGuard.h"
 #include "HeavyTruckSynchroGuard.h"
 #include "PedalsManager.h"
+#include "SlotPattern.h"
 
 class HeavyTruck : public BonusFFBApp
 {
@@ -32,8 +34,7 @@ public:
 	void gameLoop();
 
 public slots:
-	void setPresetPatternEatonFuller();
-	void setPresetPatternFullRange();
+	void setSlotPattern(QString);
 	void slotParameterChanged(int);
 
 	void redrawJoystickMap();
@@ -49,17 +50,13 @@ signals:
 
 private:
 	QGraphicsScene* scene = nullptr;
-	QGraphicsRectItem* neutralChannelRect;
-	QGraphicsRectItem* centerSlotRect;
-	QGraphicsRectItem* rightSlotRect;
-	QGraphicsRectItem* leftSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
-
 	QGraphicsRectItem* grindZoneRect;
 	QGraphicsRectItem* buttonZoneRect;
 
 	// Stateful FFB effect managers
 	SlotParameters* slot = new SlotParameters();
+	SlotPattern slotPattern;
 	HeavyTruckStateManager stateManager;
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
