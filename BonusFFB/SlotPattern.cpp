@@ -36,30 +36,24 @@ void SlotPattern::setSlotWalls(int t_flags) {
 
 void SlotPattern::setWidthScale(int t_scale) {
 	// t_scale is 0 to 100, convert to 0.0 to 1.0
-	width_scale = double(t_scale) / 100.0;
+	width_scale = double(t_scale) * 0.01;
 	renderScene();
 }
 
 void SlotPattern::setDepthScale(int t_scale) {
 	// t_scale is 0 to 100, convert to 0.0 to 1.0
-	depth_scale = double(t_scale) / 100.0;
+	depth_scale = double(t_scale) * 0.01;
 	renderScene();
 }
 
-void SlotPattern::setAlignment(int new_alignment) {
-	alignment = new_alignment;
+void SlotPattern::setLeftOffset(int t_offset) {
+	left_offset = t_offset * 0.01;
 	renderScene();
 }
 
 double SlotPattern::getSlotPositionAbsolute(Slot slot) {
 	// Still provided as a value from 0 to 1, justified by alignment
-	float offset = 0;	// Valid for LHD
-	if (alignment == SLOT_ALIGNMENT_CENTERED) {
-		offset = (1 - width_scale) * 0.5;
-	}
-	else if (alignment == SLOT_ALIGNMENT_RHD) {
-		offset = 1 - width_scale;
-	}
+	float offset = (1 - width_scale) * left_offset;
 	return offset + (slot.position_pct_nominal * width_scale);
 }
 

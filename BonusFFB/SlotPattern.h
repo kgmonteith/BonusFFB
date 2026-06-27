@@ -21,10 +21,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #define SLOT_ORIENTATION_FORWARD true
 #define SLOT_ORIENTATION_BACK false
 
-#define SLOT_ALIGNMENT_LHD 0
-#define SLOT_ALIGNMENT_CENTERED 1
-#define SLOT_ALIGNMENT_RHD 2
-
 #define SLOT_WALL_LEFT	0b01
 #define SLOT_WALL_RIGHT 0b10
 
@@ -47,7 +43,7 @@ class SlotPattern : public QObject {
 public slots:
 	void setWidthScale(int);
 	void setDepthScale(int);
-	void setAlignment(int);
+	void setLeftOffset(int);
 	void setName(QString);
 
 public:
@@ -64,7 +60,8 @@ public:
 	int slot_wall_flags = 0;
 	double width_scale = .75;
 	double depth_scale = 0.75;
-	int alignment = SLOT_ALIGNMENT_LHD;
+	double left_offset = 0.5;
+	double top_offset = 0;
 
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem neutralChannelRect = QGraphicsRectItem();

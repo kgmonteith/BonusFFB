@@ -37,7 +37,7 @@ void HeavyTruck::initialize() {
 
     // UI connections
     connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentTextChanged, this, &HeavyTruck::setSlotPattern);
-    connect(ui->heavytruck_slotPatternPositionComboBox, &QComboBox::currentIndexChanged, &slotPattern, &SlotPattern::setAlignment);
+    connect(ui->heavytruck_slotPatternLeftOffsetSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setLeftOffset);
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
@@ -206,7 +206,7 @@ void HeavyTruck::saveSettings(QSettings* settings) {
 
     settings->beginGroup("slot_pattern_settings");
     settings->setValue("slotPattern", ui->heavytruck_slotPatternComboBox->currentText());
-    settings->setValue("slotPatternPosition", ui->heavytruck_slotPatternPositionComboBox->currentIndex());
+    settings->setValue("slotPatternLeftOffset", ui->heavytruck_slotPatternLeftOffsetSlider->value());
     settings->setValue("slotPatternDepthScale", ui->heavytruck_slotPatternDepthScaleSlider->value());
     settings->setValue("slotPatternWidthScale", ui->heavytruck_slotPatternWidthScaleSlider->value());
     settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
@@ -232,7 +232,7 @@ void HeavyTruck::loadSettings(QSettings* settings) {
 
     settings->beginGroup("slot_pattern_settings");
     ui->heavytruck_slotPatternComboBox->setCurrentIndex(ui->heavytruck_slotPatternComboBox->findText(settings->value("slotPattern", "Eaton-Fuller 18/13").toString()));
-    ui->heavytruck_slotPatternPositionComboBox->setCurrentIndex(settings->value("slotPatternPosition", 0).toInt());
+    ui->heavytruck_slotPatternLeftOffsetSlider->setValue(settings->value("slotPatternLeftOffset", 75).toInt());
     ui->heavytruck_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 75).toInt());
     ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 66).toInt());
     ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
