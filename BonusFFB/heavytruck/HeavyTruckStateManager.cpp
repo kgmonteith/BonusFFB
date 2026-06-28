@@ -126,11 +126,12 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     }
     // Blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
     if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH) {
-        qDebug() << "Triggering throttle blip";
+        //qDebug() << "Triggering throttle blip";
         emit unblipThrottle();
     }
     if (buttonZoneState != newState) {
         buttonZoneState = newState;
+        qDebug() << "buttonZone changed: " << buttonZoneState;
         emit buttonZoneChanged(buttonZoneState);
     }
 }

@@ -40,6 +40,7 @@ public:
 	int getActiveGear();
 	int getGearForSlot(int);
 	float getThrottlePercent();
+	void logTelemetry();
 
 signals:
 	void telemetryChanged(TelemetrySource);
@@ -52,4 +53,6 @@ private:
 	scsTelemetryMap_s* pTelemMap = nullptr;
 
 	QChronoTimer* timer;
+	QTimer* gearLogTimer;
+	QTimer* rpmLogTimer;
 };

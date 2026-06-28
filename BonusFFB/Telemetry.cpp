@@ -20,6 +20,14 @@ using namespace std::chrono_literals;
 Telemetry::Telemetry() {
 	timer = new QChronoTimer(1s, this);
 	connect(timer, &QChronoTimer::timeout, this, &Telemetry::connectTelemetry);
+
+	gearLogTimer = new QTimer(this);
+	gearLogTimer->setInterval(500);
+	gearLogTimer->setSingleShot(true);
+
+	rpmLogTimer = new QTimer(this);
+	rpmLogTimer->setInterval(500);
+	rpmLogTimer->setSingleShot(true);
 }
 
 
@@ -142,6 +150,20 @@ int Telemetry::getGearForSlot(int slotNumber) {
 		}
 		int gearIndex = ((slotNumber + 1) * 4) + rangeAdder + splitterAdder;
 		int gear = pTelemMap->truck_i.hshifterResulting[gearIndex];
+		if(!gearLogTimer->isActive()) 
+		{
+			qDebug() << "\tgetGearForSlot(" << slotNumber << "):";
+			qDebug() << "\t\trange enabled: " << pTelemMap->truck_b.shifterToggle[0];
+			qDebug() << "\t\tsplit enabled: " << pTelemMap->truck_b.shifterToggle[1];
+			qDebug() << "\t\tgearIndex: " << gearIndex;
+			qDebug() << "\t\tresulting gear: " << pTelemMap->truck_i.hshifterResulting[gearIndex];
+			QString t_str = "";
+			for (int i = 0; i < std::size(pTelemMap->truck_i.hshifterResulting); i++) {
+				t_str += QString::number(pTelemMap->truck_i.hshifterResulting[i]) + " ";
+			}
+			qDebug() << "\t\tpTelemMap->truck_i.hshifterResulting[]: " << t_str;
+			gearLogTimer->start();
+		}
 		return gear;
 	}
 	return 0;
@@ -149,7 +171,7 @@ int Telemetry::getGearForSlot(int slotNumber) {
 
 float Telemetry::getTransmissionRPMForGear(int gear) {
 	float rpm = 0.0;
-	if (telemetrySource != TelemetrySource::SCS) {
+	if (telemetrySource != TelemetrySource::SCS || gear == 0) {
 		return 0.0;
 	}
 
@@ -171,20 +193,37 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	// Get gear ratio for input gear
 	float gearRatio = 0.0;
 	if (gear > 0) {
+		// Drive gears
 		gearRatio = pTelemMap->config_f.gearRatiosForward[gear-1];
 	}
-	else if (gear < 0) {
+	else {
+		// Reverse gears
 		gearRatio = pTelemMap->config_f.gearRatiosReverse[std::abs(gear-1)];
-	}
-	else
-	{
-		// In neutral, not relevant
-		return 0.0;
 	}
 
 	// Unit definitions: https://kniffen.dev/TruckSim-Telemetry/documents/Units.html
 	// Wheel velocity is Hz (rotations per second)
 	// Engine RPM = Wheel RPM * transmission ratio (Hz) * 60 * differential ratio
 	float transmission_rpm = gearRatio * averageDrivenWheelAngularVelocity * 60 * pTelemMap->config_f.gearDifferential;
+
+	if (!rpmLogTimer->isActive()) {
+		qDebug() << "\tgetTransmissionRPMForGear(" << gear << ")";
+		qDebug() << "\t\twheelOmegaSum: " << wheelOmegaSum;
+		qDebug() << "\t\twheelRadiusSum: " << wheelRadiusSum;
+		qDebug() << "\t\tpoweredWheelCt: " << poweredWheelCt;
+		qDebug() << "\t\taverageDrivenWheelAngularVelocity: " << averageDrivenWheelAngularVelocity;
+		qDebug() << "\t\twheelRadius: " << wheelRadius;
+		qDebug() << "\t\tgearRatio: " << gearRatio;
+		QString t_str = "";
+		for (int i = 0; i < std::size(pTelemMap->config_f.gearRatiosForward); i++) {
+			t_str += QString::number(pTelemMap->config_f.gearRatiosForward[i]) + " ";
+		}
+		qDebug() << "\t\tpTelemMap->config_f.gearRatiosForward[]: " << t_str;
+		qDebug() << "\t\tgearDifferential: " << pTelemMap->config_f.gearDifferential;
+		qDebug() << "\t\tTransmission RPM: " << transmission_rpm;
+		qDebug() << "\t\tEngine RPM: " << pTelemMap->truck_f.engineRpm;
+		rpmLogTimer->start();
+	}
+
 	return transmission_rpm;
 }
