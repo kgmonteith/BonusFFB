@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
-    <height>636</height>
+    <width>901</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -139,14 +139,187 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
             <string>Monitor</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_20">
-            <item row="0" column="2" rowspan="2">
+            <item row="0" column="1" rowspan="4">
+             <widget class="QGroupBox" name="groupBox_13">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Throttle</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_17">
+               <item row="0" column="0">
+                <widget class="QProgressBar" name="heavytruck_throttleProgressBar">
+                 <property name="minimumSize">
+                  <size>
+                   <width>50</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximum">
+                  <number>65535</number>
+                 </property>
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="3" rowspan="2">
+             <widget class="QGroupBox" name="groupBox_12">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Segoe UI</family>
+               </font>
+              </property>
+              <property name="title">
+               <string>Target geat</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_8">
+               <item row="0" column="0">
+                <widget class="QLabel" name="heavytruck_gearLabel">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>120</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>72</pointsize>
+                   <italic>false</italic>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>N</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="heavytruck_rpmDeltaLabel_2">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>18</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Range</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="heavytruck_rangeLabel">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>24</pointsize>
+                   <italic>false</italic>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>❓</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="heavytruck_splitterLabel">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>24</pointsize>
+                   <italic>false</italic>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>❓</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="heavytruck_rpmDeltaLabel_3">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>18</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Bahnschrift</family>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Splitter</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="2" rowspan="4">
              <widget class="QGroupBox" name="heavytruck_joystickMapHolder">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -183,51 +356,44 @@
               </layout>
              </widget>
             </item>
-            <item row="0" column="3">
-             <widget class="QGroupBox" name="groupBox_12">
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Segoe UI</family>
-               </font>
+            <item row="0" column="0" rowspan="4">
+             <widget class="QGroupBox" name="groupBox_14">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="title">
-               <string>Gear slot</string>
+               <string>Clutch</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_20">
-               <item>
-                <widget class="QLabel" name="heavytruck_gearLabel">
+              <layout class="QGridLayout" name="gridLayout_19">
+               <item row="0" column="0">
+                <widget class="QProgressBar" name="heavytruck_clutchProgressBar">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
+                   <width>50</width>
                    <height>0</height>
                   </size>
                  </property>
-                 <property name="font">
-                  <font>
-                   <family>Bahnschrift</family>
-                   <pointsize>72</pointsize>
-                   <italic>false</italic>
-                   <bold>true</bold>
-                  </font>
+                 <property name="maximum">
+                  <number>65535</number>
                  </property>
-                 <property name="text">
-                  <string>N</string>
+                 <property name="value">
+                  <number>0</number>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 <property name="textVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
               </layout>
              </widget>
             </item>
-            <item row="1" column="3">
+            <item row="2" column="3" rowspan="2">
              <widget class="QGroupBox" name="groupBox_16">
               <property name="title">
                <string>Rev matching</string>
@@ -276,80 +442,6 @@
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="0" column="1" rowspan="2">
-             <widget class="QGroupBox" name="groupBox_13">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Throttle</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_17">
-               <item row="0" column="0">
-                <widget class="QProgressBar" name="heavytruck_throttleProgressBar">
-                 <property name="minimumSize">
-                  <size>
-                   <width>50</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <number>65535</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="textVisible">
-                  <bool>false</bool>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="0" column="0" rowspan="2">
-             <widget class="QGroupBox" name="groupBox_14">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="title">
-               <string>Clutch</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_19">
-               <item row="0" column="0">
-                <widget class="QProgressBar" name="heavytruck_clutchProgressBar">
-                 <property name="minimumSize">
-                  <size>
-                   <width>50</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="maximum">
-                  <number>65535</number>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="textVisible">
-                  <bool>false</bool>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
                 </widget>
                </item>
@@ -3600,7 +3692,7 @@ hand control</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>892</width>
+     <width>901</width>
      <height>21</height>
     </rect>
    </property>

@@ -25,6 +25,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #define FLAG_DEVICES_BRAKE			0b00000010000
 #define FLAG_DEVICES_CLUTCH			0b00000100000
 #define FLAG_DEVICES_SHIFTLOCK		0b00001000000
+#define FLAG_DEVICES_RANGE			0b00010000000
+#define FLAG_DEVICES_SPLITTER		0b00100000000
 
 #define DEVICES_NOT_AVAILABLE 0
 #define DEVICES_NOT_CONFIGURED 1
@@ -41,6 +43,11 @@ struct AxisBinding {
 	QUuid axisUuid;
 };
 
+struct ButtonBinding {
+	QUuid deviceUuid;
+	int button;
+};
+
 class DeviceConfiguration : public QObject
 {
 	Q_OBJECT;
@@ -54,6 +61,8 @@ public slots:
 	void updateThrottleAxisList(int);
 	void updateBrakeAxisList(int);
 	void updateClutchAxisList(int);
+	void changeRangeDevice(int);
+	void changeSplitterDevice(int);
 	void changeShiftLockDevice(int);
 	void testEnableAcceptButton();
 
@@ -76,7 +85,9 @@ public:
 	bool isFFBDeviceInstalled();
 	DeviceInfo* getDeviceFromGuid(QUuid);
 	AxisBinding bindAxis();
-	void updateDeviceComboBoxes(int, AxisBinding);
+	ButtonBinding bindButton();
+	void updateAxisComboBoxes(int, AxisBinding);
+	void updateButtonComboBoxes(int, ButtonBinding);
 
 	QPair<int, int> getJoystickValues();
 	PedalValues getPedalValues();
@@ -98,6 +109,11 @@ public:
 	QUuid clutchAxisGuid;
 	bool invertClutchAxis = false;
 
+	DeviceInfo* range = nullptr;
+	int rangeButton;
+	DeviceInfo* splitter = nullptr;
+	int splitterButton;
+
 	DeviceInfo* shiftLockDevice = nullptr;
 	int shiftLockButton;
 
@@ -110,6 +126,7 @@ class BindAxisWindow : public QDialog {
 public:
 	QList<DeviceInfo>* deviceList;
 	AxisBinding selectedAxis;
+	
 	QTimer detectAxisTimer;
 	QMap<QUuid, QMap<QUuid, long>> axisValues;
 
@@ -161,6 +178,70 @@ private slots:
 					 //qDebug() << device.instanceGuid << axisUuid;
 					 selectedAxis = { device.instanceGuid, axisUuid };
 					 buttonBox.button(QDialogButtonBox::Ok)->setDisabled(false);
+				}
+			}
+		}
+	}
+};
+
+
+class BindButtonWindow : public QDialog {
+	Q_OBJECT
+
+public:
+	QList<DeviceInfo>* deviceList;
+	ButtonBinding selectedButton;
+
+	QTimer detectButtonTimer;
+	QMap<QUuid, QMap<int, bool>> buttonValues;
+
+	QLabel label;
+	QDialogButtonBox buttonBox = QDialogButtonBox(
+		QDialogButtonBox::Ok | QDialogButtonBox::Cancel
+	);
+
+	explicit BindButtonWindow(QList<DeviceInfo>* deviceListPtr, QWidget* parent = nullptr) : QDialog(parent), deviceList(deviceListPtr) {
+
+		setWindowTitle("Bind button");
+
+		QVBoxLayout* layout = new QVBoxLayout(this);
+		label.setText("Press a button to bind it...");
+		layout->addWidget(&label);
+
+		buttonBox.button(QDialogButtonBox::Ok)->setText("Accept");
+		buttonBox.button(QDialogButtonBox::Ok)->setDisabled(true);
+
+		connect(&buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+		connect(&buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+		layout->addWidget(&buttonBox);
+
+		for (auto device : *deviceList) {
+			device.updateState();
+			for (int button = 0; button < device.buttonCount; button++) {
+				buttonValues[device.instanceGuid][button] = device.isButtonPressed(button);
+			}
+		}
+
+		connect(&detectButtonTimer, &QTimer::timeout, this, &BindButtonWindow::detectButton);
+		detectButtonTimer.setInterval(10);
+		detectButtonTimer.start();
+	}
+
+	ButtonBinding getSelectedButton() const {
+		return selectedButton;
+	}
+
+private slots:
+	void detectButton() {
+		for (auto device : *deviceList) {
+			device.updateState();
+			for (int button = 0; button < device.buttonCount; button++) {
+				if (buttonValues[device.instanceGuid][button] != device.isButtonPressed(button)) {
+					label.setText(device.name + ", button " + QString::number(button));
+					//qDebug() << device.instanceGuid << axisUuid;
+					selectedButton = { device.instanceGuid, button };
+					buttonBox.button(QDialogButtonBox::Ok)->setDisabled(false);
 				}
 			}
 		}

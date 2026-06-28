@@ -34,6 +34,10 @@ int DeviceConfiguration::ready(int flags = FLAG_DEVICES_REQUIRED) {
         return DEVICES_NOT_CONFIGURED;
     if (flags & FLAG_DEVICES_CLUTCH && (clutch == nullptr))
         return DEVICES_NOT_CONFIGURED;
+    if (flags & FLAG_DEVICES_RANGE && range == nullptr)
+        return DEVICES_NOT_CONFIGURED;
+    if (flags & FLAG_DEVICES_SPLITTER && splitter == nullptr)
+        return DEVICES_NOT_CONFIGURED;
     return DEVICES_OK;
 }
 
@@ -56,6 +60,14 @@ HRESULT DeviceConfiguration::acquire(int flags) {
     }
     if (flags & FLAG_DEVICES_CLUTCH && clutch == nullptr) {
         QMessageBox::critical(nullptr, "Error", "Clutch is not configured or is disconnected.");
+        return E_FAIL;
+    }
+    if (flags & FLAG_DEVICES_RANGE && range == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Shifter range switch is not configured or is disconnected.");
+        return E_FAIL;
+    }
+    if (flags & FLAG_DEVICES_SPLITTER && splitter == nullptr) {
+        QMessageBox::critical(nullptr, "Error", "Shifter splitter switch is not configured or is disconnected.");
         return E_FAIL;
     }
 
@@ -99,11 +111,29 @@ HRESULT DeviceConfiguration::acquire(int flags) {
         };
     }
 
+
+    if (flags & FLAG_DEVICES_RANGE && range != nullptr) {
+        qDebug() << "Acquiring range device...";
+        range->acquire(&hwnd);
+        if (FAILED(hr)) {
+            QMessageBox::critical(nullptr, "Error", "Could not acquire shifter range switch device. Please ensure the shifter is connected and configured.");
+            return hr;
+        };
+    }
+    if (flags & FLAG_DEVICES_SPLITTER && splitter != nullptr) {
+        qDebug() << "Acquiring splitter device...";
+        splitter->acquire(&hwnd);
+        if (FAILED(hr)) {
+            QMessageBox::critical(nullptr, "Error", "Could not acquire shifter splitter switch device. Please ensure the shifter is connected and configured.");
+            return hr;
+        };
+    }
+
     if (flags & FLAG_DEVICES_SHIFTLOCK && shiftLockDevice != nullptr) {
         qDebug() << "Acquiring shift lock device...";
         shiftLockDevice->acquire(&hwnd);
         if (FAILED(hr)) {
-            QMessageBox::critical(nullptr, "Error", "Could not acquire shift lock device. Please ensure the devices is connected and configured.");
+            QMessageBox::critical(nullptr, "Error", "Could not acquire shift lock device. Please ensure the device is connected and configured.");
             return hr;
         };
     }
@@ -126,6 +156,14 @@ void DeviceConfiguration::release() {
     if (clutch != nullptr && clutch->isAcquired) {
         qDebug() << "Releasing clutch...";
         clutch->release();
+    }
+    if (range != nullptr && range->isAcquired) {
+        qDebug() << "Releasing range...";
+        range->release();
+    }
+    if (splitter != nullptr && splitter->isAcquired) {
+        qDebug() << "Releasing splitter...";
+        splitter->release();
     }
     if (shiftLockDevice != nullptr && shiftLockDevice->isAcquired) {
         qDebug() << "Releasing shift lock device...";
@@ -166,6 +204,19 @@ void DeviceConfiguration::saveDeviceConfiguration() {
         config.setValue("device_guid", clutch->instanceGuid.toString());
         config.setValue("clutch_axis", clutchAxisGuid.toString());
         config.setValue("invert_clutch_axis", invertClutchAxis);
+        config.endGroup();
+    }
+
+    if (range != nullptr) {
+        config.beginGroup("range");
+        config.setValue("device_guid", range->instanceGuid.toString());
+        config.setValue("device_button", rangeButton);
+        config.endGroup();
+    }
+    if (splitter != nullptr) {
+        config.beginGroup("splitter");
+        config.setValue("device_guid", splitter->instanceGuid.toString());
+        config.setValue("device_button", splitterButton);
         config.endGroup();
     }
 
@@ -234,6 +285,30 @@ void DeviceConfiguration::loadDeviceConfiguration() {
         }
     }
 
+    if (config.childGroups().contains("range")) {
+        config.beginGroup("range");
+        if (config.value("device_guid").toString() != "None") {
+            range = getDeviceFromGuid(config.value("device_guid").toUuid());
+            rangeButton = config.value("device_button").toInt();
+            if (range == nullptr) {
+                QMessageBox::warning(nullptr, "Shifter range device not found", "Saved shifter range device is not connected.\nReconnect the device or update the input/output config.");
+            }
+        }
+        config.endGroup();
+    }
+
+    if (config.childGroups().contains("splitter")) {
+        config.beginGroup("splitter");
+        if (config.value("device_guid").toString() != "None") {
+            splitter = getDeviceFromGuid(config.value("device_guid").toUuid());
+            splitterButton = config.value("device_button").toInt();
+            if (splitter == nullptr) {
+                QMessageBox::warning(nullptr, "Shifter splitter device not found", "Saved shifter splitter device is not connected.\nReconnect the device or update the input/output config.");
+            }
+        }
+        config.endGroup();
+    }
+
     config.beginGroup("shiftlockdevice");
     if (config.value("device_guid").toString() != "None") {
         shiftLockDevice = getDeviceFromGuid(config.value("device_guid").toUuid());
@@ -267,31 +342,42 @@ void DeviceConfiguration::openConfigurationDialog() {
     connect(dialog.brakeDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
     connect(dialog.clutchDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::updateClutchAxisList);
     connect(dialog.clutchDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
+    connect(dialog.rangeDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeRangeDevice);
+    connect(dialog.splitterDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeSplitterDevice);
     connect(dialog.shiftLockDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::changeShiftLockDevice);
     connect(dialog.vjoyDeviceComboBox, &QComboBox::currentIndexChanged, this, &DeviceConfiguration::testEnableAcceptButton);
     // Connect bind axis buttons
     connect(dialog.bindJoystickLRButton, &QPushButton::clicked, this, [=]() {
         AxisBinding binding = bindAxis();
         if(joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
-            updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_LR, binding);
+            updateAxisComboBoxes(FLAG_DEVICES_JOYSTICK_LR, binding);
         else if (!binding.deviceUuid.isNull())
             QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
     });
     connect(dialog.bindJoystickFBButton, &QPushButton::clicked, this, [=]() {
         AxisBinding binding = bindAxis();
         if (joystick == nullptr || binding.deviceUuid == joystick->instanceGuid)
-            updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_FB, binding);
+            updateAxisComboBoxes(FLAG_DEVICES_JOYSTICK_FB, binding);
         else if (!binding.deviceUuid.isNull())
             QMessageBox::warning(nullptr, "Unable to bind axis", "Joystick axes must be bound to the same device.");
     });
     connect(dialog.bindThrottleButton, &QPushButton::clicked, this, [=]() {
-        updateDeviceComboBoxes(FLAG_DEVICES_THROTTLE, bindAxis());
+        updateAxisComboBoxes(FLAG_DEVICES_THROTTLE, bindAxis());
     });
     connect(dialog.bindBrakeButton, &QPushButton::clicked, this, [=]() {
-        updateDeviceComboBoxes(FLAG_DEVICES_BRAKE, bindAxis());
+        updateAxisComboBoxes(FLAG_DEVICES_BRAKE, bindAxis());
     });
     connect(dialog.bindClutchButton, &QPushButton::clicked, this, [=]() {
-        updateDeviceComboBoxes(FLAG_DEVICES_CLUTCH, bindAxis());
+        updateAxisComboBoxes(FLAG_DEVICES_CLUTCH, bindAxis());
+    });
+    connect(dialog.bindRangeSwitchButton, &QPushButton::clicked, this, [=]() {
+        updateButtonComboBoxes(FLAG_DEVICES_RANGE, bindButton());
+    });
+    connect(dialog.bindSplitterSwitchButton, &QPushButton::clicked, this, [=]() {
+        updateButtonComboBoxes(FLAG_DEVICES_SPLITTER, bindButton());
+    });
+    connect(dialog.bindShiftLockButton, &QPushButton::clicked, this, [=]() {
+        updateButtonComboBoxes(FLAG_DEVICES_SHIFTLOCK, bindButton());
     });
 
     // Populate the device lists
@@ -304,6 +390,8 @@ void DeviceConfiguration::openConfigurationDialog() {
             dialog.joystickDeviceComboBox->addItem(device.name, device.instanceGuid);
         }
         if (device.buttonCount > 0) {
+            dialog.rangeDeviceComboBox->addItem(device.name, device.instanceGuid);
+            dialog.splitterDeviceComboBox->addItem(device.name, device.instanceGuid);
             dialog.shiftLockDeviceComboBox->addItem(device.name, device.instanceGuid);
         }
         if (FAILED(device.acquire(&hwnd))) {
@@ -321,19 +409,24 @@ void DeviceConfiguration::openConfigurationDialog() {
     // Set the combobox indices
     if(joystick != nullptr)
     {
-        updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_LR, { joystick->instanceGuid, joystickLRAxisGuid });
-        updateDeviceComboBoxes(FLAG_DEVICES_JOYSTICK_FB, { joystick->instanceGuid, joystickFBAxisGuid });
+        updateAxisComboBoxes(FLAG_DEVICES_JOYSTICK_LR, { joystick->instanceGuid, joystickLRAxisGuid });
+        updateAxisComboBoxes(FLAG_DEVICES_JOYSTICK_FB, { joystick->instanceGuid, joystickFBAxisGuid });
     }
-    if(throttle != nullptr)
-        updateDeviceComboBoxes(FLAG_DEVICES_THROTTLE, {throttle->instanceGuid, throttleAxisGuid});
-    if(brake != nullptr)
-        updateDeviceComboBoxes(FLAG_DEVICES_BRAKE, { brake->instanceGuid, brakeAxisGuid });
-    if(clutch != nullptr)
-        updateDeviceComboBoxes(FLAG_DEVICES_CLUTCH, { clutch->instanceGuid, clutchAxisGuid });
     dialog.vjoyDeviceComboBox->setCurrentIndex(vjoy.getDeviceIndex());
+    if(throttle != nullptr)
+        updateAxisComboBoxes(FLAG_DEVICES_THROTTLE, {throttle->instanceGuid, throttleAxisGuid});
+    if(brake != nullptr)
+        updateAxisComboBoxes(FLAG_DEVICES_BRAKE, { brake->instanceGuid, brakeAxisGuid });
+    if(clutch != nullptr)
+        updateAxisComboBoxes(FLAG_DEVICES_CLUTCH, { clutch->instanceGuid, clutchAxisGuid });
+    if (range != nullptr) {
+        updateButtonComboBoxes(FLAG_DEVICES_RANGE, { range->instanceGuid, rangeButton });
+    }
+    if (splitter != nullptr) {
+        updateButtonComboBoxes(FLAG_DEVICES_SPLITTER, { splitter->instanceGuid, splitterButton });
+    }
     if (shiftLockDevice != nullptr) {
-        dialog.shiftLockDeviceComboBox->setCurrentIndex(dialog.shiftLockDeviceComboBox->findData(shiftLockDevice->instanceGuid));
-        dialog.shiftLockButtonComboBox->setCurrentIndex(shiftLockButton);
+        updateButtonComboBoxes(FLAG_DEVICES_SHIFTLOCK, { shiftLockDevice->instanceGuid, shiftLockButton });
     }
 
     // Disable accept button if devices need to be selected
@@ -345,6 +438,9 @@ void DeviceConfiguration::openConfigurationDialog() {
         joystickLRAxisGuid = dialog.joystickLRAxisComboBox->currentData().toUuid();
         joystickFBAxisGuid = dialog.joystickFBAxisComboBox->currentData().toUuid();
         qDebug() << "New joystick: " << joystick->name;
+
+        vjoy.setDeviceIndex(dialog.vjoyDeviceComboBox->currentIndex());
+        qDebug() << "New vJoy device: " << vjoy.getDeviceIndex();
 
         throttle = getDeviceFromGuid(dialog.throttleDeviceComboBox->currentData().toUuid());
         throttleAxisGuid = dialog.throttleAxisComboBox->currentData().toUuid();
@@ -359,8 +455,12 @@ void DeviceConfiguration::openConfigurationDialog() {
         invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
         qDebug() << "New clutch: " << clutch->name;
 
-        vjoy.setDeviceIndex(dialog.vjoyDeviceComboBox->currentIndex());
-        qDebug() << "New vJoy device: " << vjoy.getDeviceIndex();
+        range = getDeviceFromGuid(dialog.rangeDeviceComboBox->currentData().toUuid());
+        rangeButton = dialog.splitterSwitchComboBox->currentIndex();
+        qDebug() << "New range: " << range->name;
+        splitter = getDeviceFromGuid(dialog.splitterDeviceComboBox->currentData().toUuid());
+        splitterButton = dialog.splitterSwitchComboBox->currentIndex();
+        qDebug() << "New splitter: " << range->name;
 
         if (dialog.shiftLockDeviceComboBox->currentIndex() > 0) {
             shiftLockDevice = getDeviceFromGuid(dialog.shiftLockDeviceComboBox->currentData().toUuid());
@@ -412,7 +512,7 @@ void DeviceConfiguration::updateJoystickAxisList(int deviceIndex) {
     }
 }
 
-void DeviceConfiguration::updateDeviceComboBoxes(int flag, AxisBinding binding) {
+void DeviceConfiguration::updateAxisComboBoxes(int flag, AxisBinding binding) {
     if (binding.axisUuid.isNull() || binding.deviceUuid.isNull())
         return;
     if (flag & FLAG_DEVICES_JOYSTICK_LR) {
@@ -437,6 +537,21 @@ void DeviceConfiguration::updateDeviceComboBoxes(int flag, AxisBinding binding) 
         dialog.clutchDeviceComboBox->setCurrentIndex(dialog.clutchDeviceComboBox->findData(binding.deviceUuid));
         dialog.clutchAxisComboBox->setCurrentIndex(dialog.clutchAxisComboBox->findData(binding.axisUuid));
         dialog.invertClutchAxisBox->setChecked(invertClutchAxis);
+    }
+}
+
+void DeviceConfiguration::updateButtonComboBoxes(int flag, ButtonBinding binding) {
+    if (binding.deviceUuid.isNull() || binding.button == -1)
+        return;
+    if (flag & FLAG_DEVICES_RANGE) {
+        dialog.rangeDeviceComboBox->setCurrentIndex(dialog.rangeDeviceComboBox->findData(binding.deviceUuid));
+        dialog.rangeSwitchComboBox->setCurrentIndex(binding.button);
+    } else if (flag & FLAG_DEVICES_SPLITTER) {
+        dialog.splitterDeviceComboBox->setCurrentIndex(dialog.splitterDeviceComboBox->findData(binding.deviceUuid));
+        dialog.splitterSwitchComboBox->setCurrentIndex(binding.button);
+    } else if (flag & FLAG_DEVICES_SHIFTLOCK) {
+        dialog.shiftLockDeviceComboBox->setCurrentIndex(dialog.shiftLockDeviceComboBox->findData(binding.deviceUuid));
+        dialog.shiftLockButtonComboBox->setCurrentIndex(binding.button);
     }
 }
 
@@ -475,7 +590,6 @@ void DeviceConfiguration::updateBrakeAxisList(int deviceIndex) {
     }
 }
 
-
 void DeviceConfiguration::updateClutchAxisList(int deviceIndex) {
     QUuid deviceGuid = dialog.clutchDeviceComboBox->currentData().toUuid();
     auto selectedPedals = getDeviceFromGuid(deviceGuid);
@@ -485,6 +599,48 @@ void DeviceConfiguration::updateClutchAxisList(int deviceIndex) {
     for (auto axis = axisMap.cbegin(), end = axisMap.cend(); axis != end; ++axis)
     {
         dialog.clutchAxisComboBox->addItem(axis.value(), axis.key());
+    }
+}
+
+void DeviceConfiguration::changeRangeDevice(int deviceIndex) {
+    QVariant data = dialog.rangeDeviceComboBox->currentData();
+    QUuid deviceGuid = dialog.rangeDeviceComboBox->currentData().toUuid();
+    range = getDeviceFromGuid(deviceGuid);
+    dialog.rangeSwitchComboBox->setEnabled(true);
+    dialog.rangeSwitchComboBox->clear();
+    for (int i = 1; i <= range->buttonCount; i++) {
+        dialog.rangeSwitchComboBox->addItem(QString::number(i));
+    }
+}
+
+void DeviceConfiguration::changeSplitterDevice(int deviceIndex) {
+    QVariant data = dialog.splitterDeviceComboBox->currentData();
+    QUuid deviceGuid = dialog.splitterDeviceComboBox->currentData().toUuid();
+    splitter = getDeviceFromGuid(deviceGuid);
+    dialog.splitterSwitchComboBox->setEnabled(true);
+    dialog.splitterSwitchComboBox->clear();
+    for (int i = 1; i <= splitter->buttonCount; i++) {
+        dialog.splitterSwitchComboBox->addItem(QString::number(i));
+    }
+}
+
+void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {
+    if (deviceIndex > 0) {
+        QVariant data = dialog.shiftLockDeviceComboBox->currentData();
+        QUuid deviceGuid = dialog.shiftLockDeviceComboBox->currentData().toUuid();
+        shiftLockDevice = getDeviceFromGuid(deviceGuid);
+        dialog.shiftLockButtonComboBox->setEnabled(true);
+        dialog.shiftLockButtonComboBox->clear();
+        //ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
+        for (int i = 1; i <= shiftLockDevice->buttonCount; i++) {
+            dialog.shiftLockButtonComboBox->addItem(QString::number(i));
+        }
+    }
+    else {
+        shiftLockDevice = nullptr;
+        dialog.shiftLockButtonComboBox->clear();
+        dialog.shiftLockButtonComboBox->setEnabled(false);
+        //ui->prndl_shiftLockButtonMonitorLabel->setText("✖️");
     }
 }
 
@@ -518,26 +674,6 @@ PedalValues DeviceConfiguration::getPedalValues() {
     return values;
 }
 
-void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {
-    if (deviceIndex > 0) {
-        QVariant data = dialog.shiftLockDeviceComboBox->currentData();
-        QUuid deviceGuid = dialog.shiftLockDeviceComboBox->currentData().toUuid();
-        shiftLockDevice = getDeviceFromGuid(deviceGuid);
-        dialog.shiftLockButtonComboBox->setEnabled(true);
-        dialog.shiftLockButtonComboBox->clear();
-        //ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
-        for (int i = 1; i <= shiftLockDevice->buttonCount; i++) {
-            dialog.shiftLockButtonComboBox->addItem(QString::number(i));
-        }
-    }
-    else {
-        shiftLockDevice = nullptr;
-        dialog.shiftLockButtonComboBox->clear();
-        dialog.shiftLockButtonComboBox->setEnabled(false);
-        //ui->prndl_shiftLockButtonMonitorLabel->setText("✖️");
-    }
-}
-
 AxisBinding DeviceConfiguration::bindAxis() {
     BindAxisWindow popup(&deviceList);
 
@@ -545,4 +681,13 @@ AxisBinding DeviceConfiguration::bindAxis() {
         return popup.getSelectedAxis();
     }
     return { QUuid(), QUuid()};
+}
+
+ButtonBinding DeviceConfiguration::bindButton() {
+    BindButtonWindow popup(&deviceList);
+
+    if (popup.exec() == QDialog::Accepted) {
+        return popup.getSelectedButton();
+    }
+    return { QUuid(), -1 };
 }

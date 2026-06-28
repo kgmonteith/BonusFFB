@@ -322,7 +322,7 @@ void BonusFFB::updateStartButton() {
     else if (deviceStatus == DEVICES_NOT_CONFIGURED) {
         ui.startButton->setDisabled(false);
         ui.startButton->setText("🛠️");
-        ui.startButton->setToolTip("Devices must be configured before " + activeApp->getAppName() + " can run");
+        ui.startButton->setToolTip("Devices must be configured before " + activeApp->getAppName(true) + " mode can run");
         ui.startButton->setCheckable(false);
     }
     else {

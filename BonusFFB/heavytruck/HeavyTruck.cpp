@@ -26,7 +26,7 @@ QString HeavyTruck::getAppName(bool readable) {
 
 void HeavyTruck::initialize() {
     // Set flags for required and desired devices
-    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_THROTTLE | FLAG_DEVICES_CLUTCH;
+    appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_THROTTLE | FLAG_DEVICES_CLUTCH | FLAG_DEVICES_RANGE | FLAG_DEVICES_SPLITTER;
     if (devices->brake != nullptr)
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
