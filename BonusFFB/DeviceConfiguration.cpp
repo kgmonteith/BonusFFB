@@ -443,17 +443,26 @@ void DeviceConfiguration::openConfigurationDialog() {
         qDebug() << "New vJoy device: " << vjoy.getDeviceIndex();
 
         throttle = getDeviceFromGuid(dialog.throttleDeviceComboBox->currentData().toUuid());
-        throttleAxisGuid = dialog.throttleAxisComboBox->currentData().toUuid();
-        invertThrottleAxis = dialog.invertThrottleAxisBox->isChecked();
-        qDebug() << "New throttle: " << throttle->name;
+        if(throttle != nullptr)
+        {
+            qDebug() << "New throttle: " << throttle->name;
+            throttleAxisGuid = dialog.throttleAxisComboBox->currentData().toUuid();
+            invertThrottleAxis = dialog.invertThrottleAxisBox->isChecked();
+        }
         brake = getDeviceFromGuid(dialog.brakeDeviceComboBox->currentData().toUuid());
-        brakeAxisGuid = dialog.brakeAxisComboBox->currentData().toUuid();
-        invertBrakeAxis = dialog.invertBrakeAxisBox->isChecked();
-        qDebug() << "New brake: " << brake->name;
+        if(brake != nullptr) 
+        {
+            brakeAxisGuid = dialog.brakeAxisComboBox->currentData().toUuid();
+            invertBrakeAxis = dialog.invertBrakeAxisBox->isChecked();
+            qDebug() << "New brake: " << brake->name;
+        }
         clutch = getDeviceFromGuid(dialog.clutchDeviceComboBox->currentData().toUuid());
-        clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
-        invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
-        qDebug() << "New clutch: " << clutch->name;
+        if(clutch != nullptr)
+        {
+            clutchAxisGuid = dialog.clutchAxisComboBox->currentData().toUuid();
+            invertClutchAxis = dialog.invertClutchAxisBox->isChecked();
+            qDebug() << "New clutch: " << clutch->name;
+        }
 
         range = getDeviceFromGuid(dialog.rangeDeviceComboBox->currentData().toUuid());
         rangeButton = dialog.splitterSwitchComboBox->currentIndex();
