@@ -38,6 +38,11 @@ struct PedalValues {
 	long clutch;
 };
 
+struct RangeSplitterValues {
+	bool range;
+	bool splitter;
+};
+
 struct AxisBinding {
 	QUuid deviceUuid;
 	QUuid axisUuid;
@@ -72,6 +77,8 @@ signals:
 	void joystickFBValueChanged(int);
 	void clutchValueChanged(int);
 	void throttleValueChanged(int);
+	void rangeChanged(bool);
+	void splitterChanged(bool);
 	void pedalValuesChanged(int, int);
 	void deviceConfigurationChanged();
 
@@ -91,6 +98,7 @@ public:
 
 	QPair<int, int> getJoystickValues();
 	PedalValues getPedalValues();
+	RangeSplitterValues getRangeSplitterValues();
 
 	QList<DeviceInfo> deviceList;
 	HWND hwnd;
@@ -238,7 +246,7 @@ private slots:
 			device.updateState();
 			for (int button = 0; button < device.buttonCount; button++) {
 				if (buttonValues[device.instanceGuid][button] != device.isButtonPressed(button)) {
-					label.setText(device.name + ", button " + QString::number(button));
+					label.setText(device.name + ", button " + QString::number(button+1));
 					//qDebug() << device.instanceGuid << axisUuid;
 					selectedButton = { device.instanceGuid, button };
 					buttonBox.button(QDialogButtonBox::Ok)->setDisabled(false);

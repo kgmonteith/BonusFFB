@@ -158,6 +158,8 @@ void HShifter::saveSettings(QSettings* settings) {
 }
 
 void HShifter::loadSettings(QSettings* settings) {
+    BonusFFBApp::loadSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_effect_settings");

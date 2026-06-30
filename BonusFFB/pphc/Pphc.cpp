@@ -118,12 +118,11 @@ void Pphc::saveSettings(QSettings* settings) {
 }
 
 void Pphc::loadSettings(QSettings* settings) {
+    BonusFFBApp::loadSettings(settings);
+
     settings->beginGroup(getAppName());
 
     settings->beginGroup("ffb_effect_settings");
-    ui->pphc_damperSlider->setValue(settings->value("damper", 50).toInt());
-    ui->pphc_inertiaSlider->setValue(settings->value("inertia", 0).toInt());
-    ui->pphc_frictionSlider->setValue(settings->value("friction", 50).toInt());
     ui->pphc_brakeSpringScalingSlider->setValue(settings->value("brakeSpringScaling", 200).toInt());
     ui->pphc_brakeAxisDeadzoneSlider->setValue(settings->value("brakeAxisDeadzone", 10).toInt());
     ui->pphc_brakeAxisScalingSlider->setValue(settings->value("brakeAxisScaling", 200).toInt());
@@ -133,7 +132,6 @@ void Pphc::loadSettings(QSettings* settings) {
     settings->endGroup();
 
     settings->endGroup();
-    qDebug() << "Succesfully loaded" << getAppName() << "settings";
 }
 
 HRESULT Pphc::startMode() {

@@ -465,11 +465,17 @@ void DeviceConfiguration::openConfigurationDialog() {
         }
 
         range = getDeviceFromGuid(dialog.rangeDeviceComboBox->currentData().toUuid());
-        rangeButton = dialog.splitterSwitchComboBox->currentIndex();
-        qDebug() << "New range: " << range->name;
+        if (range != nullptr)
+        {
+            rangeButton = dialog.rangeSwitchComboBox->currentIndex();
+            qDebug() << "New range: " << range->name;
+        }
         splitter = getDeviceFromGuid(dialog.splitterDeviceComboBox->currentData().toUuid());
-        splitterButton = dialog.splitterSwitchComboBox->currentIndex();
-        qDebug() << "New splitter: " << range->name;
+        if (splitter != nullptr)
+        {
+            splitterButton = dialog.splitterSwitchComboBox->currentIndex();
+            qDebug() << "New splitter: " << range->name;
+        }
 
         if (dialog.shiftLockDeviceComboBox->currentIndex() > 0) {
             shiftLockDevice = getDeviceFromGuid(dialog.shiftLockDeviceComboBox->currentData().toUuid());
@@ -680,6 +686,20 @@ PedalValues DeviceConfiguration::getPedalValues() {
         }
     }
     emit pedalValuesChanged(values.clutch, values.throttle);    // TODO: Deprecate this
+    return values;
+}
+
+RangeSplitterValues DeviceConfiguration::getRangeSplitterValues() {
+    RangeSplitterValues values = { false, false };
+    if (SUCCEEDED(range->updateState()))
+    {
+        values.range = range->isButtonPressed(rangeButton);
+        emit rangeChanged(values.range);
+    }
+    if (SUCCEEDED(splitter->updateState())) {
+        values.splitter = splitter->isButtonPressed(splitterButton);
+        emit splitterChanged(values.splitter);
+    }
     return values;
 }
 

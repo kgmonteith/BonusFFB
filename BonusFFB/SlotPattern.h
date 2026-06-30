@@ -58,9 +58,9 @@ public:
 	QString name;
 	QList<Slot> slot_list;
 	int slot_wall_flags = 0;
-	double width_scale = .75;
+	double width_scale = 0.66;
 	double depth_scale = 0.75;
-	double left_offset = 0.5;
+	double left_offset = 0.0;
 	double top_offset = 0;
 
 	QGraphicsScene* scene = nullptr;

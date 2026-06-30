@@ -41,6 +41,9 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
+    connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
+    connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
+    connect(devices, &DeviceConfiguration::splitterChanged, this, &HeavyTruck::updateSplitterText);
     // Graphics connections
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // Telemetry connections
@@ -54,7 +57,6 @@ void HeavyTruck::initialize() {
     connect(devices, &DeviceConfiguration::throttleValueChanged, ui->heavytruck_throttleProgressBar, &QProgressBar::setValue);
     // vJoy connections
     connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
-    connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, this, &HeavyTruck::updateGearText);
     // FFB effect connections
     connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
     connect(&stateManager, &HeavyTruckStateManager::synchroStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::synchroStateChanged);
@@ -180,12 +182,34 @@ void HeavyTruck::updateJoystickCircle(int LRValue, int FBValue) {
     ui->heavytruck_graphicsView->setUpdatesEnabled(true);
 }
 
-void HeavyTruck::updateGearText(int button) {
-    if (button) {
-        ui->heavytruck_gearLabel->setText(QString::number(button));
+void HeavyTruck::updateGearText(int gear) {
+    if (gear) {
+        QString gearString = QString::number(gear).replace("-", "R");
+        ui->heavytruck_gearLabel->setText(gearString);
     }
     else {
         ui->heavytruck_gearLabel->setText("N");
+    }
+}
+
+void HeavyTruck::updateRangeText(bool newState) {
+    if (newState)   // High range
+    {
+        ui->heavytruck_rangeLabel->setText("HIGH");
+    }
+    else  // Low range
+    {
+        ui->heavytruck_rangeLabel->setText("LOW");
+    }
+}
+
+void HeavyTruck::updateSplitterText(bool newState) {
+    if (newState)
+    {
+        ui->heavytruck_splitterLabel->setText("⬆️");
+    }
+    else {
+        ui->heavytruck_splitterLabel->setText("⬇️");
     }
 }
 
@@ -228,6 +252,8 @@ void HeavyTruck::saveSettings(QSettings* settings) {
 }
 
 void HeavyTruck::loadSettings(QSettings* settings) {
+    BonusFFBApp::loadSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("slot_pattern_settings");
@@ -271,14 +297,13 @@ void HeavyTruck::gameLoop() {
     // Get new pedal values
     PedalValues pedalValues = devices->getPedalValues();
 
+    // Get new range and splitter values
+    RangeSplitterValues rangeSplitterValues = devices->getRangeSplitterValues();
+
     // Get telemetry values
+    QPair<int, int> gearValues = { 0, 0 };
     if (telemetry->isConnected() != TelemetrySource::NONE) {
-        
-        QPair<int, int> gearValues = telemetry->getGearState();
-        if (gearValues != lastGearValues) {
-            emit gearValuesChanged(gearValues);
-            lastGearValues = gearValues;
-        }
+        gearValues = telemetry->getGearState();
         float engineRPM = telemetry->getEngineRPM();
         if (engineRPM != lastEngineRPM) {
             emit engineRPMChanged(engineRPM);
@@ -289,6 +314,6 @@ void HeavyTruck::gameLoop() {
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updateTorqueLock(pedalValues, joystickValues);
-    stateManager.update(joystickValues, lastGearValues);
+    stateManager.update(joystickValues, gearValues);
     pedalsManager.updateVirtualPedals();
 }

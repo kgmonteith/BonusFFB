@@ -41,11 +41,11 @@ public slots:
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
 	void updateRpmDeltaText(float);
+	void updateRangeText(bool);
+	void updateSplitterText(bool);
 
 signals:
 	void slotPositionsChanged(int slotDepth, int rightSlot, int centerSlot);
-	void gearValuesChanged(QPair<int, int>);
-	void resetClutchAxes();
 	void engineRPMChanged(float);
 
 private:
@@ -62,7 +62,6 @@ private:
 	HeavyTruckSynchroGuard synchroGuard;
 	PedalsManager pedalsManager;
 
-	QPair<int, int> lastGearValues = { 0, 0 };
 	QPair<int, int> lastPedalValues = { 0, 0 };
 	float lastSpeed = 0.0;
 	float lastEngineRPM = 0.0;

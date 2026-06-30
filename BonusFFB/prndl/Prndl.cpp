@@ -157,6 +157,8 @@ void Prndl::saveSettings(QSettings* settings) {
 }
 
 void Prndl::loadSettings(QSettings* settings) {
+    BonusFFBApp::loadSettings(settings);
+
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("other_settings");
@@ -167,7 +169,6 @@ void Prndl::loadSettings(QSettings* settings) {
     settings->endGroup();
 
     settings->endGroup();
-    qDebug() << "Succesfully loaded PRNDL settings";
 }
 
 bool Prndl::getShiftLockReleased() {

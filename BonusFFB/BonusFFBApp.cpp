@@ -110,6 +110,7 @@ void BonusFFBApp::saveSettings(QSettings* settings) {
 
 
 void BonusFFBApp::loadSettings(QSettings* settings) {
+    qDebug() << "Loading" << this->getAppName(true) << "settings...";
     settings->beginGroup(this->getAppName());
 
     settings->beginGroup("ffb_effect_settings");

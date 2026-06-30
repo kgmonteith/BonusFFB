@@ -197,7 +197,7 @@
                </font>
               </property>
               <property name="title">
-               <string>Target geat</string>
+               <string>Target gear</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_8">
                <item row="0" column="0">
