@@ -92,6 +92,5 @@ private:
 
     QTimer gameLoopTimer;
 
-    QTimer telemetryTimer;
     Telemetry telemetry;
 };
