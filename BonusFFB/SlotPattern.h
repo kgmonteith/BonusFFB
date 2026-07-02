@@ -58,10 +58,11 @@ public:
 	QString name;
 	QList<Slot> slot_list;
 	int slot_wall_flags = 0;
+	// The true default values for these vars are set by loadSettings
 	double width_scale = 0.66;
 	double depth_scale = 0.75;
 	double left_offset = 0.0;
-	double top_offset = 0;
+	//double top_offset = 0;
 
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem neutralChannelRect = QGraphicsRectItem();

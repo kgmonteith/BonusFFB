@@ -139,7 +139,7 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -476,6 +476,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_25">
                  <item>
                   <widget class="QComboBox" name="heavytruck_slotPatternComboBox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -559,6 +562,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_46">
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternDepthScaleSlider">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="minimum">
                     <number>50</number>
                    </property>
@@ -566,7 +572,7 @@
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>75</number>
+                    <number>50</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -581,6 +587,9 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="heavytruck_slotPatternDepthScaleSpinbox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -612,6 +621,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_48">
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternWidthScaleSlider">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="minimum">
                     <number>50</number>
                    </property>
@@ -619,7 +631,7 @@
                     <number>100</number>
                    </property>
                    <property name="value">
-                    <number>66</number>
+                    <number>50</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -634,6 +646,9 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="heavytruck_slotPatternWidthScaleSpinbox">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -739,6 +754,9 @@
                  </item>
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternLeftOffsetSlider">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="maximum">
                     <number>100</number>
                    </property>
@@ -746,7 +764,7 @@
                     <number>10</number>
                    </property>
                    <property name="value">
-                    <number>50</number>
+                    <number>0</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>

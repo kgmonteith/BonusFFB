@@ -258,9 +258,9 @@ void HeavyTruck::loadSettings(QSettings* settings) {
 
     settings->beginGroup("slot_pattern_settings");
     ui->heavytruck_slotPatternComboBox->setCurrentIndex(ui->heavytruck_slotPatternComboBox->findText(settings->value("slotPattern", "Eaton-Fuller 18/13").toString()));
-    ui->heavytruck_slotPatternLeftOffsetSlider->setValue(settings->value("slotPatternLeftOffset", 75).toInt());
+    ui->heavytruck_slotPatternLeftOffsetSlider->setValue(settings->value("slotPatternLeftOffset", 0).toInt());
     ui->heavytruck_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 75).toInt());
-    ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 66).toInt());
+    ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 67).toInt());
     ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
     ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
     ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
