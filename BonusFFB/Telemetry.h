@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <wtypes.h>
 #include "scs-telemetry-common.hpp"
 
+#include "DeviceConfiguration.h"
+
 enum class TelemetrySource {
 	NONE, SCS
 };
@@ -38,7 +40,7 @@ public:
 	bool getParkingBrakeState();
 	float getTransmissionRPMForGear(int);
 	int getActiveGear();
-	int getGearForSlot(int);
+	int getGearForSlot(int, RangeSplitterValues*);
 	float getThrottlePercent();
 	void logTelemetry();
 

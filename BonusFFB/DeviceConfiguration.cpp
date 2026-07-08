@@ -580,6 +580,16 @@ QPair<int, int> DeviceConfiguration::getJoystickValues() {
     return QPair<int, int>(joystickLRValue, joystickFBValue);
 }
 
+JoystickValues DeviceConfiguration::getJoystickValues2() {
+    joystick->updateState();
+    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
+    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
+    emit joystickLRValueChanged(joystickLRValue);
+    emit joystickFBValueChanged(joystickFBValue);
+    emit joystickValueChanged(joystickLRValue, joystickFBValue);
+    return { joystickLRValue, joystickFBValue };
+}
+
 void DeviceConfiguration::updateThrottleAxisList(int deviceIndex) {
     QUuid deviceGuid = dialog.throttleDeviceComboBox->currentData().toUuid();
     auto selectedPedals = getDeviceFromGuid(deviceGuid);

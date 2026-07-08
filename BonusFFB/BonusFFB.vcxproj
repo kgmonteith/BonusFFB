@@ -130,6 +130,7 @@
     <ClCompile Include="prndl\Prndl.cpp" />
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
+    <ClCompile Include="RangeSplitterManager.cpp" />
     <ClCompile Include="SlotPattern.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
@@ -169,6 +170,7 @@
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
     <QtMoc Include="pphc\Pphc.h" />
     <QtMoc Include="PedalsManager.h" />
+    <QtMoc Include="RangeSplitterManager.h" />
     <ClInclude Include="SharedEnums.h" />
     <QtMoc Include="SlotPattern.h" />
     <ClInclude Include="version.h" />

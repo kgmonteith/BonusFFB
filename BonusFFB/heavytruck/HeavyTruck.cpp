@@ -33,10 +33,10 @@ void HeavyTruck::initialize() {
     ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
 
     // Set default slot pattern
-    setSlotPattern(ui->heavytruck_slotPatternComboBox->currentText());
+    slotPattern.setTruckPattern(0);
 
     // UI connections
-    connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentTextChanged, this, &HeavyTruck::setSlotPattern);
+    connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentIndexChanged, &slotPattern, &SlotPattern::setTruckPattern);
     connect(ui->heavytruck_slotPatternLeftOffsetSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setLeftOffset);
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
@@ -48,7 +48,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // Telemetry connections
     connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
-    connect(this, &HeavyTruck::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
+    connect(&stateManager, &HeavyTruckStateManager::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
     // Joystick connections
     connect(devices, &DeviceConfiguration::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
     connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
@@ -77,39 +77,6 @@ void HeavyTruck::initialize() {
     //connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_throttleOnShiftingCheckbox, &QCheckBox::toggled, &pedalsManager, &PedalsManager::toggleVirtualPedals);
-}
-
-void HeavyTruck::setSlotPattern(QString newPattern) {
-    slotPattern.setName(newPattern);
-    slotPattern.setSlotWalls(SLOT_WALL_LEFT);
-    if (newPattern == "Eaton-Fuller 18/13") {
-        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, -1});
-    }
-    else if (newPattern == "Eaton-Fuller 10") {
-        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, -1});
-        slotPattern.setSlotWalls(0);
-    }
-    else if (newPattern == "Scania 12") {
-        slotPattern.setPattern(QList<int>{1, 0, 0, 4, 5, -1});
-    }
-    else if (newPattern == "Scania 12+2") {
-        slotPattern.setPattern(QList<int>{1, 2, 0, 4, 5, -1});
-    }
-    else if (newPattern == "Volvo 12") {
-        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, 0});
-    }
-    else if (newPattern == "Volvo 12+2") {
-        slotPattern.setPattern(QList<int>{1, 2, 3, 4, 5, 0});
-    }
-    else if (newPattern == "ZF 12") {
-        slotPattern.setPattern(QList<int>{0, 2, 3, 0, 5, -1});
-    }
-    else if (newPattern == "ZF 16 (Modern)") {
-        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, -1});
-    }
-    else if (newPattern == "ZF 16 (Double-H)") {
-        slotPattern.setPattern(QList<int>{0, 2, 3, 4, 5, -1, 3, 4, 5, -1});
-    }
 }
 
 void HeavyTruck::slotParameterChanged(int t) {
@@ -282,10 +249,11 @@ void HeavyTruck::loadSettings(QSettings* settings) {
 
 HRESULT HeavyTruck::startMode() {
     // Initialize FFB
-    stateManager.start(telemetry, slot);
+    stateManager.start(devices, telemetry, slot);
     slotGuard.start(devices->joystick, slot);
     synchroGuard.start(devices->joystick, slot, telemetry);
     pedalsManager.start(devices);
+    rangeSplitterManager.start(devices);
 
     return S_OK;
 }
@@ -297,23 +265,10 @@ void HeavyTruck::gameLoop() {
     // Get new pedal values
     PedalValues pedalValues = devices->getPedalValues();
 
-    // Get new range and splitter values
-    RangeSplitterValues rangeSplitterValues = devices->getRangeSplitterValues();
-
-    // Get telemetry values
-    QPair<int, int> gearValues = { 0, 0 };
-    if (telemetry->isConnected() != TelemetrySource::NONE) {
-        gearValues = telemetry->getGearState();
-        float engineRPM = telemetry->getEngineRPM();
-        if (engineRPM != lastEngineRPM) {
-            emit engineRPMChanged(engineRPM);
-            lastEngineRPM = engineRPM;
-        }
-    }
-
     // Update state
     slotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updateTorqueLock(pedalValues, joystickValues);
-    stateManager.update(joystickValues, gearValues);
+    stateManager.update();
     pedalsManager.updateVirtualPedals();
+    rangeSplitterManager.updateVirtualRangeSplitter();
 }

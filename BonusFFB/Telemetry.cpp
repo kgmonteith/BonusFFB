@@ -136,16 +136,16 @@ float Telemetry::getThrottlePercent() {
 	return 0;
 }
 
-int Telemetry::getGearForSlot(int slotNumber) {
+int Telemetry::getGearForSlot(int slotNumber, RangeSplitterValues* rangeSplitter) {
 	if (!slotNumber)
 		return 0;
 	if (telemetrySource == TelemetrySource::SCS) {
 		unsigned int rangeMask = 0;
-		if (pTelemMap->truck_b.shifterToggle[0]) {
+		if (rangeSplitter->range) {
 			rangeMask = 0b01;
 		}
 		int splitterMask = 0;
-		if (pTelemMap->config_ui.selectorCount > 1 && pTelemMap->truck_b.shifterToggle[1]) {
+		if (pTelemMap->config_ui.selectorCount > 1 && rangeSplitter->splitter) {
 			splitterMask = 0b10;
 		}
 		int gearIndex = 0;
@@ -159,14 +159,17 @@ int Telemetry::getGearForSlot(int slotNumber) {
 			gearIndex = 0; //
 		int gear = pTelemMap->truck_i.hshifterResulting[gearIndex];
 		
+		/*
 		if(!gearLogTimer->isActive()) 
 		{
 			qDebug() << "\tgetGearForSlot(" << slotNumber << "):";
 			qDebug() << "\t\tgears: " << pTelemMap->config_ui.gears;
 			qDebug() << "\t\tgears_reverse: " << pTelemMap->config_ui.gears_reverse;
 			qDebug() << "\t\tselectorCount: " << pTelemMap->config_ui.selectorCount;
-			qDebug() << "\t\trange enabled: " << pTelemMap->truck_b.shifterToggle[0];
-			qDebug() << "\t\tsplit enabled: " << pTelemMap->truck_b.shifterToggle[1];
+			qDebug() << "\t\ttelemetry range enabled: " << pTelemMap->truck_b.shifterToggle[0];
+			qDebug() << "\t\thardware  range enabled: " << rangeSplitter->range;
+			qDebug() << "\t\ttelemetry split enabled: " << pTelemMap->truck_b.shifterToggle[1];
+			qDebug() << "\t\thardware  split enabled: " << rangeSplitter->splitter;
 			qDebug() << "\t\tgearIndex: " << gearIndex;
 			qDebug() << "\t\tresulting gear: " << pTelemMap->truck_i.hshifterResulting[gearIndex];
 			QString t_str = "";
@@ -182,7 +185,8 @@ int Telemetry::getGearForSlot(int slotNumber) {
 			qDebug() << "\t\tpTelemMap->truck_i.hshifterBitmask[]:   " << s_str;
 			gearLogTimer->start();
 		}
-		
+		*/
+
 		return gear;
 	}
 	return 0;
@@ -225,6 +229,7 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	// Engine RPM = Wheel RPM * transmission ratio (Hz) * 60 * differential ratio
 	float transmission_rpm = gearRatio * averageDrivenWheelAngularVelocity * 60 * pTelemMap->config_f.gearDifferential;
 
+	/*
 	if (!rpmLogTimer->isActive()) {
 		qDebug() << "\tgetTransmissionRPMForGear(" << gear << ")";
 		qDebug() << "\t\twheelOmegaSum: " << wheelOmegaSum;
@@ -243,6 +248,7 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 		qDebug() << "\t\tEngine RPM: " << pTelemMap->truck_f.engineRpm;
 		rpmLogTimer->start();
 	}
+	*/
 
 	return transmission_rpm;
 }

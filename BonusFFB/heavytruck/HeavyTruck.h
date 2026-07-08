@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckSlotGuard.h"
 #include "HeavyTruckSynchroGuard.h"
 #include "PedalsManager.h"
+#include "RangeSplitterManager.h"
 #include "SlotPattern.h"
 
 class HeavyTruck : public BonusFFBApp
@@ -34,7 +35,6 @@ public:
 	void gameLoop();
 
 public slots:
-	void setSlotPattern(QString);
 	void slotParameterChanged(int);
 
 	void redrawJoystickMap();
@@ -43,10 +43,6 @@ public slots:
 	void updateRpmDeltaText(float);
 	void updateRangeText(bool);
 	void updateSplitterText(bool);
-
-signals:
-	void slotPositionsChanged(int slotDepth, int rightSlot, int centerSlot);
-	void engineRPMChanged(float);
 
 private:
 	QGraphicsScene* scene = nullptr;
@@ -61,9 +57,6 @@ private:
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
 	PedalsManager pedalsManager;
-
-	QPair<int, int> lastPedalValues = { 0, 0 };
-	float lastSpeed = 0.0;
-	float lastEngineRPM = 0.0;
+	RangeSplitterManager rangeSplitterManager;
 };
 

@@ -32,6 +32,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #define DEVICES_NOT_CONFIGURED 1
 #define DEVICES_OK 2
 
+struct JoystickValues {
+	long lr;
+	long fb;
+};
+
 struct PedalValues {
 	long throttle;
 	long brake;
@@ -97,6 +102,7 @@ public:
 	void updateButtonComboBoxes(int, ButtonBinding);
 
 	QPair<int, int> getJoystickValues();
+	JoystickValues getJoystickValues2();
 	PedalValues getPedalValues();
 	RangeSplitterValues getRangeSplitterValues();
 

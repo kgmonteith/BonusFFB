@@ -14,7 +14,8 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include <QDebug>
 
-void HeavyTruckStateManager::start(Telemetry* t, SlotParameters * sPtr) {
+void HeavyTruckStateManager::start(DeviceConfiguration* d, Telemetry* t, SlotParameters * sPtr) {
+    devices = d;
     telemetry = t;
     slot = sPtr;
 }
@@ -23,13 +24,27 @@ void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void HeavyTruckStateManager::update(QPair<int, int> joystickValues, QPair<int, int> gearValues) {
-    long lrValue = joystickValues.first;
-    long fbValue = joystickValues.second;
-    updateSlotState(lrValue, fbValue);
-    updateButtonZoneState(lrValue, fbValue);
-    updateHeavyTruckSynchroState(lrValue, fbValue, gearValues);
-    updateHeavyTruckGrindingState(lrValue, fbValue);
+void HeavyTruckStateManager::update() {
+    joystick = devices->getJoystickValues2();
+
+    // Get new range and splitter values
+    rangeSplitter = devices->getRangeSplitterValues();
+
+    // Get telemetry values
+    QPair<int, int> gearValues = { 0, 0 };
+    if (telemetry->isConnected() != TelemetrySource::NONE) {
+        gearValues = telemetry->getGearState();
+        float engineRPM = telemetry->getEngineRPM();
+        if (engineRPM != lastEngineRPM) {
+            emit engineRPMChanged(engineRPM);
+            lastEngineRPM = engineRPM;
+        }
+    }
+
+    updateSlotState();
+    updateButtonZoneState();
+    updateHeavyTruckSynchroState(gearValues);
+    updateHeavyTruckGrindingState();
 }
 
 bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
@@ -38,33 +53,33 @@ bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
     return false;
 }
 
-void HeavyTruckStateManager::updateSlotState(long lrValue, long fbValue) {
+void HeavyTruckStateManager::updateSlotState() {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     //if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
-    int under_slot = slot->underSlot(lrValue);
-    if (fbValue >= JOY_MIDPOINT - slot->neutral_channel_half_width && fbValue <= JOY_MIDPOINT + slot->neutral_channel_half_width) {
+    int under_slot = slot->underSlot(joystick.lr);
+    if (joystick.fb >= JOY_MIDPOINT - slot->neutral_channel_half_width && joystick.fb <= JOY_MIDPOINT + slot->neutral_channel_half_width) {
         newState = HeavyTruckSlotState::NEUTRAL;
     }
     else if (under_slot == 0) {
         // In or under left channel
-        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
+        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_FWD;
-        else if(fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
+        else if(joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_LEFT_BACK;
     }
     else if (under_slot == 1)
     {
         // In or under center channel
-        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
+        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_MIDDLE_FWD;
-        else if (fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
+        else if (joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_MIDDLE_BACK;
     }
     else if (under_slot == 2) {
         // In neutral under right channel
-        if (fbValue <= JOY_MIDPOINT - slot->neutral_channel_half_width)
+        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_FWD;
-        else if (fbValue >= JOY_MIDPOINT + slot->neutral_channel_half_width)
+        else if (joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
             newState = HeavyTruckSlotState::SLOT_RIGHT_BACK;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
@@ -90,7 +105,7 @@ void HeavyTruckStateManager::updateTargetGear() {
         targetSlot = 4;
     else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
         targetSlot = 6;
-    targetGear = telemetry->getGearForSlot(targetSlot);
+    targetGear = telemetry->getGearForSlot(targetSlot, &rangeSplitter);
     
     float engineRPM = telemetry->getEngineRPM();
     float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
@@ -106,9 +121,9 @@ void HeavyTruckStateManager::updateTargetGear() {
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
 
-void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
+void HeavyTruckStateManager::updateButtonZoneState() {
     int newState = 0;
-    if (fbValue <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (fbValue <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && fbValue <= slot->grindPointDepthAsJoystickValueFwd())) {
+    if (joystick.fb <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (joystick.fb <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb <= slot->grindPointDepthAsJoystickValueFwd())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
@@ -116,7 +131,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (fbValue >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (fbValue >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && fbValue >= slot->grindPointDepthAsJoystickValueBack())) {
+    else if (joystick.fb >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (joystick.fb >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb >= slot->grindPointDepthAsJoystickValueBack())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
@@ -136,7 +151,7 @@ void HeavyTruckStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     }
 }
 
-void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbValue, QPair<int, int> gearValues) {
+void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearValues) {
     HeavyTruckSynchroState newState = HeavyTruckSynchroState::UNKNOWN;
     if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second == targetGear) {
         // Gears are synchronized from telemetry reading
@@ -147,7 +162,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
         */
         //qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
     }
-    else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && (fbValue <= finished_exiting_synch_depth || fbValue >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
+    else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && (joystick.fb <= finished_exiting_synch_depth || joystick.fb >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
         // Gears were synched, but now we are exiting sync on our way back to neutral
         newState = HeavyTruckSynchroState::EXITING_SYNCH;
     }
@@ -165,14 +180,14 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(long lrValue, long fbV
             qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
         }
         synchroState = newState;
-        emit synchroStateChanged(synchroState, fbValue);
+        emit synchroStateChanged(synchroState, joystick.fb);
     }
 }
 
-void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fbValue) {
+void HeavyTruckStateManager::updateHeavyTruckGrindingState() {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (fbValue <= slot->grindPointDepthAsJoystickValueFwd() || fbValue >= slot->grindPointDepthAsJoystickValueBack())) {
-        if (fbValue < JOY_MIDPOINT)
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (joystick.fb <= slot->grindPointDepthAsJoystickValueFwd() || joystick.fb >= slot->grindPointDepthAsJoystickValueBack())) {
+        if (joystick.fb < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else
             newGrindingState = HeavyTruckGrindingState::GRINDING_BACK;
@@ -180,6 +195,6 @@ void HeavyTruckStateManager::updateHeavyTruckGrindingState(long lrValue, long fb
     if (newGrindingState != grindingState)
     {
         grindingState = newGrindingState;
-        emit grindingStateChanged(grindingState, fbValue);
+        emit grindingStateChanged(grindingState, joystick.fb);
     }
 }

@@ -24,6 +24,19 @@ You should have received a copy of the GNU General Public License along with Bon
 #define SLOT_WALL_LEFT	0b01
 #define SLOT_WALL_RIGHT 0b10
 
+enum class TruckPattern {
+	EATON_18,
+	EATON_10,
+	SCANIA_12,
+	SCANIA_12_2,
+	VOLVO_12,
+	VOLVO_12_2,
+	ZF_12,
+	ZF_16,
+	ZF_16_DOUBLEH
+};
+
+
 class Slot {
 public:
 	bool isEnabled() {
@@ -44,11 +57,11 @@ public slots:
 	void setWidthScale(int);
 	void setDepthScale(int);
 	void setLeftOffset(int);
-	void setName(QString);
+	//void setName(QString);
+	void setTruckPattern(int index);
 
 public:
 	SlotPattern() {};
-	void setPattern(const QList<int>& slot_buttons);
 	void setSlotWalls(int wall_flags);
 	double getSlotPositionAbsolute(Slot);
 

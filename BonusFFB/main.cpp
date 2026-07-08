@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon("BonusFFB.ico"));
 
     // Enable debug logging to file
+    // TODO: Make this optionally enabled
+    /*
     QString logDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/logs/");
     QDir dir;
     if (!dir.exists(logDir)) {
@@ -46,6 +48,7 @@ int main(int argc, char *argv[])
     logFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
     qInstallMessageHandler(fileLogMessageHandler);
     qSetMessagePattern("%{time yyyy-MM-dd hh:mm:ss,zzz} [%{type}]: %{message}");
+    */
 
     BonusFFB window;
     window.show();

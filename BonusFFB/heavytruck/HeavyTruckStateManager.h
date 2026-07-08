@@ -12,7 +12,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 #include "Telemetry.h"
-#include "DeviceInfo.h"
+#include "DeviceConfiguration.h"
 #include "SharedEnums.h"
 
 enum class HeavyTruckSynchroState {
@@ -44,8 +44,8 @@ class HeavyTruckStateManager: public QObject
     Q_OBJECT;
 
 public:
-    void start(Telemetry*, SlotParameters*);
-    void update(QPair<int, int>, QPair<int, int>);
+    void start(DeviceConfiguration*, Telemetry*, SlotParameters*);
+    void update();
 
 public slots:
     void setTelemetryState(TelemetrySource);
@@ -58,16 +58,21 @@ signals:
     void targetGearChanged(int);
     void rpmDeltaChanged(float);
     void unblipThrottle();
+    void engineRPMChanged(float);
 
 private:
-    void updateSlotState(long, long);
-    void updateButtonZoneState(long, long);
-    void updateHeavyTruckSynchroState(long, long, QPair<int, int>);
-    void updateHeavyTruckGrindingState(long, long);
+    void updateSlotState();
+    void updateButtonZoneState();
+    void updateHeavyTruckSynchroState(QPair<int, int>);
+    void updateHeavyTruckGrindingState();
     void updateTargetGear();
     bool stateIsInGear(HeavyTruckSlotState);
 
+    DeviceConfiguration* devices = nullptr;
+
     Telemetry* telemetry = nullptr;
+    RangeSplitterValues rangeSplitter;
+    JoystickValues joystick;
 
     int buttonZoneState = 0;
     float rpmDelta = 0;

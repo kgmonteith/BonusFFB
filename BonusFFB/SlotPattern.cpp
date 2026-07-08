@@ -13,12 +13,46 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QDebug>
 #include "SlotPattern.h"
 
+/*
 void SlotPattern::setName(QString t_name) {
 	qDebug() << "Slot pattern name: " << t_name;
 	name = t_name;
 }
+*/
 
-void SlotPattern::setPattern(const QList<int>& slot_buttons) {
+void SlotPattern::setTruckPattern(int index) {
+	TruckPattern newPattern = static_cast<TruckPattern>(index);
+	setSlotWalls(SLOT_WALL_LEFT);
+	QList<int> slot_buttons;
+	if (newPattern == TruckPattern::EATON_18) {
+		slot_buttons = {1, 2, 3, 4, 5, -1};
+	}
+	else if (newPattern == TruckPattern::EATON_10) {
+		slot_buttons = {1, 2, 3, 4, 5, -1};
+		setSlotWalls(0);
+	}
+	else if (newPattern == TruckPattern::SCANIA_12) {
+		slot_buttons = { 1, 0, 0, 4, 5, -1 };
+	}
+	else if (newPattern == TruckPattern::SCANIA_12_2) {
+		slot_buttons = {1, 2, 0, 4, 5, -1};
+	}
+	else if (newPattern == TruckPattern::VOLVO_12) {
+		slot_buttons = {0, 2, 3, 4, 5, 0};
+	}
+	else if (newPattern == TruckPattern::VOLVO_12_2) {
+		slot_buttons = {1, 2, 3, 4, 5, 0};
+	}
+	else if (newPattern == TruckPattern::ZF_12) {
+		slot_buttons = { 0, 2, 3, 0, 5, -1};
+	}
+	else if (newPattern == TruckPattern::ZF_16) {
+		slot_buttons = { 0, 2, 3, 4, 5, -1};
+	}
+	else if (newPattern == TruckPattern::ZF_16_DOUBLEH) {
+		slot_buttons = { 0, 2, 3, 4, 5, -1, 3, 4, 5, -1};
+	}
+
 	slot_list.clear();
 	int full_slot_ct = slot_buttons.length() / 2;
 	bool orientation = SLOT_ORIENTATION_FORWARD;

@@ -477,7 +477,7 @@
                  <item>
                   <widget class="QComboBox" name="heavytruck_slotPatternComboBox">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -563,7 +563,7 @@
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternDepthScaleSlider">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="minimum">
                     <number>50</number>
@@ -588,7 +588,7 @@
                  <item>
                   <widget class="QSpinBox" name="heavytruck_slotPatternDepthScaleSpinbox">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="suffix">
                     <string>%</string>
@@ -622,7 +622,7 @@
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternWidthScaleSlider">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="minimum">
                     <number>50</number>
@@ -647,7 +647,7 @@
                  <item>
                   <widget class="QSpinBox" name="heavytruck_slotPatternWidthScaleSpinbox">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="suffix">
                     <string>%</string>
@@ -755,7 +755,7 @@
                  <item>
                   <widget class="QSlider" name="heavytruck_slotPatternLeftOffsetSlider">
                    <property name="enabled">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="maximum">
                     <number>100</number>
