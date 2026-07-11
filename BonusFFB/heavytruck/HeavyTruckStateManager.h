@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "Telemetry.h"
 #include "DeviceConfiguration.h"
 #include "SharedEnums.h"
+#include "SlotPattern.h"
 
 enum class HeavyTruckSynchroState {
     UNKNOWN,
@@ -31,12 +32,15 @@ enum class HeavyTruckGrindingState {
 enum class HeavyTruckSlotState {
     UNKNOWN,
     NEUTRAL,
+    SLOTTED
+    /*
     SLOT_LEFT_FWD,
     SLOT_LEFT_BACK,
     SLOT_MIDDLE_FWD,
     SLOT_MIDDLE_BACK,
     SLOT_RIGHT_FWD,
     SLOT_RIGHT_BACK
+    */
 };
 
 class HeavyTruckStateManager: public QObject
@@ -44,7 +48,7 @@ class HeavyTruckStateManager: public QObject
     Q_OBJECT;
 
 public:
-    void start(DeviceConfiguration*, Telemetry*, SlotParameters*);
+    void start(DeviceConfiguration*, Telemetry*, SlotPattern*);
     void update();
 
 public slots:
@@ -53,8 +57,8 @@ public slots:
 signals:
     void slotStateChanged(HeavyTruckSlotState);
     void buttonZoneChanged(int);
-    void synchroStateChanged(HeavyTruckSynchroState, int);
-    void grindingStateChanged(HeavyTruckGrindingState, int);
+    void synchroStateChanged(HeavyTruckSynchroState);
+    void grindingStateChanged(HeavyTruckGrindingState);
     void targetGearChanged(int);
     void rpmDeltaChanged(float);
     void unblipThrottle();
@@ -66,7 +70,7 @@ private:
     void updateHeavyTruckSynchroState(QPair<int, int>);
     void updateHeavyTruckGrindingState();
     void updateTargetGear();
-    bool stateIsInGear(HeavyTruckSlotState);
+    //bool stateIsInGear(HeavyTruckSlotState);
 
     DeviceConfiguration* devices = nullptr;
 
@@ -81,7 +85,9 @@ private:
     float lastEngineRPM = 0;
     bool rpmIncreasing = false;
 
-    SlotParameters* slot = nullptr;
+    //SlotParameters* slotParams = nullptr;
+    SlotPattern* slotPattern = nullptr;
+    const Slot* slot = nullptr;
 
     TelemetrySource telemetryState = TelemetrySource::NONE;
     HeavyTruckSlotState slotState = HeavyTruckSlotState::NEUTRAL;
@@ -105,8 +111,8 @@ private:
     
     ///*
 
-    int button_zone_half_width = 2000;
-    int button_zone_depth = 4000;
+    //int button_zone_half_width = 2000;
+    //int button_zone_depth = 4000;
     //int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
 
     int in_synch_depth = JOY_MIDPOINT * 0.20;

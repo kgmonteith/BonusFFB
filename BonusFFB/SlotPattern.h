@@ -18,11 +18,15 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 
+#include "DeviceConfiguration.h"
+
 #define SLOT_ORIENTATION_FORWARD true
 #define SLOT_ORIENTATION_BACK false
 
 #define SLOT_WALL_LEFT	0b01
 #define SLOT_WALL_RIGHT 0b10
+
+#define SLOT_NONE nullptr
 
 enum class TruckPattern {
 	EATON_18,
@@ -37,17 +41,28 @@ enum class TruckPattern {
 };
 
 
+
 class Slot {
 public:
-	bool isEnabled() {
+	bool isEnabled() const {
 		if (button != 0)
 			return true;
 		return false;
 	}
+	bool isOrientationFwd() const {
+		return orientation == SLOT_ORIENTATION_FORWARD;
+	}
+	bool isOrientationBack() const {
+		return orientation == SLOT_ORIENTATION_BACK;
+	}
 
 	int button = 0;
 	double position_pct_nominal = 0;
-	bool orientation = true;
+	bool orientation = SLOT_ORIENTATION_FORWARD;
+
+	bool operator==(const Slot& other) const {
+		return (this->position_pct_nominal == other.position_pct_nominal) && (this->orientation == other.orientation);
+	}
 };
 
 class SlotPattern : public QObject {
@@ -63,7 +78,20 @@ public slots:
 public:
 	SlotPattern() {};
 	void setSlotWalls(int wall_flags);
+	bool hasSlotWall(int wall_flag);
+	const Slot* getWallSlot(int wall_flag);
 	double getSlotPositionAbsolute(Slot);
+	double slotPositionAsJoystick(Slot);
+	double slotPositionAsFFBOffset(Slot);
+	double slotDepthAsJoystick(bool);
+	double slotDepthAsFFBOffset(bool);
+	bool isInNeutral(JoystickValues);
+	bool isInCorner(Slot, JoystickValues);
+	bool isInButtonZone(Slot, JoystickValues);
+	bool isInGrindZone(JoystickValues);
+	const Slot* getNearestSlot(JoystickValues, bool narrow_tolerance = false);
+	Slot getLeftmostSlot();
+	Slot getRightmostSlot();
 
 	void setScene(QGraphicsScene*);
 	void renderScene();
@@ -76,6 +104,13 @@ public:
 	double depth_scale = 0.75;
 	double left_offset = 0.0;
 	//double top_offset = 0;
+	double neutral_depth_scale = 0.05;
+	double button_zone_scale = 0.35;
+	double grind_zone_scale = 0.15;
+	double slot_tolerance_narrow_scale = 0.05;
+
+	double roundingFactorAsJoystick();
+	double rounding_factor = 0.1;
 
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem neutralChannelRect = QGraphicsRectItem();

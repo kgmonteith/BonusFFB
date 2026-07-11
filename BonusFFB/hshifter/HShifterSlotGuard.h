@@ -24,12 +24,12 @@ public:
 
 public slots:
 	void updateSlotGuardEffects(QPair<int, int>);
-	void updateSlotGuardState(SlotState);
+	void updateSlotGuardState(HShifterSlotState);
 	void setNeutralSpringStrength(int);
 
 private:
 	DeviceInfo* device = nullptr;
-	SlotState slot_state = SlotState::NEUTRAL_UNDER_SLOT;
+	HShifterSlotState slot_state = HShifterSlotState::NEUTRAL_UNDER_SLOT;
 	NEUTRAL_SHAPE neutralShape = NEUTRAL_SHAPE::SQUARE;
 
 	DIEFFECT slotSpringEff = {};

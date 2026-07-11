@@ -14,10 +14,11 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include <QDebug>
 
-void HeavyTruckStateManager::start(DeviceConfiguration* d, Telemetry* t, SlotParameters * sPtr) {
+void HeavyTruckStateManager::start(DeviceConfiguration* d, Telemetry* t, SlotPattern* spPtr) {
     devices = d;
     telemetry = t;
-    slot = sPtr;
+    //slotParams = sPtr;
+    slotPattern = spPtr;
 }
 
 void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
@@ -47,45 +48,31 @@ void HeavyTruckStateManager::update() {
     updateHeavyTruckGrindingState();
 }
 
+/*
 bool HeavyTruckStateManager::stateIsInGear(HeavyTruckSlotState state) {
     if (state == HeavyTruckSlotState::SLOT_LEFT_FWD || state == HeavyTruckSlotState::SLOT_LEFT_BACK || state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || state == HeavyTruckSlotState::SLOT_MIDDLE_BACK || state == HeavyTruckSlotState::SLOT_RIGHT_FWD || state == HeavyTruckSlotState::SLOT_RIGHT_BACK)
         return true;
     return false;
 }
+*/
 
 void HeavyTruckStateManager::updateSlotState() {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     //if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
-    int under_slot = slot->underSlot(joystick.lr);
-    if (joystick.fb >= JOY_MIDPOINT - slot->neutral_channel_half_width && joystick.fb <= JOY_MIDPOINT + slot->neutral_channel_half_width) {
+    //int under_slot = slot->underSlot(joystick.lr);
+    const Slot* newSlot = slotPattern->getNearestSlot(joystick);
+    bool in_neutral = slotPattern->isInNeutral(joystick);
+    //if (joystick.fb >= JOY_MIDPOINT - slotParams->neutral_channel_half_width && joystick.fb <= JOY_MIDPOINT + slotParams->neutral_channel_half_width) {
+    if (in_neutral) {
         newState = HeavyTruckSlotState::NEUTRAL;
-    }
-    else if (under_slot == 0) {
-        // In or under left channel
-        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_LEFT_FWD;
-        else if(joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_LEFT_BACK;
-    }
-    else if (under_slot == 1)
-    {
-        // In or under center channel
-        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_MIDDLE_FWD;
-        else if (joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_MIDDLE_BACK;
-    }
-    else if (under_slot == 2) {
-        // In neutral under right channel
-        if (joystick.fb <= JOY_MIDPOINT - slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_RIGHT_FWD;
-        else if (joystick.fb >= JOY_MIDPOINT + slot->neutral_channel_half_width)
-            newState = HeavyTruckSlotState::SLOT_RIGHT_BACK;
+    } else if (newSlot != nullptr) {
+        newState = HeavyTruckSlotState::SLOTTED;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
-    bool disallowShift = (newState != slotState && stateIsInGear(newState) && stateIsInGear(slotState));
+    bool disallowShift = (newState != slotState && newState == HeavyTruckSlotState::SLOTTED && slotState == HeavyTruckSlotState::SLOTTED && slot != newSlot);
     if (newState != HeavyTruckSlotState::UNKNOWN && newState != slotState && !disallowShift) {
         slotState = newState;
+        slot = newSlot;
         emit slotStateChanged(slotState);
     }
     updateTargetGear();
@@ -93,18 +80,8 @@ void HeavyTruckStateManager::updateSlotState() {
 
 void HeavyTruckStateManager::updateTargetGear() {
     int targetSlot = 0;
-    if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
-        targetSlot = 1;
-    else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
-        targetSlot = 3;
-    else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
-        targetSlot = 5;
-    else if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
-        targetSlot = 2;
-    else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
-        targetSlot = 4;
-    else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
-        targetSlot = 6;
+    if (slotState == HeavyTruckSlotState::SLOTTED && slot != nullptr)
+        targetSlot = slot->button;
     targetGear = telemetry->getGearForSlot(targetSlot, &rangeSplitter);
     
     float engineRPM = telemetry->getEngineRPM();
@@ -123,7 +100,8 @@ void HeavyTruckStateManager::updateTargetGear() {
 
 void HeavyTruckStateManager::updateButtonZoneState() {
     int newState = 0;
-    if (joystick.fb <= (slot->depthAsJoystickValueFwd() + (button_zone_depth * slot->depth)) || (joystick.fb <= slot->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb <= slot->grindPointDepthAsJoystickValueFwd())) {
+    /*
+    if (joystick.fb <= (slotParams->depthAsJoystickValueFwd() + (button_zone_depth * slotParams->depth)) || (joystick.fb <= slotParams->buttonZoneDepthAsJoystickValueFwd() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb <= slotParams->grindPointDepthAsJoystickValueFwd())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_FWD)
             newState = 1;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_FWD)
@@ -131,7 +109,7 @@ void HeavyTruckStateManager::updateButtonZoneState() {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
-    else if (joystick.fb >= slot->depthAsJoystickValueBack() - (button_zone_depth * slot->depth) || (joystick.fb >= slot->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb >= slot->grindPointDepthAsJoystickValueBack())) {
+    else if (joystick.fb >= slotParams->depthAsJoystickValueBack() - (button_zone_depth * slotParams->depth) || (joystick.fb >= slotParams->buttonZoneDepthAsJoystickValueBack() && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && joystick.fb >= slotParams->grindPointDepthAsJoystickValueBack())) {
         if (slotState == HeavyTruckSlotState::SLOT_LEFT_BACK)
             newState = 2;
         else if (slotState == HeavyTruckSlotState::SLOT_MIDDLE_BACK)
@@ -139,6 +117,12 @@ void HeavyTruckStateManager::updateButtonZoneState() {
         else if (slotState == HeavyTruckSlotState::SLOT_RIGHT_BACK)
             newState = 6;
     }
+    */
+    if (slot != nullptr) {
+        if ((slotPattern->isInButtonZone(*slot, joystick) && telemetryState != TelemetrySource::NONE) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && slotPattern->isInGrindZone(joystick))) {
+            newState = slot->button;
+        }
+    } 
     // Blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
     if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH) {
         //qDebug() << "Triggering throttle blip";
@@ -172,6 +156,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
     }
     if(synchroState != newState) 
     {
+        qDebug() << "new synchro state";
         if (newState == HeavyTruckSynchroState::IN_SYNCH)
             qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
         else if (newState == HeavyTruckSynchroState::EXITING_SYNCH)
@@ -180,13 +165,14 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
             qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
         }
         synchroState = newState;
-        emit synchroStateChanged(synchroState, joystick.fb);
+        emit synchroStateChanged(synchroState);
     }
 }
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState() {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (joystick.fb <= slot->grindPointDepthAsJoystickValueFwd() || joystick.fb >= slot->grindPointDepthAsJoystickValueBack())) {
+    //if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (joystick.fb <= slotParams->grindPointDepthAsJoystickValueFwd() || joystick.fb >= slotParams->grindPointDepthAsJoystickValueBack())) {
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState == HeavyTruckSlotState::SLOTTED && slotPattern->isInGrindZone(joystick)) {
         if (joystick.fb < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else
@@ -195,6 +181,6 @@ void HeavyTruckStateManager::updateHeavyTruckGrindingState() {
     if (newGrindingState != grindingState)
     {
         grindingState = newGrindingState;
-        emit grindingStateChanged(grindingState, joystick.fb);
+        emit grindingStateChanged(grindingState);
     }
 }

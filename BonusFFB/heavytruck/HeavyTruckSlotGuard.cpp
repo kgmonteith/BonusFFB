@@ -14,9 +14,9 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
-    device = devPtr;
-    slot = sPtr;
+HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr) {
+    devices = devPtr;
+    slotPattern = spPtr;
 
     slotSpringEff.dwSize = sizeof(DIEFFECT);
     slotSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -34,7 +34,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     slotSpringConditions[1] = noSpring;
     slotSpringEff.lpvTypeSpecificParams = &slotSpringConditions;
     slotSpringEff.dwStartDelay = 0;
-    device->addEffect("slotSpring", { GUID_Spring, &slotSpringEff });
+    devices->joystick->addEffect("slotSpring", { GUID_Spring, &slotSpringEff });
     
     clickPushBackEff.dwSize = sizeof(clickPushBackEff);
     clickPushBackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -49,7 +49,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     clickPushBackEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
     clickPushBackEff.lpvTypeSpecificParams = &clickPushBack;
     clickPushBackEff.dwStartDelay = 0;
-    device->addEffect("clickPushBack", { GUID_RampForce, &clickPushBackEff, false });
+    devices->joystick->addEffect("clickPushBack", { GUID_RampForce, &clickPushBackEff, false });
 
     clickPushForwardEff.dwSize = sizeof(clickPushForwardEff);
     clickPushForwardEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -64,7 +64,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceInfo* devPtr, SlotParameters* sPtr) {
     clickPushForwardEff.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
     clickPushForwardEff.lpvTypeSpecificParams = &clickPushForward;
     clickPushForwardEff.dwStartDelay = 0;
-    device->addEffect("clickPushForward", { GUID_RampForce, &clickPushForwardEff, false });
+    devices->joystick->addEffect("clickPushForward", { GUID_RampForce, &clickPushForwardEff, false });
 
     return DI_OK;
 }
@@ -73,32 +73,23 @@ void HeavyTruckSlotGuard::updateSlotGuardState(HeavyTruckSlotState state) {
     slot_state = state;
 }
 
-int HeavyTruckSlotGuard::isInCorner(int slot_num, QPair<int, int> joystickValues) {
-    if ((joystickValues.first > slot->asJoystickValue(slot_num) - slot->rounding_factor && joystickValues.first < slot->asJoystickValue(slot_num) + slot->rounding_factor) && (joystickValues.second > JOY_MIDPOINT - slot->rounding_factor && joystickValues.second < JOY_MIDPOINT + slot->rounding_factor)) {
-        if (slot_num == 1 && joystickValues.first < slot->asJoystickValue(slot_num))
-            return CORNER_SQUARE;
-        return CORNER_ROUNDED;
-    }
-    return NOT_IN_CORNER;
-}
-
-QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(int slot_num, QPair<int, int> joystickValues) {
+QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(double slot_pos_x) {
     // Calculate the origin point for the corner calculations
-    double x0 = slot->asJoystickValue(slot_num), y0 = JOY_MIDPOINT;
-    if (joystickValues.first < x0) {
-        x0 -= slot->rounding_factor;
+    double x0 = slot_pos_x, y0 = JOY_MIDPOINT;
+    if (joyValues.lr < x0) {
+        x0 -= slotPattern->roundingFactorAsJoystick();
     }
     else {
-        x0 += slot->rounding_factor;
+        x0 += slotPattern->roundingFactorAsJoystick();
     }
-    if (joystickValues.second < y0) {
-        y0 -= slot->rounding_factor;
+    if (joyValues.fb < y0) {
+        y0 -= slotPattern->roundingFactorAsJoystick();
     }
     else {
-        y0 += slot->rounding_factor;
+        y0 += slotPattern->roundingFactorAsJoystick();
     }
 
-    double x = joystickValues.first, y = joystickValues.second;
+    double x = joyValues.lr, y = joyValues.fb;
     // 1. Shift origin
     double dx = x - x0;
     double dy = y - y0;
@@ -110,87 +101,120 @@ QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(int slot_num, QPair<int
     double cosA = std::abs(std::cos(angle));
 
     // Calculate linear scaling
-    float scaleX = scaleRangeValue(x, slot->asJoystickValue(slot_num), x0);
+    float scaleX = scaleRangeValue(x, slot_pos_x, x0);
     float scaleY = scaleRangeValue(y, JOY_MIDPOINT, y0);
 
     long xStrength = FFB_MAX * sinA * scaleX;
     long yStrength = FFB_MAX * cosA * scaleY;
 
-    //qDebug() << "joystickValues: " << joystickValues.first << joystickValues.second << ", scaleX: " << scaleX << ", scaleY: " << scaleY;
+    //qDebug() << "joystickValues: " << joyValues.lr << joyValues.fb << ", scaleX: " << scaleX << ", scaleY: " << scaleY;
     return QPair<long, long>(yStrength, xStrength);
 }
 
-void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
-    //slot->getNearestSlot(joystickValues.first);
-    int nearest_slot = slot->getNearestSlot(joystickValues.first);
-    if (last_nearest_slot != nearest_slot && slot_state != HeavyTruckSlotState::NEUTRAL) {
+void HeavyTruckSlotGuard::updateSlotGuardEffects() {
+    joyValues = devices->getJoystickValues2();
+    bool in_neutral = slotPattern->isInNeutral(joyValues);
+    const Slot* slot = slotPattern->getNearestSlot(joyValues);
+
+    if (in_neutral)
+        passed_through_neutral = true;
+    if (last_slot != slot && (!passed_through_neutral)) {
         // Refusing to update slot effects without passing through neutral
         return;
     }
-    last_nearest_slot = nearest_slot;
-    int is_in_corner = isInCorner(nearest_slot, joystickValues);
-    if (is_in_corner) {
-        QPair<float, float> corner_strength = getCornerStrength(nearest_slot, joystickValues);
+    else if (passed_through_neutral && slot != SLOT_NONE)
+        passed_through_neutral = false;
+    last_slot = slot;
+
+    if (slot != SLOT_NONE && slotPattern->isInCorner(*slot, joyValues)) {
+        QPair<float, float> corner_strength = getCornerStrength(slotPattern->slotPositionAsJoystick(*slot));
         slotSpringConditions[0].lPositiveCoefficient = corner_strength.first;
         slotSpringConditions[0].lNegativeCoefficient = corner_strength.first;
-        slotSpringConditions[0].lOffset = slot->asFFBOffset(nearest_slot) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(nearest_slot)) * -1.3);
+        //slotSpringConditions[0].lOffset = slotParams->asFFBOffset(nearest_slot) + ((joystickPositionToFFBOffset(joyValues.lr) - slotParams->asFFBOffset(nearest_slot)) * -1.3);
+        double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*slot);
+        slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
         slotSpringConditions[1].lPositiveCoefficient = corner_strength.second;
         slotSpringConditions[1].lNegativeCoefficient = corner_strength.second;
-        slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joystickValues.second) * -1.3;
+        slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
     }
     else if (slot_state != HeavyTruckSlotState::UNKNOWN && slot_state != HeavyTruckSlotState::NEUTRAL) {
+    //else if (!in_neutral && slot != SLOT_NONE) {
         // Keep stick centered L/R
         slotSpringConditions[0] = keepLRCentered;
-        slotSpringConditions[0].lOffset = slot->asFFBOffset(nearest_slot) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(nearest_slot)) * -1.3);
+        //slotSpringConditions[0].lOffset = slotParams->asFFBOffset(nearest_slot); // +((joystickPositionToFFBOffset(joyValues.lr) - slotParams->asFFBOffset(nearest_slot)) * -1.3);
+        double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*slot);
+        slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
         slotSpringConditions[1] = noSpring;
     }
     else if (slot_state == HeavyTruckSlotState::NEUTRAL)
+    //else if(in_neutral)
     {
         // Keep stick centered F/B
         slotSpringConditions[0] = noSpring;
         slotSpringConditions[1] = keepFBCentered;
-        slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joystickValues.second) * -1.3;
-    }
-    else {
-        qDebug() << "Slot state is unknown!";
+        slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
     }
 
     // Set the wall effect strength
-    if (joystickValues.first < slot->asJoystickValue(1) && joystickValues.first >= 5000 && (nearest_slot == 1 || slot_state == HeavyTruckSlotState::NEUTRAL)) {
+    /*
+    if (slotPattern->hasSlotWall(SLOT_WALL_LEFT)) {
+        const Slot* left_wall_slot = slotPattern->getWallSlot(SLOT_WALL_LEFT);
+        Slot leftmost_slot = slotPattern->getLeftmostSlot();
+        if (joyValues.lr < slotPattern->slotPositionAsJoystick(*left_wall_slot) && joyValues.lr >= slotPattern->slotPositionAsJoystick(leftmost_slot) + 5000 && (in_neutral || (slot != nullptr && slot->position_pct_nominal == left_wall_slot->position_pct_nominal))) {
+            double left_wall_slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*left_wall_slot);
+            slotSpringConditions[0] = keepLRCentered;
+            slotSpringConditions[0].lOffset = left_wall_slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - left_wall_slot_pos_ffb) * -1.3);
+            if (in_neutral && slot != SLOT_NONE)
+                slotSpringConditions[1] = noSpring;
+            if (in_neutral) {
+                // Downscale wall effect when approaching the left slot
+                double scalingDistance = 15000;
+                double leftmost_slot_pos = slotPattern->slotPositionAsJoystick(leftmost_slot);
+                slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, leftmost_slot_pos + 5000, leftmost_slot_pos + scalingDistance);
+                slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joyValues.lr, leftmost_slot_pos + 5000, leftmost_slot_pos + scalingDistance);
+                //qDebug() << "slotSpringConditions[0].lNegativeCoefficient" << slotSpringConditions[0].lNegativeCoefficient;
+            }
+        }
+    }*/
+
+    // Prevent the stick from being pushed too far left at any point
+    if (joyValues.lr < slotPattern->slotPositionAsJoystick(slotPattern->getLeftmostSlot())) {
         slotSpringConditions[0] = keepLRCentered;
-        slotSpringConditions[0].lOffset = slot->asFFBOffset(1) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(1)) * -1.3);
-        slotSpringConditions[1] = noSpring;
-        if (slot_state == HeavyTruckSlotState::NEUTRAL) {
-            // Downscale wall effect when approaching the left slot
-            double scalingDistance = 15000;
-            slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joystickValues.first, 5000, scalingDistance);
-            slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joystickValues.first, 5000, scalingDistance);
-            //qDebug() << "slotSpringConditions[0].lPositiveCoefficient" << slotSpringConditions[0].lPositiveCoefficient;
+        double leftmost_pos_ffb = slotPattern->slotPositionAsFFBOffset(slotPattern->getLeftmostSlot());
+        slotSpringConditions[0].lOffset = leftmost_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - leftmost_pos_ffb) * -1.3);
+        if (slot != SLOT_NONE)
+        {
+            slotSpringConditions[1] = noSpring;
         }
     }
-
     // Prevent the stick from being pushed too far right at any point
-    if (joystickValues.first > slot->asJoystickValue(2)) {
+    if(joyValues.lr > slotPattern->slotPositionAsJoystick(slotPattern->getRightmostSlot())) {
         slotSpringConditions[0] = keepLRCentered;
-        slotSpringConditions[0].lOffset = slot->asFFBOffset(2) + ((joystickPositionToFFBOffset(joystickValues.first) - slot->asFFBOffset(2)) * -1.3);
-        slotSpringConditions[1] = noSpring;
+        double rightmost_pos_ffb = slotPattern->slotPositionAsFFBOffset(slotPattern->getRightmostSlot());
+        slotSpringConditions[0].lOffset = rightmost_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - rightmost_pos_ffb) * -1.3);
+        if (slot != SLOT_NONE)
+        {
+            slotSpringConditions[1] = noSpring;
+        }
     }
     // Prevent the stick from being pushed too far forward or back when the slot depth is less than 100%
-    if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_FWD || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_FWD || slot_state == HeavyTruckSlotState::SLOT_RIGHT_FWD) && joystickValues.second <= JOY_MIDPOINT - slot->depthAsJoystick()) {
+    if (slot != SLOT_NONE && slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(slot->orientation)) {
         slotSpringConditions[1] = keepFBCentered;
-        int offset = slot->depthAsFFBOffsetFwd() + (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetFwd()) * 2.5);
+        double depth_pos_ffb = slotPattern->slotDepthAsFFBOffset(slot->orientation);
+        int offset = depth_pos_ffb + (std::abs(joystickPositionToFFBOffset(joyValues.fb) - depth_pos_ffb) * 2.5);
         slotSpringConditions[1].lOffset = offset;
     }
-    else if ((slot_state == HeavyTruckSlotState::SLOT_LEFT_BACK || slot_state == HeavyTruckSlotState::SLOT_MIDDLE_BACK || slot_state == HeavyTruckSlotState::SLOT_RIGHT_BACK) && joystickValues.second >= JOY_MIDPOINT + slot->depthAsJoystick()) {
+    else if (slot != SLOT_NONE && slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(slot->orientation)) {
         slotSpringConditions[1] = keepFBCentered;
-        int offset = slot->depthAsFFBOffsetBack() - (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slot->depthAsFFBOffsetBack()) * 2.5);
+        double depth_pos_ffb = slotPattern->slotDepthAsFFBOffset(slot->orientation);
+        int offset = depth_pos_ffb - (std::abs(joystickPositionToFFBOffset(joyValues.fb) - depth_pos_ffb) * 2.5);
         slotSpringConditions[1].lOffset = offset;
     }
-    device->updateEffect("slotSpring");
+    devices->joystick->updateEffect("slotSpring");
 
     // Set the gate latch friction
     /*
-    bool inLatchGateZone = (joystickValues.second <= slot->grindPointDepthAsJoystickValueFwd() && joystickValues.second >= slot->grindPointDepthAsJoystickValueFwd() - latchDepth) || (joystickValues.second >= slot->grindPointDepthAsJoystickValueBack() && joystickValues.second <= slot->grindPointDepthAsJoystickValueBack() + latchDepth);
+    bool inLatchGateZone = (joyValues.fb <= slot->grindPointDepthAsJoystickValueFwd() && joyValues.fb >= slot->grindPointDepthAsJoystickValueFwd() - latchDepth) || (joyValues.fb >= slot->grindPointDepthAsJoystickValueBack() && joyValues.fb <= slot->grindPointDepthAsJoystickValueBack() + latchDepth);
     if (inLatchGateZone && frictionCondition[0].lPositiveCoefficient != gateLatchFrictionStrength)
     {
         frictionCondition[0] = { 0, gateLatchFrictionStrength, gateLatchFrictionStrength };
@@ -207,20 +231,21 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues)
     */
 
     // Play the end-of-slot click effect
-    if (!clickPlayed && (joystickValues.second <= slot->depthAsJoystickValueFwd() + 1000 || joystickValues.second >= slot->depthAsJoystickValueBack() - 1000)) {
-        if (joystickValues.second < JOY_MIDPOINT) {
-            HRESULT hr = device->playEffect("clickPushBack");
+    if (!clickPlayed && slot != SLOT_NONE) {
+        if (slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(slot->orientation) + 1000) {
+            HRESULT hr = devices->joystick->playEffect("clickPushBack");
             if (!SUCCEEDED(hr)) {
                 qDebug() << "device->playEffect(\"clickPushBack\") failed";
             }
+            clickPlayed = true;
         }
-        else {
-            device->playEffect("clickPushForward");
+        else if (slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(slot->orientation) - 1000){
+            devices->joystick->playEffect("clickPushForward");
+            clickPlayed = true;
         }
-        clickPlayed = true;
         //qDebug() << "Playing click";
     }
-    else if (clickPlayed && joystickValues.second >= slot->grindPointDepthAsJoystickValueFwd() && joystickValues.second <= slot->grindPointDepthAsJoystickValueBack()) {
+    else if (clickPlayed && in_neutral) {
         clickPlayed = false;
         //qDebug() << "Resetting click";
     }

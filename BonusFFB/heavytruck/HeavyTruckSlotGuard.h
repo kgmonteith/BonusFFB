@@ -24,20 +24,23 @@ class HeavyTruckSlotGuard: public QObject {
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*, SlotParameters*);
+	HRESULT start(DeviceConfiguration*, SlotPattern*);
 
 public slots:
-	void updateSlotGuardEffects(QPair<int, int>);
+	void updateSlotGuardEffects();
 	void updateSlotGuardState(HeavyTruckSlotState);
 
 private:
-	int isInCorner(int slot_num, QPair<int, int> joystickValues);
-	QPair<long, long> getCornerStrength(int slot_num, QPair<int, int> joystickValues);
+	QPair<long, long> getCornerStrength(double);
 	int last_nearest_slot = 1;
+	const Slot* last_slot;
+	bool passed_through_neutral = true;
 
-	DeviceInfo* device = nullptr;
-	SlotParameters* slot = nullptr;
+	DeviceConfiguration* devices = nullptr;
+	SlotPattern* slotPattern = nullptr;
 	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL;
+
+	JoystickValues joyValues;
 
 	DIEFFECT slotSpringEff = {};
 

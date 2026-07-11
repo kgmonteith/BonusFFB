@@ -587,7 +587,9 @@ JoystickValues DeviceConfiguration::getJoystickValues2() {
     emit joystickLRValueChanged(joystickLRValue);
     emit joystickFBValueChanged(joystickFBValue);
     emit joystickValueChanged(joystickLRValue, joystickFBValue);
-    return { joystickLRValue, joystickFBValue };
+    double lr_pct = (double)joystickLRValue / JOY_MAXPOINT;
+    double fb_pct = (double)joystickFBValue / JOY_MAXPOINT;
+    return { joystickLRValue, joystickFBValue, lr_pct, fb_pct };
 }
 
 void DeviceConfiguration::updateThrottleAxisList(int deviceIndex) {

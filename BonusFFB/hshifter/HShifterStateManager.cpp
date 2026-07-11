@@ -28,39 +28,39 @@ void HShifterStateManager::update(QPair<int, int> joystickValues, PedalValues pe
 }
 
 void HShifterStateManager::updateSlotState(long lrValue, long fbValue) {
-    SlotState newState = SlotState::UNKNOWN;
+    HShifterSlotState newState = HShifterSlotState::UNKNOWN;
     bool inNeutral = fbValue <= JOY_MIDPOINT + neutral_channel_half_width && fbValue >= JOY_MIDPOINT - neutral_channel_half_width;
     if (lrValue <= JOY_MINPOINT + side_slot_width) {
         // In or under left channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
-            newState = SlotState::SLOT_LEFT_FWD;
+            newState = HShifterSlotState::SLOT_LEFT_FWD;
         else if(fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
-            newState = SlotState::SLOT_LEFT_BACK;
+            newState = HShifterSlotState::SLOT_LEFT_BACK;
         else
-            newState = SlotState::NEUTRAL_UNDER_SLOT;
+            newState = HShifterSlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= JOY_MIDPOINT - middle_slot_half_width && lrValue <= JOY_MIDPOINT + middle_slot_half_width)
     {
         // In or under center channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
-            newState = SlotState::SLOT_MIDDLE_FWD;
+            newState = HShifterSlotState::SLOT_MIDDLE_FWD;
         else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
-            newState = SlotState::SLOT_MIDDLE_BACK;
+            newState = HShifterSlotState::SLOT_MIDDLE_BACK;
         else
-            newState = SlotState::NEUTRAL_UNDER_SLOT;
+            newState = HShifterSlotState::NEUTRAL_UNDER_SLOT;
     }
     else if (lrValue >= JOY_MAXPOINT - side_slot_width) {
         // In neutral under right channel
         if (fbValue <= JOY_MIDPOINT - neutral_channel_half_width)
-            newState = SlotState::SLOT_RIGHT_FWD;
+            newState = HShifterSlotState::SLOT_RIGHT_FWD;
         else if (fbValue >= JOY_MIDPOINT + neutral_channel_half_width)
-            newState = SlotState::SLOT_RIGHT_BACK;
+            newState = HShifterSlotState::SLOT_RIGHT_BACK;
         else
-            newState = SlotState::NEUTRAL_UNDER_SLOT;
+            newState = HShifterSlotState::NEUTRAL_UNDER_SLOT;
     } else if (inNeutral) {
-        newState = SlotState::NEUTRAL;
+        newState = HShifterSlotState::NEUTRAL;
     }
-    if (newState != SlotState::UNKNOWN) {
+    if (newState != HShifterSlotState::UNKNOWN) {
         slotState = newState;
         emit slotStateChanged(slotState);
     }
@@ -69,19 +69,19 @@ void HShifterStateManager::updateSlotState(long lrValue, long fbValue) {
 void HShifterStateManager::updateButtonZoneState(long lrValue, long fbValue) {
     int newState = 0;
     if (fbValue <= button_zone_depth || (fbValue <= button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
-        if (slotState == SlotState::SLOT_LEFT_FWD)
+        if (slotState == HShifterSlotState::SLOT_LEFT_FWD)
             newState = 1;
-        else if (slotState == SlotState::SLOT_MIDDLE_FWD)
+        else if (slotState == HShifterSlotState::SLOT_MIDDLE_FWD)
             newState = 3;
-        else if (slotState == SlotState::SLOT_RIGHT_FWD)
+        else if (slotState == HShifterSlotState::SLOT_RIGHT_FWD)
             newState = 5;
     }
     else if (fbValue >= JOY_MAXPOINT - button_zone_depth || (fbValue >= JOY_MAXPOINT - button_zone_depth_telemetry && telemetryState != TelemetrySource::NONE)) {
-        if (slotState == SlotState::SLOT_LEFT_BACK)
+        if (slotState == HShifterSlotState::SLOT_LEFT_BACK)
             newState = 2;
-        else if (slotState == SlotState::SLOT_MIDDLE_BACK)
+        else if (slotState == HShifterSlotState::SLOT_MIDDLE_BACK)
             newState = 4;
-        else if (slotState == SlotState::SLOT_RIGHT_BACK)
+        else if (slotState == HShifterSlotState::SLOT_RIGHT_BACK)
             newState = 6;
     }
     if (buttonZoneState != newState) {

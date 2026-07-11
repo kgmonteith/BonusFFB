@@ -29,7 +29,7 @@ enum class GrindingState {
     GRINDING_BACK
 };
 
-enum class SlotState {
+enum class HShifterSlotState {
     UNKNOWN,
     NEUTRAL,
     NEUTRAL_UNDER_SLOT,
@@ -52,7 +52,7 @@ public slots:
     void setTelemetryState(TelemetrySource);
 
 signals:
-    void slotStateChanged(SlotState);
+    void slotStateChanged(HShifterSlotState);
     void buttonZoneChanged(int);
     void synchroStateChanged(SynchroState, int);
     void grindingStateChanged(GrindingState, int);
@@ -65,7 +65,7 @@ private:
 
     int buttonZoneState = 0;
     TelemetrySource telemetryState = TelemetrySource::NONE;
-    SlotState slotState = SlotState::NEUTRAL;
+    HShifterSlotState slotState = HShifterSlotState::NEUTRAL;
     SynchroState synchroState = SynchroState::UNKNOWN;
     GrindingState grindingState = GrindingState::OFF;
 

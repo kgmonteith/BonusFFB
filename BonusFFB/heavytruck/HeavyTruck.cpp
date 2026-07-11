@@ -50,7 +50,6 @@ void HeavyTruck::initialize() {
     connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
     connect(&stateManager, &HeavyTruckStateManager::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
     // Joystick connections
-    connect(devices, &DeviceConfiguration::joystickFBValueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setJoystickFBValue);
     connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);
     // Pedal connections
     connect(devices, &DeviceConfiguration::clutchValueChanged, ui->heavytruck_clutchProgressBar, &QProgressBar::setValue);
@@ -249,9 +248,9 @@ void HeavyTruck::loadSettings(QSettings* settings) {
 
 HRESULT HeavyTruck::startMode() {
     // Initialize FFB
-    stateManager.start(devices, telemetry, slot);
-    slotGuard.start(devices->joystick, slot);
-    synchroGuard.start(devices->joystick, slot, telemetry);
+    stateManager.start(devices, telemetry, &slotPattern);
+    slotGuard.start(devices, &slotPattern);
+    synchroGuard.start(devices, slot, &slotPattern, telemetry);
     pedalsManager.start(devices);
     rangeSplitterManager.start(devices);
 
@@ -259,16 +258,10 @@ HRESULT HeavyTruck::startMode() {
 }
 
 void HeavyTruck::gameLoop() {
-    // Get new joystick values
-    QPair<int, int> joystickValues = devices->getJoystickValues();
-
-    // Get new pedal values
-    PedalValues pedalValues = devices->getPedalValues();
-
     // Update state
-    slotGuard.updateSlotGuardEffects(joystickValues);
-    synchroGuard.updateTorqueLock(pedalValues, joystickValues);
     stateManager.update();
+    slotGuard.updateSlotGuardEffects();
+    synchroGuard.updateTorqueLock();
     pedalsManager.updateVirtualPedals();
     rangeSplitterManager.updateVirtualRangeSplitter();
 }

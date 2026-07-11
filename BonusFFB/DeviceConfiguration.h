@@ -35,6 +35,8 @@ You should have received a copy of the GNU General Public License along with Bon
 struct JoystickValues {
 	long lr;
 	long fb;
+	double lr_pct;
+	double fb_pct;
 };
 
 struct PedalValues {

@@ -404,26 +404,26 @@ void HShifterSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
 }
 */
 
-void HShifterSlotGuard::updateSlotGuardState(SlotState state) {
+void HShifterSlotGuard::updateSlotGuardState(HShifterSlotState state) {
     slot_state = state;
 }
 
 
 void HShifterSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
-    if (slot_state == SlotState::NEUTRAL_UNDER_SLOT) {
+    if (slot_state == HShifterSlotState::NEUTRAL_UNDER_SLOT) {
         // Disable the effect to prevent thrashing
         // We can scale the condition coefficients near the junctions instead, but good enough for now
         springConditions[0] = noSpring;
         springConditions[1] = noSpring;
         springConditions[1].lDeadBand = 500;
-    } else if (slot_state == SlotState::NEUTRAL) {
+    } else if (slot_state == HShifterSlotState::NEUTRAL) {
         springConditions[0] = noSpring;
         springConditions[1] = keepFBCentered;
         // Move the offset to increase force instead of adding a scaled constant force, which causes thrashing
         int offset = ((double(joystickValues.second) / 3.2767) - 10000) * -1.3;
         springConditions[1].lOffset = offset;
         springConditions[1].lDeadBand = 500;
-    } else if (slot_state == SlotState::SLOT_LEFT_FWD || slot_state == SlotState::SLOT_LEFT_BACK) {
+    } else if (slot_state == HShifterSlotState::SLOT_LEFT_FWD || slot_state == HShifterSlotState::SLOT_LEFT_BACK) {
         springConditions[0] = keepLeft;
         // Think of a smarter way to implement this, but scaling the spring seems like a decent way to implement slot angling/rounding
         /*
@@ -436,10 +436,10 @@ void HShifterSlotGuard::updateSlotGuardEffects(QPair<int, int> joystickValues) {
             springConditions[0].lNegativeCoefficient = scaledStrength;
         }*/
         springConditions[1] = noSpring;
-    } else if (slot_state == SlotState::SLOT_MIDDLE_FWD || slot_state == SlotState::SLOT_MIDDLE_BACK) {
+    } else if (slot_state == HShifterSlotState::SLOT_MIDDLE_FWD || slot_state == HShifterSlotState::SLOT_MIDDLE_BACK) {
         springConditions[0] = keepLRCentered;
         springConditions[1] = noSpring;
-    } else if (slot_state == SlotState::SLOT_RIGHT_FWD || slot_state == SlotState::SLOT_RIGHT_BACK) {
+    } else if (slot_state == HShifterSlotState::SLOT_RIGHT_FWD || slot_state == HShifterSlotState::SLOT_RIGHT_BACK) {
         springConditions[0] = keepRight;
         springConditions[1] = noSpring;
     }
