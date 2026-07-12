@@ -24,6 +24,7 @@ void SlotPattern::setTruckPattern(int index) {
 	truckPattern = static_cast<TruckPattern>(index);
 	setSlotWalls(SLOT_WALL_LEFT);
 	QList<int> slot_buttons;
+	bool range_override = false;
 	if (truckPattern == TruckPattern::EATON_18) {
 		slot_buttons = {1, 2, 3, 4, 5, 6};
 	}
@@ -51,6 +52,7 @@ void SlotPattern::setTruckPattern(int index) {
 	}
 	else if (truckPattern == TruckPattern::ZF_16_DOUBLEH) {
 		slot_buttons = { 0, 2, 3, 4, 5, 6, 3, 4, 5, 6};
+		range_override = true;
 	}
 
 	slot_list.clear();
@@ -61,6 +63,7 @@ void SlotPattern::setTruckPattern(int index) {
 		slot_list.append({slot_buttons[i], position_pct, orientation});
 		orientation = !orientation;
 	}
+	emit setRangeOverride(range_override);
 	renderScene();
 }
 
@@ -215,7 +218,6 @@ const Slot* SlotPattern::getNearestSlot(JoystickValues joyValues) {
 	return closest_slot;
 }
 
-// TODO: Refactor these to return the leftmost and rightmost slot, dependent on selected slot orientation
 Slot SlotPattern::getLeftmostSlot(bool orientation) {
 	// Returns the first slot, determined by orientation, regardless of whether it's enabled
 	if (orientation == SLOT_ORIENTATION_FORWARD)

@@ -82,6 +82,8 @@ public slots:
 		grind_zone_scale = double(t) * 0.01;
 	}
 
+signals:
+	void setRangeOverride(bool);
 
 public:
 	SlotPattern() {};

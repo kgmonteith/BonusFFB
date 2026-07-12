@@ -92,7 +92,6 @@ void HeavyTruckStateManager::updateTargetGear() {
     lastEngineRPM = engineRPM;
 
     rpmDelta = engineRPM - transmissionRPM;
-    qDebug() << "engineRPM: " << engineRPM << ", transmissionRPM: " << transmissionRPM;
     emit targetGearChanged(targetGear);
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
@@ -132,7 +131,6 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
     }
     if(synchroState != newState) 
     {
-        qDebug() << "new synchro state";
         if (newState == HeavyTruckSynchroState::IN_SYNCH)
             qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
         else if (newState == HeavyTruckSynchroState::EXITING_SYNCH)

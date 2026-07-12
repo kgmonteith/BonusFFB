@@ -35,13 +35,16 @@ void HeavyTruck::initialize() {
     // Set default slot pattern
     slotPattern.setTruckPattern(0);
 
-    // UI connections
+    // Slot pattern connections
     connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentIndexChanged, &slotPattern, &SlotPattern::setTruckPattern);
     connect(ui->heavytruck_slotPatternLeftOffsetSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setLeftOffset);
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
     connect(ui->heavytruck_grindZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setGrindZoneScale);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setButtonZoneScale);
+    connect(&slotPattern, &SlotPattern::setRangeOverride, devices, &DeviceConfiguration::setRangeOverride);
+    connect(&slotGuard, &HeavyTruckSlotGuard::forceRangeValue, devices, &DeviceConfiguration::forceRange);
+    // UI connections
     connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
     connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
     connect(devices, &DeviceConfiguration::splitterChanged, this, &HeavyTruck::updateSplitterText);

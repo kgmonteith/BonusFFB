@@ -703,9 +703,13 @@ PedalValues DeviceConfiguration::getPedalValues() {
 
 RangeSplitterValues DeviceConfiguration::getRangeSplitterValues() {
     RangeSplitterValues values = { false, false };
+    // Override range value if configured
     if (SUCCEEDED(range->updateState()))
     {
         values.range = range->isButtonPressed(rangeButton);
+        if (rangeOverride) {
+            values.range = rangeOverrideState;
+        }
         emit rangeChanged(values.range);
     }
     if (SUCCEEDED(splitter->updateState())) {

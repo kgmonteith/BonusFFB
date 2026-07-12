@@ -25,7 +25,7 @@ extra:
     property: G-24NFE8C173
   social:
     - icon: fontawesome/brands/discord 
-      link: https://discord.com/channels/438688364359581707/1509778353836658778
+      link: https://discord.gg/hotas
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -52,4 +52,4 @@ nav:
     - Handbrake: handbrake.md
   - Get help:
     - Report a bug 🪲: https://github.com/kgmonteith/BonusFFB/issues
-    - Chat on Discord: https://discord.com/channels/438688364359581707/1509778353836658778
+    - "HOTAS Discord (#bonus-ffb)": https://discord.gg/hotas

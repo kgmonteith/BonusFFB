@@ -78,6 +78,15 @@ public slots:
 	void changeShiftLockDevice(int);
 	void testEnableAcceptButton();
 
+	void setRangeOverride(bool newState) {
+		rangeOverride = newState;
+		qDebug() << "rangeOverride set to " << rangeOverride;
+	}
+	void forceRange(bool newState) {
+		rangeOverrideState = newState;
+	}
+
+
 signals:
 	void joystickValueChanged(int, int);
 	void joystickLRValueChanged(int);
@@ -129,6 +138,8 @@ public:
 	int rangeButton;
 	DeviceInfo* splitter = nullptr;
 	int splitterButton;
+	bool rangeOverride = false;
+	bool rangeOverrideState = false;
 
 	DeviceInfo* shiftLockDevice = nullptr;
 	int shiftLockButton;

@@ -30,6 +30,9 @@ public slots:
 	void updateSlotGuardEffects();
 	void updateSlotGuardState(HeavyTruckSlotState);
 
+signals:
+	void forceRangeValue(bool);
+
 private:
 	QPair<long, long> getCornerStrength(double);
 	const Slot* last_nearest_slot;
@@ -58,4 +61,5 @@ private:
 	DIRAMPFORCE clickPushForward = { 0, endOfSlotClickStrength * -1 };
 	DIEFFECT clickPushForwardEff = {};
 	bool clickPlayed = false;
+	bool rangeOverride = false;
 };

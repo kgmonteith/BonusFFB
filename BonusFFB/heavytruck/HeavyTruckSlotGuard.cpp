@@ -174,6 +174,30 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         }
     }
 
+    // Set the bump-through spring for the ZF-16 double-H
+    if (slotPattern->truckPattern == TruckPattern::ZF_16_DOUBLEH) {
+        double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
+        if ((nearest_slot == &slotPattern->slot_list[4] || nearest_slot == &slotPattern->slot_list[5]) && joyValues.lr > slotPattern->slotPositionAsJoystick(*nearest_slot)) {
+            //qDebug() << "in third slot";
+            slotSpringConditions[0] = keepLRCentered;
+            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+        }
+        else if ((nearest_slot == &slotPattern->slot_list[6] || nearest_slot == &slotPattern->slot_list[7]) && joyValues.lr < slotPattern->slotPositionAsJoystick(*nearest_slot)) {
+            //qDebug() << "in fourth slot";
+            slotSpringConditions[0] = keepLRCentered;
+            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+        }
+        // Override the range switch
+        bool newRangeOverride = false;
+        if (joyValues.lr > slotPattern->slotPositionAsJoystick(slotPattern->slot_list[6]) - (slotPattern->getSlotSpacingAsJoystick() * 0.5))
+            newRangeOverride = true;
+        if (newRangeOverride != rangeOverride) {
+            rangeOverride = newRangeOverride;
+            qDebug() << "rangeOverride chaged: " << rangeOverride;
+            emit forceRangeValue(rangeOverride);
+        }
+    }
+
     // Prevent the stick from being pushed too far left at any point
     if (joyValues.lr < slotPattern->getPatternLeftMinimumAsJoystick()) {
         slotSpringConditions[0] = keepLRCentered;
