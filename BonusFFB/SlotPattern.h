@@ -89,9 +89,12 @@ public:
 	bool isInCorner(Slot, JoystickValues);
 	bool isInButtonZone(Slot, JoystickValues);
 	bool isInGrindZone(JoystickValues);
+	const Slot* isUnderSlot(JoystickValues, bool narrow_tolerance = false);
 	const Slot* getNearestSlot(JoystickValues, bool narrow_tolerance = false);
-	Slot getLeftmostSlot();
-	Slot getRightmostSlot();
+	Slot getLeftmostSlot(bool);
+	Slot getRightmostSlot(bool);
+	double getPatternLeftMinimumAsJoystick();
+	double getPatternRightMaximumAsJoystick();
 
 	void setScene(QGraphicsScene*);
 	void renderScene();

@@ -60,7 +60,7 @@ void HeavyTruckStateManager::updateSlotState() {
     HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
     //if (fbValue >= slot->grindPointDepthAsJoystickValueFwd() && fbValue <= slot->grindPointDepthAsJoystickValueBack()) {
     //int under_slot = slot->underSlot(joystick.lr);
-    const Slot* newSlot = slotPattern->getNearestSlot(joystick);
+    const Slot* newSlot = slotPattern->isUnderSlot(joystick);
     bool in_neutral = slotPattern->isInNeutral(joystick);
     //if (joystick.fb >= JOY_MIDPOINT - slotParams->neutral_channel_half_width && joystick.fb <= JOY_MIDPOINT + slotParams->neutral_channel_half_width) {
     if (in_neutral) {
@@ -74,6 +74,12 @@ void HeavyTruckStateManager::updateSlotState() {
         slotState = newState;
         slot = newSlot;
         emit slotStateChanged(slotState);
+        if (slotState == HeavyTruckSlotState::SLOTTED)
+            qDebug() << "HeavyTruckSlotState::SLOTTED";
+        else if (slotState == HeavyTruckSlotState::NEUTRAL)
+            qDebug() << "HeavyTruckSlotState::NEUTRAL";
+        else if (slotState == HeavyTruckSlotState::UNKNOWN)
+            qDebug() << "HeavyTruckSlotState::UNKNOWN";
     }
     updateTargetGear();
 }
@@ -130,7 +136,7 @@ void HeavyTruckStateManager::updateButtonZoneState() {
     }
     if (buttonZoneState != newState) {
         buttonZoneState = newState;
-        qDebug() << "buttonZone changed: " << buttonZoneState;
+        //qDebug() << "buttonZone changed: " << buttonZoneState;
         emit buttonZoneChanged(buttonZoneState);
     }
 }

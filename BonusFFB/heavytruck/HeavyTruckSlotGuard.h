@@ -32,7 +32,7 @@ public slots:
 
 private:
 	QPair<long, long> getCornerStrength(double);
-	int last_nearest_slot = 1;
+	const Slot* last_nearest_slot;
 	const Slot* last_slot;
 	bool passed_through_neutral = true;
 

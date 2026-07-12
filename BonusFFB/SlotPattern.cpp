@@ -132,14 +132,17 @@ double SlotPattern::roundingFactorAsJoystick() {
 
 bool SlotPattern::isInNeutral(JoystickValues joyValues) {
 	// Returns true if the stick is near the neutral channel, plus or minus the rounding factor, regardless of whether the stick is under a slot.
-	double neutral_depth_joystick = neutral_depth_scale * JOY_MAXPOINT * depth_scale;
-	//if (joyValues.fb >= JOY_MIDPOINT - roundingFactorAsJoystick() && joyValues.fb <= JOY_MIDPOINT + roundingFactorAsJoystick())
-	if (joyValues.fb >= JOY_MIDPOINT - neutral_depth_joystick && joyValues.fb <= JOY_MIDPOINT + neutral_depth_joystick)
+	double neutral_depth_joystick = neutral_depth_scale * JOY_MIDPOINT;
+	if (joyValues.fb >= JOY_MIDPOINT - roundingFactorAsJoystick() && joyValues.fb <= JOY_MIDPOINT + roundingFactorAsJoystick())
+	//if (joyValues.fb >= JOY_MIDPOINT - neutral_depth_joystick && joyValues.fb <= JOY_MIDPOINT + neutral_depth_joystick)
 		return true;
 	return false;
 }
 
 bool SlotPattern::isInCorner(Slot slot, JoystickValues joyValues) {
+	// Return false if the L/R values exceed the rounding factor
+	if (joyValues.lr < slotPositionAsJoystick(slot) - roundingFactorAsJoystick() || joyValues.lr > slotPositionAsJoystick(slot) + roundingFactorAsJoystick())
+		return false;
 	// If the stick is within the depth of the rounding factor, it's in a corner and should be rounded
 	if (slot.isOrientationFwd() && joyValues.fb >= JOY_MIDPOINT - roundingFactorAsJoystick() && joyValues.fb <= JOY_MIDPOINT)
 		return true;
@@ -170,37 +173,75 @@ bool SlotPattern::isInGrindZone(JoystickValues joyValues) {
 	return false;
 }
 
-const Slot* SlotPattern::getNearestSlot(JoystickValues joyValues, bool narrow_tolerance) {
-	double tolerance = roundingFactorAsJoystick();
-	if (narrow_tolerance)
-		tolerance = slot_tolerance_narrow_scale * JOY_MAXPOINT;
+
+const Slot* SlotPattern::isUnderSlot(JoystickValues joyValues, bool narrow_tolerance) {
+	//double tolerance = roundingFactorAsJoystick();
+	//if (narrow_tolerance)
+	double tolerance = slot_tolerance_narrow_scale * JOY_MAXPOINT;
 	// Returns a pointer to the slot if the stick is in or under a slot, within a tolerance of +/- the slot rounding factor
 	for (const auto& slot : slot_list) {
 		if (!slot.isEnabled())	// Don't return disabled slots
 			continue;
 		double slot_position = slotPositionAsJoystick(slot);
+		bool joy_orientation = (joyValues.fb < JOY_MIDPOINT) ? SLOT_ORIENTATION_FORWARD : SLOT_ORIENTATION_BACK;
 		if (joyValues.lr >= slot_position - tolerance && joyValues.lr <= slot_position + tolerance) {
-			if ((joyValues.fb <= JOY_MIDPOINT && slot.isOrientationFwd()) || (joyValues.fb >= JOY_MIDPOINT && slot.isOrientationBack())) {
+			if ((joy_orientation == SLOT_ORIENTATION_FORWARD && slot.isOrientationFwd()) || (joy_orientation == SLOT_ORIENTATION_BACK && slot.isOrientationBack())) {
 				return &slot;
 			}
 		}
-
+		// Check if joystick position exceeds first or last slot, snap to it
+		// Fixes an FFB bug when the joystick position is outside a slot range to the left or right of the pattern
+		if (slot == getLeftmostSlot(joy_orientation) && joyValues.lr <= getPatternLeftMinimumAsJoystick()) {
+			qDebug() << "Reporting under leftmost slot despite exceeding range";
+			return &slot;
+		}
+		else if (slot == getRightmostSlot(joy_orientation) && joyValues.lr >= getPatternRightMaximumAsJoystick()) {
+			qDebug() << "Reporting under rightmost slot despite exceeding range";
+			return &slot;
+		}
 	}
 	return SLOT_NONE;
 }
 
-Slot SlotPattern::getLeftmostSlot() {
-	// Returns the first enabled slot
-	if (slot_list.first().isEnabled())
+const Slot* SlotPattern::getNearestSlot(JoystickValues joyValues, bool narrow_tolerance) {
+	double min_distance = JOY_MAXPOINT;
+	bool joy_orientation = (joyValues.fb < JOY_MIDPOINT) ? SLOT_ORIENTATION_FORWARD : SLOT_ORIENTATION_BACK;
+	const Slot* closest_slot = SLOT_NONE;
+	// Returns a pointer to the slot nearest the stick, even if it's disabled
+	for (const auto& slot : slot_list) {
+		if (!slot.orientation == joy_orientation)
+			continue;
+		double slot_distance = std::abs(joyValues.lr - slotPositionAsJoystick(slot));
+		if (slot_distance < min_distance) {
+			min_distance = slot_distance;
+			closest_slot = &slot;
+		}
+
+	}
+	return closest_slot;
+}
+
+// TODO: Refactor these to return the leftmost and rightmost slot, dependent on selected slot orientation
+Slot SlotPattern::getLeftmostSlot(bool orientation) {
+	// Returns the first slot, determined by orientation, regardless of whether it's enabled
+	if (orientation == SLOT_ORIENTATION_FORWARD)
 		return slot_list.first();
 	return slot_list.at(1);
 }
 
-Slot SlotPattern::getRightmostSlot() {
-	// Returns the last enabled slot
-	if (slot_list.last().isEnabled())
-		return slot_list.last();
-	return slot_list.at(slot_list.length() - 2);
+Slot SlotPattern::getRightmostSlot(bool orientation) {
+	// Returns the last slot, determined by orientation, regardless of whether it's enabled
+	if (orientation == SLOT_ORIENTATION_FORWARD)
+		return slot_list.at(slot_list.length() - 2);
+	return slot_list.last();
+}
+
+double SlotPattern::getPatternLeftMinimumAsJoystick() {
+	return slotPositionAsJoystick(slot_list.first());
+}
+
+double SlotPattern::getPatternRightMaximumAsJoystick() {
+	return slotPositionAsJoystick(slot_list.last());
 }
 
 void SlotPattern::setScene(QGraphicsScene* s) {
