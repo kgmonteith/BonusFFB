@@ -174,10 +174,8 @@ bool SlotPattern::isInGrindZone(JoystickValues joyValues) {
 }
 
 
-const Slot* SlotPattern::isUnderSlot(JoystickValues joyValues, bool narrow_tolerance) {
-	//double tolerance = roundingFactorAsJoystick();
-	//if (narrow_tolerance)
-	double tolerance = slot_tolerance_narrow_scale * JOY_MAXPOINT;
+const Slot* SlotPattern::isUnderSlot(JoystickValues joyValues) {
+	double tolerance = roundingFactorAsJoystick();
 	// Returns a pointer to the slot if the stick is in or under a slot, within a tolerance of +/- the slot rounding factor
 	for (const auto& slot : slot_list) {
 		if (!slot.isEnabled())	// Don't return disabled slots
@@ -190,20 +188,18 @@ const Slot* SlotPattern::isUnderSlot(JoystickValues joyValues, bool narrow_toler
 			}
 		}
 		// Check if joystick position exceeds first or last slot, snap to it
-		// Fixes an FFB bug when the joystick position is outside a slot range to the left or right of the pattern
+		// Fixes an FFB bug that's triggered when the joystick position is outside a slot range to the left or right of the pattern
 		if (slot == getLeftmostSlot(joy_orientation) && joyValues.lr <= getPatternLeftMinimumAsJoystick()) {
-			qDebug() << "Reporting under leftmost slot despite exceeding range";
 			return &slot;
 		}
 		else if (slot == getRightmostSlot(joy_orientation) && joyValues.lr >= getPatternRightMaximumAsJoystick()) {
-			qDebug() << "Reporting under rightmost slot despite exceeding range";
 			return &slot;
 		}
 	}
 	return SLOT_NONE;
 }
 
-const Slot* SlotPattern::getNearestSlot(JoystickValues joyValues, bool narrow_tolerance) {
+const Slot* SlotPattern::getNearestSlot(JoystickValues joyValues) {
 	double min_distance = JOY_MAXPOINT;
 	bool joy_orientation = (joyValues.fb < JOY_MIDPOINT) ? SLOT_ORIENTATION_FORWARD : SLOT_ORIENTATION_BACK;
 	const Slot* closest_slot = SLOT_NONE;
@@ -242,6 +238,10 @@ double SlotPattern::getPatternLeftMinimumAsJoystick() {
 
 double SlotPattern::getPatternRightMaximumAsJoystick() {
 	return slotPositionAsJoystick(slot_list.last());
+}
+
+double SlotPattern::getSlotSpacingAsJoystick() {
+	return slotPositionAsJoystick(slot_list[2]) - slotPositionAsJoystick(slot_list[0]);
 }
 
 void SlotPattern::setScene(QGraphicsScene* s) {

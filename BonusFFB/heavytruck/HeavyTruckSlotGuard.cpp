@@ -116,7 +116,7 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     //bool in_neutral = slotPattern->isInNeutral(joyValues);
     const Slot* nearest_slot = slotPattern->getNearestSlot(joyValues);
 
-    if (last_nearest_slot != nearest_slot && slot_state != HeavyTruckSlotState::NEUTRAL) {
+    if (last_nearest_slot != nearest_slot && (slot_state != HeavyTruckSlotState::NEUTRAL && slot_state != HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
         // Refusing to update slot effects without passing through neutral
         qDebug() << "Refusing to update slot effects without passing through neutral";
         return;
@@ -167,30 +167,30 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         //qDebug() << "neutral lOffset: " << slotSpringConditions[1].lOffset;
     }
     else {
-        qDebug() << "Bad state!";
+        //qDebug() << "Bad state!";
     }
 
     // Set the wall effect strength
-    /*
     if (slotPattern->hasSlotWall(SLOT_WALL_LEFT)) {
         const Slot* left_wall_slot = slotPattern->getWallSlot(SLOT_WALL_LEFT);
-        Slot leftmost_slot = slotPattern->getLeftmostSlot();
-        if (joyValues.lr < slotPattern->slotPositionAsJoystick(*left_wall_slot) && joyValues.lr >= slotPattern->slotPositionAsJoystick(leftmost_slot) + 5000 && (in_neutral || (slot != nullptr && slot->position_pct_nominal == left_wall_slot->position_pct_nominal))) {
+        double left_pattern_limit = slotPattern->getPatternLeftMinimumAsJoystick();
+        double wall_taper_range = slotPattern->getSlotSpacingAsJoystick() / 5.0;
+        if (joyValues.lr < slotPattern->slotPositionAsJoystick(*left_wall_slot) && joyValues.lr >= left_pattern_limit + wall_taper_range && (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
             double left_wall_slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*left_wall_slot);
             slotSpringConditions[0] = keepLRCentered;
             slotSpringConditions[0].lOffset = left_wall_slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - left_wall_slot_pos_ffb) * -1.3);
-            if (in_neutral && slot != SLOT_NONE)
-                slotSpringConditions[1] = noSpring;
-            if (in_neutral) {
+            //if (in_neutral && slot != SLOT_NONE)
+            //    slotSpringConditions[1] = noSpring;
+            if (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
                 // Downscale wall effect when approaching the left slot
-                double scalingDistance = 15000;
-                double leftmost_slot_pos = slotPattern->slotPositionAsJoystick(leftmost_slot);
-                slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, leftmost_slot_pos + 5000, leftmost_slot_pos + scalingDistance);
-                slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joyValues.lr, leftmost_slot_pos + 5000, leftmost_slot_pos + scalingDistance);
+                double wall_scaling_range = slotPattern->getSlotSpacingAsJoystick() / 2.5;
+                qDebug() << "wall_taper_range: " << wall_taper_range << ", wall_scaling_range: " << wall_scaling_range;
+                slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, left_pattern_limit + wall_taper_range, left_pattern_limit + wall_scaling_range);
+                slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joyValues.lr, left_pattern_limit + wall_taper_range, left_pattern_limit + wall_scaling_range);
                 //qDebug() << "slotSpringConditions[0].lNegativeCoefficient" << slotSpringConditions[0].lNegativeCoefficient;
             }
         }
-    }*/
+    }
 
     // Prevent the stick from being pushed too far left at any point
     if (joyValues.lr < slotPattern->getPatternLeftMinimumAsJoystick()) {

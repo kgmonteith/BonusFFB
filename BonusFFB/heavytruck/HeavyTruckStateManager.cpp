@@ -63,9 +63,11 @@ void HeavyTruckStateManager::updateSlotState() {
     const Slot* newSlot = slotPattern->isUnderSlot(joystick);
     bool in_neutral = slotPattern->isInNeutral(joystick);
     //if (joystick.fb >= JOY_MIDPOINT - slotParams->neutral_channel_half_width && joystick.fb <= JOY_MIDPOINT + slotParams->neutral_channel_half_width) {
-    if (in_neutral) {
+    if (in_neutral && newSlot != SLOT_NONE) {
+        newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
+    } else if (in_neutral) {
         newState = HeavyTruckSlotState::NEUTRAL;
-    } else if (newSlot != nullptr) {
+    } else if (newSlot != SLOT_NONE) {
         newState = HeavyTruckSlotState::SLOTTED;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
@@ -78,6 +80,8 @@ void HeavyTruckStateManager::updateSlotState() {
             qDebug() << "HeavyTruckSlotState::SLOTTED";
         else if (slotState == HeavyTruckSlotState::NEUTRAL)
             qDebug() << "HeavyTruckSlotState::NEUTRAL";
+        else if (slotState == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)
+            qDebug() << "HeavyTruckSlotState::NEUTRAL_UNDER_SLOT";
         else if (slotState == HeavyTruckSlotState::UNKNOWN)
             qDebug() << "HeavyTruckSlotState::UNKNOWN";
     }
@@ -178,7 +182,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
 void HeavyTruckStateManager::updateHeavyTruckGrindingState() {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
     //if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && (joystick.fb <= slotParams->grindPointDepthAsJoystickValueFwd() || joystick.fb >= slotParams->grindPointDepthAsJoystickValueBack())) {
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState == HeavyTruckSlotState::SLOTTED && slotPattern->isInGrindZone(joystick)) {
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && slotPattern->isInGrindZone(joystick)) {
         if (joystick.fb < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else

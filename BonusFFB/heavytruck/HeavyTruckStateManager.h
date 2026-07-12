@@ -32,6 +32,7 @@ enum class HeavyTruckGrindingState {
 enum class HeavyTruckSlotState {
     UNKNOWN,
     NEUTRAL,
+    NEUTRAL_UNDER_SLOT,
     SLOTTED
     /*
     SLOT_LEFT_FWD,
