@@ -132,9 +132,7 @@ double SlotPattern::roundingFactorAsJoystick() {
 
 bool SlotPattern::isInNeutral(JoystickValues joyValues) {
 	// Returns true if the stick is near the neutral channel, plus or minus the rounding factor, regardless of whether the stick is under a slot.
-	double neutral_depth_joystick = neutral_depth_scale * JOY_MIDPOINT;
 	if (joyValues.fb >= JOY_MIDPOINT - roundingFactorAsJoystick() && joyValues.fb <= JOY_MIDPOINT + roundingFactorAsJoystick())
-	//if (joyValues.fb >= JOY_MIDPOINT - neutral_depth_joystick && joyValues.fb <= JOY_MIDPOINT + neutral_depth_joystick)
 		return true;
 	return false;
 }

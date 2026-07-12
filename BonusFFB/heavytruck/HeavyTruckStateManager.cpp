@@ -44,6 +44,7 @@ void HeavyTruckStateManager::update() {
 
     updateSlotState();
     updateButtonZoneState();
+    updateTargetGear();
     updateHeavyTruckSynchroState(gearValues);
     updateHeavyTruckGrindingState();
 }
@@ -72,7 +73,7 @@ void HeavyTruckStateManager::updateSlotState() {
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
     bool disallowShift = (newState != slotState && newState == HeavyTruckSlotState::SLOTTED && slotState == HeavyTruckSlotState::SLOTTED && slot != newSlot);
-    if (newState != HeavyTruckSlotState::UNKNOWN && newState != slotState && !disallowShift) {
+    if (newState != HeavyTruckSlotState::UNKNOWN && (newState != slotState || slot != newSlot) && !disallowShift) {
         slotState = newState;
         slot = newSlot;
         emit slotStateChanged(slotState);
@@ -85,12 +86,11 @@ void HeavyTruckStateManager::updateSlotState() {
         else if (slotState == HeavyTruckSlotState::UNKNOWN)
             qDebug() << "HeavyTruckSlotState::UNKNOWN";
     }
-    updateTargetGear();
 }
 
 void HeavyTruckStateManager::updateTargetGear() {
     int targetSlot = 0;
-    if (slotState == HeavyTruckSlotState::SLOTTED && slot != nullptr)
+    if ((slotState == HeavyTruckSlotState::SLOTTED || (slotState == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT && slotPattern->isInGrindZone(joystick))) && slot != nullptr)
         targetSlot = slot->button;
     targetGear = telemetry->getGearForSlot(targetSlot, &rangeSplitter);
     

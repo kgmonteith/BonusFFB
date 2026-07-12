@@ -108,7 +108,6 @@ public:
 	double depth_scale = 0.75;
 	double left_offset = 0.0;
 	//double top_offset = 0;
-	double neutral_depth_scale = 0.05;
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
 	double slot_tolerance_narrow_scale = 0.05;
