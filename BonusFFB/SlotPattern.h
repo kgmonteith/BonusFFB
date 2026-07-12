@@ -75,6 +75,14 @@ public slots:
 	//void setName(QString);
 	void setTruckPattern(int index);
 
+	void setButtonZoneScale(int t) {
+		button_zone_scale = double(t) * 0.01;
+	}
+	void setGrindZoneScale(int t) {
+		grind_zone_scale = double(t) * 0.01;
+	}
+
+
 public:
 	SlotPattern() {};
 	void setSlotWalls(int wall_flags);
@@ -111,6 +119,8 @@ public:
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
 	double slot_tolerance_narrow_scale = 0.05;
+
+	TruckPattern truckPattern;
 
 	double roundingFactorAsJoystick();
 	double rounding_factor = 0.1;

@@ -25,7 +25,7 @@ enum class GrindEffectBehavior {
 	OVERRIDE_ENGINE_RPM
 };
 
-class SlotParameters : public QObject {
+class SlotParametersX : public QObject {
 public slots:
 	void setButtonZoneDepth(int t) {
 		button_zone_depth_telemetry = double(t) * 0.01;

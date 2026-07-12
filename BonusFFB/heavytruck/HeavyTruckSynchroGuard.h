@@ -22,7 +22,7 @@ class HeavyTruckSynchroGuard: public QObject
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceConfiguration*, SlotParameters*, SlotPattern*, Telemetry*);
+	HRESULT start(DeviceConfiguration*, SlotPattern*, Telemetry*);
 
 public slots:
 	void updateTorqueLock();
@@ -40,7 +40,6 @@ public slots:
 
 private:
 	DeviceConfiguration* devices = nullptr;
-	SlotParameters* slotParams = nullptr;
 	SlotPattern* slotPattern = nullptr;
 	Telemetry* telemetry = nullptr;
 

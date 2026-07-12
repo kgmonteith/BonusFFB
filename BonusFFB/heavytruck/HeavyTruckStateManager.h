@@ -13,7 +13,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #pragma once
 #include "Telemetry.h"
 #include "DeviceConfiguration.h"
-#include "SharedEnums.h"
 #include "SlotPattern.h"
 
 enum class HeavyTruckSynchroState {
@@ -34,14 +33,6 @@ enum class HeavyTruckSlotState {
     NEUTRAL,
     NEUTRAL_UNDER_SLOT,
     SLOTTED
-    /*
-    SLOT_LEFT_FWD,
-    SLOT_LEFT_BACK,
-    SLOT_MIDDLE_FWD,
-    SLOT_MIDDLE_BACK,
-    SLOT_RIGHT_FWD,
-    SLOT_RIGHT_BACK
-    */
 };
 
 class HeavyTruckStateManager: public QObject
@@ -71,7 +62,6 @@ private:
     void updateHeavyTruckSynchroState(QPair<int, int>);
     void updateHeavyTruckGrindingState();
     void updateTargetGear();
-    //bool stateIsInGear(HeavyTruckSlotState);
 
     DeviceConfiguration* devices = nullptr;
 
@@ -86,7 +76,6 @@ private:
     float lastEngineRPM = 0;
     bool rpmIncreasing = false;
 
-    //SlotParameters* slotParams = nullptr;
     SlotPattern* slotPattern = nullptr;
     const Slot* slot = nullptr;
 
@@ -95,34 +84,6 @@ private:
     HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::UNKNOWN;
     HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 
-    // AustinH18's settings
-    /*
-    int side_slot_width = 15000;
-    int middle_slot_half_width = 15000;
-    int neutral_channel_half_width = 5500;
-
-    int button_zone_half_width = 2000;
-    int button_zone_depth = 4000;
-    int button_zone_depth_telemetry = JOY_MIDPOINT * 0.65;
-
-    int in_synch_depth = JOY_MIDPOINT * 0.20;
-    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.65;
-    int grind_point_depth = JOY_MIDPOINT * 0.65;
-    */
-    
-    ///*
-
-    //int button_zone_half_width = 2000;
-    //int button_zone_depth = 4000;
-    //int button_zone_depth_telemetry = JOY_MIDPOINT * 0.25; // JOY_MIDPOINT * 0.65;
-
-    int in_synch_depth = JOY_MIDPOINT * 0.20;
-    int finished_exiting_synch_depth = JOY_MIDPOINT * 0.85;
-
     int targetGear = 0;
-    //*/
     
 };
-
-//static int grind_point_depth = JOY_MIDPOINT * 0.85;
-

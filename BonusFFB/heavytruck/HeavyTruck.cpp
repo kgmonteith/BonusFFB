@@ -40,7 +40,8 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_slotPatternLeftOffsetSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setLeftOffset);
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
-    connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, slot, &SlotParameters::setButtonZoneDepth);
+    connect(ui->heavytruck_grindZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setGrindZoneScale);
+    connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setButtonZoneScale);
     connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
     connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
     connect(devices, &DeviceConfiguration::splitterChanged, this, &HeavyTruck::updateSplitterText);
@@ -83,7 +84,7 @@ void HeavyTruck::slotParameterChanged(int t) {
     //slot->depth = (double)ui->heavytruck_slotDepthSlider->value() * .01;
     //slot->pos_pct[1] = ui->heavytruck_centerSlotPositionSlider->value() * .01;
     //slot->pos_pct[2] = ui->heavytruck_rightSlotPositionSlider->value() * .01;
-    slot->rounding_factor = JOY_MAXPOINT * ui->heavytruck_slotRoundingFactorSlider->value() * 0.01;
+    //slot->rounding_factor = JOY_MAXPOINT * ui->heavytruck_slotRoundingFactorSlider->value() * 0.01;
 }
 
 void HeavyTruck::initializeJoystickMap() {
@@ -126,8 +127,8 @@ void HeavyTruck::redrawJoystickMap() {
 
 
     if (ui->heavytruck_displayZoneMarkers->isChecked()) {
-        grindZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slot->grind_point_depth), scene->width() + 4, scene->height() * slot->grind_point_depth);
-        buttonZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slot->button_zone_depth_telemetry), scene->width() + 4, scene->height() * slot->button_zone_depth_telemetry);
+        grindZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slotPattern.grind_zone_scale), scene->width() + 4, scene->height() * slotPattern.grind_zone_scale);
+        buttonZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slotPattern.button_zone_scale), scene->width() + 4, scene->height() * slotPattern.button_zone_scale);
         grindZoneRect->show();
         buttonZoneRect->show();
     }
@@ -200,6 +201,7 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->setValue("slotPatternDepthScale", ui->heavytruck_slotPatternDepthScaleSlider->value());
     settings->setValue("slotPatternWidthScale", ui->heavytruck_slotPatternWidthScaleSlider->value());
     settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
+    settings->setValue("grindZoneDepth", ui->heavytruck_grindZoneDepthSpinbox->value());
     settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
     settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
     settings->endGroup();
@@ -228,6 +230,7 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     ui->heavytruck_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 75).toInt());
     ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 67).toInt());
     ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
+    ui->heavytruck_grindZoneDepthSpinbox->setValue(settings->value("grindZoneDepth", 15).toInt());
     ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
     ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
     settings->endGroup();
@@ -250,7 +253,7 @@ HRESULT HeavyTruck::startMode() {
     // Initialize FFB
     stateManager.start(devices, telemetry, &slotPattern);
     slotGuard.start(devices, &slotPattern);
-    synchroGuard.start(devices, slot, &slotPattern, telemetry);
+    synchroGuard.start(devices, &slotPattern, telemetry);
     pedalsManager.start(devices);
     rangeSplitterManager.start(devices);
 

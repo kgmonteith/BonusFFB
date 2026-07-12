@@ -123,24 +123,10 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     }
     last_nearest_slot = nearest_slot;
 
-    /*
-    if (in_neutral)
-        passed_through_neutral = true;
-    if (last_slot != slot && (!passed_through_neutral)) {
-        // Refusing to update slot effects without passing through neutral
-        qDebug() << "Refusing to update slot effects without passing through neutral";
-        return;
-    }
-    else if (passed_through_neutral && slot != SLOT_NONE)
-        passed_through_neutral = false;
-    last_slot = slot;
-    */
-
     if (nearest_slot->isEnabled() && slotPattern->isInCorner(*nearest_slot, joyValues)) {
         QPair<float, float> corner_strength = getCornerStrength(slotPattern->slotPositionAsJoystick(*nearest_slot));
         slotSpringConditions[0].lPositiveCoefficient = corner_strength.first;
         slotSpringConditions[0].lNegativeCoefficient = corner_strength.first;
-        //slotSpringConditions[0].lOffset = slotParams->asFFBOffset(nearest_slot) + ((joystickPositionToFFBOffset(joyValues.lr) - slotParams->asFFBOffset(nearest_slot)) * -1.3);
         double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
         slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
         slotSpringConditions[1].lPositiveCoefficient = corner_strength.second;
@@ -148,11 +134,9 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
         //qDebug() << "corner_strength: " << corner_strength;
     }
-    //else if (slot != SLOT_NONE && slot_state != HeavyTruckSlotState::UNKNOWN && slot_state != HeavyTruckSlotState::NEUTRAL) {
     else if (nearest_slot->isEnabled() && slot_state == HeavyTruckSlotState::SLOTTED) {
         // Keep stick centered L/R
         slotSpringConditions[0] = keepLRCentered;
-        //slotSpringConditions[0].lOffset = slotParams->asFFBOffset(nearest_slot); // +((joystickPositionToFFBOffset(joyValues.lr) - slotParams->asFFBOffset(nearest_slot)) * -1.3);
         double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
         slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
         slotSpringConditions[1] = noSpring;
@@ -164,7 +148,6 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         slotSpringConditions[0] = noSpring;
         slotSpringConditions[1] = keepFBCentered;
         slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
-        //qDebug() << "neutral lOffset: " << slotSpringConditions[1].lOffset;
     }
     else {
         //qDebug() << "Bad state!";
@@ -184,7 +167,6 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
             if (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
                 // Downscale wall effect when approaching the left slot
                 double wall_scaling_range = slotPattern->getSlotSpacingAsJoystick() / 2.5;
-                qDebug() << "wall_taper_range: " << wall_taper_range << ", wall_scaling_range: " << wall_scaling_range;
                 slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, left_pattern_limit + wall_taper_range, left_pattern_limit + wall_scaling_range);
                 slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joyValues.lr, left_pattern_limit + wall_taper_range, left_pattern_limit + wall_scaling_range);
                 //qDebug() << "slotSpringConditions[0].lNegativeCoefficient" << slotSpringConditions[0].lNegativeCoefficient;

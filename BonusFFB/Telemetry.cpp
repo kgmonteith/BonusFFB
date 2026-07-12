@@ -221,7 +221,7 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	}
 	else {
 		// Reverse gears
-		gearRatio = pTelemMap->config_f.gearRatiosReverse[std::abs(gear-1)];
+		gearRatio = pTelemMap->config_f.gearRatiosReverse[std::abs(gear)-1];
 	}
 
 	// Unit definitions: https://kniffen.dev/TruckSim-Telemetry/documents/Units.html

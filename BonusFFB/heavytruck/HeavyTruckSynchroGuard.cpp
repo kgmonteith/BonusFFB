@@ -14,9 +14,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
 
-HRESULT HeavyTruckSynchroGuard::start(DeviceConfiguration* devPtr, SlotParameters* sPtr, SlotPattern* spPtr, Telemetry* tPtr) {
+HRESULT HeavyTruckSynchroGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr, Telemetry* tPtr) {
     devices = devPtr;
-    slotParams = sPtr;
     slotPattern = spPtr;
     telemetry = tPtr;
 

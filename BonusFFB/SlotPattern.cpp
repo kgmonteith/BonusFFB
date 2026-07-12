@@ -21,35 +21,35 @@ void SlotPattern::setName(QString t_name) {
 */
 
 void SlotPattern::setTruckPattern(int index) {
-	TruckPattern newPattern = static_cast<TruckPattern>(index);
+	truckPattern = static_cast<TruckPattern>(index);
 	setSlotWalls(SLOT_WALL_LEFT);
 	QList<int> slot_buttons;
-	if (newPattern == TruckPattern::EATON_18) {
+	if (truckPattern == TruckPattern::EATON_18) {
 		slot_buttons = {1, 2, 3, 4, 5, 6};
 	}
-	else if (newPattern == TruckPattern::EATON_10) {
+	else if (truckPattern == TruckPattern::EATON_10) {
 		slot_buttons = {1, 2, 3, 4, 5, 6};
 		setSlotWalls(0);
 	}
-	else if (newPattern == TruckPattern::SCANIA_12) {
+	else if (truckPattern == TruckPattern::SCANIA_12) {
 		slot_buttons = { 1, 0, 0, 4, 5, 6 };
 	}
-	else if (newPattern == TruckPattern::SCANIA_12_2) {
+	else if (truckPattern == TruckPattern::SCANIA_12_2) {
 		slot_buttons = {1, 2, 0, 4, 5, 6 };
 	}
-	else if (newPattern == TruckPattern::VOLVO_12) {
+	else if (truckPattern == TruckPattern::VOLVO_12) {
 		slot_buttons = {0, 2, 3, 4, 5, 0};
 	}
-	else if (newPattern == TruckPattern::VOLVO_12_2) {
+	else if (truckPattern == TruckPattern::VOLVO_12_2) {
 		slot_buttons = {1, 2, 3, 4, 5, 0};
 	}
-	else if (newPattern == TruckPattern::ZF_12) {
+	else if (truckPattern == TruckPattern::ZF_12) {
 		slot_buttons = { 0, 2, 3, 0, 5, 6};
 	}
-	else if (newPattern == TruckPattern::ZF_16) {
+	else if (truckPattern == TruckPattern::ZF_16) {
 		slot_buttons = { 0, 2, 3, 4, 5, 6};
 	}
-	else if (newPattern == TruckPattern::ZF_16_DOUBLEH) {
+	else if (truckPattern == TruckPattern::ZF_16_DOUBLEH) {
 		slot_buttons = { 0, 2, 3, 4, 5, 6, 3, 4, 5, 6};
 	}
 

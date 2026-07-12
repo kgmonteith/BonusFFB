@@ -50,9 +50,9 @@ private:
 	QGraphicsRectItem* grindZoneRect;
 	QGraphicsRectItem* buttonZoneRect;
 
-	// Stateful FFB effect managers
-	SlotParameters* slot = new SlotParameters();
 	SlotPattern slotPattern;
+
+	// Stateful FFB effect managers
 	HeavyTruckStateManager stateManager;
 	HeavyTruckSlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
