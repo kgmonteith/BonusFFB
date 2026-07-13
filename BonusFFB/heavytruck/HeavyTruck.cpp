@@ -42,6 +42,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
     connect(ui->heavytruck_grindZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setGrindZoneScale);
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setButtonZoneScale);
+    connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setRoundingFactor);
     connect(&slotPattern, &SlotPattern::setRangeOverride, devices, &DeviceConfiguration::setRangeOverride);
     connect(&slotGuard, &HeavyTruckSlotGuard::forceRangeValue, devices, &DeviceConfiguration::forceRange);
     // UI connections
@@ -78,16 +79,7 @@ void HeavyTruck::initialize() {
     //connect(ui->heavytruck_slotDepthSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     //connect(ui->heavytruck_centerSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     //connect(ui->heavytruck_rightSlotPositionSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
-    connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, this, &HeavyTruck::slotParameterChanged);
     connect(ui->heavytruck_throttleOnShiftingCheckbox, &QCheckBox::toggled, &pedalsManager, &PedalsManager::toggleVirtualPedals);
-}
-
-void HeavyTruck::slotParameterChanged(int t) {
-    // Either right or center slot position changed, so we need to update both
-    //slot->depth = (double)ui->heavytruck_slotDepthSlider->value() * .01;
-    //slot->pos_pct[1] = ui->heavytruck_centerSlotPositionSlider->value() * .01;
-    //slot->pos_pct[2] = ui->heavytruck_rightSlotPositionSlider->value() * .01;
-    //slot->rounding_factor = JOY_MAXPOINT * ui->heavytruck_slotRoundingFactorSlider->value() * 0.01;
 }
 
 void HeavyTruck::initializeJoystickMap() {

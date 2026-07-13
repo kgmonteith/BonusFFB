@@ -72,6 +72,9 @@ public slots:
 	void setWidthScale(int);
 	void setDepthScale(int);
 	void setLeftOffset(int);
+	void setRoundingFactor(int value) {
+		rounding_factor = value * 0.01;
+	}
 	//void setName(QString);
 	void setTruckPattern(int index);
 

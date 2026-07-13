@@ -35,8 +35,6 @@ public:
 	void gameLoop();
 
 public slots:
-	void slotParameterChanged(int);
-
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateGearText(int);
