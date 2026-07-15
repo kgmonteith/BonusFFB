@@ -1,6 +1,9 @@
 # H-Shifter
 
-This mode simulates a basic H-pattern shifter with lock-out, gear grinding, and simplified float shifting. Configuring clutch and throttle pedals axes in the `Input/output settings` tab is required. Float shifting requires [setting up game telemetry](getting-started.md#2-install-telemetry-plugins), currently only supported for ATS/ETS2. However, the [heavy truck mode](heavytruck.md) is recommended for a more immersive experience.
+!!! Warning
+    The H-shifter mode is overdue for an update. For ATS/ETS2, [heavy truck mode](heavytruck.md) is strongly recommended.
+
+This mode simulates a basic H-pattern shifter with lock-out, gear grinding, and simplified float shifting. Configuring clutch and throttle pedals axes in the `Input/output settings` tab is required. Float shifting requires [setting up game telemetry](setup-guide.md#2-install-telemetry-plugins), currently only supported for ATS/ETS2. However, the [heavy truck mode](heavytruck.md) is recommended for a more immersive experience.
 
 The H-shifter mode is best suited to casual driving games, such truck, bus, and taxi sims. Depending on the strength of your FFB joystick, it's easily possible to overcome the locking, grinding, and channel-keeping force effects. Remember to play along and not push through these effects. If you want something stronger and more precise, consider a purpose-built device like the [Bash Pro](https://mvhstudios.co.uk/products/bash-pro).
 

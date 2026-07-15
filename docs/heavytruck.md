@@ -1,10 +1,10 @@
 # Heavy truck shifter
 
-The heavy truck mode simulates an Eaton-Fuller 18-speed heavy truck transmission. It was designed and tuned based on feedback from truckers with 30 years of experience driving manual transmission trucks. Tremendous thanks to Kyle Darling for the insights that made this mode possible, and to Exius86 and amagawd for their testing and feedback.
+The heavy truck mode was originally designed to simulate an Eaton-Fuller 18-speed heavy truck transmission. It was designed and tuned based on feedback from truckers with 30 years of experience driving manual transmission trucks. Tremendous thanks to Kyle Darling for the insights that made this mode possible, and to Exius86 and amagawd for their testing and feedback.
 
-The heavy truck mode was built specifically for American Truck Simulator. [Setting up telemetry](getting-started.md#2-install-telemetry-plugins) is required, it will not work without it.
+All stock shifter layouts in ATS and ETS2 are now supported, plus a special bonus ZF-16 Double-H slot pattern.
 
-The heavy truck mode features rev-matching effects to enable tactile float shifting, configurable slot throws to support joystick extensions, Eaton-Fuller specific slot layouts, throttle-on shifting, and more.
+The heavy truck mode features rev-matching effects to enable tactile float shifting, customizable slot patterns, throttle-on shifting, and more.
 
 ![Heavy truck mode](images/heavytruck-screenshot.png) 
 
@@ -17,7 +17,7 @@ The heavy truck mode features rev-matching effects to enable tactile float shift
 
 > *"Most sims treat truck transmissions like a heavy car shifter (spring + click). That’s wrong. An Eaton 18-speed is an industrial control interface. It is viscous, unforgiving, and communicative. To mimic an Eaton RT-18, the FFB needs to prioritize friction and texture over spring force. I need to feel the torque clamping the stick, the 'saw blade' effect of the gear teeth when I miss a shift, and the physical 'clunk' of the range change air-piston transferring through the handle."*
 
-The heavy truck mode implements effects and features found in American heavy-duty dog box truck transmissions. It's still a work in progress, and [feedback](https://github.com/kgmonteith/BonusFFB/issues) on the mode is appreciated.
+The heavy truck mode implements effects and features found in American heavy-duty dog box truck transmissions. It's still a work in progress, and feedback is appreciated.
 
 !!! Warning
     The heavy truck mode relies on ATS/ETS2 telemetry to function. It will not behave correctly without it, or when the game is paused or not running. This is expected behavior.
@@ -30,17 +30,43 @@ The "Rev matching" indicator provides a visual cue of when float shifting is per
 
 You can tune the maximum allowed RPM delta for float shifting in the FFB effect settings, making floating shifts easier or harder.
 
+### Customizable slot patterns
+
+The heavy truck mode includes slot patterns for all standard shifter layouts in ATS and ETS2&mdash;Eaton-Fuller, Scania, Volvo, and ZF. Blocked slots are actually blocked, and you can quickly change between different patterns. No more dead-sticking into the wrong slot!
+
+<div class="grid cards" markdown>
+
+- <figure markdown="span">
+    ![Image title](images/heavytruck-scania-12.png){ width="300" }
+    <figcaption>Scania 12</figcaption>
+  </figure>
+- <figure markdown="span">
+    ![Image title](images/heavytruck-volvo-12.png){ width="300" }
+    <figcaption>Volvo 12</figcaption>
+  </figure>
+- <figure markdown="span">
+    ![Image title](images/heavytruck-zf-12.png){ width="300" }
+    <figcaption>ZF 12</figcaption>
+  </figure>
+- <figure markdown="span">
+    ![Image title](images/heavytruck-zf-16-doubleh.png){ width="300" }
+    <figcaption>ZF 16 Double-H</figcaption>
+  </figure>
+</div>
+
+To support stick extensions, the heavy truck mode has configurable slot depths, pattern width, and pattern alignment.
+
+There's also an extra-special, old-school [ZF-16 Double-H pattern](https://www.scribd.com/document/421805601/245068800-ZF-Double-H-Shift-Pattern-pdf), fully compatible with the ZF-16 shifter layout in ETS2. The range switch is not used; instead, the range changed by [bumping the stick between the two patterns](https://www.youtube.com/watch?v=ggJv-Rj5_dA).
+
 ### Torque lock
 
 When a real truck is in gear and the transmission is loaded (e.g., the throttle is pressed), it's not physically possible to move the stick out of gear. The heavy truck mode simulates this effect by applying a heavy counter-force if the stick is pushed towards neutral while in gear and throttle is applied. The mode uses telemetry values to set the effect, so it also applies when using cruise control. A lighter amount of torque lock is also applied any time the transmission is in gear and the wheels are moving.
 
-### Configurable slot patterns
-
-To support stick extensions, the heavy truck mode has configurable slot depths and slot channel positioning. The default slot pattern matches that of a real RT-18 and is intended to be used with an extension, but is also comfortable with direct-mounted truck shifter. Preset buttons are provided for the default Eaton Fuller pattern, and a pattern that utilizes the full range of your joystick base.
-
 ### The left-slot "wall"
 
 On an RT-18 transmission, the regular drive gears are available in the center and right slots. The "low" and "reverse" gears are on the left slot. To protect from mis-shifts, or maybe even for mechanical reasons, a strong "wall" of force needs to be overcome in order to move the shifter into the left slot.
+
+The wall effect is also applied on other slot patterns with a similar reverse/low layout.
 
 ### Throttle-on shifting
 
@@ -50,44 +76,48 @@ Bonus FFB adds support for throttle-on shifting by mapping your pedal axes onto 
 
 ## Game configuration
 
-The heavy truck mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the heavy truck mode's input/output settings.
-
-!!! Note
-    If you have difficulty binding buttons while in heavy truck mode, bind them while using [H-shifter mode](hshifter.md) instead. The same button numbers are used by both modes.
-
 ### Basic game settings
 
-Install the [required ATS/ETS2 telemetry plugin](getting-started.md#2-install-telemetry-plugins), then set these values in the "Controls" menu.
+First, install the [required ATS/ETS2 telemetry plugin](setup-guide.md#2-install-telemetry-plugins).
 
-* In the `Input Types` list, add the vJoy Device
+Start the heavy truck mode, then set these values in the "Controls" menu:
+
+* In the `Input Types` list, add the vJoy Device. In this example, vJoy Device is the fourth entry, so it will show up as Joy 4 in the control bindings.
 ![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to `H-Shifter`
 * Set `Shifter layout` to match the vehicle's transmission, e.g., Eaton-Fuller 18 speed
 * Set `Shifter layout behavior` to `Advanced`
-* Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
+* Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the shifter slots
+    * Simply walk the shifter through the slots to bind each gear while Bonus FFB is running, as you would a hardware shifter.
+    * If you have trouble binding buttons while in heavy truck mode, bind them using [H-shifter mode](hshifter.md) instead. The same button numbers are used by both modes.
     * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
-    
+* Set the `Shifter layout` to match the transmission of your truck. In Bonus FFB, choose the matching slot pattern in the slot pattern settings tab.
+    * ⚠️ Remember to change this setting when you change trucks or transmissions!
+
 ![ATS Hshifter settings](images/ats-hshifter.png)
-(Your device number will be different than in the above screenshot)
 
-### Advanced game settings for throttle-on shifting
+### Advanced game settings
 
-Throttle-on shifting in the heavy truck mode works by duplicating your pedals' axis outputs on corresponding vJoy virtual axes, then tweaking the values when a throttle-on float shift should be allowed in a real truck.
+Some advanced features, like throttle-on shifting and the ZF-16 Double-H pattern, mode work by duplicating your devices' outputs on corresponding vJoy outputs, and tweaking the values when appropriate.
 
-To use throttle-on shifting, you will need to bind the vJoy axes to the throttle, brake, and clutch axes in the game's control settings. Doing that is tricky, since the game will likely default to using your physical pedals' axes when using the in-game controls configuration menu.
+To use these features, you will need to bind the vJoy axes and buttons in the game's control settings. To do so, remove your physical pedals and range/splitter as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the below axes and buttons (while  Bonus FFB is running) as you would normally, by pressing the corresponding axis or button. This will cause the game to recognize the vJoy device as the control source.
 
-To bind the vJoy virtual axes, there are two options:
+* Bind the range and splitter buttons as shown in the screenshot above.
+* Bind the acceleration, brake, and clutch axes by pressing as shown below.
 
-1. Remove your physical pedals as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the pedal axes as you would normally. This will cause the game to recognize the vJoy axes as the pedal axes.
-    - This will work if your pedals are connected to your steering wheel, just be sure to add your steering wheel back to the "Input type" list after binding the pedal axes.
-2. Use [HidHide](https://docs.nefarius.at/projects/HidHide/) to mask your physical pedals from the game. Consult the [HidHide documentation](https://docs.nefarius.at/projects/HidHide/Simple-Setup-Guide/#setting-up-hidhide-quick-guide) for instructions. You only need to mask your pedals when binding the axes, they can be unmasked afterward.
+(This will work even if your pedals are connected to your steering wheel, just be sure to add your steering wheel back to the "Input type" list after binding the pedal axes.)
+
+![ATS virtual pedal axes](images/ats-pedals.png)
 
 ## Settings descriptions
 
 ### Slot pattern settings
 
-- Changes to the slot depth and positions are reflected on the joystick map, consult it after making a change.
-- **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot.
+Changes to the slot pattern, position, slot depth, and width are reflected on the joystick map, consult it after making a change.
+
+- **Slot pattern**: Select the pattern that matches your truck's transmission, *and* the shifter layout in the game's controls menu.
+- **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.
+- **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press, shown with a blue line when markers are enabled. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot, about 20% higher than the grind zone value is recommended.
 
 ### Force feedback effect settings
 
@@ -97,7 +127,7 @@ To bind the vJoy virtual axes, there are two options:
     - **<span id="friction">Friction:</span>** Adds constant resistance, regardless of joystick motion
     !!! Warning
         For Moza bases, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
-    !!! Note
+    !!! Info
         New Eaton-Fuller transmissions tend to feel "weighty", increase these settings to simulate a new transmission. Older transmissions tend to feel "looser" with a stick that's easier to move.
 - **<span id="gate-latch-friction">Gate latch friction:</span>** A friction effect that plays when passing through a slot gate latch, simulating the shift fork engaging the synchronizer collar
     - This value is added to the constant friction resistance&mdash;e.g., 30% constant friction + 40% gate latch friction results in 70% total friction for the effect.

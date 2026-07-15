@@ -824,10 +824,13 @@
                   <string>%</string>
                  </property>
                  <property name="minimum">
-                  <number>0</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
-                  <number>100</number>
+                  <number>90</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
                  </property>
                  <property name="value">
                   <number>35</number>
@@ -874,10 +877,13 @@
                   <string>%</string>
                  </property>
                  <property name="minimum">
-                  <number>0</number>
+                  <number>10</number>
                  </property>
                  <property name="maximum">
-                  <number>100</number>
+                  <number>80</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
                  </property>
                  <property name="value">
                   <number>15</number>

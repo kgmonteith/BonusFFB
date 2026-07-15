@@ -11,7 +11,7 @@ Bonus FFB is free, open-source software that simulates these devices using force
 * [Simple handbrakes](handbrake.md)
 * Got an idea? [Make a suggestion :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues)
 
-Follow the [Getting Started](getting-started.md) guide for complete installations instructions.
+Follow the [setup guide](setup-guide.md) for complete installation and configuration instructions.
 
 ## Demo videos
 
@@ -24,7 +24,7 @@ Follow the [Getting Started](getting-started.md) guide for complete installation
 
 ## Supported devices
 
-* [MOZA AB9 FFB Base](device-settings.md#moza-ab9)
+* [MOZA AB9 FFB Base](setup-guide.md#moza-ab9ab6)
 
 !!! tip "Help us support more devices"
     Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other powerful FFB joystick and would like to test Bonus FFB, please get in touch in #bonus-ffb on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).

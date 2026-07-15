@@ -36,15 +36,19 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - footnotes
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
   - Home: index.md
   - Download: https://github.com/kgmonteith/BonusFFB/releases
-  - Getting started: getting-started.md
-  - Device settings: device-settings.md
-  - Applications:
+  - Setup guide: setup-guide.md
+  - Modes:
     - Heavy truck shifter: heavytruck.md
     - H-Shifter: hshifter.md
     - PRNDL: prndl.md

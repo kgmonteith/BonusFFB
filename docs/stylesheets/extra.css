@@ -11,3 +11,12 @@ h5 + p,
 h6 + p {
   text-indent: 0;
 }
+
+.md-typeset .tabbed-set {
+  border: 0.5px solid darkslategray;
+}
+
+.md-typeset .tabbed-content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
