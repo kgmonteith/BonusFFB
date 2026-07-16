@@ -139,7 +139,7 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -1459,19 +1459,6 @@
                   <widget class="QCheckBox" name="heavytruck_throttleOnShiftingCheckbox">
                    <property name="text">
                     <string>Enable throttle-on shifting</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="heavytruck_throttleOnShiftingLabel">
-                   <property name="enabled">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#advanced-game-settings-for-throttle-on-shifting&quot; style=&quot;text-decoration: none;&quot;&gt;⚠️ Additional game configuration is required, click for details&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -3902,22 +3889,5 @@ hand control</string>
  <resources>
   <include location="BonusFFB.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>heavytruck_throttleOnShiftingCheckbox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>heavytruck_throttleOnShiftingLabel</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>411</x>
-     <y>554</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>620</x>
-     <y>554</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

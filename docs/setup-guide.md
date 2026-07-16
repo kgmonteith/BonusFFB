@@ -93,7 +93,7 @@ If you'd like other modes or have ideas for Bonus FFB, drop a message in the #bo
 
 If the joystick does not behave as expected while Bonus FFB is running, close and exit Steam. If it suddenly starts working properly, the problem is actually caused by an [incompatibility between Steam and vJoy](https://github.com/kgmonteith/BonusFFB/issues/65).
 
-To fix it, download and install [HidHide](https://github.com/nefarius/HidHide/releases). You can use it to mask vJoy from Steam entirely. This will no effect on games that use vJoy, it only blocks the Steam application itself. Here's an example HidHide configuration:
+To fix it, download and install [HidHide](https://github.com/nefarius/HidHide/releases). You can use it to mask vJoy from Steam entirely. This will not effect Steam-launched games that use vJoy; it only blocks the Steam application itself. Here's an example HidHide configuration:
 
 ![HidHide applications blacklist](images/hidhide-applications.png)
 

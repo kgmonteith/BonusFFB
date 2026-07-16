@@ -1,8 +1,8 @@
 # Heavy truck shifter
 
-The heavy truck mode was originally designed to simulate an Eaton-Fuller 18-speed heavy truck transmission. It was designed and tuned based on feedback from truckers with 30 years of experience driving manual transmission trucks. Tremendous thanks to Kyle Darling for the insights that made this mode possible, and to Exius86 and amagawd for their testing and feedback.
+The heavy truck mode was built to simulate an Eaton-Fuller 18-speed heavy truck transmission. It was designed and tuned using feedback from truckers with 30 years of experience driving manual transmission trucks. Tremendous thanks to Kyle Darling for the insights that made this mode possible, and to Exius86 and amagawd for their testing and input.
 
-All stock shifter layouts in ATS and ETS2 are now supported, plus a special bonus ZF-16 Double-H slot pattern.
+All stock shifter layouts in ATS and ETS2 are supported, plus a special bonus ZF-16 Double-H slot pattern.
 
 The heavy truck mode features rev-matching effects to enable tactile float shifting, customizable slot patterns, throttle-on shifting, and more.
 

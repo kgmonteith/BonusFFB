@@ -4,7 +4,7 @@ Do you own a force-feedback joystick? Have you wondered if it can simulate other
 
 Bonus FFB is free, open-source software that simulates these devices using force-feedback joysticks:
 
-* [Heavy truck shifters](heavytruck.md), modeled on Eaton-Fuller 18 speed manual transmissions
+* [Heavy truck shifters](heavytruck.md), built for American Truck Simulator and ETS2
 * [H-pattern manual shifters](hshifter.md)
 * ["PRNDL"-style automatic transmission shifters](prndl.md)
 * [Push/pull hand controls](pphc.md)
