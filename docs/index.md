@@ -22,23 +22,6 @@ Follow the [setup guide](setup-guide.md) for complete installation and configura
 
 </div>
 
-## Supported devices
-
-* [MOZA AB9 FFB Base](setup-guide.md#moza-ab9ab6)
-
-!!! tip "Help us support more devices"
-    Bonus FFB *should* work with any FFB joystick that supports DirectInput. If you own a VPForce Rhino, FFBeast, or other powerful FFB joystick and would like to test Bonus FFB, please get in touch in #bonus-ffb on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/Bonus-FFB/issues).
-
-## Dependencies
-
-Required depedencies:
-
-* [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0)
-
-Optional (but recommended) dependencies:
-
-* [RenCloud's telemetry plugin for ATS/ETS2](https://github.com/RenCloud/scs-sdk-plugin)
-
 ## Disclaimer
 
 !!! danger

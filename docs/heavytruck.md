@@ -78,7 +78,7 @@ Bonus FFB adds support for throttle-on shifting by mapping your pedal axes onto 
 
 ### Basic game settings
 
-First, install the [required ATS/ETS2 telemetry plugin](setup-guide.md#2-install-telemetry-plugins).
+First, install the [required ATS/ETS2 telemetry plugin](setup-guide.md#3-install-telemetry-plugins).
 
 Start the heavy truck mode, then set these values in the "Controls" menu:
 

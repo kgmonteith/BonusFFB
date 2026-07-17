@@ -11,7 +11,18 @@ Run the "Configure vJoy" application. Set up at least one virtual device with a 
 
 ![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
 
-## 2. Install telemetry plugins
+## 2. Install and configure HidHide
+
+Download and install [HidHide](https://github.com/nefarius/HidHide/releases).
+
+Steam has introduced an incompatibility with vJoy that affects Bonus FFB and certain FFB wheelbases. [Set up](https://github.com/nefarius/HidHide#user-guide) HidHide with this configuration to block Steam from recognizing vJoy, then restart your PC:
+
+![HidHide applications blacklist](images/hidhide-applications.png)
+
+![HidHide device list](images/hidhide-devices.png)
+
+
+## 3. Install telemetry plugins
 
 ### American Truck Simulator/Euro Truck Simulator 2
 
@@ -23,7 +34,7 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
 ??? tip "When installed correctly, ATS/ETS2 will start with a notice that the SDK has been activated."
     Unfortunately this message cannot be deactived, you will have to press OK each time the game is launched.
 
-## 3. Configure your FFB joystick
+## 4. Configure your FFB joystick
 
 === "MOZA AB9/AB6"
 
@@ -38,6 +49,8 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
     Download and install [MOZA Cockpit](https://support.mozaracing.com/en/support/solutions/articles/70000666515-moza-cockpit-download) if you don't already have it. These instructions apply to settings in MOZA Cockpit, which is distinct from MOZA Pithouse.
 
     <h3>Required MOZA Cockpit settings</h3>
+
+    First, ensure you have installed firmware version 1.1.3.4 or newer for your AB9/AB6 base.
 
     Under Basic Settings, change these settings:
 
@@ -64,7 +77,7 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
 
     This should include VPForce Rhino, FFBeast, etc., but has not been tested. If you have one of these devices and can help provide configuration instructions, please reach out via [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues) or the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas).
 
-## 4. Install and configure Bonus FFB
+## 5. Install and configure Bonus FFB
 
 Download and run the latest [Bonus FFB installer](https://github.com/kgmonteith/BonusFFB/releases).
 
@@ -88,13 +101,3 @@ Please read the mode's guide for app-specific configuration, options, and featur
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 
 If you'd like other modes or have ideas for Bonus FFB, drop a message in the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
-
-## Troubleshooting
-
-If the joystick does not behave as expected while Bonus FFB is running, close and exit Steam. If it suddenly starts working properly, the problem is actually caused by an [incompatibility between Steam and vJoy](https://github.com/kgmonteith/BonusFFB/issues/65).
-
-To fix it, download and install [HidHide](https://github.com/nefarius/HidHide/releases). You can use it to mask vJoy from Steam entirely. This will not effect Steam-launched games that use vJoy; it only blocks the Steam application itself. Here's an example HidHide configuration:
-
-![HidHide applications blacklist](images/hidhide-applications.png)
-
-![HidHide device list](images/hidhide-devices.png)
