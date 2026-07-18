@@ -54,9 +54,9 @@ The heavy truck mode includes slot patterns for all standard shifter layouts in 
   </figure>
 </div>
 
-To support stick extensions, the heavy truck mode has configurable slot depths, pattern width, and pattern alignment.
+To support stick extensions, the heavy truck mode has configurable slot depths, pattern widths, and pattern alignment.
 
-There's also an extra-special, old-school [ZF-16 Double-H pattern](https://www.scribd.com/document/421805601/245068800-ZF-Double-H-Shift-Pattern-pdf), fully compatible with the ZF-16 shifter layout in ETS2. The range switch is not used; instead, the range changed by [bumping the stick between the two patterns](https://www.youtube.com/watch?v=ggJv-Rj5_dA).
+There's also an extra-special, old-school [ZF-16 Double-H pattern](https://www.scribd.com/document/421805601/245068800-ZF-Double-H-Shift-Pattern-pdf), fully compatible with the ZF-16 shifter layout in ETS2. The range switch is not used; instead, the range is changed by [bumping the stick between the two patterns](https://www.youtube.com/watch?v=ggJv-Rj5_dA).
 
 ### Torque lock
 
@@ -85,25 +85,24 @@ Start the heavy truck mode, then set these values in the "Controls" menu:
 * In the `Input Types` list, add the vJoy Device. In this example, vJoy Device is the fourth entry, so it will show up as Joy 4 in the control bindings.
 ![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to `H-Shifter`
-* Set `Shifter layout` to match the vehicle's transmission, e.g., Eaton-Fuller 18 speed
 * Set `Shifter layout behavior` to `Advanced`
 * Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the shifter slots
     * Simply walk the shifter through the slots to bind each gear while Bonus FFB is running, as you would a hardware shifter.
     * If you have trouble binding buttons while in heavy truck mode, bind them using [H-shifter mode](hshifter.md) instead. The same button numbers are used by both modes.
     * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
-* Set the `Shifter layout` to match the transmission of your truck. In Bonus FFB, choose the matching slot pattern in the slot pattern settings tab.
+* Set the `Shifter layout` to match the transmission of your truck,  e.g., Eaton-Fuller 18 speed. In Bonus FFB, choose the matching slot pattern in the slot pattern settings tab.
     * ⚠️ Remember to change this setting when you change trucks or transmissions!
 
 ![ATS Hshifter settings](images/ats-hshifter.png)
 
 ### Advanced game settings
 
-Some advanced features, like throttle-on shifting and the ZF-16 Double-H pattern, mode work by duplicating your devices' outputs on corresponding vJoy outputs, and tweaking the values when appropriate.
+Some advanced features, like throttle-on shifting and the ZF-16 Double-H pattern, work by duplicating your devices' outputs on corresponding vJoy outputs, and tweaking the values when appropriate.
 
 To use these features, you will need to bind the vJoy axes and buttons in the game's control settings. To do so, remove your physical pedals and range/splitter as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the below axes and buttons (while  Bonus FFB is running) as you would normally, by pressing the corresponding axis or button. This will cause the game to recognize the vJoy device as the control source.
 
 * Bind the range and splitter buttons as shown in the screenshot above.
-* Bind the acceleration, brake, and clutch axes by pressing as shown below.
+* Bind the acceleration, brake, and clutch axes as shown below.
 
 (This will work even if your pedals are connected to your steering wheel, just be sure to add your steering wheel back to the "Input type" list after binding the pedal axes.)
 
