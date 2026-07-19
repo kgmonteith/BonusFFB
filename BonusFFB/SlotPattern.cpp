@@ -244,6 +244,12 @@ double SlotPattern::getSlotSpacingAsJoystick() {
 	return slotPositionAsJoystick(slot_list[2]) - slotPositionAsJoystick(slot_list[0]);
 }
 
+double SlotPattern::getPositionPercentAsFFBOffset(double pos_pct) {
+	double offset = (1 - width_scale) * left_offset;
+	double pos_absolute = offset + (pos_pct * width_scale);
+	return (2 * FFB_MAX * pos_absolute) - FFB_MAX;
+}
+
 void SlotPattern::setScene(QGraphicsScene* s) {
 	scene = s;
 

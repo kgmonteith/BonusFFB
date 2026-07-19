@@ -97,9 +97,9 @@ Start the heavy truck mode, then set these values in the "Controls" menu:
 
 ### Advanced game settings
 
-Some advanced features, like throttle-on shifting and the ZF-16 Double-H pattern, work by duplicating your devices' outputs on corresponding vJoy outputs, and tweaking the values when appropriate.
+Some advanced features, like throttle-on shifting and the ZF-16 Double-H pattern, work by duplicating your devices' outputs on corresponding vJoy outputs, and modifying the values when appropriate.
 
-To use these features, you will need to bind the vJoy axes and buttons in the game's control settings. To do so, remove your physical pedals and range/splitter as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the below axes and buttons (while  Bonus FFB is running) as you would normally, by pressing the corresponding axis or button. This will cause the game to recognize the vJoy device as the control source.
+To use these features, you will need to bind the vJoy axes and buttons in the game's control settings. To do so, remove your physical pedals and range/splitter as an input in the game's "Controls" menu by selecting them in the "Input type" list and choosing "None". Then rebind the below axes and buttons (while Bonus FFB is running) as you would normally, by pressing the corresponding axis or button. This will cause the game to recognize the vJoy device as the control source.
 
 * Bind the range and splitter buttons as shown in the screenshot above.
 * Bind the acceleration, brake, and clutch axes as shown below.
@@ -133,6 +133,6 @@ Changes to the slot pattern, position, slot depth, and width are reflected on th
 - **<span id="grind-effect-intensity">Grind effect intensity:</span>** Sets the strength of the gear grinding effect. This effect plays when attempting to shift into gear without the clutch applied and the RPM delta is too high.
 - **<span id="grind-effect-shape">Grind effect shape:</span>** Changes the effect shape of the grind effect. 'Triangle' is recommended to simulate the most realistic feel.
 - **<span id="idle-torque-lock-strength">Idle torque lock strength:</span>** When in gear, the torque lock effect pushes the shifter back into the slotted position. This setting adjusts the strength of the effect when throttle is *not* applied. Think of it as the minimum amount of force you need to move the stick from a slotted gear back to neutral.
-- **<span id="torque-load-effect-strength">Torque load effect strength:<span>** When in gear, this effect applies a subtle force proportional to throttle application. This simulates the gear teeth clamping under torque and holding the gear.
-- **<span id="engine-vibration-strength">Engine vibration strength:</span>** Sets the strength of the engine vibration effect. This effect should be subtle, high values could result in the shifter stick thrashing.
+- **<span id="torque-load-effect-strength">Torque load effect strength:</span>** When in gear, this effect applies a subtle force proportional to throttle application. This simulates the gear teeth clamping under torque and holding the gear.
+- **<span id="engine-vibration-strength">Engine vibration strength:</span>** Sets the strength of the engine vibration effect. This effect should be subtle; high values could result in the shifter stick thrashing wildly.
 - **<span id="max-rpm-delta">Max RPM delta for float shift:</span>** Changes the allowable RPM delta range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.

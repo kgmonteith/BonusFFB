@@ -15,7 +15,7 @@ Simply move the joystick forward and back to select the desired gear position.
 
 ## Game configuration
 
-The PRNDL mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware automatic shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the PRNDL mode's input/output settings.
+The PRNDL mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware automatic shifter, by walking through the gears slot-by-slot in the game's control settings. The input device will show up as the vJoy device you selected in the PRNDL mode's input/output settings.
 
 ### ATS/ETS2 settings
 
@@ -40,4 +40,4 @@ The PRNDL mode will also output your pedals' values on vJoy virtual axes, to pre
 - **<span id="enable-park-slot">Enable park slot:</span>** This option enables the park slot. ATS/ETS2 does not have a park gear, so if you're not using telemetry, you may want to disable this option.
 - **<span id="enable-low-slot">Enable Low slot:</span>** Similar to the above, if your game of choice does not have a low gear, this option should be disabled.
 - **<span id="simulate-park-slot">Simulate Park slot in ATS/ETS2 using parking brake telemetry:</span>** ATS/ETS2 does not implement a park gear in the game. When this option is enabled and ATS/ETS2 telemetry is active, the PRNDL mode will simulate a park gear by enabling the parking brake and setting the gear to neutral. Disable this option if this behavior is not desired.
-- **<span id="enable-shift-lock-between-neutral-and-reverse">Enable shift lock between Neutral and Reverse:</span>** When this option is enabled and a shift lock device and button are configured, the shift lock button must be pressed in order to shift from neutral to reverse. (This is in addition to shift lock button's default behavior of preventing shifting from park to reverse.)
+- **<span id="enable-shift-lock-between-neutral-and-reverse">Enable shift lock between Neutral and Reverse:</span>** When this option is enabled and a shift lock device and button are configured, the shift lock button must be pressed in order to shift from neutral to reverse. (This is in addition to the shift lock button's default behavior of preventing shifting from park to reverse.)

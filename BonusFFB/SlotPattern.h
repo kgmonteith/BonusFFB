@@ -40,8 +40,6 @@ enum class TruckPattern {
 	ZF_16_DOUBLEH
 };
 
-
-
 class Slot {
 public:
 	bool isEnabled() const {
@@ -89,7 +87,6 @@ signals:
 	void setRangeOverride(bool);
 
 public:
-	SlotPattern() {};
 	void setSlotWalls(int wall_flags);
 	bool hasSlotWall(int wall_flag);
 	const Slot* getWallSlot(int wall_flag);
@@ -109,6 +106,7 @@ public:
 	double getPatternLeftMinimumAsJoystick();
 	double getPatternRightMaximumAsJoystick();
 	double getSlotSpacingAsJoystick();
+	double getPositionPercentAsFFBOffset(double pos_pct);
 
 	void setScene(QGraphicsScene*);
 	void renderScene();
@@ -123,7 +121,6 @@ public:
 	//double top_offset = 0;
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
-	double slot_tolerance_narrow_scale = 0.05;
 
 	TruckPattern truckPattern;
 

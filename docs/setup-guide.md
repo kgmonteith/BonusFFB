@@ -9,7 +9,7 @@ Install [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v
 
 Run the "Configure vJoy" application. Set up at least one virtual device with a minimum of 32 buttons, and click the "Enable vJoy" checkbox:
 
-![vJoy config](images/vjoy-config.png){: style="height:551;width:416px"}
+![vJoy config](images/vjoy-config.png){: style="height:551px;width:416px"}
 
 ## 2. Install and configure HidHide
 
@@ -32,14 +32,14 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
 * `C:\Program Files (x86)\Steam\steamapps\common\Euro Truck Simulator 2\bin\win_x64\plugins\`
 
 ??? tip "When installed correctly, ATS/ETS2 will start with a notice that the SDK has been activated."
-    Unfortunately this message cannot be deactived, you will have to press OK each time the game is launched.
+    Unfortunately this message cannot be deactivated, you will have to press OK each time the game is launched.
 
 ## 4. Configure your FFB joystick
 
 === "MOZA AB9/AB6"
 
     ??? warning "You must set `Force Feedback Mode` to `DirectInput`"
-        If `Force Feedback Mode` is incorrect, Bonus FFB will silently fail to send to force feedback commands to the base, resulting a 'dead stick' effect.
+        If `Force Feedback Mode` is incorrect, Bonus FFB will silently fail to send force feedback commands to the base, resulting in a 'dead stick' effect.
 
     ??? warning "You must set `Base Force Model Selection` to `Flight Base`"
         Do NOT use the `Shifter` mode. The `Shifter` mode is for Moza's built-in shifter app and overrides Bonus FFB.
@@ -75,7 +75,7 @@ Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/r
     1. Supports DirectInput, which should be all of them
     2. Supports disabling centering spring effects
 
-    This should include VPForce Rhino, FFBeast, etc., but has not been tested. If you have one of these devices and can help provide configuration instructions, please reach out via [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues) or the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas).
+    This should include VPForce Rhino, FFBeast, etc., but has not been tested. If you have one of these devices and can help provide configuration instructions, please reach out via [GitHub :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues) or the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas).
 
 ## 5. Install and configure Bonus FFB
 
@@ -100,4 +100,4 @@ Please read the mode's guide for app-specific configuration, options, and featur
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 
-If you'd like other modes or have ideas for Bonus FFB, drop a message in the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [Github :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
+If you'd like other modes or have ideas for Bonus FFB, drop a message in the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [GitHub :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).

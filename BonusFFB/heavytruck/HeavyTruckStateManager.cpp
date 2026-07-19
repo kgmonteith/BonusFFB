@@ -34,11 +34,6 @@ void HeavyTruckStateManager::update() {
     QPair<int, int> gearValues = { 0, 0 };
     if (telemetry->isConnected() != TelemetrySource::NONE) {
         gearValues = telemetry->getGearState();
-        float engineRPM = telemetry->getEngineRPM();
-        if (engineRPM != lastEngineRPM) {
-            emit engineRPMChanged(engineRPM);
-            lastEngineRPM = engineRPM;
-        }
     }
 
     updateSlotState();
@@ -65,6 +60,7 @@ void HeavyTruckStateManager::updateSlotState() {
         slotState = newState;
         slot = newSlot;
         emit slotStateChanged(slotState);
+        /*
         if (slotState == HeavyTruckSlotState::SLOTTED)
             qDebug() << "HeavyTruckSlotState::SLOTTED";
         else if (slotState == HeavyTruckSlotState::NEUTRAL)
@@ -73,6 +69,7 @@ void HeavyTruckStateManager::updateSlotState() {
             qDebug() << "HeavyTruckSlotState::NEUTRAL_UNDER_SLOT";
         else if (slotState == HeavyTruckSlotState::UNKNOWN)
             qDebug() << "HeavyTruckSlotState::UNKNOWN";
+        */
     }
 }
 
@@ -85,11 +82,15 @@ void HeavyTruckStateManager::updateTargetGear() {
     float engineRPM = telemetry->getEngineRPM();
     float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
 
-    if (engineRPM > lastEngineRPM)
-        rpmIncreasing = true;
-    else
-        rpmIncreasing = false;
-    lastEngineRPM = engineRPM;
+    if (engineRPM != lastEngineRPM) 
+    {
+        if (engineRPM > lastEngineRPM)
+            rpmIncreasing = true;
+        else
+            rpmIncreasing = false;
+        lastEngineRPM = engineRPM;
+        //qDebug() << "engineRPM: " << engineRPM << ", rpmIncreasing: " << rpmIncreasing;
+    }
 
     rpmDelta = engineRPM - transmissionRPM;
     emit targetGearChanged(targetGear);
@@ -131,6 +132,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
     }
     if(synchroState != newState) 
     {
+        /*
         if (newState == HeavyTruckSynchroState::IN_SYNCH)
             qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
         else if (newState == HeavyTruckSynchroState::EXITING_SYNCH)
@@ -138,6 +140,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
         else if (newState == HeavyTruckSynchroState::ENTERING_SYNCH) {
             qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
         }
+        */
         synchroState = newState;
         emit synchroStateChanged(synchroState);
     }

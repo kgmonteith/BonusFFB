@@ -16,10 +16,6 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "HeavyTruckStateManager.h"
 #include "SharedEnums.h"
 
-#define NOT_IN_CORNER 0
-#define CORNER_ROUNDED 1
-#define CORNER_SQUARE 2
-
 class HeavyTruckSlotGuard: public QObject {
 	Q_OBJECT
 
@@ -29,6 +25,12 @@ public:
 public slots:
 	void updateSlotGuardEffects();
 	void updateSlotGuardState(HeavyTruckSlotState);
+	void setNeutralSpringStrength(int value) {
+		neutral_spring_strength = value * 100;	// Scale to FFB_MAX (10000)
+	}
+	void setNeutralSpringPosition(int value) {
+		neutral_spring_pos_pct = value * 0.01;	
+	}
 
 signals:
 	void forceRangeValue(bool);
@@ -36,7 +38,6 @@ signals:
 private:
 	QPair<long, long> getCornerStrength(double);
 	const Slot* last_nearest_slot;
-	const Slot* last_slot;
 	bool passed_through_neutral = true;
 
 	DeviceConfiguration* devices = nullptr;
@@ -51,6 +52,11 @@ private:
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION slotSpringConditions[2] = { noSpring, noSpring };
+
+	DIEFFECT neutralSpringEff = {};
+	double neutral_spring_pos_pct = 0.5;
+	long neutral_spring_strength = 0;
+	DICONDITION neutralSpringCondition = { 0, neutral_spring_strength, neutral_spring_strength };
 
 	//long gateLatchFrictionStrength = 5000;
 	//int latchDepth = JOY_MAXPOINT;

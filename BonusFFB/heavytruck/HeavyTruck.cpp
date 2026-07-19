@@ -30,8 +30,6 @@ void HeavyTruck::initialize() {
     if (devices->brake != nullptr)
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
-    ui->heavytruck_throttleOnShiftingLabel->setVisible(false);
-
     // Set default slot pattern
     slotPattern.setTruckPattern(0);
 
@@ -45,6 +43,8 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setRoundingFactor);
     connect(&slotPattern, &SlotPattern::setRangeOverride, devices, &DeviceConfiguration::setRangeOverride);
     connect(&slotGuard, &HeavyTruckSlotGuard::forceRangeValue, devices, &DeviceConfiguration::forceRange);
+    connect(ui->heavytruck_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringStrength);
+    connect(ui->heavytruck_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringPosition);
     // UI connections
     connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
     connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
@@ -196,6 +196,8 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->setValue("slotPatternDepthScale", ui->heavytruck_slotPatternDepthScaleSlider->value());
     settings->setValue("slotPatternWidthScale", ui->heavytruck_slotPatternWidthScaleSlider->value());
     settings->setValue("slotRoundingFactor", ui->heavytruck_slotRoundingFactorSlider ->value());
+    settings->setValue("neutralSpringStrength", ui->heavytruck_neutralSpringStrengthSlider->value());
+    settings->setValue("neutralSpringPosition", ui->heavytruck_neutralSpringPositionSlider->value());
     settings->setValue("grindZoneDepth", ui->heavytruck_grindZoneDepthSpinbox->value());
     settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
     settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
@@ -225,6 +227,8 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     ui->heavytruck_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 75).toInt());
     ui->heavytruck_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 67).toInt());
     ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
+    ui->heavytruck_neutralSpringStrengthSlider->setValue(settings->value("neutralSpringStrength", 0).toInt());
+    ui->heavytruck_neutralSpringPositionSlider->setValue(settings->value("neutralSpringPosition", 50).toInt());
     ui->heavytruck_grindZoneDepthSpinbox->setValue(settings->value("grindZoneDepth", 15).toInt());
     ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
     ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());

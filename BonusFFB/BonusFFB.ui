@@ -139,7 +139,7 @@
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -719,18 +719,18 @@
                  </item>
                 </layout>
                </item>
-               <item row="7" column="0">
+               <item row="4" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_55">
                  <item>
                   <widget class="QLabel" name="label_45">
                    <property name="text">
-                    <string>Slot rounding factor</string>
+                    <string>Slot rounding</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
-               <item row="7" column="1">
+               <item row="4" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_56">
                  <item>
                   <widget class="QSlider" name="heavytruck_slotRoundingFactorSlider">
@@ -772,15 +772,143 @@
                  </item>
                 </layout>
                </item>
-               <item row="8" column="1">
-                <widget class="QCheckBox" name="checkBox">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Enable synchronized transmission neutral spring</string>
-                 </property>
-                </widget>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_23">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_6">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_99">
+                 <item>
+                  <widget class="QLabel" name="label_82">
+                   <property name="text">
+                    <string>Neutral spring strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_98">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_neutralSpringStrengthSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_neutralSpringStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_100">
+                 <item>
+                  <widget class="QLabel" name="label_83">
+                   <property name="text">
+                    <string>Neutral spring position</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_101">
+                 <item>
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>Center slot</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="heavytruck_neutralSpringPositionSlider">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="minimum">
+                    <number>50</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_7">
+                   <property name="text">
+                    <string>Right slot</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_neutralSpringPositionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>50</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>
@@ -790,7 +918,53 @@
               <property name="title">
                <string/>
               </property>
-              <layout class="QFormLayout" name="formLayout_6">
+              <layout class="QFormLayout" name="formLayout_7">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_59">
+                 <item>
+                  <widget class="QLabel" name="label_49">
+                   <property name="text">
+                    <string>Grind zone depth</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_81">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="heavytruck_grindZoneDepthSpinbox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>80</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>15</number>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_52">
                  <item>
@@ -837,56 +1011,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item row="2" column="1">
                 <widget class="QCheckBox" name="heavytruck_displayZoneMarkers">
                  <property name="text">
                   <string>Display grind and button zone markers on joystick map</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_59">
-                 <item>
-                  <widget class="QLabel" name="label_49">
-                   <property name="text">
-                    <string>Grind zone depth</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_81">
-                   <property name="text">
-                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                   </property>
-                   <property name="openExternalLinks">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="heavytruck_grindZoneDepthSpinbox">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="suffix">
-                  <string>%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>10</number>
-                 </property>
-                 <property name="maximum">
-                  <number>80</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>5</number>
-                 </property>
-                 <property name="value">
-                  <number>15</number>
                  </property>
                 </widget>
                </item>

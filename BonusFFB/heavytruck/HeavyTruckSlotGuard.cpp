@@ -36,6 +36,23 @@ HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spP
     slotSpringEff.dwStartDelay = 0;
     devices->joystick->addEffect("slotSpring", { GUID_Spring, &slotSpringEff });
     
+    neutralSpringCondition.lOffset = slotPattern->getPositionPercentAsFFBOffset(neutral_spring_pos_pct);
+    neutralSpringEff.dwSize = sizeof(DIEFFECT);
+    neutralSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    neutralSpringEff.dwDuration = INFINITE;
+    neutralSpringEff.dwSamplePeriod = 0;
+    neutralSpringEff.dwGain = DI_FFNOMINALMAX;
+    neutralSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    neutralSpringEff.dwTriggerRepeatInterval = 0;
+    neutralSpringEff.cAxes = 1;
+    neutralSpringEff.rgdwAxes = AXES;
+    neutralSpringEff.rglDirection = FORWARDBACK;
+    neutralSpringEff.lpEnvelope = 0;
+    neutralSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    neutralSpringEff.lpvTypeSpecificParams = &neutralSpringCondition;
+    neutralSpringEff.dwStartDelay = 0;
+    devices->joystick->addEffect("neutralSpring", { GUID_Spring, &neutralSpringEff });
+
     clickPushBackEff.dwSize = sizeof(clickPushBackEff);
     clickPushBackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     clickPushBackEff.dwDuration = .025 * DI_SECONDS;
@@ -174,6 +191,13 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         }
     }
 
+    // Adjust neutral spring strength
+    long prior_offset = neutralSpringCondition.lOffset;
+    long prior_strength = neutralSpringCondition.lPositiveCoefficient;
+    double neutral_spring_scale = 1 - scaleRangeValue(std::abs(joystickPositionToFFBOffset(joyValues.fb)), 0, FFB_MAX * slotPattern->depth_scale); // Consider using rounding factor, button zone depth, etc., if this isn't a good scaling point
+    neutralSpringCondition.lPositiveCoefficient = neutral_spring_scale * neutral_spring_strength;
+    neutralSpringCondition.lNegativeCoefficient = neutral_spring_scale * neutral_spring_strength;
+
     // Set the bump-through spring for the ZF-16 double-H
     if (slotPattern->truckPattern == TruckPattern::ZF_16_DOUBLEH) {
         double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
@@ -181,11 +205,13 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
             //qDebug() << "in third slot";
             slotSpringConditions[0] = keepLRCentered;
             slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+            neutralSpringCondition.lOffset = slotPattern->slotPositionAsFFBOffset(slotPattern->slot_list[4]);
         }
         else if ((nearest_slot == &slotPattern->slot_list[6] || nearest_slot == &slotPattern->slot_list[7]) && joyValues.lr < slotPattern->slotPositionAsJoystick(*nearest_slot)) {
             //qDebug() << "in fourth slot";
             slotSpringConditions[0] = keepLRCentered;
             slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+            neutralSpringCondition.lOffset = slotPattern->slotPositionAsFFBOffset(slotPattern->slot_list[6]);
         }
         // Override the range switch
         bool newRangeOverride = false;
@@ -193,10 +219,18 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
             newRangeOverride = true;
         if (newRangeOverride != rangeOverride) {
             rangeOverride = newRangeOverride;
-            qDebug() << "rangeOverride chaged: " << rangeOverride;
+            qDebug() << "rangeOverride changed: " << rangeOverride;
             emit forceRangeValue(rangeOverride);
         }
     }
+    else {
+        // For all other patterns, set the neutral spring offset from the UI setting
+        neutralSpringCondition.lOffset = slotPattern->getPositionPercentAsFFBOffset(neutral_spring_pos_pct);
+    }
+
+    // Update neutral spring if needed
+    if (neutralSpringCondition.lPositiveCoefficient != prior_strength || neutralSpringCondition.lOffset != prior_offset)
+        devices->joystick->updateEffect("neutralSpring");
 
     // Prevent the stick from being pushed too far left at any point
     if (joyValues.lr < slotPattern->getPatternLeftMinimumAsJoystick()) {
@@ -270,4 +304,5 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         clickPlayed = false;
         //qDebug() << "Resetting click";
     }
+
 }
