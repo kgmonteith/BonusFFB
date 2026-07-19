@@ -117,6 +117,8 @@ Changes to the slot pattern, position, slot depth, and width are reflected on th
 - **Slot pattern**: Select the pattern that matches your truck's transmission, *and* the shifter layout in the game's controls menu.
 - **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.
 - **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press, shown with a blue line when markers are enabled. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot, about 20% higher than the grind zone value is recommended.
+- **Neutral spring strength**: Sets the strength of the neutral centering spring effect, which is applied when the stick is near the neutral channel.
+- **Neutral spring position**: Sets the centering position of the neutral spring. This is limited to positions under and between the center and rightmost slots in heavy truck mode, to prevent conflicts with the left-slot wall effect. This setting is ignored by the ZF-16 Double-H pattern, which overrides the neutral spring position for each of the two H-patterns.
 
 ### Force feedback effect settings
 

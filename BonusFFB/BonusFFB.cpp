@@ -257,6 +257,7 @@ void BonusFFB::loadProfile(QString profilePath) {
         app->loadSettings(&activeProfile);
     }
     setProfileDisplayName();
+    saveSetting("profile_path", activeProfile.fileName());
 }
 
 void BonusFFB::saveActiveProfile() {
