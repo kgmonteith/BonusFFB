@@ -37,7 +37,7 @@ void HeavyTruckStateManager::update() {
     }
 
     updateSlotState();
-    updateButtonZoneState();
+    updateButtonZoneState(gearValues);
     updateTargetGear();
     updateHeavyTruckSynchroState(gearValues);
     updateHeavyTruckGrindingState();
@@ -97,16 +97,21 @@ void HeavyTruckStateManager::updateTargetGear() {
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
 
-void HeavyTruckStateManager::updateButtonZoneState() {
+void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
     int newState = 0;
     if (slot != nullptr) {
         if (slotPattern->isInButtonZone(*slot, joystick) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && slotPattern->isInGrindZone(joystick))) {
             newState = slot->button;
         }
     } 
-    // Blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
+    // Un-blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
     if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH) {
         //qDebug() << "Triggering throttle blip";
+        emit unblipThrottle();
+    }
+    // Un-blip throttle if the stick is in neutral and telemetry says a gear is still engaged
+    if (!buttonZoneState && slotPattern->isInNeutral(joystick) && gearValues.second && devices->getPedalValues().throttle > 0) {
+        //qDebug() << "Triggering neutral throttle blip";
         emit unblipThrottle();
     }
     if (buttonZoneState != newState) {

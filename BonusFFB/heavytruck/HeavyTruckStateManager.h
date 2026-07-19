@@ -58,7 +58,7 @@ signals:
 
 private:
     void updateSlotState();
-    void updateButtonZoneState();
+    void updateButtonZoneState(QPair<int, int>);
     void updateHeavyTruckSynchroState(QPair<int, int>);
     void updateHeavyTruckGrindingState();
     void updateTargetGear();
