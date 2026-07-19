@@ -34,6 +34,8 @@ void HeavyTruckStateManager::update() {
     QPair<int, int> gearValues = { 0, 0 };
     if (telemetry->isConnected() != TelemetrySource::NONE) {
         gearValues = telemetry->getGearState();
+        float engineRPM = telemetry->getEngineRPM();
+        emit engineRPMChanged(engineRPM);
     }
 
     updateSlotState();
