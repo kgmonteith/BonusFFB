@@ -3,6 +3,12 @@
 !!! danger "Using FFB devices for anything other than their intended purpose may result in damage or injury"
     The authors of Bonus FFB accept no liability for any loss or damage including, without limitation, indirect or consequential loss or damage arising out of or in connection with the use of the software. Use Bonus FFB at your own risk.
 
+To set up Bonus FFB, please follow these instructions in their entirety.
+
+Armstrong Gaming created an excellent tutorial for installing Bonus FFB with troubleshooting tips, give it a watch if you're having trouble:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1cJ69dylecg?si=Yl7EC97IAe13NFz8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 1. Install vJoy
 
 Install [vJoy v2.2.2.0](https://github.com/BrunnerInnovation/vJoy/releases/tag/v2.2.2.0).
@@ -26,7 +32,7 @@ Steam has introduced an incompatibility with vJoy that affects Bonus FFB and cer
 
 ### American Truck Simulator/Euro Truck Simulator 2
 
-Install [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/releases) DLL to the `bin\win_x64\plugins` folder of your ATS and ETS2 installations. These are the default locations when using Steam:
+Install the x64 version of [RenCloud's scs-sdk-plugin](https://github.com/RenCloud/scs-sdk-plugin/releases) DLL to the `bin\win_x64\plugins` folder of your ATS and ETS2 installations. These are the default locations when using Steam:
 
 * `C:\Program Files (x86)\Steam\steamapps\common\American Truck Simulator\bin\win_x64\plugins\`
 * `C:\Program Files (x86)\Steam\steamapps\common\Euro Truck Simulator 2\bin\win_x64\plugins\`
@@ -100,4 +106,4 @@ Please read the mode's guide for app-specific configuration, options, and featur
 
 If your FFB joystick and other devices are correctly detected and configured, you can start the app by pressing the ▶️ button.
 
-If you'd like other modes or have ideas for Bonus FFB, drop a message in the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [GitHub :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
+If you're having trouble or have ideas for Bonus FFB, drop a message in the #bonus-ffb channel on the [HOTAS Discord :fontawesome-brands-discord:](https://discord.gg/hotas) or [GitHub :fontawesome-brands-github:](https://github.com/kgmonteith/BonusFFB/issues).
