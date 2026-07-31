@@ -84,6 +84,8 @@ void HeavyTruckStateManager::updateTargetGear() {
     float engineRPM = telemetry->getEngineRPM();
     float transmissionRPM = telemetry->getTransmissionRPMForGear(targetGear);
 
+    rpmDelta = engineRPM - transmissionRPM;
+
     if (engineRPM != lastEngineRPM) 
     {
         if (engineRPM > lastEngineRPM)
@@ -91,10 +93,9 @@ void HeavyTruckStateManager::updateTargetGear() {
         else
             rpmIncreasing = false;
         lastEngineRPM = engineRPM;
-        //qDebug() << "engineRPM: " << engineRPM << ", rpmIncreasing: " << rpmIncreasing;
+        //qDebug() << telemetry->getSpeed() << engineRPM << transmissionRPM << rpmDelta ;
     }
 
-    rpmDelta = engineRPM - transmissionRPM;
     emit targetGearChanged(targetGear);
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
