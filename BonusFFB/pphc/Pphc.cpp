@@ -175,6 +175,7 @@ void Pphc::gameLoop() {
         return;
     }
     // Get new joystick values
+    devices->updateState();
     QPair<int, int> joystickValues = devices->getJoystickValues();
 
     updateSlotSpring(joystickValues);

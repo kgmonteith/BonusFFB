@@ -182,6 +182,8 @@ HRESULT HShifter::startMode() {
 }
 
 void HShifter::gameLoop() {
+    devices->updateState();
+
     // Get new joystick values
     QPair<int, int> joystickValues = devices->getJoystickValues();
 

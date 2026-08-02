@@ -171,6 +171,16 @@ void DeviceConfiguration::release() {
     }
 }
 
+void DeviceConfiguration::updateState() {
+    QSet<QUuid> uuids;
+    QList<DeviceInfo*> activeDevices = { joystick, throttle, brake, clutch, range, splitter, shiftLockDevice };
+    for (auto device : activeDevices) {
+        if (device != nullptr && SUCCEEDED(device->updateState())) {
+            uuids.insert(device->instanceGuid);
+        }
+    }
+}
+
 void DeviceConfiguration::saveDeviceConfiguration() {
     QDir appSettingsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     QSettings config = QSettings(appSettingsDir.filePath("device_configuration.ini"), QSettings::IniFormat);
@@ -571,7 +581,6 @@ void DeviceConfiguration::updateButtonComboBoxes(int flag, ButtonBinding binding
 }
 
 QPair<int, int> DeviceConfiguration::getJoystickValues() {
-    joystick->updateState();
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     emit joystickLRValueChanged(joystickLRValue);
@@ -581,7 +590,6 @@ QPair<int, int> DeviceConfiguration::getJoystickValues() {
 }
 
 JoystickValues DeviceConfiguration::getJoystickValues2() {
-    joystick->updateState();
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     emit joystickLRValueChanged(joystickLRValue);
@@ -673,49 +681,33 @@ void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {
 
 PedalValues DeviceConfiguration::getPedalValues() {
     PedalValues values = { 0, 0, 0 };
-    if (SUCCEEDED(throttle->updateState()))
-    {
-        values.throttle = throttle->getAxisReading(throttleAxisGuid);
-        if (invertThrottleAxis) {
-            values.throttle = abs(65535 - values.throttle);
-        }
-        emit throttleValueChanged(values.throttle);
+    values.throttle = throttle->getAxisReading(throttleAxisGuid);
+    if (invertThrottleAxis) {
+        values.throttle = abs(65535 - values.throttle);
     }
-    if (SUCCEEDED(clutch->updateState()))
-    {
-        values.clutch = clutch->getAxisReading(clutchAxisGuid);
-        if (invertClutchAxis) {
-            values.clutch = abs(65535 - values.clutch);
-        }
-        emit clutchValueChanged(values.clutch);
+    emit throttleValueChanged(values.throttle);
+    values.clutch = clutch->getAxisReading(clutchAxisGuid);
+    if (invertClutchAxis) {
+        values.clutch = abs(65535 - values.clutch);
     }
-
-    if (SUCCEEDED(brake->updateState()))
-    {
-        values.brake = brake->getAxisReading(brakeAxisGuid);
-        if (invertBrakeAxis) {
-            values.brake = abs(65535 - values.brake);
-        }
+    emit clutchValueChanged(values.clutch);
+    values.brake = brake->getAxisReading(brakeAxisGuid);
+    if (invertBrakeAxis) {
+        values.brake = abs(65535 - values.brake);
     }
-    emit pedalValuesChanged(values.clutch, values.throttle);    // TODO: Deprecate this
     return values;
 }
 
 RangeSplitterValues DeviceConfiguration::getRangeSplitterValues() {
     RangeSplitterValues values = { false, false };
     // Override range value if configured
-    if (SUCCEEDED(range->updateState()))
-    {
-        values.range = range->isButtonPressed(rangeButton);
-        if (rangeOverride) {
-            values.range = rangeOverrideState;
-        }
-        emit rangeChanged(values.range);
+    values.range = range->isButtonPressed(rangeButton);
+    if (rangeOverride) {
+        values.range = rangeOverrideState;
     }
-    if (SUCCEEDED(splitter->updateState())) {
-        values.splitter = splitter->isButtonPressed(splitterButton);
-        emit splitterChanged(values.splitter);
-    }
+    emit rangeChanged(values.range);
+    values.splitter = splitter->isButtonPressed(splitterButton);
+    emit splitterChanged(values.splitter);
     return values;
 }
 

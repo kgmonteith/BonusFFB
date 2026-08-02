@@ -95,7 +95,6 @@ signals:
 	void throttleValueChanged(int);
 	void rangeChanged(bool);
 	void splitterChanged(bool);
-	void pedalValuesChanged(int, int);
 	void deviceConfigurationChanged();
 
 public:
@@ -103,6 +102,7 @@ public:
 	int ready(int);
 	HRESULT acquire(int);
 	void release();
+	void updateState();
 	void saveDeviceConfiguration();
 	void loadDeviceConfiguration();
 	bool isFFBDeviceInstalled();

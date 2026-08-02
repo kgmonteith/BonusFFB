@@ -47,10 +47,26 @@ void Prndl::initialize() {
     QObject::connect(ui->prndl_enableParkSlotCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleParkSlot);
     QObject::connect(ui->prndl_enableLowSlotCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleLastSlot);
     QObject::connect(ui->prndl_simulateParkUsingTelemetryCheckBox, &QCheckBox::checkStateChanged, &stateManager, &PrndlStateManager::toggleAtsTelemetryPark);
+    connect(ui->prndl_useBrakeAsShiftLock, &QCheckBox::checkStateChanged, this, &Prndl::checkUsingShiftLock);
 
+    checkUsingShiftLock(ui->prndl_useBrakeAsShiftLock->isChecked());
+}
+
+void Prndl::checkUsingShiftLock(bool useBrakeAsShiftLock) {
+
+    bool usingShiftLock = false;
     if (devices->shiftLockDevice != nullptr) {
+        usingShiftLock = true;
+    }
+    else if (useBrakeAsShiftLock) {
+        usingShiftLock = true;
+    }
+    if (usingShiftLock) {
         ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
         stateManager.toggleUsingShiftLock(true);
+    }
+    else {
+        stateManager.toggleUsingShiftLock(false);
     }
 }
 
@@ -151,6 +167,7 @@ void Prndl::saveSettings(QSettings* settings) {
     settings->setValue("enable_low_slot", ui->prndl_enableLowSlotCheckBox->isChecked());
     settings->setValue("simulate_park_atsets2", ui->prndl_simulateParkUsingTelemetryCheckBox->isChecked());
     settings->setValue("shift_lock_neutral_reverse", ui->prndl_shiftLockFromNeutralToReverseCheckBox->isChecked());
+    settings->setValue("useBrakeAsShiftLock", ui->prndl_useBrakeAsShiftLock->isChecked());
     settings->endGroup();
 
     settings->endGroup();
@@ -166,17 +183,31 @@ void Prndl::loadSettings(QSettings* settings) {
     ui->prndl_enableLowSlotCheckBox->setChecked(settings->value("enable_low_slot", true).toBool());
     ui->prndl_simulateParkUsingTelemetryCheckBox->setChecked(settings->value("simulate_park_atsets2", true).toBool());
     ui->prndl_shiftLockFromNeutralToReverseCheckBox->setChecked(settings->value("shift_lock_neutral_reverse", true).toBool());
+    ui->prndl_useBrakeAsShiftLock->setChecked(settings->value("useBrakeAsShiftLock", true).toBool());
     settings->endGroup();
 
     settings->endGroup();
 }
 
 bool Prndl::getShiftLockReleased() {
-    if (devices->shiftLockDevice == nullptr || !devices->shiftLockDevice->isAcquired) {
-        return false;
+    bool shiftLockReleased = false;
+    // Check shift lock button
+    if (devices->shiftLockDevice != nullptr) 
+    {
+        shiftLockReleased = devices->shiftLockDevice->isButtonPressed(devices->shiftLockButton);
     }
-    devices->shiftLockDevice->updateState();
-    bool shiftLockReleased = devices->shiftLockDevice->isButtonPressed(devices->shiftLockButton);
+    if (ui->prndl_useBrakeAsShiftLock->isChecked() && devices->brake != nullptr) {
+        long brakeValue = devices->getPedalValues().brake;
+        bool shiftLockBrakeReleased = (brakeValue > JOY_MIDPOINT) ? true : false;
+        if (devices->shiftLockDevice == nullptr) {
+            // If there is no shift lock button, lock is fully released if the brakes are pressed
+            shiftLockReleased = shiftLockBrakeReleased;
+        }
+        else {
+            // If there is a shift lock button and brakes are pressed, shift lock is released
+            shiftLockReleased &= shiftLockBrakeReleased;
+        }
+    }
     if (shiftLockReleased != lastShiftLockReleased) {
         if (shiftLockReleased) {
             ui->prndl_shiftLockButtonMonitorLabel->setText("🟢");
@@ -185,7 +216,6 @@ bool Prndl::getShiftLockReleased() {
         {
             ui->prndl_shiftLockButtonMonitorLabel->setText("⭕");
         }
-        emit shiftLockStateChanged(shiftLockReleased);
     }
     lastShiftLockReleased = shiftLockReleased;
     return shiftLockReleased;
@@ -203,8 +233,9 @@ void Prndl::gameLoop() {
     if (devices->joystick == nullptr || !devices->joystick->isAcquired ) {
         return;
     }
+    devices->updateState();
     // Get new joystick values
-    QPair<int, int> joystickValues = devices->getJoystickValues();
+    JoystickValues joystickValues = devices->getJoystickValues2();
     bool isShiftLockRelased = getShiftLockReleased();
 
     // Get telemetry values
@@ -214,6 +245,6 @@ void Prndl::gameLoop() {
     }
 
     stateManager.update(joystickValues, isShiftLockRelased, isParkingBrakeSet);
-    slotGuard.updateLRSpring(joystickValues.first);
+    slotGuard.updateLRSpring(joystickValues.lr);
     pedalsManager.updateVirtualPedals();
 }

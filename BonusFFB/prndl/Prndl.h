@@ -29,6 +29,7 @@ public:
 	void saveSettings(QSettings*);
 	void loadSettings(QSettings*);
 	void initializeJoystickMap();
+	void checkUsingShiftLock(bool);
 
 	HRESULT startMode();
 	void stopMode();
@@ -40,10 +41,6 @@ public slots:
 	void redrawJoystickMap();
 	void changeSlotLabel(PrndlSlot slot);
 	void updateJoystickCircle(int, int);
-
-
-signals:
-	void shiftLockStateChanged(bool);
 
 private:
 	QGraphicsScene* scene = nullptr;

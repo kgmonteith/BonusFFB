@@ -34,7 +34,7 @@ class PrndlStateManager: public QObject
 
 public:
     PrndlStateManager();
-    void update(QPair<int, int>, bool, bool);
+    void update(JoystickValues, bool, bool);
     int getEnabledSlotCount();
     bool isParkEnabled();
     int getButtonNumberForSlot(PrndlSlot);
@@ -73,5 +73,6 @@ private:
     int slot_half_depth = 4000;
     bool using_ats_telemetry_park = true;
     bool using_shift_lock = false;
+    bool using_brake_as_shift_lock = false;
     bool lock_shifts_from_neutral_to_reverse = true;
 };

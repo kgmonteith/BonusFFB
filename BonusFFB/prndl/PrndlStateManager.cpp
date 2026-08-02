@@ -27,9 +27,9 @@ void PrndlStateManager::setTelemetryState(TelemetrySource t) {
 	telemetryState = t;
 }
 
-void PrndlStateManager::update(QPair<int, int> joystickValues, bool shiftLockButtonState, bool parkingBrakeState) {
-    long lrValue = joystickValues.first;
-    long fbValue = joystickValues.second;
+void PrndlStateManager::update(JoystickValues joystickValues, bool shiftLockButtonState, bool parkingBrakeState) {
+    long lrValue = joystickValues.lr;
+    long fbValue = joystickValues.fb;
     //updateShiftLockButtonState(shiftLockButtonState);
     //updateSlotState(lrValue, fbValue);
     updateButtonZoneState(fbValue, shiftLockButtonState, parkingBrakeState);

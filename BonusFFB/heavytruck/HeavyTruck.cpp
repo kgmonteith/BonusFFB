@@ -261,6 +261,7 @@ HRESULT HeavyTruck::startMode() {
 
 void HeavyTruck::gameLoop() {
     // Update state
+    devices->updateState();
     stateManager.update();
     slotGuard.updateSlotGuardEffects();
     synchroGuard.updateTorqueLock();
