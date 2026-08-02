@@ -58,7 +58,7 @@ void Prndl::checkUsingShiftLock(bool useBrakeAsShiftLock) {
     if (devices->shiftLockDevice != nullptr) {
         usingShiftLock = true;
     }
-    else if (useBrakeAsShiftLock) {
+    else if (useBrakeAsShiftLock && devices->brake != nullptr) {
         usingShiftLock = true;
     }
     if (usingShiftLock) {
