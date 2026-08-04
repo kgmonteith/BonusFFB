@@ -54,6 +54,12 @@ void SlotPattern::setTruckPattern(int index) {
 		slot_buttons = { 0, 2, 3, 4, 5, 6, 3, 4, 5, 6};
 		range_override = true;
 	}
+	else if (truckPattern == TruckPattern::R6_ZF_BUS) {
+		slot_buttons = { REVERSE_BUTTON, 1, 2, 3, 4, 5, 6, 0 };
+	}
+	else if (truckPattern == TruckPattern::R6_GENERIC) {
+		slot_buttons = { REVERSE_BUTTON, 0, 1, 2, 3, 4, 5, 6 };
+	}
 
 	slot_list.clear();
 	int full_slot_ct = slot_buttons.length() / 2;

@@ -28,6 +28,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #define SLOT_NONE nullptr
 
+# define REVERSE_BUTTON 21
+
 enum class TruckPattern {
 	EATON_18,
 	EATON_10,
@@ -37,7 +39,9 @@ enum class TruckPattern {
 	VOLVO_12_2,
 	ZF_12,
 	ZF_16,
-	ZF_16_DOUBLEH
+	ZF_16_DOUBLEH,
+	R6_ZF_BUS,
+	R6_GENERIC
 };
 
 class Slot {

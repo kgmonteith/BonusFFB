@@ -132,7 +132,7 @@
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
@@ -528,6 +528,16 @@
                    <item>
                     <property name="text">
                      <string>ZF 16 (Double-H)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>R+6 (ZF Bus)</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>R+6 (Generic)</string>
                     </property>
                    </item>
                   </widget>
@@ -2207,7 +2217,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="prndlTabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
