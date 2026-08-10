@@ -78,7 +78,7 @@ void HeavyTruckStateManager::updateSlotState() {
 void HeavyTruckStateManager::updateTargetGear() {
     int targetSlot = 0;
     if ((slotState == HeavyTruckSlotState::SLOTTED || (slotState == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT && slotPattern->isInGrindZone(joystick))) && slot != nullptr)
-        targetSlot = slot->button;
+        targetSlot = slot->vJoyButton();
     targetGear = telemetry->getGearForSlot(targetSlot, &rangeSplitter);
     
     float engineRPM = telemetry->getEngineRPM();
@@ -104,7 +104,7 @@ void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
     int newState = 0;
     if (slot != nullptr) {
         if (slotPattern->isInButtonZone(*slot, joystick) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && slotPattern->isInGrindZone(joystick))) {
-            newState = slot->button;
+            newState = slot->vJoyButton();
         }
     } 
     // Un-blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting

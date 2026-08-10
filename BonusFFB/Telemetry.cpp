@@ -136,8 +136,8 @@ float Telemetry::getThrottlePercent() {
 	return 0;
 }
 
-int Telemetry::getGearForSlot(int slotNumber, RangeSplitterValues* rangeSplitter) {
-	if (!slotNumber)
+int Telemetry::getGearForSlot(int slotButton, RangeSplitterValues* rangeSplitter) {
+	if (slotButton < 0)
 		return 0;
 	if (telemetrySource == TelemetrySource::SCS) {
 		unsigned int rangeMask = 0;
@@ -150,7 +150,7 @@ int Telemetry::getGearForSlot(int slotNumber, RangeSplitterValues* rangeSplitter
 		}
 		int gearIndex = 0;
 		for (gearIndex = 0; gearIndex < 32; gearIndex++) {
-			if (pTelemMap->truck_ui.hshifterPosition[gearIndex] != (slotNumber + 1)) // SCS seems to assume an 8-slot shifter, with the first two slots always unused. Might be wrong about that for custom transmissions.
+			if (pTelemMap->truck_ui.hshifterPosition[gearIndex] != slotButton) // SCS seems to assume an 8-slot shifter, with the first two slots always unused. Might be wrong about that for custom transmissions.
 				continue;
 			if (pTelemMap->truck_ui.hshifterBitmask[gearIndex] == (rangeMask | splitterMask))
 				break;

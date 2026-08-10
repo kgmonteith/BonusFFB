@@ -23,50 +23,50 @@ void SlotPattern::setName(QString t_name) {
 void SlotPattern::setTruckPattern(int index) {
 	truckPattern = static_cast<TruckPattern>(index);
 	setSlotWalls(SLOT_WALL_LEFT);
-	QList<int> slot_buttons;
+	QList<int> slot_numbers;
 	bool range_override = false;
 	if (truckPattern == TruckPattern::EATON_18) {
-		slot_buttons = {1, 2, 3, 4, 5, 6};
+		slot_numbers = {1, 2, 3, 4, 5, 6};
 	}
 	else if (truckPattern == TruckPattern::EATON_10) {
-		slot_buttons = {1, 2, 3, 4, 5, 6};
+		slot_numbers = {1, 2, 3, 4, 5, 6};
 		setSlotWalls(0);
 	}
 	else if (truckPattern == TruckPattern::SCANIA_12) {
-		slot_buttons = { 1, 0, 0, 4, 5, 6 };
+		slot_numbers = { 1, X, X, 4, 5, 6 };
 	}
 	else if (truckPattern == TruckPattern::SCANIA_12_2) {
-		slot_buttons = {1, 2, 0, 4, 5, 6 };
+		slot_numbers = {1, 2, X, 4, 5, 6 };
 	}
 	else if (truckPattern == TruckPattern::VOLVO_12) {
-		slot_buttons = {0, 2, 3, 4, 5, 0};
+		slot_numbers = {X, 2, 3, 4, 5, X};
 	}
 	else if (truckPattern == TruckPattern::VOLVO_12_2) {
-		slot_buttons = {1, 2, 3, 4, 5, 0};
+		slot_numbers = {1, 2, 3, 4, 5, X};
 	}
 	else if (truckPattern == TruckPattern::ZF_12) {
-		slot_buttons = { 0, 2, 3, 0, 5, 6};
+		slot_numbers = { X, 2, 3, X, 5, 6};
 	}
 	else if (truckPattern == TruckPattern::ZF_16) {
-		slot_buttons = { 0, 2, 3, 4, 5, 6};
+		slot_numbers = { X, 2, 3, 4, 5, 6};
 	}
 	else if (truckPattern == TruckPattern::ZF_16_DOUBLEH) {
-		slot_buttons = { 0, 2, 3, 4, 5, 6, 3, 4, 5, 6};
+		slot_numbers = { X, 2, 3, 4, 5, 6, 3, 4, 5, 6};
 		range_override = true;
 	}
 	else if (truckPattern == TruckPattern::R6_ZF_BUS) {
-		slot_buttons = { REVERSE_BUTTON, 1, 2, 3, 4, 5, 6, 0 };
+		slot_numbers = { R, 1, 2, 3, 4, 5, 6, X };
 	}
 	else if (truckPattern == TruckPattern::R6_GENERIC) {
-		slot_buttons = { REVERSE_BUTTON, 0, 1, 2, 3, 4, 5, 6 };
+		slot_numbers = { R, X, 1, 2, 3, 4, 5, 6 };
 	}
 
 	slot_list.clear();
-	int full_slot_ct = slot_buttons.length() / 2;
+	int full_slot_ct = slot_numbers.length() / 2;
 	bool orientation = SLOT_ORIENTATION_FORWARD;
-	for (int i = 0; i < slot_buttons.length(); i++) {
+	for (int i = 0; i < slot_numbers.length(); i++) {
 		double position_pct = double(i / 2) / (full_slot_ct - 1);
-		slot_list.append({slot_buttons[i], position_pct, orientation});
+		slot_list.append({slot_numbers[i], position_pct, orientation});
 		orientation = !orientation;
 	}
 	emit setRangeOverride(range_override);

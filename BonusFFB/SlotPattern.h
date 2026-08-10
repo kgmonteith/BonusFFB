@@ -28,7 +28,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #define SLOT_NONE nullptr
 
-# define REVERSE_BUTTON 21
+#define R 0
+#define X -1
 
 enum class TruckPattern {
 	EATON_18,
@@ -47,7 +48,7 @@ enum class TruckPattern {
 class Slot {
 public:
 	bool isEnabled() const {
-		if (button != 0)
+		if (number != X)
 			return true;
 		return false;
 	}
@@ -57,8 +58,11 @@ public:
 	bool isOrientationBack() const {
 		return orientation == SLOT_ORIENTATION_BACK;
 	}
+	int vJoyButton() const {
+		return number + 1;
+	}
 
-	int button = 0;
+	int number = X;
 	double position_pct_nominal = 0;
 	bool orientation = SLOT_ORIENTATION_FORWARD;
 
