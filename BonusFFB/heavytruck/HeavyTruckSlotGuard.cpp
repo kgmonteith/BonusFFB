@@ -327,20 +327,21 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     }
     */
 
-    // Play the end-of-slot detent effect
+    // Play the end-of-slot detent and shift rail resistance effects
     if (nearest_slot != SLOT_NONE) {
         long detent_prior_offset = detentSpringCondition.lOffset;
         long detent_prior_strength = detentSpringCondition.lPositiveCoefficient;
-        if ((nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + 5000) || (nearest_slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) - 5000)) {
-            qDebug() << "Enabling detent";
+        if ((nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + 3500) || (nearest_slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) - 3500)) {
+            // Spring simulates the detent
             detentSpringCondition.lOffset = slotPattern->slotDepthAsFFBOffset(nearest_slot->orientation);
-            detentSpringCondition.lPositiveCoefficient = detent_spring_strength;
-            detentSpringCondition.lNegativeCoefficient = detent_spring_strength;
+            detentSpringCondition.lPositiveCoefficient = detent_spring_strength * -1;   // I have no idea why this spring strength needs to be inverted, but it does
+            detentSpringCondition.lNegativeCoefficient = detent_spring_strength * -1;
         }
         else {
-            qDebug() << "Disabling detent";
-            detentSpringCondition.lPositiveCoefficient = 0;
-            detentSpringCondition.lNegativeCoefficient = 0;
+            // Spring simulates the ramp resistance
+            detentSpringCondition.lOffset = 0;
+            detentSpringCondition.lPositiveCoefficient = shift_rail_ramp_resistance * -1;
+            detentSpringCondition.lNegativeCoefficient = shift_rail_ramp_resistance * -1;
         }
         if (detent_prior_offset != detentSpringCondition.lOffset || detent_prior_strength != detentSpringCondition.lPositiveCoefficient)
         {
