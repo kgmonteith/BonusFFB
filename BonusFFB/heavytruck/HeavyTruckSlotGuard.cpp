@@ -45,14 +45,33 @@ HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spP
     neutralSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
     neutralSpringEff.dwTriggerRepeatInterval = 0;
     neutralSpringEff.cAxes = 1;
-    neutralSpringEff.rgdwAxes = AXES;
-    neutralSpringEff.rglDirection = FORWARDBACK;
+    neutralSpringEff.rgdwAxes = &AXES[0];
+    neutralSpringEff.rglDirection = &FORWARDBACK[0];
     neutralSpringEff.lpEnvelope = 0;
     neutralSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     neutralSpringEff.lpvTypeSpecificParams = &neutralSpringCondition;
     neutralSpringEff.dwStartDelay = 0;
     devices->joystick->addEffect("neutralSpring", { GUID_Spring, &neutralSpringEff });
 
+
+    detentSpringCondition.lOffset = slotPattern->getPositionPercentAsFFBOffset(neutral_spring_pos_pct);
+    detentSpringEff.dwSize = sizeof(DIEFFECT);
+    detentSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    detentSpringEff.dwDuration = INFINITE;
+    detentSpringEff.dwSamplePeriod = 0;
+    detentSpringEff.dwGain = DI_FFNOMINALMAX;
+    detentSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    detentSpringEff.dwTriggerRepeatInterval = 0;
+    detentSpringEff.cAxes = 1;
+    detentSpringEff.rgdwAxes = &AXES[1];
+    detentSpringEff.rglDirection = &FORWARDBACK[0];
+    detentSpringEff.lpEnvelope = 0;
+    detentSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    detentSpringEff.lpvTypeSpecificParams = &detentSpringCondition;
+    detentSpringEff.dwStartDelay = 0;
+    devices->joystick->addEffect("detentSpring", { GUID_Spring, &detentSpringEff });
+
+    /*
     clickPushBackEff.dwSize = sizeof(clickPushBackEff);
     clickPushBackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
     clickPushBackEff.dwDuration = .025 * DI_SECONDS;
@@ -82,6 +101,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spP
     clickPushForwardEff.lpvTypeSpecificParams = &clickPushForward;
     clickPushForwardEff.dwStartDelay = 0;
     devices->joystick->addEffect("clickPushForward", { GUID_RampForce, &clickPushForwardEff, false });
+    */
 
     return DI_OK;
 }
@@ -286,6 +306,7 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     */
 
     // Play the end-of-slot click effect
+    /*
     if (!clickPlayed && nearest_slot != SLOT_NONE) {
         if (nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + 1000) {
             HRESULT hr = devices->joystick->playEffect("clickPushBack");
@@ -304,5 +325,26 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         clickPlayed = false;
         //qDebug() << "Resetting click";
     }
+    */
 
+    // Play the end-of-slot detent effect
+    if (nearest_slot != SLOT_NONE) {
+        long detent_prior_offset = detentSpringCondition.lOffset;
+        long detent_prior_strength = detentSpringCondition.lPositiveCoefficient;
+        if ((nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + 5000) || (nearest_slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) - 5000)) {
+            qDebug() << "Enabling detent";
+            detentSpringCondition.lOffset = slotPattern->slotDepthAsFFBOffset(nearest_slot->orientation);
+            detentSpringCondition.lPositiveCoefficient = detent_spring_strength;
+            detentSpringCondition.lNegativeCoefficient = detent_spring_strength;
+        }
+        else {
+            qDebug() << "Disabling detent";
+            detentSpringCondition.lPositiveCoefficient = 0;
+            detentSpringCondition.lNegativeCoefficient = 0;
+        }
+        if (detent_prior_offset != detentSpringCondition.lOffset || detent_prior_strength != detentSpringCondition.lPositiveCoefficient)
+        {
+            devices->joystick->updateEffect("detentSpring");
+        }
+    }
 }

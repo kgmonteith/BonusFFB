@@ -31,6 +31,9 @@ public slots:
 	void setNeutralSpringPosition(int value) {
 		neutral_spring_pos_pct = value * 0.01;	
 	}
+	void setDetentSpringStrength(int value) {
+		detent_spring_strength = value * -100; // Scale to -FFB_MAX
+	}
 
 signals:
 	void forceRangeValue(bool);
@@ -57,6 +60,10 @@ private:
 	double neutral_spring_pos_pct = 0.5;
 	long neutral_spring_strength = 0;
 	DICONDITION neutralSpringCondition = { 0, neutral_spring_strength, neutral_spring_strength };
+
+	long detent_spring_strength = 0;
+	DIEFFECT detentSpringEff = {};
+	DICONDITION detentSpringCondition = { 0, 0, 0 };
 
 	//long gateLatchFrictionStrength = 5000;
 	//int latchDepth = JOY_MAXPOINT;

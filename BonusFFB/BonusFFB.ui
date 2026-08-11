@@ -729,59 +729,6 @@
                  </item>
                 </layout>
                </item>
-               <item row="4" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_55">
-                 <item>
-                  <widget class="QLabel" name="label_45">
-                   <property name="text">
-                    <string>Slot rounding</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="4" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_56">
-                 <item>
-                  <widget class="QSlider" name="heavytruck_slotRoundingFactorSlider">
-                   <property name="minimum">
-                    <number>10</number>
-                   </property>
-                   <property name="maximum">
-                    <number>25</number>
-                   </property>
-                   <property name="value">
-                    <number>10</number>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="tickPosition">
-                    <enum>QSlider::TickPosition::TicksBelow</enum>
-                   </property>
-                   <property name="tickInterval">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QSpinBox" name="heavytruck_slotRoundingFactorSpinbox">
-                   <property name="suffix">
-                    <string>%</string>
-                   </property>
-                   <property name="minimum">
-                    <number>10</number>
-                   </property>
-                   <property name="maximum">
-                    <number>25</number>
-                   </property>
-                   <property name="value">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
               </layout>
              </widget>
             </item>
@@ -915,6 +862,65 @@
                    </property>
                    <property name="maximum">
                     <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_103">
+                 <item>
+                  <widget class="QLabel" name="label_84">
+                   <property name="text">
+                    <string>Detent spring strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_102">
+                 <item>
+                  <widget class="QSlider" name="heavytruck_detentSpringStrengthSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="heavytruck_detentSpringStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
                    </property>
                   </widget>
                  </item>
