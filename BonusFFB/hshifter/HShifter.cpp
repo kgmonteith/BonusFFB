@@ -32,57 +32,47 @@ void HShifter::initialize() {
     if (devices->brake != nullptr)
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
+    // Hide UI elements that start hidden
+    ui->hshifter_slotPatternCustomWarningLabel->hide();
+
+    // Add slot patterns
+    for (auto pattern : PresetPatterns) {
+        ui->hshifter_slotPatternPresetComboBox->addItem(pattern.name);
+    }
+
+    // Slot pattern connections
+    connect(ui->hshifter_slotPatternPresetComboBox, &QComboBox::currentTextChanged, &slotPattern, &SlotPattern::setPattern);
     // Graphics connections
-    QObject::connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
+    connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
     // Telemetry connections
-    QObject::connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HShifterStateManager::setTelemetryState);
+    connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HShifterStateManager::setTelemetryState);
     // Joystick connections
-    QObject::connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HShifter::updateJoystickCircle);
+    connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HShifter::updateJoystickCircle);
     // Pedal connections
-    QObject::connect(devices, &DeviceConfiguration::clutchValueChanged, ui->clutchProgressBar, &QProgressBar::setValue);
-    QObject::connect(devices, &DeviceConfiguration::throttleValueChanged, ui->throttleProgressBar, &QProgressBar::setValue);
+    connect(devices, &DeviceConfiguration::clutchValueChanged, ui->clutchProgressBar, &QProgressBar::setValue);
+    connect(devices, &DeviceConfiguration::throttleValueChanged, ui->throttleProgressBar, &QProgressBar::setValue);
     // vJoy connections
-    QObject::connect(&stateManager, &HShifterStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
-    QObject::connect(&stateManager, &HShifterStateManager::buttonZoneChanged, this, &HShifter::updateGearText);
+    connect(&stateManager, &HShifterStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
+    connect(&stateManager, &HShifterStateManager::buttonZoneChanged, this, &HShifter::updateGearText);
     // FFB effect connections
-    QObject::connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &HShifterSlotGuard::updateSlotGuardState);
-    QObject::connect(&stateManager, &HShifterStateManager::synchroStateChanged, &synchroGuard, &HShifterSynchroGuard::synchroStateChanged);
-    QObject::connect(this, &HShifter::engineRPMChanged, &synchroGuard, &HShifterSynchroGuard::updateEngineRPM);
-    QObject::connect(&stateManager, &HShifterStateManager::grindingStateChanged, &synchroGuard, &HShifterSynchroGuard::grindingStateChanged);
-    QObject::connect(ui->grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectIntensity);
-    QObject::connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::updateGrindEffectRPM);
-    //QObject::connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
-    QObject::connect(ui->grindEffectBehaviorComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectBehavior);
-    QObject::connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setKeepInGearIdleIntensity);
+    connect(&stateManager, &HShifterStateManager::slotStateChanged, &oldSlotGuard, &HShifterSlotGuard::updateSlotGuardState);
+    connect(&stateManager, &HShifterStateManager::synchroStateChanged, &synchroGuard, &HShifterSynchroGuard::synchroStateChanged);
+    connect(this, &HShifter::engineRPMChanged, &synchroGuard, &HShifterSynchroGuard::updateEngineRPM);
+    connect(&stateManager, &HShifterStateManager::grindingStateChanged, &synchroGuard, &HShifterSynchroGuard::grindingStateChanged);
+    connect(ui->grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectIntensity);
+    connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::updateGrindEffectRPM);
+    //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    connect(ui->grindEffectBehaviorComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectBehavior);
+    connect(ui->keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setKeepInGearIdleIntensity);
+
+    // Set default slot pattern
+    ui->hshifter_slotPatternPresetComboBox->setCurrentIndex(7);
 }
 
 void HShifter::initializeJoystickMap() {
     scene = new QGraphicsScene();
     scene->setSceneRect(ui->hshifter_graphicsView->viewport()->rect());
-
-    long sceneWidth = ui->hshifter_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->hshifter_graphicsView->viewport()->rect().height();
-    QPointF center = scene->sceneRect().center();
-
-    neutralChannelRect = new QGraphicsRectItem();
-    neutralChannelRect->setBrush(QBrush(Qt::black));
-    neutralChannelRect->setPen(Qt::NoPen);
-    scene->addItem(neutralChannelRect);
-
-    centerSlotRect = new QGraphicsRectItem();
-    centerSlotRect->setBrush(QBrush(Qt::black));
-    centerSlotRect->setPen(Qt::NoPen);
-    scene->addItem(centerSlotRect);
-
-    rightSlotRect = new QGraphicsRectItem();
-    rightSlotRect->setBrush(QBrush(Qt::black));
-    rightSlotRect->setPen(Qt::NoPen);
-    scene->addItem(rightSlotRect);
-
-    leftSlotRect = new QGraphicsRectItem();
-    leftSlotRect->setBrush(QBrush(Qt::black));
-    leftSlotRect->setPen(Qt::NoPen);
-    scene->addItem(leftSlotRect);
+    slotPattern.setScene(scene);
 
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
     QColor seethroughWhite = Qt::transparent;
@@ -90,6 +80,15 @@ void HShifter::initializeJoystickMap() {
     joystickCircle->setBrush(QBrush(seethroughWhite));
     joystickCircle->setPen(QPen(QColor(1, 129, 231), 7));
     scene->addItem(joystickCircle);
+
+    grindZoneRect = new QGraphicsRectItem(0, 0, 0, 0);
+    grindZoneRect->setBrush(QBrush(Qt::NoBrush));
+    grindZoneRect->setPen(QPen(Qt::red));
+    scene->addItem(grindZoneRect);
+    buttonZoneRect = new QGraphicsRectItem(0, 0, 0, 0);
+    buttonZoneRect->setBrush(QBrush(Qt::NoBrush));
+    buttonZoneRect->setPen(QPen(Qt::blue));
+    scene->addItem(buttonZoneRect);
 
     ui->hshifter_graphicsView->setScene(scene);
     ui->hshifter_graphicsView->setRenderHints(QPainter::Antialiasing);
@@ -106,22 +105,20 @@ void HShifter::redrawJoystickMap() {
     }
     ui->hshifter_graphicsView->scene()->setSceneRect(ui->hshifter_graphicsView->viewport()->rect());
 
-    long sceneWidth = ui->hshifter_graphicsView->viewport()->rect().width();
-    long sceneHeight = ui->hshifter_graphicsView->viewport()->rect().height();
-    QPointF center = scene->sceneRect().center();
+    slotPattern.renderScene();
 
-    neutralChannelRect->setRect(0, 0, sceneWidth, SLOT_WIDTH_PX);
-    neutralChannelRect->setPos(center - QPointF(sceneWidth / 2, SLOT_WIDTH_PX / 2));
+    if (ui->hshifter_displayZoneMarkers->isChecked()) {
+        grindZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slotPattern.grind_zone_scale), scene->width() + 4, scene->height() * slotPattern.grind_zone_scale);
+        buttonZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slotPattern.button_zone_scale), scene->width() + 4, scene->height() * slotPattern.button_zone_scale);
+        grindZoneRect->show();
+        buttonZoneRect->show();
+    }
+    else {
+        grindZoneRect->hide();
+        buttonZoneRect->hide();
+    }
 
-    centerSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
-    centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, sceneHeight / 2));
-
-    rightSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
-    rightSlotRect->setPos(QPointF(sceneWidth - SLOT_WIDTH_PX, 0));
-
-    leftSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight);
-
-    joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
+    joystickCircle->setPos(scene->sceneRect().center() - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
 
 void HShifter::updateJoystickCircle(int LRValue, int FBValue) {
@@ -162,6 +159,21 @@ void HShifter::loadSettings(QSettings* settings) {
 
     settings->beginGroup(this->getAppName());
 
+    settings->beginGroup("slot_pattern_settings");
+    ui->hshifter_slotPatternPresetComboBox->setCurrentIndex(ui->hshifter_slotPatternPresetComboBox->findText(settings->value("slotPattern", "Dogleg R+6").toString()));
+    ui->hshifter_slotPatternLeftOffsetSlider->setValue(settings->value("slotPatternLeftOffset", 0).toInt());
+    ui->hshifter_slotPatternDepthScaleSlider->setValue(settings->value("slotPatternDepthScale", 100).toInt());
+    ui->hshifter_slotPatternWidthScaleSlider->setValue(settings->value("slotPatternWidthScale", 100).toInt());
+    //ui->hshifter_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
+    ui->hshifter_neutralSpringStrengthSlider->setValue(settings->value("neutralSpringStrength", 0).toInt());
+    ui->hshifter_neutralSpringPositionSlider->setValue(settings->value("neutralSpringPosition", 50).toInt());
+    ui->hshifter_detentSpringStrengthSlider->setValue(settings->value("detentSpringStrength", 0).toInt());
+    ui->hshifter_shiftRailRampStrengthSlider->setValue(settings->value("shiftRailRampStrength", 0).toInt());
+    ui->hshifter_grindZoneDepthSpinbox->setValue(settings->value("grindZoneDepth", 15).toInt());
+    ui->hshifter_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
+    ui->hshifter_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
+    settings->endGroup();
+
     settings->beginGroup("ffb_effect_settings");
     ui->grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
     ui->grindEffectBehaviorComboBox->setCurrentIndex(settings->value("grindEffectBehavior", 0).toInt());
@@ -174,7 +186,7 @@ void HShifter::loadSettings(QSettings* settings) {
 
 HRESULT HShifter::startMode() {
     // Initialize FFB
-    slotGuard.start(devices->joystick);
+    oldSlotGuard.start(devices->joystick);
     synchroGuard.start(devices->joystick);
     pedalsManager.start(devices);
 
@@ -205,7 +217,7 @@ void HShifter::gameLoop() {
     }
 
     // Update state
-    slotGuard.updateSlotGuardEffects(joystickValues);
+    oldSlotGuard.updateSlotGuardEffects(joystickValues);
     synchroGuard.updatePedalEngagement(pedalValues, joystickValues);
     stateManager.update(joystickValues, pedalValues, lastGearValues);
     pedalsManager.updateVirtualPedals();

@@ -20,61 +20,29 @@ void SlotPattern::setName(QString t_name) {
 }
 */
 
-void SlotPattern::setTruckPattern(int index) {
-	truckPattern = static_cast<TruckPattern>(index);
-	setSlotWalls(SLOT_WALL_LEFT);
-	QList<int> slot_numbers;
+void SlotPattern::setPattern(QString patternName) {
 	bool range_override = false;
-	if (truckPattern == TruckPattern::EATON_18) {
-		slot_numbers = {1, 2, 3, 4, 5, 6};
+	for (auto slotDef : AllPatterns) {
+		if (slotDef.name == patternName) {
+			name = patternName;
+			slot_list.clear();
+			int full_slot_ct = slotDef.slot_numbers.length() / 2;
+			bool orientation = SLOT_ORIENTATION_FORWARD;
+			for (int i = 0; i < slotDef.slot_numbers.length(); i++) {
+				double position_pct = double(i / 2) / (full_slot_ct - 1);
+				slot_list.append({ slotDef.slot_numbers[i], position_pct, orientation });
+				orientation = !orientation;
+			}
+			setSlotWalls(slotDef.wall_flags);
+			renderScene();
+			emit setRangeOverride(range_override);
+		}
 	}
-	else if (truckPattern == TruckPattern::EATON_10) {
-		slot_numbers = {1, 2, 3, 4, 5, 6};
-		setSlotWalls(0);
-	}
-	else if (truckPattern == TruckPattern::SCANIA_12) {
-		slot_numbers = { 1, X, X, 4, 5, 6 };
-	}
-	else if (truckPattern == TruckPattern::SCANIA_12_2) {
-		slot_numbers = {1, 2, X, 4, 5, 6 };
-	}
-	else if (truckPattern == TruckPattern::VOLVO_12) {
-		slot_numbers = {X, 2, 3, 4, 5, X};
-	}
-	else if (truckPattern == TruckPattern::VOLVO_12_2) {
-		slot_numbers = {1, 2, 3, 4, 5, X};
-	}
-	else if (truckPattern == TruckPattern::ZF_12) {
-		slot_numbers = { X, 2, 3, X, 5, 6};
-	}
-	else if (truckPattern == TruckPattern::ZF_16) {
-		slot_numbers = { X, 2, 3, 4, 5, 6};
-	}
-	else if (truckPattern == TruckPattern::ZF_16_DOUBLEH) {
-		slot_numbers = { X, 2, 3, 4, 5, 6, 3, 4, 5, 6};
-		range_override = true;
-	}
-	else if (truckPattern == TruckPattern::R6_ZF_BUS) {
-		slot_numbers = { R, 1, 2, 3, 4, 5, 6, X };
-	}
-	else if (truckPattern == TruckPattern::R6_GENERIC) {
-		slot_numbers = { R, X, 1, 2, 3, 4, 5, 6 };
-	}
-
-	slot_list.clear();
-	int full_slot_ct = slot_numbers.length() / 2;
-	bool orientation = SLOT_ORIENTATION_FORWARD;
-	for (int i = 0; i < slot_numbers.length(); i++) {
-		double position_pct = double(i / 2) / (full_slot_ct - 1);
-		slot_list.append({slot_numbers[i], position_pct, orientation});
-		orientation = !orientation;
-	}
-	emit setRangeOverride(range_override);
-	renderScene();
 }
 
 void SlotPattern::setSlotWalls(int t_flags) {
 	slot_wall_flags = t_flags;
+	emit slotWallsChanged(t_flags);
 }
 
 bool SlotPattern::hasSlotWall(int flag) {
@@ -86,7 +54,7 @@ const Slot* SlotPattern::getWallSlot(int flag) {
 	if (slot_wall_flags & SLOT_WALL_LEFT && flag == SLOT_WALL_LEFT)
 		return &slot_list.at(2);
 	else if (slot_wall_flags & SLOT_WALL_RIGHT && flag == SLOT_WALL_RIGHT)
-		return &slot_list.at(slot_list.size() - 2);
+		return &slot_list.at(slot_list.size() - 3);
 	return nullptr;
 }
 

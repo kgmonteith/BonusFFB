@@ -30,11 +30,16 @@ void HeavyTruck::initialize() {
     if (devices->brake != nullptr)
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
+    // Add slot patterns
+    for (auto pattern : AllPatterns) {
+        ui->heavytruck_slotPatternComboBox->addItem(pattern.name);
+    }
+
     // Set default slot pattern
-    slotPattern.setTruckPattern(0);
+    slotPattern.setPattern(TruckPatterns.first().name);
 
     // Slot pattern connections
-    connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentIndexChanged, &slotPattern, &SlotPattern::setTruckPattern);
+    connect(ui->heavytruck_slotPatternComboBox, &QComboBox::currentTextChanged, &slotPattern, &SlotPattern::setPattern);
     connect(ui->heavytruck_slotPatternLeftOffsetSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setLeftOffset);
     connect(ui->heavytruck_slotPatternDepthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setDepthScale);
     connect(ui->heavytruck_slotPatternWidthScaleSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setWidthScale);
@@ -121,7 +126,6 @@ void HeavyTruck::redrawJoystickMap() {
     ui->heavytruck_graphicsView->scene()->setSceneRect(ui->heavytruck_graphicsView->viewport()->rect());
 
     slotPattern.renderScene();
-
 
     if (ui->heavytruck_displayZoneMarkers->isChecked()) {
         grindZoneRect->setRect(-2, (scene->height() / 2) - (scene->height() / 2 * slotPattern.grind_zone_scale), scene->width() + 4, scene->height() * slotPattern.grind_zone_scale);

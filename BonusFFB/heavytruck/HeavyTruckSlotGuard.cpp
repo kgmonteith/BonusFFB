@@ -210,6 +210,24 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
             }
         }
     }
+    if (slotPattern->hasSlotWall(SLOT_WALL_RIGHT)) {
+        const Slot* right_wall_slot = slotPattern->getWallSlot(SLOT_WALL_RIGHT);
+        double right_pattern_limit = slotPattern->getPatternRightMaximumAsJoystick();
+        double wall_taper_range = slotPattern->getSlotSpacingAsJoystick() / 5.0;
+        if (joyValues.lr > slotPattern->slotPositionAsJoystick(*right_wall_slot) && joyValues.lr <= right_pattern_limit - wall_taper_range && (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
+            double right_wall_slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*right_wall_slot);
+            slotSpringConditions[0] = keepLRCentered;
+            slotSpringConditions[0].lOffset = right_wall_slot_pos_ffb - ((joystickPositionToFFBOffset(joyValues.lr) + right_wall_slot_pos_ffb) * 1.3);
+            //if (in_neutral && slot != SLOT_NONE)
+            //    slotSpringConditions[1] = noSpring;
+            if (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
+                // Downscale wall effect when approaching the left slot
+                double wall_scaling_range = slotPattern->getSlotSpacingAsJoystick() / 2.5;
+                slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, right_pattern_limit - wall_taper_range, right_pattern_limit - wall_scaling_range);
+                slotSpringConditions[0].lPositiveCoefficient = slotSpringConditions[0].lPositiveCoefficient * scaleRangeValue(joyValues.lr, right_pattern_limit - wall_taper_range, right_pattern_limit - wall_scaling_range);
+            }
+        }
+    }
 
     // Adjust neutral spring strength
     long prior_offset = neutralSpringCondition.lOffset;
@@ -219,18 +237,18 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     neutralSpringCondition.lNegativeCoefficient = neutral_spring_scale * neutral_spring_strength;
 
     // Set the bump-through spring for the ZF-16 double-H
-    if (slotPattern->truckPattern == TruckPattern::ZF_16_DOUBLEH) {
+    if (slotPattern->name == "ZF 16 (Double-H)") {
         double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
         if ((nearest_slot == &slotPattern->slot_list[4] || nearest_slot == &slotPattern->slot_list[5]) && joyValues.lr > slotPattern->slotPositionAsJoystick(*nearest_slot)) {
             //qDebug() << "in third slot";
             slotSpringConditions[0] = keepLRCentered;
-            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1); // Previously -1.3
             neutralSpringCondition.lOffset = slotPattern->slotPositionAsFFBOffset(slotPattern->slot_list[4]);
         }
         else if ((nearest_slot == &slotPattern->slot_list[6] || nearest_slot == &slotPattern->slot_list[7]) && joyValues.lr < slotPattern->slotPositionAsJoystick(*nearest_slot)) {
             //qDebug() << "in fourth slot";
             slotSpringConditions[0] = keepLRCentered;
-            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
+            slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1); // Previously -1.3
             neutralSpringCondition.lOffset = slotPattern->slotPositionAsFFBOffset(slotPattern->slot_list[6]);
         }
         // Override the range switch

@@ -11,7 +11,6 @@ You should have received a copy of the GNU General Public License along with Bon
 */
 
 #pragma once
-#include <QMap>
 
 #include "BonusFFBApp.h"
 #include "HeavyTruckStateManager.h"

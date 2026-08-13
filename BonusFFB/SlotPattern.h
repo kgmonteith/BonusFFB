@@ -31,19 +31,47 @@ You should have received a copy of the GNU General Public License along with Bon
 #define R 0
 #define X -1
 
-enum class TruckPattern {
-	EATON_18,
-	EATON_10,
-	SCANIA_12,
-	SCANIA_12_2,
-	VOLVO_12,
-	VOLVO_12_2,
-	ZF_12,
-	ZF_16,
-	ZF_16_DOUBLEH,
-	R6_ZF_BUS,
-	R6_GENERIC
+struct PatternDef {
+	QString name;
+	QList<int> slot_numbers;
+	int wall_flags = 0;
+	double neutral_spring_slot_number = 3;
 };
+
+
+static const QList<PatternDef> TruckPatterns = {
+	{ "Eaton-Fuller 18/13", {1, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
+	{ "Eaton-Fuller 10", {1, 2, 3, 4, 5, 6} },
+	{ "Scania 12", { 1, X, X, 4, 5, 6 }, SLOT_WALL_LEFT},
+	{ "Scania 12+2", {1, 2, X, 4, 5, 6 }, SLOT_WALL_LEFT},
+	{ "Volvo 12", {X, 2, 3, 4, 5, X}, SLOT_WALL_LEFT},
+	{ "Volvo 12+2", {1, 2, 3, 4, 5, X}, SLOT_WALL_LEFT},
+	{ "ZF 12", { X, 2, 3, X, 5, 6}, SLOT_WALL_LEFT},
+	{ "ZF 16 (Modern)", { X, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
+	{ "ZF 16 (Double-H)", { X, 2, 3, 4, 5, 6, 3, 4, 5, 6}, SLOT_WALL_LEFT},
+	{ "Generic R+6", { R, 1, 2, 3, 4, 5, 6, X }},
+	{ "Generic dogleg R+6", { R, X, 1, 2, 3, 4, 5, 6 }, SLOT_WALL_LEFT}
+};
+
+static const QList<PatternDef> PresetPatterns = {
+	{"R+4", { R, 1, 2, 3, 4, X} },
+	{"R+5", { R, 1, 2, 3, 4, 5 } },
+	{"R+6", { R, 1, 2, 3, 4, 5, 6, X } },
+	{"R+7", { R, 1, 2, 3, 4, 5, 6, 7 } },
+	{"R+8", { R, 1, 2, 3, 4, 5, 6 , 7, 8, X } },
+	{"Dogleg R+4", { R, X, 1, 2, 3, 4}, SLOT_WALL_LEFT, 1},
+	{"Dogleg R+5", { R, X, 1, 2, 3, 4, 5, X}, SLOT_WALL_LEFT},
+	{"Dogleg R+6", { R, X, 1, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
+	{"Dogleg R+7", { R, X, 1, 2, 3, 4, 5, 6, 7, X}, SLOT_WALL_LEFT},
+	{"Dogleg R+8", { R, X, 1, 2, 3, 4, 5, 6, 7, 8}, SLOT_WALL_LEFT},
+	{"4+R", { 1, 2, 3, 4, X, R }, SLOT_WALL_RIGHT},
+	{"5+R", { 1, 2, 3, 4, 5, R }},
+	{"6+R", { 1, 2, 3, 4, 5, 6, X, R }, SLOT_WALL_RIGHT},
+	{"7+R", { 1, 2, 3, 4, 5, 6, 7, R }},
+	{"8+R", { 1, 2, 3, 4, 5, 6, 7, 8, X, R }, SLOT_WALL_RIGHT}
+};
+
+static const QList<PatternDef> AllPatterns = TruckPatterns + PresetPatterns;
 
 class Slot {
 public:
@@ -82,7 +110,7 @@ public slots:
 		rounding_factor = value * 0.01;
 	}
 	//void setName(QString);
-	void setTruckPattern(int index);
+	void setPattern(QString);
 
 	void setButtonZoneScale(int t) {
 		button_zone_scale = double(t) * 0.01;
@@ -93,6 +121,7 @@ public slots:
 
 signals:
 	void setRangeOverride(bool);
+	void slotWallsChanged(int);
 
 public:
 	void setSlotWalls(int wall_flags);
@@ -129,8 +158,6 @@ public:
 	//double top_offset = 0;
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
-
-	TruckPattern truckPattern;
 
 	double roundingFactorAsJoystick();
 	double rounding_factor = 0.1;

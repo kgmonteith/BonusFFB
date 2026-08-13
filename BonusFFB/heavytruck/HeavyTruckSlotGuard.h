@@ -72,11 +72,14 @@ private:
 	//long gateLatchFrictionStrength = 5000;
 	//int latchDepth = JOY_MAXPOINT;
 
+	/*
 	int endOfSlotClickStrength = 2750;
 	DIRAMPFORCE clickPushBack = { 0, endOfSlotClickStrength };
 	DIEFFECT clickPushBackEff = {};
 	DIRAMPFORCE clickPushForward = { 0, endOfSlotClickStrength * -1 };
 	DIEFFECT clickPushForwardEff = {};
 	bool clickPlayed = false;
+	*/
+
 	bool rangeOverride = false;
 };

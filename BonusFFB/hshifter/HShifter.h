@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "BonusFFBApp.h"
 #include "HShifterStateManager.h"
+#include "../heavytruck/HeavyTruckSlotGuard.h"
 #include "HShifterSlotGuard.h"
 #include "HShifterSynchroGuard.h"
 #include "PedalsManager.h"
@@ -44,15 +45,16 @@ signals:
 
 private:
 	QGraphicsScene* scene = nullptr;
-	QGraphicsRectItem* neutralChannelRect;
-	QGraphicsRectItem* centerSlotRect;
-	QGraphicsRectItem* rightSlotRect;
-	QGraphicsRectItem* leftSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
+	QGraphicsRectItem* grindZoneRect;
+	QGraphicsRectItem* buttonZoneRect;
+
+	SlotPattern slotPattern;
 
 	// Stateful FFB effect managers
 	HShifterStateManager stateManager;
-	HShifterSlotGuard slotGuard;
+	HShifterSlotGuard oldSlotGuard;
+	HeavyTruckSlotGuard slotGuard;
 	HShifterSynchroGuard synchroGuard;
 	PedalsManager pedalsManager;
 
