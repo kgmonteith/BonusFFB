@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>901</width>
-    <height>662</height>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1836,798 +1836,607 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
             <string>Slot pattern settings</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_23">
-            <item row="0" column="0">
-             <widget class="QScrollArea" name="scrollArea">
-              <property name="frameShape">
-               <enum>QFrame::Shape::StyledPanel</enum>
+            <item row="2" column="0">
+             <widget class="QGroupBox" name="groupBox_31">
+              <property name="title">
+               <string/>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Shadow::Sunken</enum>
-              </property>
-              <property name="lineWidth">
-               <number>0</number>
-              </property>
-              <property name="widgetResizable">
-               <bool>true</bool>
-              </property>
-              <widget class="QWidget" name="scrollAreaWidgetContents">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>-149</y>
-                 <width>722</width>
-                 <height>606</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_14">
-                <item>
-                 <widget class="QGroupBox" name="groupBox_32">
-                  <property name="title">
-                   <string/>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_12">
-                   <item row="1" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_55">
-                     <item>
-                      <widget class="QLabel" name="label_43">
-                       <property name="text">
-                        <string>Slot pattern</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_27">
-                     <item>
-                      <widget class="QRadioButton" name="hshifter_slotPatternRadioButtonPreset">
-                       <property name="minimumSize">
-                        <size>
-                         <width>90</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>Preset</string>
-                       </property>
-                       <property name="checked">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="hshifter_slotPatternPresetComboBox">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="currentIndex">
-                        <number>-1</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_3">
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="2" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_8">
-                     <item>
-                      <widget class="QRadioButton" name="hshifter_slotPatternRadioButtonTelemetry">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>90</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>Telemetry</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="hshifter_slotPatternTelemetryComboBox">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>R+Gear count</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Dogleg R+Gear count</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Gear count+R</string>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_22">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="text">
-                        <string>(Work in progress)</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_4">
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="3" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_6">
-                     <item>
-                      <widget class="QRadioButton" name="hshifter_slotPatternRadioButtonCustom">
-                       <property name="minimumSize">
-                        <size>
-                         <width>66</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>66</width>
-                         <height>16777215</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>Custom</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_21">
-                       <property name="minimumSize">
-                        <size>
-                         <width>18</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>18</width>
-                         <height>16777215</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>ℹ️</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="hshifter_slotPatternCustomLineEdit">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>160</width>
-                         <height>16777215</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string>R X 1 2 3 4 5</string>
-                       </property>
-                       <property name="maxLength">
-                        <number>48</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="hshifter_slotPatternCustomWarningLabel">
-                       <property name="text">
-                        <string>⚠️ Warning text</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="5" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_56">
-                     <item>
-                      <widget class="QLabel" name="label_45">
-                       <property name="text">
-                        <string>Left/right position</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="5" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_110">
-                     <item>
-                      <widget class="QLabel" name="label_9">
-                       <property name="text">
-                        <string>Align to left</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSlider" name="hshifter_slotPatternLeftOffsetSlider">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>10</number>
-                       </property>
-                       <property name="value">
-                        <number>0</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_11">
-                       <property name="text">
-                        <string>Align to right</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="6" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_111">
-                     <item>
-                      <widget class="QLabel" name="label_88">
-                       <property name="text">
-                        <string>Slot depth scale</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="6" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_112">
-                     <item>
-                      <widget class="QSlider" name="hshifter_slotPatternDepthScaleSlider">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="minimum">
-                        <number>50</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="value">
-                        <number>50</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="hshifter_slotPatternDepthScaleSpinbox">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>50</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="value">
-                        <number>75</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="8" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_113">
-                     <item>
-                      <widget class="QLabel" name="label_89">
-                       <property name="text">
-                        <string>Pattern width scale</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="8" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_114">
-                     <item>
-                      <widget class="QSlider" name="hshifter_slotPatternWidthScaleSlider">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="minimum">
-                        <number>50</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="value">
-                        <number>50</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="hshifter_slotPatternWidthScaleSpinbox">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="value">
-                        <number>66</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="9" column="1">
-                    <widget class="QCheckBox" name="hshifter_leftSlotWallCheckbox">
-                     <property name="text">
-                      <string>Enable left slot wall</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="10" column="1">
-                    <widget class="QCheckBox" name="hshifter_rightSlotWallCheckbox">
-                     <property name="text">
-                      <string>Enable right slot wall</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_33">
-                  <property name="title">
-                   <string/>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_17">
-                   <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_115">
-                     <item>
-                      <widget class="QLabel" name="label_90">
-                       <property name="text">
-                        <string>Neutral spring strength</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_116">
-                     <item>
-                      <widget class="QSlider" name="hshifter_neutralSpringStrengthSlider">
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>1</number>
-                       </property>
-                       <property name="value">
-                        <number>10</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="hshifter_neutralSpringStrengthSpinbox">
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>5</number>
-                       </property>
-                       <property name="value">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_117">
-                     <item>
-                      <widget class="QLabel" name="label_91">
-                       <property name="text">
-                        <string>Neutral spring position</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_118">
-                     <item>
-                      <widget class="QLabel" name="label_12">
-                       <property name="text">
-                        <string>Center slot</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSlider" name="hshifter_neutralSpringPositionSlider">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="minimum">
-                        <number>50</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>10</number>
-                       </property>
-                       <property name="value">
-                        <number>50</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_20">
-                       <property name="text">
-                        <string>Right slot</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="heavytruck_neutralSpringPositionSpinbox_2">
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>50</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_31">
-                  <property name="title">
-                   <string/>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_11">
-                   <item row="1" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_106">
-                     <item>
-                      <widget class="QLabel" name="label_86">
-                       <property name="toolTip">
-                        <string>Resistance felt as the stick moves away from neutral, before it releases into a detent.
+              <layout class="QFormLayout" name="formLayout_11">
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_106">
+                 <item>
+                  <widget class="QLabel" name="label_86">
+                   <property name="toolTip">
+                    <string>Resistance felt as the stick moves away from neutral, before it releases into a detent.
 
 Simulates the detent ball riding up the cammed ramp between detent notches. This is the &quot;hump&quot; you feel mid-stroke when shifting into or out of gear.</string>
-                       </property>
-                       <property name="text">
-                        <string>Shift rail ramp resistance</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_107">
-                     <item>
-                      <widget class="QSlider" name="hshifter_shiftRailRampStrengthSlider">
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>1</number>
-                       </property>
-                       <property name="value">
-                        <number>0</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="hshifter_shiftRailRampStrengthSpinbox">
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>5</number>
-                       </property>
-                       <property name="value">
-                        <number>0</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_108">
-                     <item>
-                      <widget class="QLabel" name="label_87">
-                       <property name="text">
-                        <string>Detent spring strength</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_109">
-                     <item>
-                      <widget class="QSlider" name="hshifter_detentSpringStrengthSlider">
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>1</number>
-                       </property>
-                       <property name="value">
-                        <number>0</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TickPosition::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="hshifter_detentSpringStrengthSpinbox">
-                       <property name="suffix">
-                        <string>%</string>
-                       </property>
-                       <property name="minimum">
-                        <number>0</number>
-                       </property>
-                       <property name="maximum">
-                        <number>100</number>
-                       </property>
-                       <property name="singleStep">
-                        <number>5</number>
-                       </property>
-                       <property name="value">
-                        <number>0</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_34">
-                  <property name="title">
-                   <string/>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_18">
-                   <item row="0" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_119">
-                     <item>
-                      <widget class="QLabel" name="label_92">
-                       <property name="text">
-                        <string>Grind zone depth</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_93">
-                       <property name="text">
-                        <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                       </property>
-                       <property name="openExternalLinks">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QSpinBox" name="hshifter_grindZoneDepthSpinbox">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="suffix">
-                      <string>%</string>
-                     </property>
-                     <property name="minimum">
-                      <number>10</number>
-                     </property>
-                     <property name="maximum">
-                      <number>80</number>
-                     </property>
-                     <property name="singleStep">
-                      <number>5</number>
-                     </property>
-                     <property name="value">
-                      <number>15</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <layout class="QHBoxLayout" name="horizontalLayout_120">
-                     <item>
-                      <widget class="QLabel" name="label_94">
-                       <property name="text">
-                        <string>Button zone depth</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_95">
-                       <property name="text">
-                        <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
-                       </property>
-                       <property name="openExternalLinks">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QSpinBox" name="hshifter_buttonZoneDepthSpinbox">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="suffix">
-                      <string>%</string>
-                     </property>
-                     <property name="minimum">
-                      <number>20</number>
-                     </property>
-                     <property name="maximum">
-                      <number>90</number>
-                     </property>
-                     <property name="singleStep">
-                      <number>5</number>
-                     </property>
-                     <property name="value">
-                      <number>35</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QCheckBox" name="hshifter_displayZoneMarkers">
-                     <property name="text">
-                      <string>Display grind and button zone markers on joystick map</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
+                   </property>
+                   <property name="text">
+                    <string>Shift rail ramp resistance</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_107">
+                 <item>
+                  <widget class="QSlider" name="hshifter_shiftRailRampStrengthSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_shiftRailRampStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_108">
+                 <item>
+                  <widget class="QLabel" name="label_87">
+                   <property name="text">
+                    <string>Detent spring strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_109">
+                 <item>
+                  <widget class="QSlider" name="hshifter_detentSpringStrengthSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_detentSpringStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupBox_32">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_12">
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_55">
+                 <item>
+                  <widget class="QLabel" name="label_43">
+                   <property name="text">
+                    <string>Slot pattern</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_27">
+                 <item>
+                  <widget class="QComboBox" name="hshifter_slotPatternPresetComboBox">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="currentIndex">
+                    <number>-1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_56">
+                 <item>
+                  <widget class="QLabel" name="label_45">
+                   <property name="text">
+                    <string>Left/right position</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="3" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_110">
+                 <item>
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>Align to left</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="hshifter_slotPatternLeftOffsetSlider">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_11">
+                   <property name="text">
+                    <string>Align to right</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_111">
+                 <item>
+                  <widget class="QLabel" name="label_88">
+                   <property name="text">
+                    <string>Slot depth scale</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="4" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_112">
+                 <item>
+                  <widget class="QSlider" name="hshifter_slotPatternDepthScaleSlider">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="minimum">
+                    <number>50</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_slotPatternDepthScaleSpinbox">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>50</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>75</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="6" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_113">
+                 <item>
+                  <widget class="QLabel" name="label_89">
+                   <property name="text">
+                    <string>Pattern width scale</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="6" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_114">
+                 <item>
+                  <widget class="QSlider" name="hshifter_slotPatternWidthScaleSlider">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="minimum">
+                    <number>50</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_slotPatternWidthScaleSpinbox">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>66</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QGroupBox" name="groupBox_34">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_18">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_119">
+                 <item>
+                  <widget class="QLabel" name="label_92">
+                   <property name="text">
+                    <string>Grind zone depth</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_93">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="hshifter_grindZoneDepthSpinbox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>80</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>15</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_120">
+                 <item>
+                  <widget class="QLabel" name="label_94">
+                   <property name="text">
+                    <string>Button zone depth</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_95">
+                   <property name="text">
+                    <string>&lt;a href=&quot;https://kgmonteith.github.io/BonusFFB/heavytruck/#button-zone-depth&quot; style=&quot;text-decoration: none&quot;&gt;ℹ️&lt;/a&gt;</string>
+                   </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="hshifter_buttonZoneDepthSpinbox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="suffix">
+                  <string>%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>20</number>
+                 </property>
+                 <property name="maximum">
+                  <number>90</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>35</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QCheckBox" name="hshifter_displayZoneMarkers">
+                 <property name="text">
+                  <string>Display grind and button zone markers on joystick map</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGroupBox" name="groupBox_33">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QFormLayout" name="formLayout_17">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_115">
+                 <item>
+                  <widget class="QLabel" name="label_90">
+                   <property name="text">
+                    <string>Neutral spring strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_116">
+                 <item>
+                  <widget class="QSlider" name="hshifter_neutralSpringStrengthSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_neutralSpringStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_117">
+                 <item>
+                  <widget class="QLabel" name="label_91">
+                   <property name="text">
+                    <string>Neutral spring position</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_118">
+                 <item>
+                  <widget class="QLabel" name="label_12">
+                   <property name="text">
+                    <string>Left slot</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="hshifter_neutralSpringPositionSlider">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_20">
+                   <property name="text">
+                    <string>Right slot</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_neutralSpringPositionSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -4872,54 +4681,5 @@ hand control</string>
  <resources>
   <include location="BonusFFB.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>hshifter_slotPatternRadioButtonPreset</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>hshifter_slotPatternPresetComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>302</x>
-     <y>217</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>408</x>
-     <y>217</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hshifter_slotPatternRadioButtonTelemetry</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>hshifter_slotPatternTelemetryComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>303</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>383</x>
-     <y>249</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hshifter_slotPatternRadioButtonCustom</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>hshifter_slotPatternCustomLineEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>302</x>
-     <y>281</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>481</x>
-     <y>281</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

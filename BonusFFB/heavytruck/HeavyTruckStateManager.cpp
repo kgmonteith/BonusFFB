@@ -40,25 +40,26 @@ void HeavyTruckStateManager::update() {
 
     updateSlotState();
     updateButtonZoneState(gearValues);
+    updateDetentState();
     updateTargetGear();
     updateHeavyTruckSynchroState(gearValues);
     updateHeavyTruckGrindingState();
 }
 
 void HeavyTruckStateManager::updateSlotState() {
-    HeavyTruckSlotState newState = HeavyTruckSlotState::UNKNOWN;
+    SlotState newState = SlotState::UNKNOWN;
     const Slot* newSlot = slotPattern->isUnderSlot(joystick);
     bool in_neutral = slotPattern->isInNeutral(joystick);
     if (in_neutral && newSlot != SLOT_NONE) {
-        newState = HeavyTruckSlotState::NEUTRAL_UNDER_SLOT;
+        newState = SlotState::NEUTRAL_UNDER_SLOT;
     } else if (in_neutral) {
-        newState = HeavyTruckSlotState::NEUTRAL;
+        newState = SlotState::NEUTRAL;
     } else if (newSlot != SLOT_NONE) {
-        newState = HeavyTruckSlotState::SLOTTED;
+        newState = SlotState::SLOTTED;
     }
     // Do not allow state change if it's directly from one gear to another without passing through neutral
-    bool disallowShift = (newState != slotState && newState == HeavyTruckSlotState::SLOTTED && slotState == HeavyTruckSlotState::SLOTTED && slot != newSlot);
-    if (newState != HeavyTruckSlotState::UNKNOWN && (newState != slotState || slot != newSlot) && !disallowShift) {
+    bool disallowShift = (newState != slotState && newState == SlotState::SLOTTED && slotState == SlotState::SLOTTED && slot != newSlot);
+    if (newState != SlotState::UNKNOWN && (newState != slotState || slot != newSlot) && !disallowShift) {
         slotState = newState;
         slot = newSlot;
         emit slotStateChanged(slotState);
@@ -77,7 +78,7 @@ void HeavyTruckStateManager::updateSlotState() {
 
 void HeavyTruckStateManager::updateTargetGear() {
     int targetSlot = 0;
-    if ((slotState == HeavyTruckSlotState::SLOTTED || (slotState == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT && slotPattern->isInGrindZone(joystick))) && slot != nullptr)
+    if ((slotState == SlotState::SLOTTED || (slotState == SlotState::NEUTRAL_UNDER_SLOT && slotPattern->isInGrindZone(joystick))) && slot != nullptr)
         targetSlot = slot->vJoyButton();
     targetGear = telemetry->getGearForSlot(targetSlot, &rangeSplitter);
     
@@ -100,11 +101,32 @@ void HeavyTruckStateManager::updateTargetGear() {
     emit rpmDeltaChanged(engineRPM - transmissionRPM);
 }
 
+void HeavyTruckStateManager::updateDetentState() {
+    if (slot != nullptr) {
+        if (detentState == DetentState::ENTERING_DETENT && ((slot->orientation == SLOT_ORIENTATION_FORWARD && joystick.fb <= slotPattern->slotDepthAsJoystick(slot->orientation)) || (slot->orientation == SLOT_ORIENTATION_BACK && joystick.fb >= slotPattern->slotDepthAsJoystick(slot->orientation)))) {
+            detentState = DetentState::DETENT_REACHED;
+            qDebug() << "DetentState::DETENT_REACHED";
+        }
+        else if (detentState == DetentState::DETENT_REACHED && !slotPattern->isInDetentZone(joystick)) {
+            detentState = DetentState::EXITING_DETENT;
+            qDebug() << "DetentState::EXITING_DETENT";
+        }
+        else if (detentState == DetentState::EXITING_DETENT && !slotPattern->isInButtonZone(*slot, joystick)) {
+            detentState = DetentState::ENTERING_DETENT;
+            qDebug() << "DetentState::ENTERING_DETENT";
+        }
+    }
+}
+
 void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
     int newState = 0;
     if (slot != nullptr) {
         if (slotPattern->isInButtonZone(*slot, joystick) || (synchroState == HeavyTruckSynchroState::IN_SYNCH && slotPattern->isInGrindZone(joystick))) {
             newState = slot->vJoyButton();
+        }
+        if (detentState == DetentState::EXITING_DETENT) {
+            qDebug() << "Triggering neutral from detent exit";
+            newState = 0;
         }
     } 
     // Un-blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
@@ -126,11 +148,11 @@ void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
 
 void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearValues) {
     HeavyTruckSynchroState newState = HeavyTruckSynchroState::UNKNOWN;
-    if (telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second == targetGear) {
+    if ((telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second == targetGear) && (detentState != DetentState::EXITING_DETENT)) {
         // Gears are synchronized from telemetry reading
         newState = HeavyTruckSynchroState::IN_SYNCH;
     }
-    else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && slotPattern->isInGrindZone(joystick)) {
+    else if ((synchroState == HeavyTruckSynchroState::IN_SYNCH || synchroState == HeavyTruckSynchroState::EXITING_SYNCH) && slotPattern->isInGrindZone(joystick) ) {
         // Gears were synched, but now we are exiting sync on our way back to neutral
         newState = HeavyTruckSynchroState::EXITING_SYNCH;
     }
@@ -156,7 +178,7 @@ void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearVa
 
 void HeavyTruckStateManager::updateHeavyTruckGrindingState() {
     HeavyTruckGrindingState newGrindingState = HeavyTruckGrindingState::OFF;
-    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != HeavyTruckSlotState::NEUTRAL && slotPattern->isInGrindZone(joystick)) {
+    if (synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && slotState != SlotState::NEUTRAL && slotPattern->isInGrindZone(joystick)) {
         if (joystick.fb < JOY_MIDPOINT)
             newGrindingState = HeavyTruckGrindingState::GRINDING_FWD;
         else

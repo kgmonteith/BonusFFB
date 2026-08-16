@@ -31,11 +31,18 @@ You should have received a copy of the GNU General Public License along with Bon
 #define R 0
 #define X -1
 
+enum class SlotState {
+	UNKNOWN,
+	NEUTRAL,
+	NEUTRAL_UNDER_SLOT,
+	SLOTTED
+};
+
 struct PatternDef {
 	QString name;
 	QList<int> slot_numbers;
 	int wall_flags = 0;
-	double neutral_spring_slot_number = 3;
+	double neutral_spring_pos = 0.5;
 };
 
 
@@ -54,16 +61,16 @@ static const QList<PatternDef> TruckPatterns = {
 };
 
 static const QList<PatternDef> PresetPatterns = {
-	{"R+4", { R, 1, 2, 3, 4, X} },
-	{"R+5", { R, 1, 2, 3, 4, 5 } },
-	{"R+6", { R, 1, 2, 3, 4, 5, 6, X } },
-	{"R+7", { R, 1, 2, 3, 4, 5, 6, 7 } },
-	{"R+8", { R, 1, 2, 3, 4, 5, 6 , 7, 8, X } },
-	{"Dogleg R+4", { R, X, 1, 2, 3, 4}, SLOT_WALL_LEFT, 1},
-	{"Dogleg R+5", { R, X, 1, 2, 3, 4, 5, X}, SLOT_WALL_LEFT},
-	{"Dogleg R+6", { R, X, 1, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
-	{"Dogleg R+7", { R, X, 1, 2, 3, 4, 5, 6, 7, X}, SLOT_WALL_LEFT},
-	{"Dogleg R+8", { R, X, 1, 2, 3, 4, 5, 6, 7, 8}, SLOT_WALL_LEFT},
+	{"R+4", { R, X, 1, 2, 3, 4}, SLOT_WALL_LEFT, 1},
+	{"R+5", { R, X, 1, 2, 3, 4, 5, X}, SLOT_WALL_LEFT},
+	{"R+6", { R, X, 1, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
+	{"R+7", { R, X, 1, 2, 3, 4, 5, 6, 7, X}, SLOT_WALL_LEFT},
+	{"R+8", { R, X, 1, 2, 3, 4, 5, 6, 7, 8}, SLOT_WALL_LEFT},
+	{"R over 1+4", { R, 1, 2, 3, 4, X} },
+	{"R over 1+5", { R, 1, 2, 3, 4, 5 } },
+	{"R over 1+6", { R, 1, 2, 3, 4, 5, 6, X } },
+	{"R over 1+7", { R, 1, 2, 3, 4, 5, 6, 7 } },
+	{"R over 1+8", { R, 1, 2, 3, 4, 5, 6 , 7, 8, X } },
 	{"4+R", { 1, 2, 3, 4, X, R }, SLOT_WALL_RIGHT},
 	{"5+R", { 1, 2, 3, 4, 5, R }},
 	{"6+R", { 1, 2, 3, 4, 5, 6, X, R }, SLOT_WALL_RIGHT},
@@ -89,6 +96,12 @@ public:
 	int vJoyButton() const {
 		return number + 1;
 	}
+	QString asText() const {
+		if (number == R)
+			return "R";
+		else
+			return QString::number(number);
+	}
 
 	int number = X;
 	double position_pct_nominal = 0;
@@ -111,6 +124,7 @@ public slots:
 	}
 	//void setName(QString);
 	void setPattern(QString);
+	void setPatternFromText(QString);
 
 	void setButtonZoneScale(int t) {
 		button_zone_scale = double(t) * 0.01;
@@ -136,6 +150,7 @@ public:
 	bool isInCorner(Slot, JoystickValues);
 	bool isInButtonZone(Slot, JoystickValues);
 	bool isInGrindZone(JoystickValues);
+	bool isInDetentZone(JoystickValues);
 	const Slot* isUnderSlot(JoystickValues);
 	const Slot* getNearestSlot(JoystickValues);
 	Slot getLeftmostSlot(bool);
@@ -158,6 +173,7 @@ public:
 	//double top_offset = 0;
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
+	double detent_zone_scale = 0.20;
 
 	double roundingFactorAsJoystick();
 	double rounding_factor = 0.1;

@@ -106,8 +106,16 @@ HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spP
     return DI_OK;
 }
 
-void HeavyTruckSlotGuard::updateSlotGuardState(HeavyTruckSlotState state) {
+void HeavyTruckSlotGuard::updateSlotGuardState(SlotState state) {
     slot_state = state;
+    if (slot_state == SlotState::SLOTTED)
+        qDebug() << "SlotState::SLOTTED";
+    else if (slot_state == SlotState::NEUTRAL)
+        qDebug() << "SlotState::NEUTRAL";
+    else if (slot_state == SlotState::NEUTRAL_UNDER_SLOT)
+        qDebug() << "SlotState::NEUTRAL_UNDER_SLOT";
+    else if (slot_state == SlotState::UNKNOWN)
+        qDebug() << "SlotState::UNKNOWN";
 }
 
 QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(double slot_pos_x) {
@@ -153,7 +161,7 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
     //bool in_neutral = slotPattern->isInNeutral(joyValues);
     const Slot* nearest_slot = slotPattern->getNearestSlot(joyValues);
 
-    if (last_nearest_slot != nearest_slot && (slot_state != HeavyTruckSlotState::NEUTRAL && slot_state != HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
+    if (last_nearest_slot != nearest_slot && (slot_state != SlotState::NEUTRAL && slot_state != SlotState::NEUTRAL_UNDER_SLOT)) {
         // Refusing to update slot effects without passing through neutral
         qDebug() << "Refusing to update slot effects without passing through neutral";
         return;
@@ -171,14 +179,14 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
         //qDebug() << "corner_strength: " << corner_strength;
     }
-    else if (nearest_slot->isEnabled() && slot_state == HeavyTruckSlotState::SLOTTED) {
+    else if (nearest_slot->isEnabled() && slot_state == SlotState::SLOTTED) {
         // Keep stick centered L/R
         slotSpringConditions[0] = keepLRCentered;
         double slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*nearest_slot);
         slotSpringConditions[0].lOffset = slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - slot_pos_ffb) * -1.3);
         slotSpringConditions[1] = noSpring;
     }
-    else if (slot_state == HeavyTruckSlotState::NEUTRAL)
+    else if (slot_state == SlotState::NEUTRAL)
     //else if(in_neutral)
     {
         // Keep stick centered F/B
@@ -187,7 +195,7 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         slotSpringConditions[1].lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1.3;
     }
     else {
-        //qDebug() << "Bad state!";
+        qDebug() << "Bad state!";
     }
 
     // Set the wall effect strength
@@ -195,13 +203,13 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         const Slot* left_wall_slot = slotPattern->getWallSlot(SLOT_WALL_LEFT);
         double left_pattern_limit = slotPattern->getPatternLeftMinimumAsJoystick();
         double wall_taper_range = slotPattern->getSlotSpacingAsJoystick() / 5.0;
-        if (joyValues.lr < slotPattern->slotPositionAsJoystick(*left_wall_slot) && joyValues.lr >= left_pattern_limit + wall_taper_range && (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
+        if (joyValues.lr < slotPattern->slotPositionAsJoystick(*left_wall_slot) && joyValues.lr >= left_pattern_limit + wall_taper_range && (slot_state == SlotState::NEUTRAL || slot_state == SlotState::NEUTRAL_UNDER_SLOT)) {
             double left_wall_slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*left_wall_slot);
             slotSpringConditions[0] = keepLRCentered;
             slotSpringConditions[0].lOffset = left_wall_slot_pos_ffb + ((joystickPositionToFFBOffset(joyValues.lr) - left_wall_slot_pos_ffb) * -1.3);
             //if (in_neutral && slot != SLOT_NONE)
             //    slotSpringConditions[1] = noSpring;
-            if (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
+            if (slot_state == SlotState::NEUTRAL || slot_state == SlotState::NEUTRAL_UNDER_SLOT) {
                 // Downscale wall effect when approaching the left slot
                 double wall_scaling_range = slotPattern->getSlotSpacingAsJoystick() / 2.5;
                 slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, left_pattern_limit + wall_taper_range, left_pattern_limit + wall_scaling_range);
@@ -214,13 +222,13 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         const Slot* right_wall_slot = slotPattern->getWallSlot(SLOT_WALL_RIGHT);
         double right_pattern_limit = slotPattern->getPatternRightMaximumAsJoystick();
         double wall_taper_range = slotPattern->getSlotSpacingAsJoystick() / 5.0;
-        if (joyValues.lr > slotPattern->slotPositionAsJoystick(*right_wall_slot) && joyValues.lr <= right_pattern_limit - wall_taper_range && (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT)) {
+        if (joyValues.lr > slotPattern->slotPositionAsJoystick(*right_wall_slot) && joyValues.lr <= right_pattern_limit - wall_taper_range && (slot_state == SlotState::NEUTRAL || slot_state == SlotState::NEUTRAL_UNDER_SLOT)) {
             double right_wall_slot_pos_ffb = slotPattern->slotPositionAsFFBOffset(*right_wall_slot);
             slotSpringConditions[0] = keepLRCentered;
             slotSpringConditions[0].lOffset = right_wall_slot_pos_ffb - ((joystickPositionToFFBOffset(joyValues.lr) + right_wall_slot_pos_ffb) * 1.3);
             //if (in_neutral && slot != SLOT_NONE)
             //    slotSpringConditions[1] = noSpring;
-            if (slot_state == HeavyTruckSlotState::NEUTRAL || slot_state == HeavyTruckSlotState::NEUTRAL_UNDER_SLOT) {
+            if (slot_state == SlotState::NEUTRAL || slot_state == SlotState::NEUTRAL_UNDER_SLOT) {
                 // Downscale wall effect when approaching the left slot
                 double wall_scaling_range = slotPattern->getSlotSpacingAsJoystick() / 2.5;
                 slotSpringConditions[0].lNegativeCoefficient = slotSpringConditions[0].lNegativeCoefficient * scaleRangeValue(joyValues.lr, right_pattern_limit - wall_taper_range, right_pattern_limit - wall_scaling_range);
@@ -339,27 +347,49 @@ void HeavyTruckSlotGuard::updateSlotGuardEffects() {
         }
         //qDebug() << "Playing click";
     }
-    else if (clickPlayed && slot_state != HeavyTruckSlotState::SLOTTED) {
+    else if (clickPlayed && slot_state != SlotState::SLOTTED) {
         clickPlayed = false;
         //qDebug() << "Resetting click";
-    }
-    */
+    }*/
+    
 
     // Play the end-of-slot detent and shift rail resistance effects
     if (nearest_slot != SLOT_NONE) {
+        int detent_pos = JOY_MIDPOINT * 0.20;
         long detent_prior_offset = detentSpringCondition.lOffset;
         long detent_prior_strength = detentSpringCondition.lPositiveCoefficient;
-        if ((nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + 3500) || (nearest_slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) - 3500)) {
+        if ((nearest_slot->isOrientationFwd() && joyValues.fb <= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) + detent_pos) || (nearest_slot->isOrientationBack() && joyValues.fb >= slotPattern->slotDepthAsJoystick(nearest_slot->orientation) - detent_pos)) {
             // Spring simulates the detent
             detentSpringCondition.lOffset = slotPattern->slotDepthAsFFBOffset(nearest_slot->orientation);
+            if (nearest_slot->isOrientationFwd() && joyValues.fb > slotPattern->slotDepthAsJoystick(nearest_slot->orientation)) {
+                detentSpringCondition.lOffset += (slotPattern->slotDepthAsFFBOffset(nearest_slot->orientation) - joystickPositionToFFBOffset(joyValues.fb)) *1.7;
+
+            }
+            else if (nearest_slot->isOrientationBack() && joyValues.fb < slotPattern->slotDepthAsJoystick(nearest_slot->orientation)) {
+                detentSpringCondition.lOffset += (slotPattern->slotDepthAsFFBOffset(nearest_slot->orientation) - joystickPositionToFFBOffset(joyValues.fb)) *1.7;
+            }
             detentSpringCondition.lPositiveCoefficient = detent_spring_strength * -1;   // I have no idea why this spring strength needs to be inverted, but it does
             detentSpringCondition.lNegativeCoefficient = detent_spring_strength * -1;
+            //qDebug() << "detentSpringCondition.lPositiveCoefficient: " << detentSpringCondition.lPositiveCoefficient << ", detentSpringCondition.lOffset: " << detentSpringCondition.lOffset;
+            detentSpringCondition.lDeadBand = 0;
+            /*
+            detentSpringCondition.dwNegativeSaturation = 0;
+            detentSpringCondition.dwPositiveSaturation = 0;
+            detentSpringCondition.lDeadBand = 0;
+            */
         }
         else {
             // Spring simulates the ramp resistance
             detentSpringCondition.lOffset = 0;
-            detentSpringCondition.lPositiveCoefficient = shift_rail_ramp_resistance * -1;
-            detentSpringCondition.lNegativeCoefficient = shift_rail_ramp_resistance * -1;
+            detentSpringCondition.lPositiveCoefficient = -10000;
+            detentSpringCondition.lNegativeCoefficient = -10000;
+             // /* Saturation and deadband will help with making this effect feel linear, but I think we still need offset scaling to make it more of a gate entry latch
+            detentSpringCondition.dwNegativeSaturation = shift_rail_ramp_resistance;
+            detentSpringCondition.dwPositiveSaturation = shift_rail_ramp_resistance;
+            detentSpringCondition.lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1;
+            detentSpringCondition.lDeadBand = FFB_MAX * slotPattern->grind_zone_scale;
+            //qDebug() << "shift_rail_ramp_resistance: " << shift_rail_ramp_resistance << ", detentSpringCondition.lOffset: " << detentSpringCondition.lOffset;
+            //*/
         }
         if (detent_prior_offset != detentSpringCondition.lOffset || detent_prior_strength != detentSpringCondition.lPositiveCoefficient)
         {

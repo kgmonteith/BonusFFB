@@ -14,8 +14,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
     
-HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
-    device = devPtr;
+HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr) {
+    devices = devPtr;
 
     keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
     keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -31,7 +31,7 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     keepInGearSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
     keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
     keepInGearSpringEff.dwStartDelay = 0;
-    device->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
+    devices->joystick->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
 
     keepInGearEff.dwSize = sizeof(DIEFFECT);
     keepInGearEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -47,7 +47,7 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     keepInGearEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
     keepInGearEff.dwStartDelay = 0;
-    device->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
+    devices->joystick->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
 
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -63,7 +63,7 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
     rumbleEff.dwStartDelay = 0;
-    device->addEffect("rumble", { GUID_Triangle, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
+    devices->joystick->addEffect("rumble", { GUID_Triangle, &rumbleEff, DIEP_TYPESPECIFICPARAMS });
 
     rumblePushbackEff.dwSize = sizeof(rumblePushbackEff);
     rumblePushbackEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -78,7 +78,7 @@ HRESULT HShifterSynchroGuard::start(DeviceInfo* devPtr) {
     rumblePushbackEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
-    device->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
+    devices->joystick->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
     return DI_OK;
 }
 
@@ -101,38 +101,42 @@ void HShifterSynchroGuard::updatePedalEngagement(PedalValues pedalValues, QPair<
         else {
             keepInGearForce.lMagnitude = 0;
         }
-        device->updateEffect("keepInGearEff");
+        devices->joystick->updateEffect("keepInGearEff");
     }
 }
 
 
-void HShifterSynchroGuard::synchroStateChanged(SynchroState newState, int fbValue) {
+void HShifterSynchroGuard::synchroStateChanged(SynchroState newState) {
     if (newState == SynchroState::IN_SYNCH) {
+        JoystickValues joyValues = devices->getJoystickValues2();
+
         // Activate keep-in-gear spring
         float phaseOut = 1.0;
-        if (fbValue <= JOY_MIDPOINT) {
-            phaseOut = scaleRangeValue(fbValue, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
+        if (joyValues.fb <= JOY_MIDPOINT) {
+            phaseOut = scaleRangeValue(joyValues.fb, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
         }
         else {
-            phaseOut = scaleRangeValue(fbValue, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
+            phaseOut = scaleRangeValue(joyValues.fb, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
         }
         keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;  // AB9 1.1.3.4 firmware force inversion
-        device->updateEffect("keepInGearSpring");
+        devices->joystick->updateEffect("keepInGearSpring");
     }
     else if (newState == SynchroState::ENTERING_SYNCH) {
         // Deactivate keep-in-gear spring
         keepInGearSpring.lNegativeCoefficient = 0;
-        device->updateEffect("keepInGearSpring");
+        devices->joystick->updateEffect("keepInGearSpring");
     }
     synchroState = newState;
 }
 
-void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbValue) {
+void HShifterSynchroGuard::grindingStateChanged(GrindingState newState) {
     if (newState != GrindingState::OFF) {
+        JoystickValues joyValues = devices->getJoystickValues2();
+
         // Start rumbling
-        double effectScaling = scaleRangeValue(fbValue, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500);
+        double effectScaling = scaleRangeValue(joyValues.fb, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500);
         if (newState == GrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(fbValue, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500)) * -1;
+            effectScaling = scaleRangeValue(joyValues.fb, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500)) * -1;
         }
         rumble.dwPeriod = int(6e7 / computeGrindRPM());
         rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
@@ -147,8 +151,8 @@ void HShifterSynchroGuard::grindingStateChanged(GrindingState newState, int fbVa
         rumble.dwMagnitude = 0;
         rumblePushback.lMagnitude = 0;
     }
-    device->updateEffect("rumble");
-    device->updateEffect("rumblePushback");
+    devices->joystick->updateEffect("rumble");
+    devices->joystick->updateEffect("rumblePushback");
     grindingState = newState;
 }
 

@@ -24,7 +24,7 @@ public:
 
 public slots:
 	void updateSlotGuardEffects();
-	void updateSlotGuardState(HeavyTruckSlotState);
+	void updateSlotGuardState(SlotState);
 	void setNeutralSpringStrength(int value) {
 		neutral_spring_strength = value * 100;	// Scale to FFB_MAX (10000)
 	}
@@ -48,7 +48,7 @@ private:
 
 	DeviceConfiguration* devices = nullptr;
 	SlotPattern* slotPattern = nullptr;
-	HeavyTruckSlotState slot_state = HeavyTruckSlotState::NEUTRAL;
+	SlotState slot_state = SlotState::NEUTRAL;
 
 	JoystickValues joyValues;
 

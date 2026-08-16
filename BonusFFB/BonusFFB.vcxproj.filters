@@ -58,9 +58,6 @@
     <ClCompile Include="hshifter\HShifter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hshifter\HShifterSlotGuard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="hshifter\HShifterStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,9 +115,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="hshifter\HShifter.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="hshifter\HShifterSlotGuard.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="hshifter\HShifterStateManager.h">

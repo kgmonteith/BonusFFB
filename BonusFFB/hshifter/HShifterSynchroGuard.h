@@ -22,12 +22,12 @@ class HShifterSynchroGuard: public QObject
 	Q_OBJECT
 
 public:
-	HRESULT start(DeviceInfo*);
+	HRESULT start(DeviceConfiguration*);
 
 public slots:
 	void updatePedalEngagement(PedalValues, QPair<int, int>);
-	void synchroStateChanged(SynchroState, int);
-	void grindingStateChanged(GrindingState, int);
+	void synchroStateChanged(SynchroState);
+	void grindingStateChanged(GrindingState);
 	void updateEngineRPM(float);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
@@ -37,7 +37,7 @@ public slots:
 private:
 	float computeGrindRPM();
 
-	DeviceInfo* device = nullptr;
+	DeviceConfiguration* devices = nullptr;
 
 	SynchroState synchroState = SynchroState::ENTERING_SYNCH;
 	GrindingState grindingState = GrindingState::OFF;

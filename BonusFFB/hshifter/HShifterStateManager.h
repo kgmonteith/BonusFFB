@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #include <QObject>
 #include "DeviceConfiguration.h"
 #include "Telemetry.h"
+#include "SlotPattern.h"
 
 
 enum class SynchroState {
@@ -29,43 +30,42 @@ enum class GrindingState {
     GRINDING_BACK
 };
 
-enum class HShifterSlotState {
-    UNKNOWN,
-    NEUTRAL,
-    NEUTRAL_UNDER_SLOT,
-    SLOT_LEFT_FWD,
-    SLOT_LEFT_BACK,
-    SLOT_MIDDLE_FWD,
-    SLOT_MIDDLE_BACK,
-    SLOT_RIGHT_FWD,
-    SLOT_RIGHT_BACK
-};
-
 class HShifterStateManager: public QObject
 {
     Q_OBJECT;
 
 public:
-    void update(QPair<int, int>, PedalValues, QPair<int, int>);
+    void start(DeviceConfiguration*, Telemetry*, SlotPattern*);
+    void update();
 
 public slots:
     void setTelemetryState(TelemetrySource);
 
 signals:
-    void slotStateChanged(HShifterSlotState);
+    void slotStateChanged(SlotState);
     void buttonZoneChanged(int);
-    void synchroStateChanged(SynchroState, int);
-    void grindingStateChanged(GrindingState, int);
+    void slotTextChanged(QString);
+    void synchroStateChanged(SynchroState);
+    void grindingStateChanged(GrindingState);
 
 private:
-    void updateSlotState(long, long);
-    void updateButtonZoneState(long, long);
-    void updateSynchroState(long, long, QPair<int, int>);
-    void updateGrindingState(long, long);
+    void updateSlotState();
+    void updateButtonZoneState();
+    void updateSynchroState();
+    void updateGrindingState();
+
+    DeviceConfiguration* devices = nullptr;
+
+    Telemetry* telemetry = nullptr;
+    JoystickValues joystick;
 
     int buttonZoneState = 0;
+
+    SlotPattern* slotPattern = nullptr;
+    const Slot* slot = nullptr;
+
     TelemetrySource telemetryState = TelemetrySource::NONE;
-    HShifterSlotState slotState = HShifterSlotState::NEUTRAL;
+    SlotState slotState = SlotState::NEUTRAL;
     SynchroState synchroState = SynchroState::UNKNOWN;
     GrindingState grindingState = GrindingState::OFF;
 

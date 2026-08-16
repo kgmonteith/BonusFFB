@@ -40,6 +40,10 @@ void SlotPattern::setPattern(QString patternName) {
 	}
 }
 
+void SlotPattern::setPatternFromText(QString patternText) {
+	qDebug() << patternText;
+}
+
 void SlotPattern::setSlotWalls(int t_flags) {
 	slot_wall_flags = t_flags;
 	emit slotWallsChanged(t_flags);
@@ -143,6 +147,17 @@ bool SlotPattern::isInGrindZone(JoystickValues joyValues) {
 		return true;
 	}
 	else if (joyValues.fb > JOY_MIDPOINT && joyValues.fb >= JOY_MIDPOINT + grind_zone) {
+		return true;
+	}
+	return false;
+}
+
+bool SlotPattern::isInDetentZone(JoystickValues joyValues) {
+	double zone = JOY_MIDPOINT * detent_zone_scale;
+	if (joyValues.fb < JOY_MIDPOINT && joyValues.fb <= (slotDepthAsJoystick(SLOT_ORIENTATION_FORWARD)) + zone) {
+		return true;
+	}
+	else if (joyValues.fb > JOY_MIDPOINT && joyValues.fb >= (slotDepthAsJoystick(SLOT_ORIENTATION_BACK)) - zone) {
 		return true;
 	}
 	return false;

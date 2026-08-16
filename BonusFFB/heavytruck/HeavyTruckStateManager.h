@@ -28,11 +28,10 @@ enum class HeavyTruckGrindingState {
     GRINDING_BACK
 };
 
-enum class HeavyTruckSlotState {
-    UNKNOWN,
-    NEUTRAL,
-    NEUTRAL_UNDER_SLOT,
-    SLOTTED
+enum class DetentState {
+    ENTERING_DETENT,
+    DETENT_REACHED,
+    EXITING_DETENT
 };
 
 class HeavyTruckStateManager: public QObject
@@ -47,7 +46,7 @@ public slots:
     void setTelemetryState(TelemetrySource);
 
 signals:
-    void slotStateChanged(HeavyTruckSlotState);
+    void slotStateChanged(SlotState);
     void buttonZoneChanged(int);
     void synchroStateChanged(HeavyTruckSynchroState);
     void grindingStateChanged(HeavyTruckGrindingState);
@@ -59,6 +58,7 @@ signals:
 private:
     void updateSlotState();
     void updateButtonZoneState(QPair<int, int>);
+    void updateDetentState();
     void updateHeavyTruckSynchroState(QPair<int, int>);
     void updateHeavyTruckGrindingState();
     void updateTargetGear();
@@ -80,10 +80,11 @@ private:
     const Slot* slot = nullptr;
 
     TelemetrySource telemetryState = TelemetrySource::NONE;
-    HeavyTruckSlotState slotState = HeavyTruckSlotState::NEUTRAL;
+    SlotState slotState = SlotState::NEUTRAL;
     HeavyTruckSynchroState synchroState = HeavyTruckSynchroState::UNKNOWN;
     HeavyTruckGrindingState grindingState = HeavyTruckGrindingState::OFF;
 
     int targetGear = 0;
+    DetentState detentState = DetentState::ENTERING_DETENT;
     
 };

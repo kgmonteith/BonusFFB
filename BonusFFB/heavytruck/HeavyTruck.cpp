@@ -31,7 +31,7 @@ void HeavyTruck::initialize() {
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
 
     // Add slot patterns
-    for (auto pattern : AllPatterns) {
+    for (auto pattern : TruckPatterns) {
         ui->heavytruck_slotPatternComboBox->addItem(pattern.name);
     }
 
