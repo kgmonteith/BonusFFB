@@ -175,7 +175,7 @@ void Handbrake::gameLoop() {
     }
     devices->updateState();
     // Get new joystick values
-    JoystickValues joystickValues = devices->getJoystickValues2();
+    JoystickValues joystickValues = devices->getJoystickValues();
 
     // Update the effect, just to ensure the device gets reacquired. Should be harmless, right?
     devices->joystick->updateEffect("handbrakeSpring");

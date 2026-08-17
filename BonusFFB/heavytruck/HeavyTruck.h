@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "BonusFFBApp.h"
 #include "HeavyTruckStateManager.h"
-#include "HeavyTruckSlotGuard.h"
+#include "SlotGuard.h"
 #include "HeavyTruckSynchroGuard.h"
 #include "PedalsManager.h"
 #include "RangeSplitterManager.h"
@@ -51,7 +51,7 @@ private:
 
 	// Stateful FFB effect managers
 	HeavyTruckStateManager stateManager;
-	HeavyTruckSlotGuard slotGuard;
+	SlotGuard slotGuard;
 	HeavyTruckSynchroGuard synchroGuard;
 	PedalsManager pedalsManager;
 	RangeSplitterManager rangeSplitterManager;

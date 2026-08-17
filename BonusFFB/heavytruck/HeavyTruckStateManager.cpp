@@ -25,7 +25,7 @@ void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
 }
 
 void HeavyTruckStateManager::update() {
-    joystick = devices->getJoystickValues2();
+    joystick = devices->getJoystickValues();
 
     // Get new range and splitter values
     rangeSplitter = devices->getRangeSplitterValues();

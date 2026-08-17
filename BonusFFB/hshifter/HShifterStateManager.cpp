@@ -25,7 +25,7 @@ void HShifterStateManager::setTelemetryState(TelemetrySource t) {
 }
 
 void HShifterStateManager::update() {
-    joystick = devices->getJoystickValues2();
+    joystick = devices->getJoystickValues();
 
     updateSlotState();
     updateButtonZoneState();

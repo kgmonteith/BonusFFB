@@ -143,7 +143,7 @@ void HeavyTruckSynchroGuard::setTorqueLoadStrength(int value) {
 
 void HeavyTruckSynchroGuard::updateTorqueLock() { // int clutchValue, int throttleValue, int fbValue) {
     // Get new joystick values
-    JoystickValues joyValues = devices->getJoystickValues2();
+    JoystickValues joyValues = devices->getJoystickValues();
 
     // Get new pedal values
     PedalValues pedalValues = devices->getPedalValues();
@@ -242,7 +242,7 @@ void HeavyTruckSynchroGuard::setRumbleRPM() {
     // Start rumbling
     if (grindingState != HeavyTruckGrindingState::OFF) {
         double effectScaling = 0;
-        JoystickValues joyValues = devices->getJoystickValues2();
+        JoystickValues joyValues = devices->getJoystickValues();
         double grind_depth_scaled = JOY_MIDPOINT * slotPattern->grind_zone_scale;
         if (grindingState == HeavyTruckGrindingState::GRINDING_FWD)
         {

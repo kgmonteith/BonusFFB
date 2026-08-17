@@ -235,7 +235,7 @@ void Prndl::gameLoop() {
     }
     devices->updateState();
     // Get new joystick values
-    JoystickValues joystickValues = devices->getJoystickValues2();
+    JoystickValues joystickValues = devices->getJoystickValues();
     bool isShiftLockRelased = getShiftLockReleased();
 
     // Get telemetry values

@@ -12,11 +12,10 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #pragma once
 
-#include "DeviceInfo.h"
-#include "HeavyTruckStateManager.h"
-#include "SharedEnums.h"
+#include "DeviceConfiguration.h"
+#include "SlotPattern.h"
 
-class HeavyTruckSlotGuard: public QObject {
+class SlotGuard: public QObject {
 	Q_OBJECT
 
 public:

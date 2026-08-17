@@ -63,7 +63,7 @@ HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr, SlotPattern* sp
 /// </summary>
 void HShifterSynchroGuard::setRumbleRPM() {
     PedalValues pedalValues = devices->getPedalValues();
-    JoystickValues joyValues = devices->getJoystickValues2();
+    JoystickValues joyValues = devices->getJoystickValues();
 
     double clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
     double throttlePercent = double(pedalValues.throttle) / JOY_MAXPOINT;
@@ -71,7 +71,7 @@ void HShifterSynchroGuard::setRumbleRPM() {
     // Start rumbling
     if (grindingState != GrindingState::OFF) {
         double effectScaling = 0;
-        JoystickValues joyValues = devices->getJoystickValues2();
+        JoystickValues joyValues = devices->getJoystickValues();
         double grind_depth_scaled = JOY_MIDPOINT * slotPattern->grind_zone_scale;
         if (grindingState == GrindingState::GRINDING_FWD)
         {

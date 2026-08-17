@@ -80,7 +80,6 @@ public slots:
 
 	void setRangeOverride(bool newState) {
 		rangeOverride = newState;
-		qDebug() << "rangeOverride set to " << rangeOverride;
 	}
 	void forceRange(bool newState) {
 		rangeOverrideState = newState;
@@ -112,8 +111,7 @@ public:
 	void updateAxisComboBoxes(int, AxisBinding);
 	void updateButtonComboBoxes(int, ButtonBinding);
 
-	QPair<int, int> getJoystickValues();
-	JoystickValues getJoystickValues2();
+	JoystickValues getJoystickValues();
 	PedalValues getPedalValues();
 	RangeSplitterValues getRangeSplitterValues();
 

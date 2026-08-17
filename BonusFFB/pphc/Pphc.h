@@ -31,9 +31,9 @@ public:
 public slots:
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
-	void updateBrake(int);
-	void updateThrottle(int);
-	void updateSlotSpring(QPair<int, int>);
+	void updateBrake();
+	void updateThrottle();
+	void updateSlotSpring();
 
 	void setBrakeSpringScaling(int);
 	void setBrakeAxisDeadzone(int);
@@ -57,6 +57,7 @@ private:
 	DIEFFECT pphcSpringEff = {};
 	DICONDITION pphcSpring = { 0, -5000, -5000 };
 
+	JoystickValues joyValues;
 
 	int throttleSpringStrength = -0.3 * FFB_MAX;
 	double throttleDeadzone = 0.05;

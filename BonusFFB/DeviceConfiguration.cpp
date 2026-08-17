@@ -580,16 +580,7 @@ void DeviceConfiguration::updateButtonComboBoxes(int flag, ButtonBinding binding
     }
 }
 
-QPair<int, int> DeviceConfiguration::getJoystickValues() {
-    long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
-    long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
-    emit joystickLRValueChanged(joystickLRValue);
-    emit joystickFBValueChanged(joystickFBValue);
-    emit joystickValueChanged(joystickLRValue, joystickFBValue);
-    return QPair<int, int>(joystickLRValue, joystickFBValue);
-}
-
-JoystickValues DeviceConfiguration::getJoystickValues2() {
+JoystickValues DeviceConfiguration::getJoystickValues() {
     long joystickLRValue = joystick->getAxisReading(joystickLRAxisGuid);
     long joystickFBValue = joystick->getAxisReading(joystickFBAxisGuid);
     emit joystickLRValueChanged(joystickLRValue);

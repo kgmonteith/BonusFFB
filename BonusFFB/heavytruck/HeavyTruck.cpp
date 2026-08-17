@@ -47,11 +47,11 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_buttonZoneDepthSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setButtonZoneScale);
     //connect(ui->heavytruck_slotRoundingFactorSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setRoundingFactor);
     connect(&slotPattern, &SlotPattern::setRangeOverride, devices, &DeviceConfiguration::setRangeOverride);
-    connect(&slotGuard, &HeavyTruckSlotGuard::forceRangeValue, devices, &DeviceConfiguration::forceRange);
-    connect(ui->heavytruck_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringStrength);
-    connect(ui->heavytruck_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringPosition);
-    connect(ui->heavytruck_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setDetentSpringStrength);
-    connect(ui->heavytruck_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setShiftRailResistance );
+    connect(&slotGuard, &SlotGuard::forceRangeValue, devices, &DeviceConfiguration::forceRange);
+    connect(ui->heavytruck_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringStrength);
+    connect(ui->heavytruck_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringPosition);
+    connect(ui->heavytruck_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setDetentSpringStrength);
+    connect(ui->heavytruck_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setShiftRailResistance );
     // UI connections
     connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
     connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
@@ -69,7 +69,7 @@ void HeavyTruck::initialize() {
     // vJoy connections
     connect(&stateManager, &HeavyTruckStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
     // FFB effect connections
-    connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
+    connect(&stateManager, &HeavyTruckStateManager::slotStateChanged, &slotGuard, &SlotGuard::updateSlotGuardState);
     connect(&stateManager, &HeavyTruckStateManager::synchroStateChanged, &synchroGuard, &HeavyTruckSynchroGuard::synchroStateChanged);
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateGrindEffectRPM);
     connect(&stateManager, &HeavyTruckStateManager::rpmDeltaChanged, this, &HeavyTruck::updateRpmDeltaText);

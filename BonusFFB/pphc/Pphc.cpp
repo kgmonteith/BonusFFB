@@ -176,21 +176,21 @@ void Pphc::gameLoop() {
     }
     // Get new joystick values
     devices->updateState();
-    QPair<int, int> joystickValues = devices->getJoystickValues();
+    joyValues = devices->getJoystickValues();
 
-    updateSlotSpring(joystickValues);
-    updateBrake(joystickValues.second);
-    updateThrottle(joystickValues.second);
+    updateSlotSpring();
+    updateBrake();
+    updateThrottle();
 }
 
-void Pphc::updateBrake(int fbValue) {
-    float brakeSpringOffset = joystickPositionToFFBOffset(fbValue) * brakeSpringScaling * -1;
+void Pphc::updateBrake() {
+    float brakeSpringOffset = joystickPositionToFFBOffset(joyValues.fb) * brakeSpringScaling * -1;
     int brakeAxisOutput = VJOY_AXIS_MAX_VALUE * (scaleRangeValue(brakeSpringOffset, 10000 * brakeDeadzone, 10000.0 / brakeAxisScaling));
     devices->vjoy.setAxisValue(brakeAxisOutput, HID_USAGE_Y);
     ui->pphc_brakeLabel->setText(QString::number(brakeAxisOutput));
     ui->pphc_brakeProgressBar->setValue(brakeAxisOutput);
 
-    if (fbValue <= JOY_MIDPOINT) {
+    if (joyValues.fb <= JOY_MIDPOINT) {
         pphcSpring.lOffset = brakeSpringOffset;
         pphcSpring.lNegativeCoefficient = FFB_MAX * -1;
         pphcSpring.lPositiveCoefficient = FFB_MAX * -1;
@@ -198,13 +198,13 @@ void Pphc::updateBrake(int fbValue) {
     }
 }
 
-void Pphc::updateThrottle(int fbValue) {
-    int throttleAxisOutput = VJOY_AXIS_MAX_VALUE * scaleRangeValue(fbValue, JOY_MIDPOINT + (JOY_MAXPOINT * throttleDeadzone), JOY_MIDPOINT + (JOY_MIDPOINT * throttleSlotDepth));
+void Pphc::updateThrottle() {
+    int throttleAxisOutput = VJOY_AXIS_MAX_VALUE * scaleRangeValue(joyValues.fb, JOY_MIDPOINT + (JOY_MAXPOINT * throttleDeadzone), JOY_MIDPOINT + (JOY_MIDPOINT * throttleSlotDepth));
     devices->vjoy.setAxisValue(throttleAxisOutput, HID_USAGE_X);
     ui->pphc_throttleLabel->setText(QString::number(throttleAxisOutput));
     ui->pphc_throttleProgressBar->setValue(throttleAxisOutput);
 
-    if (fbValue > JOY_MIDPOINT) {
+    if (joyValues.fb > JOY_MIDPOINT) {
         if (pphcSpring.lPositiveCoefficient != throttleSpringStrength || pphcSpring.lOffset != 0) {
             pphcSpring.lPositiveCoefficient = throttleSpringStrength;
             pphcSpring.lNegativeCoefficient = throttleSpringStrength;
@@ -214,12 +214,12 @@ void Pphc::updateThrottle(int fbValue) {
     }
 }
 
-void Pphc::updateSlotSpring(QPair<int, int> joystickValues) {
-    slotSpringConditions[0].lOffset = joystickPositionToFFBOffset(joystickValues.first) * -1;
+void Pphc::updateSlotSpring() {
+    slotSpringConditions[0].lOffset = joystickPositionToFFBOffset(joyValues.lr) * -1;
     float slotDepthAsFFBOffsetBack = (throttleSlotDepth * FFB_MAXPOINT);
-    if (joystickValues.second >= JOY_MIDPOINT + (throttleSlotDepth * JOY_MIDPOINT)) {
+    if (joyValues.fb >= JOY_MIDPOINT + (throttleSlotDepth * JOY_MIDPOINT)) {
         slotSpringConditions[1] = keepFBCentered;
-        int offset = slotDepthAsFFBOffsetBack - (std::abs(joystickPositionToFFBOffset(joystickValues.second) - slotDepthAsFFBOffsetBack) * 2.5);
+        int offset = slotDepthAsFFBOffsetBack - (std::abs(joystickPositionToFFBOffset(joyValues.fb) - slotDepthAsFFBOffsetBack) * 2.5);
         slotSpringConditions[1].lOffset = offset;
     }
     else {

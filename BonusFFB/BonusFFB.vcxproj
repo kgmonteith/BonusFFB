@@ -118,7 +118,6 @@
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="handbrake\Handbrake.cpp" />
     <ClCompile Include="heavytruck\HeavyTruck.cpp" />
-    <ClCompile Include="heavytruck\HeavyTruckSlotGuard.cpp" />
     <ClCompile Include="heavytruck\HeavyTruckStateManager.cpp" />
     <ClCompile Include="heavytruck\HeavyTruckSynchroGuard.cpp" />
     <ClCompile Include="hshifter\HShifter.cpp" />
@@ -130,6 +129,7 @@
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
     <ClCompile Include="RangeSplitterManager.cpp" />
+    <ClCompile Include="SlotGuard.cpp" />
     <ClCompile Include="SlotPattern.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="vJoyFeeder.cpp" />
@@ -163,7 +163,6 @@
     <QtMoc Include="prndl\PrndlStateManager.h" />
     <QtMoc Include="handbrake\Handbrake.h" />
     <QtMoc Include="heavytruck\HeavyTruck.h" />
-    <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h" />
     <QtMoc Include="heavytruck\HeavyTruckStateManager.h" />
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h" />
     <QtMoc Include="pphc\Pphc.h" />
@@ -171,6 +170,7 @@
     <QtMoc Include="RangeSplitterManager.h" />
     <ClInclude Include="SharedEnums.h" />
     <QtMoc Include="SlotPattern.h" />
+    <QtMoc Include="SlotGuard.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="vJoyFeeder.h" />
   </ItemGroup>

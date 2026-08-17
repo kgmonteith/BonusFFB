@@ -82,9 +82,6 @@
     <ClCompile Include="heavytruck\HeavyTruck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="heavytruck\HeavyTruckSlotGuard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="heavytruck\HeavyTruckStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,6 +101,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RangeSplitterManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SlotGuard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -144,9 +144,6 @@
     <QtMoc Include="heavytruck\HeavyTruckSynchroGuard.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="heavytruck\HeavyTruckSlotGuard.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="heavytruck\HeavyTruck.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -163,6 +160,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="RangeSplitterManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SlotGuard.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

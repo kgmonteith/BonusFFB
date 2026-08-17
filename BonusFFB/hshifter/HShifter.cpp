@@ -46,10 +46,10 @@ void HShifter::initialize() {
     connect(ui->hshifter_detentZoneSpinbox, &QSpinBox::valueChanged, &slotPattern, &SlotPattern::setDetentZoneScale);
     //connect(ui->hshifter_slotRoundingFactorSlider, &QSlider::valueChanged, &slotPattern, &SlotPattern::setRoundingFactor);
     connect(&slotPattern, &SlotPattern::setRangeOverride, devices, &DeviceConfiguration::setRangeOverride);
-    connect(ui->hshifter_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringStrength);
-    connect(ui->hshifter_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setNeutralSpringPosition);
-    connect(ui->hshifter_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setDetentSpringStrength);
-    connect(ui->hshifter_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &HeavyTruckSlotGuard::setShiftRailResistance);
+    connect(ui->hshifter_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringStrength);
+    connect(ui->hshifter_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringPosition);
+    connect(ui->hshifter_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setDetentSpringStrength);
+    connect(ui->hshifter_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setShiftRailResistance);
     // Graphics connections
     connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
     // Telemetry connections
@@ -63,7 +63,7 @@ void HShifter::initialize() {
     connect(&stateManager, &HShifterStateManager::buttonZoneChanged, &devices->vjoy, &vJoyFeeder::updateButtons);
     connect(&stateManager, &HShifterStateManager::slotTextChanged, ui->gearLabel, &QLabel::setText);
     // FFB effect connections
-    connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &HeavyTruckSlotGuard::updateSlotGuardState);
+    connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &SlotGuard::updateSlotGuardState);
     connect(&stateManager, &HShifterStateManager::synchroStateChanged, &synchroGuard, &HShifterSynchroGuard::synchroStateChanged);
     connect(this, &HShifter::engineRPMChanged, &synchroGuard, &HShifterSynchroGuard::updateEngineRPM);
     connect(&stateManager, &HShifterStateManager::grindingStateChanged, &synchroGuard, &HShifterSynchroGuard::grindingStateChanged);

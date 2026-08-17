@@ -10,11 +10,11 @@ Bonus FFB is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You should have received a copy of the GNU General Public License along with Bonus FFB. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "HeavyTruckSlotGuard.h"
+#include "SlotGuard.h"
 
 #include <QDebug>
 
-HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr) {
+HRESULT SlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr) {
     devices = devPtr;
     slotPattern = spPtr;
 
@@ -106,7 +106,7 @@ HRESULT HeavyTruckSlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spP
     return DI_OK;
 }
 
-void HeavyTruckSlotGuard::updateSlotGuardState(SlotState state) {
+void SlotGuard::updateSlotGuardState(SlotState state) {
     slot_state = state;
     if (slot_state == SlotState::SLOTTED)
         qDebug() << "SlotState::SLOTTED";
@@ -118,7 +118,7 @@ void HeavyTruckSlotGuard::updateSlotGuardState(SlotState state) {
         qDebug() << "SlotState::UNKNOWN";
 }
 
-QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(double slot_pos_x) {
+QPair<long, long> SlotGuard::getCornerStrength(double slot_pos_x) {
     // Calculate the origin point for the corner calculations
     double x0 = slot_pos_x, y0 = JOY_MIDPOINT;
     if (joyValues.lr < x0) {
@@ -156,8 +156,8 @@ QPair<long, long> HeavyTruckSlotGuard::getCornerStrength(double slot_pos_x) {
     return QPair<long, long>(yStrength, xStrength);
 }
 
-void HeavyTruckSlotGuard::updateSlotGuardEffects() {
-    joyValues = devices->getJoystickValues2();
+void SlotGuard::updateSlotGuardEffects() {
+    joyValues = devices->getJoystickValues();
     //bool in_neutral = slotPattern->isInNeutral(joyValues);
     const Slot* nearest_slot = slotPattern->getNearestSlot(joyValues);
 
