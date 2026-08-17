@@ -38,6 +38,12 @@ enum class SlotState {
 	SLOTTED
 };
 
+enum class DetentState {
+	ENTERING_DETENT,
+	DETENT_REACHED,
+	EXITING_DETENT
+};
+
 struct PatternDef {
 	QString name;
 	QList<int> slot_numbers;
@@ -132,6 +138,9 @@ public slots:
 	void setGrindZoneScale(int t) {
 		grind_zone_scale = double(t) * 0.01;
 	}
+	void setDetentZoneScale(int t) {
+		detent_zone_scale = double(t) * 0.01;
+	}
 
 signals:
 	void setRangeOverride(bool);
@@ -173,7 +182,7 @@ public:
 	//double top_offset = 0;
 	double button_zone_scale = 0.35;
 	double grind_zone_scale = 0.15;
-	double detent_zone_scale = 0.20;
+	double detent_zone_scale = 0.25;
 
 	double roundingFactorAsJoystick();
 	double rounding_factor = 0.1;

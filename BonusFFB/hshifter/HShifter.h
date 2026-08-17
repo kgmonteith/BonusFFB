@@ -47,7 +47,7 @@ private:
 	QGraphicsScene* scene = nullptr;
 	QGraphicsEllipseItem* joystickCircle;
 	QGraphicsRectItem* grindZoneRect;
-	QGraphicsRectItem* buttonZoneRect;
+	QGraphicsRectItem* detentZoneRect;
 
 	SlotPattern slotPattern;
 

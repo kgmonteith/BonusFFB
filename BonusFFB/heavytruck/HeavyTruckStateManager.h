@@ -28,12 +28,6 @@ enum class HeavyTruckGrindingState {
     GRINDING_BACK
 };
 
-enum class DetentState {
-    ENTERING_DETENT,
-    DETENT_REACHED,
-    EXITING_DETENT
-};
-
 class HeavyTruckStateManager: public QObject
 {
     Q_OBJECT;

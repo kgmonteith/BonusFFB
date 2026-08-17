@@ -153,7 +153,7 @@ bool SlotPattern::isInGrindZone(JoystickValues joyValues) {
 }
 
 bool SlotPattern::isInDetentZone(JoystickValues joyValues) {
-	double zone = JOY_MIDPOINT * detent_zone_scale;
+	double zone = JOY_MIDPOINT * detent_zone_scale * depth_scale;
 	if (joyValues.fb < JOY_MIDPOINT && joyValues.fb <= (slotDepthAsJoystick(SLOT_ORIENTATION_FORWARD)) + zone) {
 		return true;
 	}

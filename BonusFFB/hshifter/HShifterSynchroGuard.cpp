@@ -14,40 +14,12 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include <QDebug>
     
-HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr) {
+HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr) {
     devices = devPtr;
+    slotPattern = spPtr;
 
-    keepInGearSpringEff.dwSize = sizeof(DIEFFECT);
-    keepInGearSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    keepInGearSpringEff.dwDuration = INFINITE;
-    keepInGearSpringEff.dwSamplePeriod = 0;
-    keepInGearSpringEff.dwGain = DI_FFNOMINALMAX;
-    keepInGearSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
-    keepInGearSpringEff.dwTriggerRepeatInterval = 0;
-    keepInGearSpringEff.cAxes = 1;
-    keepInGearSpringEff.rgdwAxes = &AXES[1];
-    keepInGearSpringEff.rglDirection = &FORWARDBACK[1];
-    keepInGearSpringEff.lpEnvelope = 0;
-    keepInGearSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
-    keepInGearSpringEff.lpvTypeSpecificParams = &keepInGearSpring;
-    keepInGearSpringEff.dwStartDelay = 0;
-    devices->joystick->addEffect("keepInGearSpring", { GUID_Spring, &keepInGearSpringEff });
-
-    keepInGearEff.dwSize = sizeof(DIEFFECT);
-    keepInGearEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
-    keepInGearEff.dwDuration = INFINITE;
-    keepInGearEff.dwSamplePeriod = 0;
-    keepInGearEff.dwGain = DI_FFNOMINALMAX;
-    keepInGearEff.dwTriggerButton = DIEB_NOTRIGGER;
-    keepInGearEff.dwTriggerRepeatInterval = 0;
-    keepInGearEff.cAxes = 1;
-    keepInGearEff.rgdwAxes = &AXES[1];
-    keepInGearEff.rglDirection = &FORWARDBACK[1];
-    keepInGearEff.lpEnvelope = 0;
-    keepInGearEff.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
-    keepInGearEff.lpvTypeSpecificParams = &keepInGearForce;
-    keepInGearEff.dwStartDelay = 0;
-    devices->joystick->addEffect("keepInGearEff", { GUID_ConstantForce, &keepInGearEff });
+    rumbleUpdateTimer = new QTimer();
+    rumbleUpdateTimer->setInterval(1);
 
     rumbleEff.dwSize = sizeof(DIEFFECT);
     rumbleEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
@@ -57,8 +29,8 @@ HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr) {
     rumbleEff.dwTriggerButton = DIEB_NOTRIGGER;
     rumbleEff.dwTriggerRepeatInterval = 0;
     rumbleEff.cAxes = 1;
-    rumbleEff.rgdwAxes = &AXES[0];
-    rumbleEff.rglDirection = &FORWARDBACK[0];
+    rumbleEff.rgdwAxes = &AXES[1];
+    rumbleEff.rglDirection = &FORWARDBACK[1];
     rumbleEff.lpEnvelope = 0;
     rumbleEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
     rumbleEff.lpvTypeSpecificParams = &rumble;
@@ -79,80 +51,67 @@ HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr) {
     rumblePushbackEff.lpvTypeSpecificParams = &rumblePushback;
     rumblePushbackEff.dwStartDelay = 0;
     devices->joystick->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
+
+    QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HShifterSynchroGuard::setRumbleRPM);
+    rumbleUpdateTimer->start();
+
     return DI_OK;
 }
 
-void HShifterSynchroGuard::updatePedalEngagement(PedalValues pedalValues, QPair<int, int> joystickValues) { // int clutchValue, int throttleValue, int fbValue) {
-    clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
-    throttlePercent = double(pedalValues.throttle) / JOY_MAXPOINT;
-    int fbValue = joystickValues.second;
-    // Update keep-in-gear spring
-    if ((synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH)) {
-        if (pedalValues.throttle > 100) {
-            int scaledCoeff = keepInGearSpringMaxCoefficient * (throttlePercent);
-            if (fbValue > JOY_MIDPOINT) {
-                scaledCoeff *= scaleRangeValue(fbValue, JOY_MAXPOINT, JOY_MAXPOINT - 6000);
-            }
-            else {
-                scaledCoeff *= scaleRangeValue(fbValue, 0, 6000) * -1;
-            }
-            keepInGearForce.lMagnitude = scaledCoeff * clutchPercent ;  // AB9 1.1.3.4 firmware force inversion
+/// <summary>
+/// Invoked via a periodic timer set to run every millisecond
+/// </summary>
+void HShifterSynchroGuard::setRumbleRPM() {
+    PedalValues pedalValues = devices->getPedalValues();
+    JoystickValues joyValues = devices->getJoystickValues2();
+
+    double clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
+    double throttlePercent = double(pedalValues.throttle) / JOY_MAXPOINT;
+
+    // Start rumbling
+    if (grindingState != GrindingState::OFF) {
+        double effectScaling = 0;
+        JoystickValues joyValues = devices->getJoystickValues2();
+        double grind_depth_scaled = JOY_MIDPOINT * slotPattern->grind_zone_scale;
+        if (grindingState == GrindingState::GRINDING_FWD)
+        {
+            //effectScaling = scaleRangeValue(joyValues.fb, slotParams->grindPointDepthAsJoystickValueFwd(), slotParams->grindPointDepthAsJoystickValueFwd() - grindPushbackScalingRange) * -1;
+            double grind_point_fwd = JOY_MIDPOINT - grind_depth_scaled;
+            effectScaling = scaleRangeValue(joyValues.fb, grind_point_fwd, grind_point_fwd - grindPushbackScalingRange) * -1;
         }
-        else {
-            keepInGearForce.lMagnitude = 0;
+        else
+        {
+            //effectScaling = scaleRangeValue(joyValues.fb, slotParams->grindPointDepthAsJoystickValueBack(), slotParams->grindPointDepthAsJoystickValueBack() + grindPushbackScalingRange);
+            double grind_point_back = JOY_MIDPOINT + grind_depth_scaled;
+            effectScaling = scaleRangeValue(joyValues.fb, grind_point_back, grind_point_back + grindPushbackScalingRange);
         }
-        devices->joystick->updateEffect("keepInGearEff");
+        rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+        devices->joystick->updateEffect("rumblePushback");
+        long smoothedRPM = long(grindEffectRPM) - long(grindEffectRPM) % 10;
+        // Apply some smoothing since the AB9 seems to struggle with changing periodic effects too frequently
+        rumble.dwPeriod = 6e7 / std::abs(smoothedRPM);
+        rumble.dwMagnitude = unsigned long(grindingIntensity * clutchPercent * std::abs(effectScaling));
+        //qDebug() << "revMatchRumbleScaling: " << revMatchRumbleScaling << "smoothedRPM: " << smoothedRPM <<  "rumble.dwPeriod: " << rumble.dwPeriod << "rumble.dwMagnitude: " << rumble.dwMagnitude;
+        devices->joystick->updateEffect("rumble");
+    }
+    else {
+        // Stop rumbling
+        if (rumble.dwMagnitude != 0) {
+            rumble.dwMagnitude = 0;
+            devices->joystick->updateEffect("rumble");
+        }
+        if (rumblePushback.lMagnitude != 0) {
+            rumblePushback.lMagnitude = 0;
+            devices->joystick->updateEffect("rumblePushback");
+        }
     }
 }
 
-
 void HShifterSynchroGuard::synchroStateChanged(SynchroState newState) {
-    if (newState == SynchroState::IN_SYNCH) {
-        JoystickValues joyValues = devices->getJoystickValues2();
-
-        // Activate keep-in-gear spring
-        float phaseOut = 1.0;
-        if (joyValues.fb <= JOY_MIDPOINT) {
-            phaseOut = scaleRangeValue(joyValues.fb, JOY_QUARTERPOINT - 5000, JOY_QUARTERPOINT + 5000);
-        }
-        else {
-            phaseOut = scaleRangeValue(joyValues.fb, JOY_THREEQUARTERPOINT + 5000, JOY_THREEQUARTERPOINT - 5000);
-        }
-        keepInGearSpring.lNegativeCoefficient = keepInGearSpringIdleCoefficient * clutchPercent;  // AB9 1.1.3.4 firmware force inversion
-        devices->joystick->updateEffect("keepInGearSpring");
-    }
-    else if (newState == SynchroState::ENTERING_SYNCH) {
-        // Deactivate keep-in-gear spring
-        keepInGearSpring.lNegativeCoefficient = 0;
-        devices->joystick->updateEffect("keepInGearSpring");
-    }
     synchroState = newState;
 }
 
 void HShifterSynchroGuard::grindingStateChanged(GrindingState newState) {
-    if (newState != GrindingState::OFF) {
-        JoystickValues joyValues = devices->getJoystickValues2();
-
-        // Start rumbling
-        double effectScaling = scaleRangeValue(joyValues.fb, JOY_MIDPOINT * 0.65, JOY_MIDPOINT * 0.65 - 7500);
-        if (newState == GrindingState::GRINDING_BACK) {
-            effectScaling = scaleRangeValue(joyValues.fb, JOY_MAXPOINT - (JOY_MIDPOINT * 0.65), JOY_MAXPOINT - (JOY_MIDPOINT * 0.65 - 7500)) * -1;
-        }
-        rumble.dwPeriod = int(6e7 / computeGrindRPM());
-        rumble.dwMagnitude = grindingIntensity * clutchPercent * std::abs(effectScaling);
-        if (synchroState == SynchroState::ENTERING_SYNCH)
-        {
-            rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent; // AB9 1.1.3.4 firmware force inversion
-            //qDebug() << "rumblePushback.lMagnitude: " << rumblePushback.lMagnitude;
-        }
-    }
-    else {
-        // Stop rumbling
-        rumble.dwMagnitude = 0;
-        rumblePushback.lMagnitude = 0;
-    }
-    devices->joystick->updateEffect("rumble");
-    devices->joystick->updateEffect("rumblePushback");
     grindingState = newState;
 }
 
@@ -174,15 +133,6 @@ void HShifterSynchroGuard::updateGrindEffectRPM(float newRPM) {
     grindEffectRPM = newRPM;
 }
 
-void HShifterSynchroGuard::setGrindEffectBehavior(int index) {
-    qDebug() << "New grind effect behavior: " << index;
-    grindEffectBehavior = static_cast<GrindEffectBehavior>(index);
-}
-
 void HShifterSynchroGuard::setGrindEffectIntensity(int value) {
     grindingIntensity = value * 100;    // Scale to 10000
-}
-
-void HShifterSynchroGuard::setKeepInGearIdleIntensity(int value) {
-    keepInGearSpringIdleCoefficient = value * 100;
 }

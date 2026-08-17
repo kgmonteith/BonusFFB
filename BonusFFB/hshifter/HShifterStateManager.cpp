@@ -68,11 +68,12 @@ void HShifterStateManager::updateSlotState() {
 void HShifterStateManager::updateButtonZoneState() {
     int newState = 0;
     if (slot != nullptr) {
-        if (slotPattern->isInButtonZone(*slot, joystick)) {
+        if (slotPattern->isInDetentZone(joystick)) {
             newState = slot->vJoyButton();
         }
     }
-    if (buttonZoneState != newState) {
+    // Either old or new state must be neutral, no direct change from gear to gear
+    if (buttonZoneState != newState && (!buttonZoneState || !newState)) { 
         buttonZoneState = newState;
         //qDebug() << "buttonZone changed: " << buttonZoneState;
         emit buttonZoneChanged(buttonZoneState);
@@ -85,11 +86,11 @@ void HShifterStateManager::updateButtonZoneState() {
 
 void HShifterStateManager::updateSynchroState() {
     SynchroState newState = SynchroState::UNKNOWN;
-    if (joystick.fb <= in_synch_depth || joystick.fb >= JOY_MAXPOINT - in_synch_depth) {
+    if (slotPattern->isInDetentZone(joystick)) {
         // Gears are synchronized
         newState = SynchroState::IN_SYNCH;
     }
-    else if ((synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) && (joystick.fb <= finished_exiting_synch_depth || joystick.fb >= JOY_MAXPOINT - finished_exiting_synch_depth)) {
+    else if ((synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) && slotPattern->isInGrindZone(joystick)) {
         // Gears were synched, but now we are exiting sync on our way back to neutral
         newState = SynchroState::EXITING_SYNCH;
     }
@@ -97,16 +98,15 @@ void HShifterStateManager::updateSynchroState() {
         // We are out of sync completely and will need to reenter
         newState = SynchroState::ENTERING_SYNCH;
     }
-    synchroState = newState;
     if (synchroState != newState)
     {
         /*
-        if (newState == HeavyTruckSynchroState::IN_SYNCH)
-            qDebug() << "HeavyTruckSynchroState::IN_SYNCH";
-        else if (newState == HeavyTruckSynchroState::EXITING_SYNCH)
-            qDebug() << "HeavyTruckSynchroState::EXITING_SYNCH";
-        else if (newState == HeavyTruckSynchroState::ENTERING_SYNCH) {
-            qDebug() << "HeavyTruckSynchroState::ENTERING_SYNCH";
+        if (newState == SynchroState::IN_SYNCH)
+            qDebug() << "SynchroState::IN_SYNCH";
+        else if (newState == SynchroState::EXITING_SYNCH)
+            qDebug() << "SynchroState::EXITING_SYNCH";
+        else if (newState == SynchroState::ENTERING_SYNCH) {
+            qDebug() << "SynchroState::ENTERING_SYNCH";
         }
         */
         synchroState = newState;
@@ -116,7 +116,7 @@ void HShifterStateManager::updateSynchroState() {
 
 void HShifterStateManager::updateGrindingState() {
     GrindingState newGrindingState = GrindingState::OFF;
-    if (synchroState == SynchroState::ENTERING_SYNCH && (joystick.fb <= grind_point_depth || joystick.fb >= JOY_MAXPOINT - grind_point_depth)) {
+    if (synchroState == SynchroState::ENTERING_SYNCH && slotState != SlotState::NEUTRAL && slotPattern->isInGrindZone(joystick)) {
         if (joystick.fb < JOY_MIDPOINT)
             newGrindingState = GrindingState::GRINDING_FWD;
         else
