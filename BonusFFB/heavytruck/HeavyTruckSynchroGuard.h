@@ -28,7 +28,6 @@ public slots:
 	void updateTorqueLock();
 	void synchroStateChanged(HeavyTruckSynchroState);
 	void grindingStateChanged(HeavyTruckGrindingState);
-	void setGrindEffectShape(int);
 	void updateGrindEffectRPM(float);
 	void setGrindEffectIntensity(int);
 	void setEngineVibrationIntensity(int);

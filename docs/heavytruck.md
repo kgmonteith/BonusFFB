@@ -115,10 +115,15 @@ To use these features, you will need to bind the vJoy axes and buttons in the ga
 Changes to the slot pattern, position, slot depth, and width are reflected on the joystick map, consult it after making a change.
 
 - **Slot pattern**: Select the pattern that matches your truck's transmission, *and* the shifter layout in the game's controls menu.
-- **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.
-- **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press, shown with a blue line when markers are enabled. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot; about 20% higher than the grind zone value is recommended.
+- **Pattern position:** Aligns the pattern to the left or right side of the joystick range.
+- **Slot depth scale:** Adjusts the depth of the shifter slots. A smaller value results in a shorter shifter throw.
+- **Pattern width:** Sets the maximum width of the shifter pattern. A smaller value restricts the left/right movement of the shifter. A value of 100% uses the full left/range of the joystick base. 
 - **Neutral spring strength**: Sets the strength of the neutral centering spring effect, which is applied when the stick is near the neutral channel.
 - **Neutral spring position**: Sets the centering position of the neutral spring. This is limited to positions under and between the center and rightmost slots in heavy truck mode, to prevent conflicts with the left-slot wall effect. This setting is ignored by the ZF-16 Double-H pattern, which overrides the neutral spring position for each of the two H-patterns.
+- **Detent spring strength:** Sets the strength of the detent felt at the ends of the shifter slots.
+- **Mechanical resistance:** Sets the strength of the spring force resisting the stick when a slot is engaged.
+- **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.
+- **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press, shown with a blue line when markers are enabled. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot; about 20% higher than the grind zone value is recommended.
 
 ### Force feedback effect settings
 
@@ -130,11 +135,20 @@ Changes to the slot pattern, position, slot depth, and width are reflected on th
         For Moza bases, these values are *added* to the corresponding values in Moza Cockpit, they do not override them.
     !!! Info
         New Eaton-Fuller transmissions tend to feel "weighty", increase these settings to simulate a new transmission. Older transmissions tend to feel "looser" with a stick that's easier to move.
-- **<span id="gate-latch-friction">Gate latch friction:</span>** A friction effect that plays when passing through a slot gate latch, simulating the shift fork engaging the synchronizer collar
-    - This value is added to the constant friction resistance&mdash;e.g., 30% constant friction + 40% gate latch friction results in 70% total friction for the effect.
 - **<span id="grind-effect-intensity">Grind effect intensity:</span>** Sets the strength of the gear grinding effect. This effect plays when attempting to shift into gear without the clutch applied and the RPM delta is too high.
-- **<span id="grind-effect-shape">Grind effect shape:</span>** Changes the effect shape of the grind effect. 'Triangle' is recommended to simulate the most realistic feel.
 - **<span id="idle-torque-lock-strength">Idle torque lock strength:</span>** When in gear, the torque lock effect pushes the shifter back into the slotted position. This setting adjusts the strength of the effect when throttle is *not* applied. Think of it as the minimum amount of force you need to move the stick from a slotted gear back to neutral.
 - **<span id="torque-load-effect-strength">Torque load effect strength:</span>** When in gear, this effect applies a subtle force proportional to throttle application. This simulates the gear teeth clamping under torque and holding the gear.
 - **<span id="engine-vibration-strength">Engine vibration strength:</span>** Sets the strength of the engine vibration effect. This effect should be subtle; high values could result in the shifter stick thrashing wildly.
-- **<span id="max-rpm-delta">Max RPM delta for float shift:</span>** Changes the allowable RPM delta range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.
+
+### Gameplay settings
+
+These settings affect gameplay mechanics by changing how device inputs are transmitted to the game.
+
+- **<span id="max-rpm-delta">Float shift rev match range:</span>** Changes the allowable RPM delta range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.
+- **Enable throttle-on shifting:** Enables [throttle-on shifting](#throttle-on-shifting), which requires mapping vJoy as your pedal inputs in the game controls. Allows you to change gears while the throttle is applied, which is not otherwise allowed by the game.
+
+# Troubleshooting and common problems
+
+- **While in game, the stick is pushed out of gear when I press the throttle pedal.**
+    - The gear in-game does not match the gear as computed by Bonus FFB. Try toggling the range and splitter switches a few times&mdash;ATS/ETS2 will reset the range and splitter whenever the game loses focus, so you need to do this any time you `Alt+Tab` out of the game.
+    - If that does not help, ensure the [telemetry plugin is correctly installed](setup-guide.md#3-install-telemetry-plugins).

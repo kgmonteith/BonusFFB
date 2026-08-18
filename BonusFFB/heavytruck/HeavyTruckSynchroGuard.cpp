@@ -122,21 +122,6 @@ HRESULT HeavyTruckSynchroGuard::start(DeviceConfiguration* devPtr, SlotPattern* 
     return DI_OK;
 }
 
-void HeavyTruckSynchroGuard::setGrindEffectShape(int index) {
-    if (index == 0) {
-        grindEffectShape = GUID_Triangle;
-    }
-    else if (index == 1) {
-        grindEffectShape = GUID_Sine;
-    }
-    else if (index == 2) {
-        grindEffectShape = GUID_SawtoothUp;
-    }
-    else {
-        grindEffectShape = GUID_Square;
-    }
-}
-
 void HeavyTruckSynchroGuard::setTorqueLoadStrength(int value) {
     torqueLoadSpringStrength = value * -100;
 }

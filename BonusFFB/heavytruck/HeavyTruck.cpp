@@ -79,7 +79,6 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectIntensity);
     connect(ui->heavytruck_maxRevMatchRPMSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setMaxRevMatchRPM);
     //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
-    connect(ui->heavytruck_grindEffectShapeComboBox, &QComboBox::currentIndexChanged, &synchroGuard, &HeavyTruckSynchroGuard::setGrindEffectShape);
     connect(ui->heavytruck_keepInGearIdleSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setKeepInGearIdleIntensity);
     connect(ui->heavytruck_torqueLoadStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setTorqueLoadStrength);
     connect(ui->heavytruck_engineVibrationStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HeavyTruckSynchroGuard::setEngineVibrationIntensity);
@@ -213,7 +212,6 @@ void HeavyTruck::saveSettings(QSettings* settings) {
 
     settings->beginGroup("ffb_effect_settings");
     settings->setValue("grindIntensity", ui->heavytruck_grindIntensitySlider->value());
-    settings->setValue("grindEffectShape", ui->heavytruck_grindEffectShapeComboBox->currentIndex());
     settings->setValue("keepInGearIdle", ui->heavytruck_keepInGearIdleSlider->value());
     settings->setValue("torqueLoadStrength", ui->heavytruck_torqueLoadStrengthSlider->value());
     settings->setValue("maxRevMatchRPM", ui->heavytruck_maxRevMatchRPMSlider->value());
@@ -246,7 +244,6 @@ void HeavyTruck::loadSettings(QSettings* settings) {
 
     settings->beginGroup("ffb_effect_settings");
     ui->heavytruck_grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
-    ui->heavytruck_grindEffectShapeComboBox->setCurrentIndex(settings->value("grindEffectShape", 0).toInt());
     ui->heavytruck_keepInGearIdleSlider->setValue(settings->value("keepInGearIdle", 30).toInt());
     ui->heavytruck_torqueLoadStrengthSlider->setValue(settings->value("torqueLoadStrength", 30).toInt());
     ui->heavytruck_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength", 0).toInt());

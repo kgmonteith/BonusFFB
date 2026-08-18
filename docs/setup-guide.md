@@ -37,6 +37,10 @@ Install the x64 version of [RenCloud's scs-sdk-plugin](https://github.com/RenClo
 * `C:\Program Files (x86)\Steam\steamapps\common\American Truck Simulator\bin\win_x64\plugins\`
 * `C:\Program Files (x86)\Steam\steamapps\common\Euro Truck Simulator 2\bin\win_x64\plugins\`
 
+When installed correctly and the ATS/ETS2 is running, Bonus FFB will show this status dashboard:
+
+![Telemetry connected](images/telemetry-good.png)
+
 ??? tip "When installed correctly, ATS/ETS2 will start with a notice that the SDK has been activated."
     Unfortunately this message cannot be deactivated, you will have to press OK each time the game is launched.
 
@@ -50,13 +54,13 @@ Install the x64 version of [RenCloud's scs-sdk-plugin](https://github.com/RenClo
     ??? warning "You must set `Base Force Model Selection` to `Flight Base`"
         Do NOT use the `Shifter` mode. The `Shifter` mode is for Moza's built-in shifter app and overrides Bonus FFB.
 
-    <h3>MOZA Cockpit vs MOZA Pithouse</h3>
+    <h3>MOZA Cockpit vs MOZA Pit House</h3>
 
-    Download and install [MOZA Cockpit](https://support.mozaracing.com/en/support/solutions/articles/70000666515-moza-cockpit-download) if you don't already have it. These instructions apply to settings in MOZA Cockpit, which is distinct from MOZA Pithouse.
+    Download and install [MOZA Cockpit](https://support.mozaracing.com/en/support/solutions/articles/70000666515-moza-cockpit-download) if you don't already have it. These instructions apply to settings in MOZA Cockpit, which is distinct from MOZA Pit House.
 
     <h3>Required MOZA Cockpit settings</h3>
 
-    First, ensure you have installed firmware version 1.1.3.4 or newer for your AB9/AB6 base.
+    First, ensure you have recently updated the firmware for your AB9/AB6 base.
 
     Under Basic Settings, change these settings:
 
@@ -72,7 +76,10 @@ Install the x64 version of [RenCloud's scs-sdk-plugin](https://github.com/RenClo
 
     * `Base Force Model Selection` to `Flight Base`
 
-    Close and fully exit MOZA Cockpit after configuring these settings, to avoid any interference from MOZA's built-in effects, and to avoid conflicts with MOZA Pithouse.
+    !!! danger "Close and fully exit MOZA Cockpit after configuring these settings"
+        Cockpit is not compatible with Pit House. Close Cockpit to avoid any interference from MOZA's built-in effects, and to avoid conflicts with other MOZA racing devices.
+
+    ![Cockpit settings](images/cockpit-settings.png)
 
 === "Other FFB Joysticks"
 
