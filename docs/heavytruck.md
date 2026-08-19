@@ -86,10 +86,10 @@ Start the heavy truck mode, then set these values in the "Controls" menu:
 ![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to `H-Shifter`
 * Set `Shifter layout behavior` to `Advanced`
-* Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the shifter slots
+* Set `Shifter Positions` R-6 to the vJoy Device buttons 0-6, corresponding to the shifter slots
     * Simply walk the shifter through the slots to bind each gear while Bonus FFB is running, as you would a hardware shifter.
+    * Use an R+6 slot pattern to bind all the buttons. Most other patterns are missing some of the buttons.
     * If you have trouble binding buttons while in heavy truck mode, bind them using [H-shifter mode](hshifter.md) instead. The same button numbers are used by both modes.
-    * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
 * Set the `Shifter layout` to match the transmission of your truck,  e.g., Eaton-Fuller 18 speed. In Bonus FFB, choose the matching slot pattern in the slot pattern settings tab.
     * ⚠️ Remember to change this setting when you change trucks or transmissions!
 
@@ -147,8 +147,10 @@ These settings affect gameplay mechanics by changing how device inputs are trans
 - **<span id="max-rpm-delta">Float shift rev match range:</span>** Changes the allowable RPM delta range for float shifts. A larger value permits a greater mismatch between the engine and transmission RPMs, making float shifting easier and more permissive. A smaller value makes float shifting more strict and challenging.
 - **Enable throttle-on shifting:** Enables [throttle-on shifting](#throttle-on-shifting), which requires mapping vJoy as your pedal inputs in the game controls. Allows you to change gears while the throttle is applied, which is not otherwise allowed by the game.
 
-# Troubleshooting and common problems
+## Troubleshooting
 
 - **While in game, the stick is pushed out of gear when I press the throttle pedal.**
-    - The gear in-game does not match the gear as computed by Bonus FFB. Try toggling the range and splitter switches a few times&mdash;ATS/ETS2 will reset the range and splitter whenever the game loses focus, so you need to do this any time you `Alt+Tab` out of the game.
+    - This happens when the gear in-game does not match the target gear computed by Bonus FFB.
+    - Try toggling the range and splitter switches a few times
+        - ATS/ETS2 resets the range and splitter whenever the game loses focus, so you need to do this any time you `Alt+Tab` out of the game.
     - If that does not help, ensure the [telemetry plugin is correctly installed](setup-guide.md#3-install-telemetry-plugins).
