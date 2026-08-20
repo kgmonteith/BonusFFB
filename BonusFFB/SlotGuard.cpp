@@ -386,8 +386,9 @@ void SlotGuard::updateSlotGuardEffects() {
         else {
             // Spring simulates the ramp resistance
             detentSpringCondition.lOffset = 0;
-            detentSpringCondition.lPositiveCoefficient = -10000;
-            detentSpringCondition.lNegativeCoefficient = -10000;
+            // Set strength to 0 if mechanical resistance is disabled. Solves setting 0 saturation.
+            detentSpringCondition.lPositiveCoefficient = (mechanical_resistance_strength) ? -10000 : 0;
+            detentSpringCondition.lNegativeCoefficient = (mechanical_resistance_strength) ? -10000 : 0;
              // /* Saturation and deadband will help with making this effect feel linear, but I think we still need offset scaling to make it more of a gate entry latch
             detentSpringCondition.dwNegativeSaturation = mechanical_resistance_strength;
             detentSpringCondition.dwPositiveSaturation = mechanical_resistance_strength;

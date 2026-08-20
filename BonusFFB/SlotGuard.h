@@ -32,9 +32,11 @@ public slots:
 	}
 	void setDetentSpringStrength(int value) {
 		detent_spring_strength = value * 100; // Scale to FFB_MAX
+		qDebug() << "detent_spring_strength: " << detent_spring_strength;
 	}
 	void setMechanicalResistance(int value) {
 		mechanical_resistance_strength = value * 100;
+		qDebug() << "mechanical_resistance_strength: " << mechanical_resistance_strength;
 	}
 
 signals:
