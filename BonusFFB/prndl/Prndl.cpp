@@ -198,7 +198,7 @@ bool Prndl::getShiftLockReleased() {
     }
     if (ui->prndl_useBrakeAsShiftLock->isChecked() && devices->brake != nullptr) {
         long brakeValue = devices->getPedalValues().brake;
-        bool shiftLockBrakeReleased = (brakeValue > JOY_MIDPOINT) ? true : false;
+        bool shiftLockBrakeReleased = (brakeValue > JOY_QUARTERPOINT) ? true : false;
         if (devices->shiftLockDevice == nullptr) {
             // If there is no shift lock button, lock is fully released if the brakes are pressed
             shiftLockReleased = shiftLockBrakeReleased;
