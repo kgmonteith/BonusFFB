@@ -1,22 +1,16 @@
 # H-Shifter
 
-!!! Warning
-    The H-shifter mode is overdue for an update. For ATS/ETS2, [heavy truck mode](heavytruck.md) is strongly recommended.
+This mode simulates a basic H-pattern shifter with gate lock-out and gear grinding. The shift pattern layout, gear count, shifter throw, and overall pattern dimensions are configurable.
 
-This mode simulates a basic H-pattern shifter with lock-out, gear grinding, and simplified float shifting. Configuring clutch and throttle pedals axes in the `Input/output settings` tab is required. Float shifting requires [setting up game telemetry](setup-guide.md#3-install-telemetry-plugins), currently only supported for ATS/ETS2. However, the [heavy truck mode](heavytruck.md) is recommended for a more immersive experience.
+The H-shifter mode allows you to push through the gate lock-out effect and force the stick into gear. This allows to you use the mode as a dogbox shifter if desired. Otherwise, be mindful not to push through the lock-out effect.
 
-The H-shifter mode is best suited to casual driving games, such truck, bus, and taxi sims. Depending on the strength of your FFB joystick, it's easily possible to overcome the locking, grinding, and channel-keeping force effects. Remember to play along and not push through these effects. If you want something stronger and more precise, consider a purpose-built device like the [Bash Pro](https://mvhstudios.co.uk/products/bash-pro).
+SimHub telemetry is not yet supported but is planned.
 
 ![H-Shifter](images/hshifter-screenshot.png) 
 
 ## Features
 
-When not using telemetry, you must depress the clutch to change gears. If you don't, you'll experience a gear-grinding effect.
-
-When using telemetry, you may depress the clutch to change gears, or you can float-shift. How this is done varies by game:
-
-* In ATS/ETS2, a button press is sent when the shifter is slotted, but before it's fully engaged. The game will decide whether the button press results in an invalid shift, resulting in a grinding effect, or a valid shift, resulting in a successful gear change.
-    * The grind effect feels rather natural in H-Shifter's feedback, but successfully float shifting can feel like the shifter is being forced into gear. Unfortunately this is currently the only reliable way to simulate float shifting with the telemetry values currently available in ATS/ETS2.
+Gate lockout is enforced by playing grinding and pushpack effects if the stick is slotted without depressing the clutch pedal.
 
 When the throttle is engaged and the clutch is not, the shift lever will be locked in gear. You must release the throttle or depress the clutch in order to disengage the shifter.
 
@@ -24,37 +18,31 @@ When the throttle is engaged and the clutch is not, the shift lever will be lock
 
 The H-shifter mode sends vJoy button presses when gears are engaged. Bind the in-game gear slots as you would with a hardware H-pattern shifter, by walking through the gears slot-by-slot in the game control settings. The input device will show up as the vJoy device you selected in the H-shifter mode's input/output settings.
 
-### ATS/ETS2 settings
+## Settings descriptions
 
-Set these values in the "Controls" menu.
+### Slot pattern settings
 
-* In the `Input Types` list, add the vJoy Device
-![ATS vJoy](images/ats-vjoy.png) 
-* Set `Transmission` to `H-Shifter`
-* Set `Acceleration axis deadzone` to ~1%
-    * This is recommended to reduce thrashing of the locked-in-gear effect
-* Set `Clutch axis deadzone` to 1-5%
-    * This is strongly recommended to smooth out clutch-enabled FFB effects
-* Set `Clutch range` as desired, ~75% is recommended
-    * Setting the clutch range too high will make shifting into gears unrealistic
-* Set `Shifter layout` to match the vehicle's transmission, e.g., Eaton-Fuller 18 speed
-* Set `Shifter layout behavior` to `Advanced`
-* Set `Shifter Positions` 1-6 to the vJoy Device buttons 0-5, corresponding to the H-Shifter slots
-    * Ignore the `Reverse` position, it's not used when the `Shifter layout` matches a real transmission
-    
-![ATS Hshifter settings](images/ats-hshifter.png)
-(Your device number will be different than in the above screenshot)
+Changes to the slot pattern, position, slot depth, and width are reflected on the joystick map, consult it after making a change.
 
-## FFB effect descriptions
+- **Slot pattern**: Select the pattern that matches your vehicles's transmission.
+- **Pattern position:** Aligns the pattern to the left or right side of the joystick range.
+- **Slot depth scale:** Adjusts the depth of the shifter slots. A smaller value results in a shorter shifter throw.
+- **Pattern width:** Sets the maximum width of the shifter pattern. A smaller value restricts the left/right movement of the shifter. A value of 100% uses the full left/range of the joystick base. 
+- **Neutral spring strength**: Sets the strength of the neutral centering spring effect, which is applied when the stick is near the neutral channel.
+- **Neutral spring position**: Sets the centering position of the neutral spring. This is limited to positions under and between the center and rightmost slots in heavy truck mode, to prevent conflicts with the left-slot wall effect. This setting is ignored by the ZF-16 Double-H pattern, which overrides the neutral spring position for each of the two H-patterns.
+- **Detent spring strength:** Sets the strength of the detent felt at the ends of the shifter slots.
+- **Mechanical resistance:** Sets the strength of the spring force resisting the stick when it enters a gear slot until the detent is reached. This resistance must also be overcome when float shifting, so a low value is recommended.
+- **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.
+- **<span id="button-zone-depth">Button zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the button press, shown with a blue line when markers are enabled. Increasing this value means you will need to push the stick farther into the slot to trigger the shift button press. Tune it such that float shifting only occurs when revs are matched and the stick is allowed to move sufficiently far into the slot; about 20% higher than the grind zone value is recommended.
 
-### Grind effect
 
-This effect occurs when attempting to shift into gear without the clutch depressed or the transmission synchronized. The drop-down selects how to apply the effect:
+### Force feedback effect settings
 
-* `Match telemetry RPM` sets the effect the engine RPM value from the game telemetry. The `Grind effect RPM` value is not used.
-* `Add to telemetry RPM` adds the value of the `Grind effect RPM` slider to the engine RPM.
-* `Override telemetry RPM` ignores the telemetry engine RPM and forces the grind effect to the `Grind effect RPM` value.
-
-### Idle in-gear lock intensity
-
-This is the spring force applied to the shift lever to keep the shifter engaged in the slot when the throttle is not applied. Think of it as the minimum amount of force you need to pull the shifter out of gear when not depressing the clutch pedal.
+- These static effect settings apply at all times:
+    - **<span id="damper">Damper:</span>** Adds resistance proportional to joystick movement speed
+    - **<span id="inertia">Inertia:</span>** Opposes changes in joystick velocity, adding "weight" to the stick
+    - **<span id="friction">Friction:</span>** Adds constant resistance, regardless of joystick motion
+- **<span id="grind-effect-intensity">Grind effect strength:</span>** Sets the strength of the gear grinding effect. This effect plays when attempting to shift into gear without the clutch applied.
+- **<span id="grind-effect-intensity">Grind effect RPM:</span>** Sets the RPM of the gear grinding effect. This is currently a static value, it does not change with transmission RPMs.
+- **Engine vibration intensity:** Sets the strength of the engine vibration effect. This effect is currently constant, it does not use telemetry to determine whether the engine is running.
+- **Engine vibration RPM:** Sets the RPM of the engine vibration effect. This is currently a static value, it does not change with engine RPMs.

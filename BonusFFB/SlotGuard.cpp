@@ -389,8 +389,8 @@ void SlotGuard::updateSlotGuardEffects() {
             detentSpringCondition.lPositiveCoefficient = -10000;
             detentSpringCondition.lNegativeCoefficient = -10000;
              // /* Saturation and deadband will help with making this effect feel linear, but I think we still need offset scaling to make it more of a gate entry latch
-            detentSpringCondition.dwNegativeSaturation = shift_rail_ramp_resistance;
-            detentSpringCondition.dwPositiveSaturation = shift_rail_ramp_resistance;
+            detentSpringCondition.dwNegativeSaturation = mechanical_resistance_strength;
+            detentSpringCondition.dwPositiveSaturation = mechanical_resistance_strength;
             detentSpringCondition.lOffset = joystickPositionToFFBOffset(joyValues.fb) * -1;
             detentSpringCondition.lDeadBand = FFB_MAX * slotPattern->grind_zone_scale;
             //qDebug() << "shift_rail_ramp_resistance: " << shift_rail_ramp_resistance << ", detentSpringCondition.lOffset: " << detentSpringCondition.lOffset;

@@ -52,10 +52,95 @@ HRESULT HShifterSynchroGuard::start(DeviceConfiguration* devPtr, SlotPattern* sp
     rumblePushbackEff.dwStartDelay = 0;
     devices->joystick->addEffect("rumblePushback", { GUID_ConstantForce, &rumblePushbackEff });
 
+    engineVibrationEff.dwSize = sizeof(DIEFFECT);
+    engineVibrationEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    engineVibrationEff.dwDuration = INFINITE;
+    engineVibrationEff.dwSamplePeriod = 0;
+    engineVibrationEff.dwGain = DI_FFNOMINALMAX;
+    engineVibrationEff.dwTriggerButton = DIEB_NOTRIGGER;
+    engineVibrationEff.dwTriggerRepeatInterval = 0;
+    engineVibrationEff.cAxes = 1;
+    engineVibrationEff.rgdwAxes = &AXES[0];
+    engineVibrationEff.rglDirection = &FORWARDBACK[0];
+    engineVibrationEff.lpEnvelope = 0;
+    engineVibrationEff.cbTypeSpecificParams = sizeof(DIPERIODIC);
+    engineVibrationEff.lpvTypeSpecificParams = &engineVibration;
+    engineVibrationEff.dwStartDelay = 0;
+    devices->joystick->addEffect("engineVibration", { GUID_Triangle, &engineVibrationEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
+
+    torqueLockSpringEff.dwSize = sizeof(DIEFFECT);
+    torqueLockSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;
+    torqueLockSpringEff.dwDuration = INFINITE;
+    torqueLockSpringEff.dwSamplePeriod = 0;
+    torqueLockSpringEff.dwGain = DI_FFNOMINALMAX;
+    torqueLockSpringEff.dwTriggerButton = DIEB_NOTRIGGER;
+    torqueLockSpringEff.dwTriggerRepeatInterval = 0;
+    torqueLockSpringEff.cAxes = 1;
+    torqueLockSpringEff.rgdwAxes = &AXES[1];
+    torqueLockSpringEff.rglDirection = &FORWARDBACK[1];
+    torqueLockSpringEff.lpEnvelope = 0;
+    torqueLockSpringEff.cbTypeSpecificParams = sizeof(DICONDITION);
+    torqueLockSpringEff.lpvTypeSpecificParams = &torqueLockSpring;
+    torqueLockSpringEff.dwStartDelay = 0;
+    // Too much to brain out right now, add this back later
+    //devices->joystick->addEffect("torqueLockSpring", { GUID_Spring, &torqueLockSpringEff, DIEP_TYPESPECIFICPARAMS | DIEP_NORESTART });
+
     QObject::connect(rumbleUpdateTimer, &QTimer::timeout, this, &HShifterSynchroGuard::setRumbleRPM);
     rumbleUpdateTimer->start();
 
     return DI_OK;
+}
+
+void HShifterSynchroGuard::updateTorqueLock() {
+    // Get new joystick values
+    JoystickValues joyValues = devices->getJoystickValues();
+
+    // Get new pedal values
+    PedalValues pedalValues = devices->getPedalValues();
+
+    double clutchPercent = 1 - (double(pedalValues.clutch) / JOY_MAXPOINT);
+    //throttlePercent = double(pedalValues.second) / JOY_MAXPOINT;
+    double throttlePercent = double(pedalValues.throttle) / JOY_MAXPOINT;
+    // Update keep-in-gear spring
+    if (synchroState == SynchroState::IN_SYNCH || synchroState == SynchroState::EXITING_SYNCH) {
+        // Assume throttle is applied, use pedal values for keep-in-gear force scaling
+        double scaling = scaleRangeValue(throttlePercent, 0.01, 0.06);
+        int maxStrength = FFB_MAX;
+        double offsetScaling = 1.3;
+        if (joyValues.fb < JOY_MIDPOINT && joyValues.fb > slotPattern->slotDepthAsJoystick(SLOT_ORIENTATION_FORWARD)) {
+            /*
+            torqueLockSpring.lOffset = slotParams->depthAsFFBOffsetFwd() - (std::abs(joystickPositionToFFBOffset(joyValues.fb) - slotParams->depthAsFFBOffsetFwd()) * offsetScaling);
+            torqueLockSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slotParams->depthAsJoystickValueFwd(), slotParams->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            torqueLockSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slotParams->depthAsJoystickValueFwd(), slotParams->depthAsJoystickValueFwd() + 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            */
+            double slot_depth_ffb = slotPattern->slotDepthAsFFBOffset(SLOT_ORIENTATION_FORWARD);
+            double slot_depth_joystick = slotPattern->slotDepthAsJoystick(SLOT_ORIENTATION_FORWARD);
+            torqueLockSpring.lOffset = slot_depth_ffb - (std::abs(joystickPositionToFFBOffset(joyValues.fb) - slot_depth_ffb) * offsetScaling);
+            torqueLockSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slot_depth_joystick, slot_depth_joystick + (JOY_MIDPOINT * slotPattern->detent_zone_scale)) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            torqueLockSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slot_depth_joystick, slot_depth_joystick + (JOY_MIDPOINT * slotPattern->detent_zone_scale)) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+        }
+        else if (joyValues.fb > JOY_MIDPOINT && joyValues.fb < slotPattern->slotDepthAsJoystick(SLOT_ORIENTATION_BACK)) {
+            /*
+            torqueLockSpring.lOffset = slotParams->depthAsFFBOffsetBack() + (std::abs(joystickPositionToFFBOffset(joyValues.fb) - slotParams->depthAsFFBOffsetBack()) * offsetScaling);
+            torqueLockSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slotParams->depthAsJoystickValueBack(), slotParams->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            torqueLockSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slotParams->depthAsJoystickValueBack(), slotParams->depthAsJoystickValueBack() - 4000) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            */
+            double slot_depth_ffb = slotPattern->slotDepthAsFFBOffset(SLOT_ORIENTATION_BACK);
+            double slot_depth_joystick = slotPattern->slotDepthAsJoystick(SLOT_ORIENTATION_BACK);
+            torqueLockSpring.lOffset = slot_depth_ffb + (std::abs(joystickPositionToFFBOffset(joyValues.fb) - slot_depth_ffb) * offsetScaling);
+            torqueLockSpring.lNegativeCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slot_depth_joystick, slot_depth_joystick - (JOY_MIDPOINT * slotPattern->detent_zone_scale)) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+            torqueLockSpring.lPositiveCoefficient = maxStrength * scaleRangeValue(joyValues.fb, slot_depth_joystick, slot_depth_joystick - (JOY_MIDPOINT * slotPattern->detent_zone_scale)) * scaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
+        }
+        else {
+            torqueLockSpring.lNegativeCoefficient = 0;
+            torqueLockSpring.lPositiveCoefficient = 0;
+        }
+    }
+    else {
+        torqueLockSpring.lNegativeCoefficient = 0;
+        torqueLockSpring.lPositiveCoefficient = 0;
+    }
+    devices->joystick->updateEffect("torqueLockSpring");
 }
 
 /// <summary>
@@ -87,10 +172,10 @@ void HShifterSynchroGuard::setRumbleRPM() {
         }
         rumblePushback.lMagnitude = FFB_MAX * effectScaling * clutchPercent * -1; // AB9 1.1.3.4 firmware force inversion
         devices->joystick->updateEffect("rumblePushback");
-        long smoothedRPM = long(grindEffectRPM) - long(grindEffectRPM) % 10;
+        long smoothedRPM = long(grindRPM) - long(grindRPM) % 10;
         // Apply some smoothing since the AB9 seems to struggle with changing periodic effects too frequently
         rumble.dwPeriod = 6e7 / std::abs(smoothedRPM);
-        rumble.dwMagnitude = unsigned long(grindingIntensity * clutchPercent * std::abs(effectScaling));
+        rumble.dwMagnitude = unsigned long(grind_strength * clutchPercent * std::abs(effectScaling));
         //qDebug() << "revMatchRumbleScaling: " << revMatchRumbleScaling << "smoothedRPM: " << smoothedRPM <<  "rumble.dwPeriod: " << rumble.dwPeriod << "rumble.dwMagnitude: " << rumble.dwMagnitude;
         devices->joystick->updateEffect("rumble");
     }
@@ -107,6 +192,23 @@ void HShifterSynchroGuard::setRumbleRPM() {
     }
 }
 
+void HShifterSynchroGuard::setEngineVibrationStrength(int value) {
+    engine_vibration_strength = unsigned long(value) * 10;    // Scale to 1000
+    engineVibration.dwMagnitude = engine_vibration_strength;
+    if (devices != nullptr && devices->joystick->isAcquired) {
+        devices->joystick->updateEffect("engineVibration");
+    }
+}
+
+void HShifterSynchroGuard::setEngineRPM(int newRPM) {
+    engineRPM = newRPM;
+    engineVibration.dwPeriod = 6e7 / engineRPM;
+    if (devices != nullptr && devices->joystick->isAcquired) {
+        devices->joystick->updateEffect("engineVibration");
+        //qDebug() << "newRPM: " << newRPM <<",  engineVibration.dwPeriod: " << engineVibration.dwPeriod << ", engineVibration.dwMagnitude: " << engineVibration.dwMagnitude;
+    }
+}
+
 void HShifterSynchroGuard::synchroStateChanged(SynchroState newState) {
     synchroState = newState;
 }
@@ -115,24 +217,10 @@ void HShifterSynchroGuard::grindingStateChanged(GrindingState newState) {
     grindingState = newState;
 }
 
-void HShifterSynchroGuard::updateEngineRPM(float newRPM) {
-    engineRPM = newRPM;
-}
-
-float HShifterSynchroGuard::computeGrindRPM() {
-    if (grindEffectBehavior == GrindEffectBehavior::MATCH_ENGINE_RPM && engineRPM) {
-        return engineRPM;
-    }
-    else if (grindEffectBehavior == GrindEffectBehavior::ADD_ENGINE_RPM) {
-        return engineRPM + grindEffectRPM;
-    }
-    return grindEffectRPM;
-}
-
 void HShifterSynchroGuard::updateGrindEffectRPM(float newRPM) {
-    grindEffectRPM = newRPM;
+    grindRPM = newRPM;
 }
 
-void HShifterSynchroGuard::setGrindEffectIntensity(int value) {
-    grindingIntensity = value * 100;    // Scale to 10000
+void HShifterSynchroGuard::setGrindEffectStrength(int value) {
+    grind_strength = value * 100;    // Scale to 10000
 }

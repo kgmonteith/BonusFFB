@@ -51,7 +51,7 @@ void HeavyTruck::initialize() {
     connect(ui->heavytruck_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringStrength);
     connect(ui->heavytruck_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringPosition);
     connect(ui->heavytruck_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setDetentSpringStrength);
-    connect(ui->heavytruck_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setShiftRailResistance );
+    connect(ui->heavytruck_mechanicalResistanceStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setMechanicalResistance );
     // UI connections
     connect(&stateManager, &HeavyTruckStateManager::targetGearChanged, this, &HeavyTruck::updateGearText);
     connect(devices, &DeviceConfiguration::rangeChanged, this, &HeavyTruck::updateRangeText);
@@ -204,7 +204,7 @@ void HeavyTruck::saveSettings(QSettings* settings) {
     settings->setValue("neutralSpringStrength", ui->heavytruck_neutralSpringStrengthSlider->value());
     settings->setValue("neutralSpringPosition", ui->heavytruck_neutralSpringPositionSlider->value());
     settings->setValue("detentSpringStrength", ui->heavytruck_detentSpringStrengthSlider->value());
-    settings->setValue("shiftRailRampStrength", ui->heavytruck_shiftRailRampStrengthSlider->value());
+    settings->setValue("mechanicalResistanceStrength", ui->heavytruck_mechanicalResistanceStrengthSlider->value());
     settings->setValue("grindZoneDepth", ui->heavytruck_grindZoneDepthSpinbox->value());
     settings->setValue("buttonZoneDepth", ui->heavytruck_buttonZoneDepthSpinbox->value());
     settings->setValue("displayZoneMarkers", ui->heavytruck_displayZoneMarkers->isChecked());
@@ -235,8 +235,8 @@ void HeavyTruck::loadSettings(QSettings* settings) {
     //ui->heavytruck_slotRoundingFactorSlider->setValue(settings->value("slotRoundingFactor", 10).toInt());
     ui->heavytruck_neutralSpringStrengthSlider->setValue(settings->value("neutralSpringStrength", 0).toInt());
     ui->heavytruck_neutralSpringPositionSlider->setValue(settings->value("neutralSpringPosition", 50).toInt());
-    ui->heavytruck_detentSpringStrengthSlider->setValue(settings->value("detentSpringStrength", 0).toInt());
-    ui->heavytruck_shiftRailRampStrengthSlider->setValue(settings->value("shiftRailRampStrength", 0).toInt());
+    ui->heavytruck_detentSpringStrengthSlider->setValue(settings->value("detentSpringStrength", 60).toInt());
+    ui->heavytruck_mechanicalResistanceStrengthSlider->setValue(settings->value("mechanicalResistanceStrength", 15).toInt());
     ui->heavytruck_grindZoneDepthSpinbox->setValue(settings->value("grindZoneDepth", 15).toInt());
     ui->heavytruck_buttonZoneDepthSpinbox->setValue(settings->value("buttonZoneDepth", 35).toInt());
     ui->heavytruck_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());

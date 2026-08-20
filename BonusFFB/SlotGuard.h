@@ -33,8 +33,8 @@ public slots:
 	void setDetentSpringStrength(int value) {
 		detent_spring_strength = value * 100; // Scale to FFB_MAX
 	}
-	void setShiftRailResistance(int value) {
-		shift_rail_ramp_resistance = value * 100;
+	void setMechanicalResistance(int value) {
+		mechanical_resistance_strength = value * 100;
 	}
 
 signals:
@@ -64,7 +64,7 @@ private:
 	DICONDITION neutralSpringCondition = { 0, neutral_spring_strength, neutral_spring_strength };
 
 	long detent_spring_strength = 0;
-	long shift_rail_ramp_resistance = 0;
+	long mechanical_resistance_strength = 0;
 	DIEFFECT detentSpringEff = {};
 	DICONDITION detentSpringCondition = { 0, 0, 0 };
 

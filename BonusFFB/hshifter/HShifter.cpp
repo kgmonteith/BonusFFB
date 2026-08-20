@@ -49,7 +49,7 @@ void HShifter::initialize() {
     connect(ui->hshifter_neutralSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringStrength);
     connect(ui->hshifter_neutralSpringPositionSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setNeutralSpringPosition);
     connect(ui->hshifter_detentSpringStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setDetentSpringStrength);
-    connect(ui->hshifter_shiftRailRampStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setShiftRailResistance);
+    connect(ui->hshifter_mechanicalResistanceStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setMechanicalResistance);
     // Graphics connections
     connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
     // Telemetry connections
@@ -65,11 +65,11 @@ void HShifter::initialize() {
     // FFB effect connections
     connect(&stateManager, &HShifterStateManager::slotStateChanged, &slotGuard, &SlotGuard::updateSlotGuardState);
     connect(&stateManager, &HShifterStateManager::synchroStateChanged, &synchroGuard, &HShifterSynchroGuard::synchroStateChanged);
-    connect(this, &HShifter::engineRPMChanged, &synchroGuard, &HShifterSynchroGuard::updateEngineRPM);
     connect(&stateManager, &HShifterStateManager::grindingStateChanged, &synchroGuard, &HShifterSynchroGuard::grindingStateChanged);
-    connect(ui->grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectIntensity);
+    connect(ui->grindIntensitySlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setGrindEffectStrength);
     connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::updateGrindEffectRPM);
-    //connect(ui->grindRPMSlider, &QSlider::valueChanged, &synchroGuard, &SynchroGuard::updateEngineRPM);
+    connect(ui->hshifter_engineVibrationStrengthSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setEngineVibrationStrength);
+    connect(ui->hshifter_engineVibrationRPMSlider, &QSlider::valueChanged, &synchroGuard, &HShifterSynchroGuard::setEngineRPM);
 
     // Set default slot pattern
     ui->hshifter_slotPatternPresetComboBox->setCurrentIndex(2);
@@ -158,7 +158,7 @@ void HShifter::saveSettings(QSettings* settings) {
     settings->setValue("neutralSpringStrength", ui->hshifter_neutralSpringStrengthSlider->value());
     settings->setValue("neutralSpringPosition", ui->hshifter_neutralSpringPositionSlider->value());
     settings->setValue("detentSpringStrength", ui->hshifter_detentSpringStrengthSlider->value());
-    settings->setValue("shiftRailRampStrength", ui->hshifter_shiftRailRampStrengthSlider->value());
+    settings->setValue("mechanicalResistanceStrength", ui->hshifter_mechanicalResistanceStrengthSlider->value());
     settings->setValue("grindZoneDepth", ui->hshifter_grindZoneDepthSpinbox->value());
     settings->setValue("detentZone", ui->hshifter_detentZoneSpinbox->value());
     settings->setValue("displayZoneMarkers", ui->hshifter_displayZoneMarkers->isChecked());
@@ -166,6 +166,8 @@ void HShifter::saveSettings(QSettings* settings) {
 
     settings->beginGroup("ffb_effect_settings");
     settings->setValue("grindIntensity", ui->grindIntensitySlider->value());
+    settings->setValue("grindEffectRPM", ui->grindRPMSlider->value());
+    settings->setValue("engineVibrationStrength", ui->heavytruck_engineVibrationStrengthSlider->value());
     settings->setValue("grindEffectRPM", ui->grindRPMSlider->value());
     settings->endGroup();
 
@@ -186,7 +188,7 @@ void HShifter::loadSettings(QSettings* settings) {
     ui->hshifter_neutralSpringStrengthSlider->setValue(settings->value("neutralSpringStrength", 25).toInt());
     ui->hshifter_neutralSpringPositionSlider->setValue(settings->value("neutralSpringPosition", 67).toInt());
     ui->hshifter_detentSpringStrengthSlider->setValue(settings->value("detentSpringStrength", 60).toInt());
-    ui->hshifter_shiftRailRampStrengthSlider->setValue(settings->value("shiftRailRampStrength", 30).toInt());
+    ui->hshifter_mechanicalResistanceStrengthSlider->setValue(settings->value("mechanicalResistanceStrength", 30).toInt());
     ui->hshifter_grindZoneDepthSpinbox->setValue(settings->value("grindZoneDepth", 15).toInt());
     ui->hshifter_detentZoneSpinbox->setValue(settings->value("detentZone", 20).toInt());
     ui->hshifter_displayZoneMarkers->setChecked(settings->value("displayZoneMarkers", false).toBool());
@@ -194,7 +196,9 @@ void HShifter::loadSettings(QSettings* settings) {
 
     settings->beginGroup("ffb_effect_settings");
     ui->grindIntensitySlider->setValue(settings->value("grindIntensity", 15).toInt());
-    ui->grindRPMSlider->setValue(settings->value("grindEffectRPM", 3000).toInt());
+    ui->grindRPMSlider->setValue(settings->value("grindEffectRPM", 2000).toInt());
+    ui->hshifter_engineVibrationStrengthSlider->setValue(settings->value("engineVibrationStrength", 20).toInt());
+    ui->hshifter_engineVibrationRPMSlider->setValue(settings->value("engineVibrationRPM", 3000).toInt());
     settings->endGroup();
 
     settings->endGroup();
@@ -202,7 +206,6 @@ void HShifter::loadSettings(QSettings* settings) {
 
 HRESULT HShifter::startMode() {
     // Initialize FFB
-    //oldSlotGuard.start(devices->joystick);
     stateManager.start(devices, telemetry, &slotPattern);
     slotGuard.start(devices, &slotPattern);
     synchroGuard.start(devices, &slotPattern);
@@ -214,23 +217,9 @@ HRESULT HShifter::startMode() {
 void HShifter::gameLoop() {
     devices->updateState();
 
-    // Get telemetry values
-    if (telemetry->isConnected() != TelemetrySource::NONE) {
-        QPair<int, int> gearValues = telemetry->getGearState();
-        if (gearValues != lastGearValues) {
-            emit gearValuesChanged(gearValues);
-            lastGearValues = gearValues;
-        }
-        float engineRPM = telemetry->getEngineRPM();
-        if (engineRPM != lastEngineRPM) {
-            emit engineRPMChanged(engineRPM);
-            lastEngineRPM = engineRPM;
-        }
-    }
-
     // Update state
-    //oldSlotGuard.updateSlotGuardEffects(joystickValues);
-    slotGuard.updateSlotGuardEffects();
     stateManager.update();
+    slotGuard.updateSlotGuardEffects();
+    //synchroGuard.updateTorqueLock();
     pedalsManager.updateVirtualPedals();
 }

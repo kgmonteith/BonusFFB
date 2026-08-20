@@ -132,14 +132,14 @@
     <item row="1" column="1" rowspan="8">
      <widget class="QStackedWidget" name="appStackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_4">
        <layout class="QGridLayout" name="gridLayout_15">
         <item row="1" column="1">
          <widget class="QTabWidget" name="heavytruckTabWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="heavytruck_monitorTab">
            <attribute name="title">
@@ -840,7 +840,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                <item row="1" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_105">
                  <item>
-                  <widget class="QSlider" name="heavytruck_shiftRailRampStrengthSlider">
+                  <widget class="QSlider" name="heavytruck_mechanicalResistanceStrengthSlider">
                    <property name="minimum">
                     <number>0</number>
                    </property>
@@ -865,7 +865,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="heavytruck_shiftRailRampStrengthSpinbox">
+                  <widget class="QSpinBox" name="heavytruck_mechanicalResistanceStrengthSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -1642,7 +1642,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
            <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="monitorTab">
            <attribute name="title">
@@ -2199,7 +2199,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                <item row="1" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_107">
                  <item>
-                  <widget class="QSlider" name="hshifter_shiftRailRampStrengthSlider">
+                  <widget class="QSlider" name="hshifter_mechanicalResistanceStrengthSlider">
                    <property name="minimum">
                     <number>0</number>
                    </property>
@@ -2224,7 +2224,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="hshifter_shiftRailRampStrengthSpinbox">
+                  <widget class="QSpinBox" name="hshifter_mechanicalResistanceStrengthSpinbox">
                    <property name="suffix">
                     <string>%</string>
                    </property>
@@ -2588,7 +2588,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                  <item>
                   <widget class="QLabel" name="label_10">
                    <property name="text">
-                    <string>Grind effect intensity</string>
+                    <string>Grind effect strength</string>
                    </property>
                   </widget>
                  </item>
@@ -2673,6 +2673,127 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
                  </item>
                  <item>
                   <widget class="QSpinBox" name="grindRPMSpinbox">
+                   <property name="suffix">
+                    <string/>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>3000</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_35">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+              <layout class="QFormLayout" name="formLayout_19">
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <item>
+                  <widget class="QLabel" name="label_13">
+                   <property name="text">
+                    <string>Engine vibration strength</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QSlider" name="hshifter_engineVibrationStrengthSlider">
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>15</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_engineVibrationStrengthSpinbox">
+                   <property name="suffix">
+                    <string>%</string>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                   <property name="value">
+                    <number>15</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <item>
+                  <widget class="QLabel" name="label_21">
+                   <property name="text">
+                    <string>Engine vibration RPM</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_18">
+                 <item>
+                  <widget class="QSlider" name="hshifter_engineVibrationRPMSlider">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>500</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>500</number>
+                   </property>
+                   <property name="value">
+                    <number>3000</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TickPosition::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>500</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="hshifter_engineVibrationRPMSpinbox">
                    <property name="suffix">
                     <string/>
                    </property>

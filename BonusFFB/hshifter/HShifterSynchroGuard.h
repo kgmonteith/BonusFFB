@@ -25,16 +25,16 @@ public:
 	HRESULT start(DeviceConfiguration*, SlotPattern*);
 
 public slots:
+	void updateTorqueLock();
 	void synchroStateChanged(SynchroState);
 	void grindingStateChanged(GrindingState);
-	void updateEngineRPM(float);
 	void updateGrindEffectRPM(float);
-	void setGrindEffectIntensity(int);
+	void setGrindEffectStrength(int);
 	void setRumbleRPM();
+	void setEngineVibrationStrength(int);
+	void setEngineRPM(int newRPM);
 
 private:
-	float computeGrindRPM();
-
 	DeviceConfiguration* devices = nullptr;
 	SlotPattern* slotPattern = nullptr;
 
@@ -42,9 +42,8 @@ private:
 	GrindingState grindingState = GrindingState::OFF;
 	GrindEffectBehavior grindEffectBehavior = GrindEffectBehavior::MATCH_ENGINE_RPM;
 
-	float engineRPM = 0;
-	float grindEffectRPM = 3000;
-	int grindingIntensity = 1500;
+	float grindRPM = 3000;
+	int grind_strength = 1500;
 
 	QTimer* rumbleUpdateTimer;
 	int grindPushbackScalingRange = 5000;
@@ -52,6 +51,15 @@ private:
 	DIEFFECT rumbleEff = {};
 	DIEFFECT rumblePushbackEff = {};
 
-	DIPERIODIC rumble = { 0, 0, 0, (DWORD)grindEffectRPM };
+	DIPERIODIC rumble = { 0, 0, 0, (DWORD)grindRPM };
 	DICONSTANTFORCE rumblePushback = { 0 };
+
+	float engine_vibration_strength = 500;
+	float engineRPM = 2000;
+
+	DIEFFECT engineVibrationEff = {};
+	DIPERIODIC engineVibration = { (DWORD)engine_vibration_strength, 0, 0, (DWORD)(6e7 / engineRPM) };
+
+	DIEFFECT torqueLockSpringEff = {};
+	DICONDITION torqueLockSpring = { 0, 0, 0 };
 };

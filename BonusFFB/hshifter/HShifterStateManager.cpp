@@ -36,6 +36,7 @@ void HShifterStateManager::update() {
 void HShifterStateManager::updateSlotState() {
     SlotState newState = SlotState::UNKNOWN;
     const Slot* newSlot = slotPattern->isUnderSlot(joystick);
+
     bool in_neutral = slotPattern->isInNeutral(joystick);
     if (in_neutral && newSlot != SLOT_NONE) {
         newState = SlotState::NEUTRAL_UNDER_SLOT;
