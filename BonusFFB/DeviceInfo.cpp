@@ -98,7 +98,7 @@ HRESULT DeviceInfo::updateEffect(QString effName) {
     {
         hr = eff.ldpieff->SetParameters(eff.eff, eff.flags);
         if (hr != DI_OK) {
-            qDebug() << "SetParameters failed, reacquiring joystick";
+            qDebug() << "SetParameters failed for effect " << effName << ", reacquiring joystick " << this->name ;
             // Update failed, reacquire device, reload effects, and try again
             reacquire();
             startEffects();

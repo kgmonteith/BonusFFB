@@ -129,6 +129,7 @@
     <ClCompile Include="prndl\PrndlSlotGuard.cpp" />
     <ClCompile Include="prndl\PrndlStateManager.cpp" />
     <ClCompile Include="RangeSplitterManager.cpp" />
+    <ClCompile Include="seqshifter\SeqShifter.cpp" />
     <ClCompile Include="SlotGuard.cpp" />
     <ClCompile Include="SlotPattern.cpp" />
     <ClCompile Include="Telemetry.cpp" />
@@ -168,6 +169,7 @@
     <QtMoc Include="pphc\Pphc.h" />
     <QtMoc Include="PedalsManager.h" />
     <QtMoc Include="RangeSplitterManager.h" />
+    <QtMoc Include="seqshifter\SeqShifter.h" />
     <ClInclude Include="SharedEnums.h" />
     <QtMoc Include="SlotPattern.h" />
     <QtMoc Include="SlotGuard.h" />

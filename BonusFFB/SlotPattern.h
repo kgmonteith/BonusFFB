@@ -84,7 +84,11 @@ static const QList<PatternDef> PresetPatterns = {
 	{"8+R", { 1, 2, 3, 4, 5, 6, 7, 8, X, R }, SLOT_WALL_RIGHT}
 };
 
-static const QList<PatternDef> AllPatterns = TruckPatterns + PresetPatterns;
+static const QList<PatternDef> SeqShifterPattern = {
+	{"seqshifter", {13, 14} }
+};
+
+static const QList<PatternDef> AllPatterns = TruckPatterns + PresetPatterns + SeqShifterPattern;
 
 class Slot {
 public:

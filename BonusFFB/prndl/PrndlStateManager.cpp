@@ -1,6 +1,5 @@
 /*
-Copyright (C) 2024-
-Ken Monteith.
+Copyright (C) 2024-2026 Ken Monteith.
 
 This file is part of Bonus FFB.
 

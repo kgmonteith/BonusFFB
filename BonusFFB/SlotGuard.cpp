@@ -53,7 +53,6 @@ HRESULT SlotGuard::start(DeviceConfiguration* devPtr, SlotPattern* spPtr) {
     neutralSpringEff.dwStartDelay = 0;
     devices->joystick->addEffect("neutralSpring", { GUID_Spring, &neutralSpringEff });
 
-
     detentSpringCondition.lOffset = slotPattern->getPositionPercentAsFFBOffset(neutral_spring_pos_pct);
     detentSpringEff.dwSize = sizeof(DIEFFECT);
     detentSpringEff.dwFlags = DIEFF_CARTESIAN | DIEFF_OBJECTOFFSETS;

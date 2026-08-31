@@ -28,11 +28,13 @@ BonusFFB::BonusFFB(QWidget *parent)
     appSelectButtonGroup.addButton(ui.heavytruck_appSelectButton, 0);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 1);
     appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 2);
-    appSelectButtonGroup.addButton(ui.pphc_appSelectButton, 3);
-    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 4);
+    appSelectButtonGroup.addButton(ui.seqshifter_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.pphc_appSelectButton, 4);
+    appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 5);
     appList.append(&heavytruck);
     appList.append(&hshifter);
     appList.append(&prndl);
+    appList.append(&seqshifter);
     appList.append(&pphc);
     appList.append(&handbrake);
     connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);
@@ -42,6 +44,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     ui.heavytruckTabWidget->setCurrentIndex(0);
     ui.hshifterTabWidget->setCurrentIndex(0);
     ui.prndlTabWidget->setCurrentIndex(0);
+    ui.seqshifterTabWidget->setCurrentIndex(0);
     ui.pphcTabWidget->setCurrentIndex(0);
     ui.handbrakeTabWidget->setCurrentIndex(0);
 
