@@ -134,6 +134,23 @@ HRESULT DeviceInfo::acquire(HWND* handle, bool exclusive) {
         return hr;
     }
 
+    // Disable auto-centering
+    DIPROPDWORD autoCenter{};
+    autoCenter.diph.dwSize = sizeof(DIPROPDWORD);
+    autoCenter.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+    autoCenter.diph.dwObj = 0;
+    autoCenter.diph.dwHow = DIPH_DEVICE;
+    autoCenter.dwData = DIPROPAUTOCENTER_OFF;
+    const HRESULT autoCenterResult = diDevice->SetProperty(DIPROP_AUTOCENTER, &autoCenter.diph);
+    if (FAILED(autoCenterResult))
+    {
+        qDebug() << "Warning: could not disable hardware auto-center before Acquire, hr: " << Qt::hex << unsigned long(autoCenterResult);
+    }
+    else
+    {
+        qDebug() << "Hardware auto-center disabled.";
+    }
+
     if (FAILED(hr = diDevice->Acquire())) {
         qDebug() << "Acquire failed, hr: " << unsigned long(hr);
         return hr;
