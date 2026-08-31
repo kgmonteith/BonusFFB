@@ -32,8 +32,14 @@ void SeqShifter::initialize() {
         appDeviceFlags |= FLAG_DEVICES_CLUTCH;
 
     // Graphics connections
-    connect(ui->prndlTabWidget, &QTabWidget::currentChanged, this, &SeqShifter::redrawJoystickMap);
+    connect(ui->seqshifterTabWidget, &QTabWidget::currentChanged, this, &SeqShifter::redrawJoystickMap);
     connect(this, &SeqShifter::shiftStateChanged, this, &SeqShifter::updateGearShiftText);
+    // Shifter settings connections
+    connect(ui->seqshifter_shifterThrowSlider, &QSlider::valueChanged, this, &SeqShifter::setShifterThrow);
+    connect(ui->seqshifter_detentScaleSlider, &QSlider::valueChanged, this, &SeqShifter::setDetentScale);
+    connect(ui->seqshifter_centeringSpringStrengthSlider, &QSlider::valueChanged, this, &SeqShifter::setCenteringSpringStrength);
+    connect(ui->seqshifter_detentSpringStrengthSlider, &QSlider::valueChanged, this, &SeqShifter::setDetentSpringStrength);
+    connect(ui->seqshifter_mechanicalResistanceStrengthSlider, &QSlider::valueChanged, this, &SeqShifter::setMechanicalResistanceStrength);
     // Joystick connections
     connect(devices, &DeviceConfiguration::joystickValueChanged, this, &SeqShifter::updateJoystickCircle);
     //connect(&stateManager, &SeqShifterStateManager::slotSpringChanged, &slotGuard, &SeqShifterSlotGuard::updateSlotSpringCenter);
@@ -114,7 +120,12 @@ void SeqShifter::saveSettings(QSettings* settings) {
 
     settings->beginGroup(this->getAppName());
 
-    settings->beginGroup("other_settings");
+    settings->beginGroup("shifter_settings");
+    settings->setValue("shifterThrow", ui->seqshifter_shifterThrowSlider->value());
+    settings->setValue("detentSize", ui->seqshifter_detentScaleSlider->value());
+    settings->setValue("centeringSpringStrength", ui->seqshifter_centeringSpringStrengthSlider->value());
+    settings->setValue("detentSpringStrength", ui->seqshifter_detentSpringStrengthSlider->value());
+    settings->setValue("mechanicalResistanceStrength", ui->seqshifter_mechanicalResistanceStrengthSlider->value());
     settings->endGroup();
 
     settings->endGroup();
@@ -125,7 +136,12 @@ void SeqShifter::loadSettings(QSettings* settings) {
 
     settings->beginGroup(this->getAppName());
 
-    settings->beginGroup("other_settings");
+    settings->beginGroup("shifter_settings");
+    ui->seqshifter_shifterThrowSlider->setValue(settings->value("shifterThrow", 50).toInt());
+    ui->seqshifter_detentScaleSlider->setValue(settings->value("detentSize", 20).toInt());
+    ui->seqshifter_centeringSpringStrengthSlider->setValue(settings->value("centeringSpringStrength", 50).toInt());
+    ui->seqshifter_detentSpringStrengthSlider->setValue(settings->value("detentSpringStrength", 50).toInt());
+    ui->seqshifter_mechanicalResistanceStrengthSlider->setValue(settings->value("mechanicalResistanceStrength", 30).toInt());
     settings->endGroup();
 
     settings->endGroup();
@@ -191,17 +207,13 @@ void SeqShifter::gameLoop() {
         return;
     }
     devices->updateState();
+
     // Get new joystick values
     joyValues = devices->getJoystickValues();
     
     updateState();
     updateSlotSpring();
     updateDetent();
-    /*
-    stateManager.update(joystickValues, isShiftLockRelased, isParkingBrakeSet);
-    slotGuard.updateLRSpring(joystickValues.lr);
-    pedalsManager.updateVirtualPedals();
-    */
 }
 
 void SeqShifter::updateState() {
@@ -276,6 +288,13 @@ void SeqShifter::updateSlotSpring() {
         slotSpringConditions[1] = noSpring;
     }
     devices->joystick->updateEffect("slotSpring");
+
+    // Check for changes to centering spring
+    if (centering_spring_strength != centeringSpring.lPositiveCoefficient) {
+        centeringSpring.lPositiveCoefficient = centering_spring_strength * -1;
+        centeringSpring.lNegativeCoefficient = centering_spring_strength * -1;
+        devices->joystick->updateEffect("centeringSpring");
+    }
 }
 
 void SeqShifter::updateDetent() {

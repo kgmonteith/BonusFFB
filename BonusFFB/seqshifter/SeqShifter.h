@@ -55,6 +55,22 @@ public slots:
 	void updateGearShiftText(SeqShifterState);
 	void updateButtons(SeqShifterState);
 
+	void setShifterThrow(int value) {
+		depth_scale = double(value) / 100.0;
+	}
+	void setDetentScale(int value) {
+		detent_zone_scale = double(value) / 100.0;
+	}
+	void setCenteringSpringStrength(int value) {
+		centering_spring_strength = value * 100; // Scale to 10000
+	}
+	void setDetentSpringStrength(int value) {
+		detent_spring_strength = value * 100; // Scale to 10000
+	}
+	void setMechanicalResistanceStrength(int value) {
+		mechanical_resistance_strength = value * 100; // Scale to 10000
+	}
+
 signals:
 	void shiftStateChanged(SeqShifterState);
 
@@ -63,18 +79,15 @@ private:
 	QGraphicsRectItem* centerSlotRect;
 	QGraphicsEllipseItem* joystickCircle;
 
-	// Stateful FFB effect managers
-	//SeqShifterSlotGuard slotGuard;
-	//SeqShifterStateManager stateManager = SeqShifterStateManager();
-
 	DIEFFECT slotSpringEff = {};
 	DICONDITION noSpring = { 0, 0, 0 };
 	DICONDITION keepLRCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION keepFBCentered = { 0, DI_FFNOMINALMAX, DI_FFNOMINALMAX };
 	DICONDITION slotSpringConditions[2] = { keepLRCentered, noSpring };
 
+	long centering_spring_strength = 5000;
 	DIEFFECT centeringSpringEff = {};
-	DICONDITION centeringSpring = { 0, -5000, -5000 };
+	DICONDITION centeringSpring = { 0, centering_spring_strength * -1, centering_spring_strength * -1 };
 
 	long detent_spring_strength = 5000;
 	long mechanical_resistance_strength = 3000;
@@ -91,7 +104,6 @@ private:
 	int min_gear = -1;
 	int current_gear = 0;
 
-	SlotPattern slotPattern;
 	SeqShifterState state = SeqShifterState::NEUTRAL;
 };
 
