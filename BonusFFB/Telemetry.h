@@ -52,7 +52,9 @@ private:
 	TelemetrySource telemetrySource = TelemetrySource::NONE;
 	HANDLE pHandle = nullptr;
 	void* pBufferPtr = nullptr;
+
 	scsTelemetryMap_s* pTelemMap = nullptr;
+	QJsonObject* shTelem = nullptr;
 
 	QChronoTimer* timer;
 	QTimer* gearLogTimer;

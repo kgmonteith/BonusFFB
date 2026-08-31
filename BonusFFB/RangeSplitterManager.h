@@ -14,9 +14,6 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "DeviceConfiguration.h"
 
-#define RANGE_BUTTON 23
-#define SPLITTER_BUTTON 24
-
 #pragma once
 class RangeSplitterManager : public QObject
 {

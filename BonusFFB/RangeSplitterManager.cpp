@@ -22,15 +22,15 @@ void RangeSplitterManager::updateVirtualRangeSplitter() {
 	// Set range and splitter vJoy buttons
 	if (newValues.range != lastValues.range) {
 		if (newValues.range == true)
-			devices->vjoy.pressButton(RANGE_BUTTON);
+			devices->vjoy.pressButton(BUTTON_RANGE);
 		else
-			devices->vjoy.releaseButton(RANGE_BUTTON);
+			devices->vjoy.releaseButton(BUTTON_RANGE);
 	}
 	if (newValues.splitter != lastValues.splitter) {
 		if (newValues.splitter == true)
-			devices->vjoy.pressButton(SPLITTER_BUTTON);
+			devices->vjoy.pressButton(BUTTON_SPLITTER);
 		else
-			devices->vjoy.releaseButton(SPLITTER_BUTTON);
+			devices->vjoy.releaseButton(BUTTON_SPLITTER);
 	}
 	lastValues = newValues;
 }

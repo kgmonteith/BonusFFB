@@ -17,6 +17,19 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "DeviceInfo.h"
 #include "vJoyFeeder.h"
 
+// Keep all button mappings here to avoid confusion
+// Buttons 1-9 are used by H-pattern modes
+#define BUTTON_SHIFT_DOWN 10
+#define BUTTON_SHIFT_UP 11
+#define BUTTON_PRNDL_PARK 12
+#define BUTTON_PRNDL_REVERSE 13
+#define BUTTON_PRNDL_NEUTRAL 14
+#define BUTTON_PRNDL_DRIVE 15
+#define BUTTON_PRNDL_LOW 16
+#define BUTTON_RANGE 23
+#define BUTTON_SPLITTER 24
+
+
 #define FLAG_DEVICES_JOYSTICK_LR	0b00000000001
 #define FLAG_DEVICES_JOYSTICK_FB	0b00000000010
 #define FLAG_DEVICES_VJOY			0b00000000100

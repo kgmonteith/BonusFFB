@@ -27,14 +27,14 @@ BonusFFB::BonusFFB(QWidget *parent)
     appSelectButtonGroup.setExclusive(true);
     appSelectButtonGroup.addButton(ui.heavytruck_appSelectButton, 0);
     appSelectButtonGroup.addButton(ui.hshifter_appSelectButton, 1);
-    appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 2);
-    appSelectButtonGroup.addButton(ui.seqshifter_appSelectButton, 3);
+    appSelectButtonGroup.addButton(ui.seqshifter_appSelectButton, 2);
+    appSelectButtonGroup.addButton(ui.prndl_appSelectButton, 3);
     appSelectButtonGroup.addButton(ui.pphc_appSelectButton, 4);
     appSelectButtonGroup.addButton(ui.handbrake_appSelectButton, 5);
     appList.append(&heavytruck);
     appList.append(&hshifter);
-    appList.append(&prndl);
     appList.append(&seqshifter);
+    appList.append(&prndl);
     appList.append(&pphc);
     appList.append(&handbrake);
     connect(&appSelectButtonGroup, &QButtonGroup::idClicked, this, &BonusFFB::changeApp);

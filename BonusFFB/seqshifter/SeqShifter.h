@@ -19,9 +19,6 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #define SHIFTER_POSITION_MARKER_DIAMETER_PX 17.0
 
-#define BUTTON_SHIFT_DOWN 15
-#define BUTTON_SHIFT_UP 16
-
 enum class SeqShifterState {
 	UNKNOWN,
 	NEUTRAL,

@@ -69,7 +69,6 @@ private:
     bool delay_shift_lock = false;
     TelemetrySource telemetryState = TelemetrySource::NONE;
 
-    int buttonOffset = 8;
     int slot_half_depth = 4000;
     bool using_ats_telemetry_park = true;
     bool using_shift_lock = false;

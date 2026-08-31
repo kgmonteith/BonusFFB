@@ -88,15 +88,15 @@ int PrndlStateManager::getButtonNumberForSlot(PrndlSlot slot) {
     case PrndlSlot::NONE:
         return 0;
     case PrndlSlot::PARK:
-        return buttonOffset;
+        return BUTTON_PRNDL_PARK;
     case PrndlSlot::REVERSE:
-        return buttonOffset + 1;
+        return BUTTON_PRNDL_REVERSE;
     case PrndlSlot::NEUTRAL:
-        return buttonOffset + 2;
+        return BUTTON_PRNDL_NEUTRAL;
     case PrndlSlot::DRIVE:
-        return buttonOffset + 3;
+        return BUTTON_PRNDL_DRIVE;
     case PrndlSlot::LOW:
-        return buttonOffset + 4;
+        return BUTTON_PRNDL_LOW;
     }
     return 0;
 }

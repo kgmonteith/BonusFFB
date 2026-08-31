@@ -30,8 +30,8 @@ You should have received a copy of the GNU General Public License along with Bon
 
 #include "hshifter/HShifter.h"
 #include "heavytruck/HeavyTruck.h"
-#include "prndl/Prndl.h"
 #include "seqshifter/SeqShifter.h"
+#include "prndl/Prndl.h"
 #include "pphc/Pphc.h"
 #include "handbrake/Handbrake.h"
 
@@ -55,8 +55,8 @@ public:
 
     HeavyTruck heavytruck;
     HShifter hshifter;
-    Prndl prndl;
     SeqShifter seqshifter;
+    Prndl prndl;
     Pphc pphc;
     Handbrake handbrake;
 
