@@ -18,9 +18,14 @@ You should have received a copy of the GNU General Public License along with Bon
 using namespace std::chrono_literals;
 
 Telemetry::Telemetry() {
-	timer = new QChronoTimer(1s, this);
-	connect(timer, &QChronoTimer::timeout, this, &Telemetry::connectTelemetry);
+	checkTelemSourcesTimer = new QTimer(this);
+	checkTelemSourcesTimer->setInterval(1000);
+	connect(checkTelemSourcesTimer, &QTimer::timeout, this, &Telemetry::connectSCSTelemetry);
 
+	connect(&shPoller, &ApiPoller::dataReceived, this, &Telemetry::simhubDataReceived);
+	connect(&shPoller, &ApiPoller::requestFailed, this, &Telemetry::simhubFailed);
+
+	/*
 	gearLogTimer = new QTimer(this);
 	gearLogTimer->setInterval(500);
 	gearLogTimer->setSingleShot(true);
@@ -28,24 +33,27 @@ Telemetry::Telemetry() {
 	rpmLogTimer = new QTimer(this);
 	rpmLogTimer->setInterval(500);
 	rpmLogTimer->setSingleShot(true);
+	*/
 }
 
 
 void Telemetry::startConnectTimer()
 {
-	timer->start();
+	checkTelemSourcesTimer->start();
+	shPoller.start();
 }
 
 TelemetrySource Telemetry::isConnected() {
 	return telemetrySource;
 }
 
-void Telemetry::connectTelemetry()
+void Telemetry::connectSCSTelemetry()
 {
-	if (pTelemMap != nullptr) {
-		if (pTelemMap->scs_values.game == UnknownGame) {
+	/// ATS/ETS2 telemetry check, preferred over SimHub
+	if (scsTelem != nullptr) {
+		if (scsTelem->scs_values.game == UnknownGame) {
 			// Telemetry has stopped, disconnect the telemetry
-			disconnectTelemetry();
+			disconnectSCSTelemetry();
 			return;
 		}
 		// Telemetry is already running and good, return
@@ -58,43 +66,72 @@ void Telemetry::connectTelemetry()
 	}
 	
 	pBufferPtr = MapViewOfFile(pHandle, FILE_MAP_READ, 0, 0, SCS_PLUGIN_MMF_SIZE);
-	pTelemMap = (scsTelemetryMap_s*)pBufferPtr;
+	scsTelem = (scsTelemetryMap_s*)pBufferPtr;
 
-	if (pTelemMap == nullptr) {
+	if (scsTelem == nullptr) {
 		qDebug() << "Failed to map shared memory";
 		CloseHandle(pHandle);
 		pHandle = nullptr;
 		return;
 	}
 
-	if (pTelemMap->scs_values.game == ATS or pTelemMap->scs_values.game == ETS2) {
+	if (scsTelem->scs_values.game == ATS or scsTelem->scs_values.game == ETS2) {
 		telemetrySource = TelemetrySource::SCS;
 		emit telemetryChanged(TelemetrySource::SCS);
 	}
 	else
 	{
 		// No idea what game this is, disconnect
-		disconnectTelemetry();
+		disconnectSCSTelemetry();
 	}
 }
 
-void Telemetry::disconnectTelemetry() {
+void Telemetry::disconnectSCSTelemetry() {
 	qDebug() << "Called disconnectTelemetry";
 	UnmapViewOfFile(pBufferPtr);
 	CloseHandle(pHandle);
 	pHandle = nullptr;
 	pBufferPtr = nullptr;
-	pTelemMap = nullptr;
+	scsTelem = nullptr;
 	telemetrySource = TelemetrySource::NONE;
 	emit telemetryChanged(telemetrySource);
+}
+
+void Telemetry::simhubDataReceived(const QJsonObject& obj) {
+	if (telemetrySource == TelemetrySource::NONE)
+	{
+		telemetrySource = TelemetrySource::SIMHUB;
+		shPoller.setInterval(100);
+		emit telemetryChanged(TelemetrySource::SIMHUB);
+	}
+}
+
+void Telemetry::simhubFailed(const QString& err) {
+	if (telemetrySource == TelemetrySource::SIMHUB) {
+		telemetrySource = TelemetrySource::NONE;
+		shPoller.setInterval(1000);
+		emit telemetryChanged(TelemetrySource::NONE);
+	}
+	// Don't preempt if SCS telemetry is running, it gets priority
+}
+
+QString Telemetry::getActiveGame() {
+	if (telemetrySource == TelemetrySource::SCS)
+	{
+		return (scsTelem->scs_values.game == ATS) ? "ATS" : "ETS2";
+	}
+	else if (telemetrySource == TelemetrySource::SIMHUB && shPoller.hasData() && shPoller.lastData().value("GameRunning").toBool()) {
+		return shPoller.lastData().value("GameName").toString();
+	}
+	return "";
 }
 
 QPair<int, int> Telemetry::getGearState() {
 	int slottedGear = 0;	// Slotted gear is set even when the gear is not correctly engaged
 	int selectedGear = 0;	// Selected gear is ONLY set when the gear is correctly engaged
 	if (telemetrySource == TelemetrySource::SCS) {
-		slottedGear = pTelemMap->truck_ui.shifterSlot;
-		selectedGear = pTelemMap->truck_i.gear;
+		slottedGear = scsTelem->truck_ui.shifterSlot;
+		selectedGear = scsTelem->truck_i.gear;
 	}
 	//qDebug() << "Shifter Type Value: " << (QString(pTelemMap->config_s.shifterType)); // values are "automatic", "hshifter", "manual" for sequential, "arcade" for simple automatic
 	//qDebug() << "truck_b.shifterToggle[2]: " << pTelemMap->truck_b.shifterToggle[0] << pTelemMap->truck_b.shifterToggle[1];
@@ -103,35 +140,50 @@ QPair<int, int> Telemetry::getGearState() {
 
 float Telemetry::getSpeed() {
 	if (telemetrySource == TelemetrySource::SCS) {
-		return pTelemMap->truck_f.speed;
+		return scsTelem->truck_f.speed;
 	}
 	return 0;
 }
 
 float Telemetry::getEngineRPM() {
 	if (telemetrySource == TelemetrySource::SCS) {
-		return pTelemMap->truck_f.engineRpm;
+		return scsTelem->truck_f.engineRpm;
 	}
 	return 0;
 }
 
 bool Telemetry::getParkingBrakeState() {
 	if (telemetrySource == TelemetrySource::SCS) {
-		return pTelemMap->truck_b.parkBrake;
+		return scsTelem->truck_b.parkBrake;
 	}
 	return false;
 }
 
 int Telemetry::getActiveGear() {
 	if (telemetrySource == TelemetrySource::SCS) {
-		return pTelemMap->truck_i.gear;
+		return scsTelem->truck_i.gear;
+	}
+	else if (telemetrySource == TelemetrySource::SIMHUB && shPoller.hasData()) {
+		QString gear_s = shPoller.lastData().value("NewData").toObject().value("Gear").toString();
+		if (gear_s == "N")
+			return 0;
+		else if (gear_s == "R")
+			return -1;
+		return gear_s.toInt();
+	}
+	return 0;
+}
+
+int Telemetry::getMaxGear() {
+	if (telemetrySource == TelemetrySource::SIMHUB && shPoller.hasData()) {
+		return shPoller.lastData().value("NewData").toObject().value("CarSettings_MaxGears").toInt();
 	}
 	return 0;
 }
 
 float Telemetry::getThrottlePercent() {
 	if (telemetrySource == TelemetrySource::SCS) {
-		return pTelemMap->truck_f.gameThrottle;
+		return scsTelem->truck_f.gameThrottle;
 	}
 	return 0;
 }
@@ -145,19 +197,19 @@ int Telemetry::getGearForSlot(int slotButton, RangeSplitterValues* rangeSplitter
 			rangeMask = 0b01;
 		}
 		int splitterMask = 0;
-		if (pTelemMap->config_ui.selectorCount > 1 && rangeSplitter->splitter) {
+		if (scsTelem->config_ui.selectorCount > 1 && rangeSplitter->splitter) {
 			splitterMask = 0b10;
 		}
 		int gearIndex = 0;
 		for (gearIndex = 0; gearIndex < 32; gearIndex++) {
-			if (pTelemMap->truck_ui.hshifterPosition[gearIndex] != slotButton) // SCS seems to assume an 8-slot shifter, with the first two slots always unused. Might be wrong about that for custom transmissions.
+			if (scsTelem->truck_ui.hshifterPosition[gearIndex] != slotButton) // SCS seems to assume an 8-slot shifter, with the first two slots always unused. Might be wrong about that for custom transmissions.
 				continue;
-			if (pTelemMap->truck_ui.hshifterBitmask[gearIndex] == (rangeMask | splitterMask))
+			if (scsTelem->truck_ui.hshifterBitmask[gearIndex] == (rangeMask | splitterMask))
 				break;
 		}
 		if (gearIndex > 31)
 			gearIndex = 0; //
-		int gear = pTelemMap->truck_i.hshifterResulting[gearIndex];
+		int gear = scsTelem->truck_i.hshifterResulting[gearIndex];
 		
 		/*
 		if(!gearLogTimer->isActive()) 
@@ -202,12 +254,12 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	double wheelOmegaSum = 0.0;
 	double wheelRadiusSum = 0.0;
 	int poweredWheelCt = 0;
-	for (unsigned int i = 0; i < pTelemMap->config_ui.truckWheelCount; i++) {
-		if (!pTelemMap->config_b.truckWheelPowered[i]) {
+	for (unsigned int i = 0; i < scsTelem->config_ui.truckWheelCount; i++) {
+		if (!scsTelem->config_b.truckWheelPowered[i]) {
 			continue;
 		}
-		wheelOmegaSum += pTelemMap->truck_f.truck_wheelVelocity[i];
-		wheelRadiusSum += pTelemMap->config_f.truckWheelRadius[i];
+		wheelOmegaSum += scsTelem->truck_f.truck_wheelVelocity[i];
+		wheelRadiusSum += scsTelem->config_f.truckWheelRadius[i];
 		poweredWheelCt++;
 	}
 	float averageDrivenWheelAngularVelocity = float(wheelOmegaSum / poweredWheelCt);
@@ -217,17 +269,17 @@ float Telemetry::getTransmissionRPMForGear(int gear) {
 	float gearRatio = 0.0;
 	if (gear > 0) {
 		// Drive gears
-		gearRatio = pTelemMap->config_f.gearRatiosForward[gear-1];
+		gearRatio = scsTelem->config_f.gearRatiosForward[gear-1];
 	}
 	else {
 		// Reverse gears
-		gearRatio = pTelemMap->config_f.gearRatiosReverse[std::abs(gear)-1];
+		gearRatio = scsTelem->config_f.gearRatiosReverse[std::abs(gear)-1];
 	}
 
 	// Unit definitions: https://kniffen.dev/TruckSim-Telemetry/documents/Units.html
 	// Wheel velocity is Hz (rotations per second)
 	// Engine RPM = Wheel RPM * transmission ratio (Hz) * 60 * differential ratio
-	float transmission_rpm = gearRatio * averageDrivenWheelAngularVelocity * 60 * pTelemMap->config_f.gearDifferential;
+	float transmission_rpm = gearRatio * averageDrivenWheelAngularVelocity * 60 * scsTelem->config_f.gearDifferential;
 
 	/*
 	if (!rpmLogTimer->isActive()) {

@@ -59,7 +59,6 @@ void HeavyTruck::initialize() {
     // Graphics connections
     connect(ui->heavytruckTabWidget, &QTabWidget::currentChanged, this, &HeavyTruck::redrawJoystickMap);
     // Telemetry connections
-    connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HeavyTruckStateManager::setTelemetryState);
     connect(&stateManager, &HeavyTruckStateManager::engineRPMChanged, &synchroGuard, &HeavyTruckSynchroGuard::updateEngineRPM);
     // Joystick connections
     connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HeavyTruck::updateJoystickCircle);

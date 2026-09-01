@@ -171,6 +171,9 @@
     <QtMoc Include="seqshifter\SeqShifter.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="ApiPoller.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="version.h">

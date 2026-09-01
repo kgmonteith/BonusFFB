@@ -212,6 +212,7 @@ void SeqShifter::gameLoop() {
     joyValues = devices->getJoystickValues();
     
     updateState();
+    updateTelemetry();
     updateSlotSpring();
     updateDetent();
 }
@@ -257,6 +258,22 @@ void SeqShifter::updateState() {
         else if (state == SeqShifterState::UNKNOWN)
             qDebug() << "SeqShifterState::UNKNOWN";
         emit shiftStateChanged(state);
+    }
+}
+
+void SeqShifter::updateTelemetry() {
+    if (telemetry->isConnected() != TelemetrySource::NONE) {
+        current_gear = telemetry->getActiveGear();
+        QString gearText = (current_gear) ? QString::number(current_gear).replace("-", "R") : "N";
+        ui->seqshifter_currentGearLabel->setText(gearText);
+
+        max_gear = telemetry->getMaxGear();
+        min_gear = -1;
+    }
+    else {
+        max_gear = 0;
+        min_gear = 0;
+        current_gear = 0;
     }
 }
 
@@ -319,8 +336,7 @@ void SeqShifter::updateDetent() {
     if (newState != state) {
         if (min_gear && max_gear) 
         {
-            QString gearText = (current_gear) ? QString::number(current_gear).replace("-", "R") : "N";
-            ui->seqshifter_currentGearLabel->setText(gearText);
+            
         }
     }*/
 }

@@ -37,12 +37,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.8.0_msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;network</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.8.0_msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;network</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtDeploy>true</QtDeploy>
   </PropertyGroup>
@@ -155,6 +155,7 @@
     <ClInclude Include="..\include\vjoyinterface.h" />
     <QtMoc Include="BonusFFBApp.h" />
     <QtMoc Include="DeviceConfiguration.h" />
+    <QtMoc Include="ApiPoller.h" />
     <ClInclude Include="DeviceInfo.h" />
     <QtMoc Include="hshifter\HShifter.h" />
     <QtMoc Include="hshifter\HShifterStateManager.h" />

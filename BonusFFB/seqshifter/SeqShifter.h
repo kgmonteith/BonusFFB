@@ -47,6 +47,7 @@ public slots:
 	void redrawJoystickMap();
 	void updateJoystickCircle(int, int);
 	void updateState();
+	void updateTelemetry();
 	void updateSlotSpring();
 	void updateDetent();
 	void updateGearShiftText(SeqShifterState);
@@ -97,8 +98,8 @@ private:
 	double detent_zone_scale = 0.2;
 	double neutral_zone_scale = 0.04;
 
-	int max_gear = 4;
-	int min_gear = -1;
+	int max_gear = 0;
+	int min_gear = 0;
 	int current_gear = 0;
 
 	SeqShifterState state = SeqShifterState::NEUTRAL;

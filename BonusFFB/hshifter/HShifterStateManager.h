@@ -38,9 +38,6 @@ public:
     void start(DeviceConfiguration*, Telemetry*, SlotPattern*);
     void update();
 
-public slots:
-    void setTelemetryState(TelemetrySource);
-
 signals:
     void slotStateChanged(SlotState);
     void buttonZoneChanged(int);
@@ -64,7 +61,6 @@ private:
     SlotPattern* slotPattern = nullptr;
     const Slot* slot = nullptr;
 
-    TelemetrySource telemetryState = TelemetrySource::NONE;
     SlotState slotState = SlotState::NEUTRAL;
     SynchroState synchroState = SynchroState::UNKNOWN;
     GrindingState grindingState = GrindingState::OFF;    

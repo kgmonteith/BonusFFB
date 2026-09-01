@@ -52,8 +52,6 @@ void HShifter::initialize() {
     connect(ui->hshifter_mechanicalResistanceStrengthSlider, &QSlider::valueChanged, &slotGuard, &SlotGuard::setMechanicalResistance);
     // Graphics connections
     connect(ui->hshifterTabWidget, &QTabWidget::currentChanged, this, &HShifter::redrawJoystickMap);
-    // Telemetry connections
-    connect(telemetry, &Telemetry::telemetryChanged, &stateManager, &HShifterStateManager::setTelemetryState);
     // Joystick connections
     connect(devices, &DeviceConfiguration::joystickValueChanged, this, &HShifter::updateJoystickCircle);
     // Pedal connections

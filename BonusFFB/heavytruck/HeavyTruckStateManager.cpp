@@ -20,10 +20,6 @@ void HeavyTruckStateManager::start(DeviceConfiguration* d, Telemetry* t, SlotPat
     slotPattern = spPtr;
 }
 
-void HeavyTruckStateManager::setTelemetryState(TelemetrySource t) {
-	telemetryState = t;
-}
-
 void HeavyTruckStateManager::update() {
     joystick = devices->getJoystickValues();
 
@@ -148,7 +144,7 @@ void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
 
 void HeavyTruckStateManager::updateHeavyTruckSynchroState(QPair<int, int> gearValues) {
     HeavyTruckSynchroState newState = HeavyTruckSynchroState::UNKNOWN;
-    if ((telemetryState != TelemetrySource::NONE && gearValues.first != 0 && gearValues.second == targetGear) && (detentState != DetentState::EXITING_DETENT)) {
+    if ((telemetry->telemetrySource == TelemetrySource::SCS && gearValues.first != 0 && gearValues.second == targetGear) && (detentState != DetentState::EXITING_DETENT)) {
         // Gears are synchronized from telemetry reading
         newState = HeavyTruckSynchroState::IN_SYNCH;
     }

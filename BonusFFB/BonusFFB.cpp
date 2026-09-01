@@ -64,7 +64,7 @@ BonusFFB::BonusFFB(QWidget *parent)
     // Game loop connections
     connect(ui.startButton, &QPushButton::clicked, this, &BonusFFB::startButtonClicked);
     // Telemetry connections
-    connect(&telemetry, &Telemetry::telemetryChanged, this, &BonusFFB::displayTelemetryState);
+    connect(&updateTelemetryDisplayTimer, &QTimer::timeout, this, &BonusFFB::displayTelemetrySource);
     // Connect sliders to spinboxes
     connectSlidersToSpinBoxes();
 
@@ -123,6 +123,8 @@ BonusFFB::BonusFFB(QWidget *parent)
 
     // Start telemetry receiver
     telemetry.startConnectTimer();
+    updateTelemetryDisplayTimer.setInterval(1000);
+    updateTelemetryDisplayTimer.start();
 
     // Load active profile. Defaults will be loaded if the active profile is invalid.
     loadActiveProfile();
@@ -154,6 +156,8 @@ void BonusFFB::changeApp(int appSelectButtonIndex) {
 
     // Check if device configuration is suitable for the app
     updateStartButton();
+    // Update telemetry label
+    displayTelemetrySource();
 }
 
 void BonusFFB::connectSlidersToSpinBoxes() {
@@ -295,12 +299,21 @@ void BonusFFB::openAbout() {
     QMessageBox::about(this, "About Bonus FFB", about);
 }
 
-void BonusFFB::displayTelemetryState(TelemetrySource newState) {
-    if (newState == TelemetrySource::NONE) {
+void BonusFFB::displayTelemetrySource() {
+    if (telemetry.telemetrySource == TelemetrySource::SCS) {
+        ui.telemetryLabel->setText("🟢 " + telemetry.getActiveGame() + " telemetry connected");
+    }
+    else if (telemetry.telemetrySource != TelemetrySource::SCS && activeApp->getAppName() == "heavytruck") {
+        ui.telemetryLabel->setText("⚠️ ATS/ETS telemetry disconnected");
+    }
+    else if (telemetry.telemetrySource == TelemetrySource::NONE) {
         ui.telemetryLabel->setText("⚠️ Telemetry disconnected");
     }
-    else if (newState == TelemetrySource::SCS) {
-        ui.telemetryLabel->setText("🟢 ATS/ETS2 telemetry connected");
+    else if (telemetry.telemetrySource == TelemetrySource::SIMHUB) {
+        if (telemetry.getActiveGame().isEmpty())
+            ui.telemetryLabel->setText("🟡 SimHub connected (No telemetry received)");
+        else
+            ui.telemetryLabel->setText("🟢 SimHub connected (" + telemetry.getActiveGame() + ")");
     }
 }
 

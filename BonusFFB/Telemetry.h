@@ -19,9 +19,10 @@ You should have received a copy of the GNU General Public License along with Bon
 #include "scs-telemetry-common.hpp"
 
 #include "DeviceConfiguration.h"
+#include "ApiPoller.h"
 
 enum class TelemetrySource {
-	NONE, SCS
+	NONE, SCS, SIMHUB
 };
 
 class Telemetry : public QObject
@@ -30,9 +31,10 @@ class Telemetry : public QObject
 
 public:
 	Telemetry();
-	void connectTelemetry();
-	void disconnectTelemetry();
+	void connectSCSTelemetry();
+	void disconnectSCSTelemetry();
 	void startConnectTimer();
+
 	TelemetrySource isConnected();
 	QPair<int, int> getGearState();
 	float getSpeed();
@@ -40,23 +42,30 @@ public:
 	bool getParkingBrakeState();
 	float getTransmissionRPMForGear(int);
 	int getActiveGear();
+	int getMaxGear();
 	int getGearForSlot(int, RangeSplitterValues*);
 	float getThrottlePercent();
-	void logTelemetry();
+	//void logTelemetry();
+	QString getActiveGame();
+
+	TelemetrySource telemetrySource = TelemetrySource::NONE;
+
+public slots:
+	void simhubDataReceived(const QJsonObject&);
+	void simhubFailed(const QString&);
 
 signals:
 	void telemetryChanged(TelemetrySource);
 	void lastUpdate(QString);
 
 private:
-	TelemetrySource telemetrySource = TelemetrySource::NONE;
 	HANDLE pHandle = nullptr;
 	void* pBufferPtr = nullptr;
 
-	scsTelemetryMap_s* pTelemMap = nullptr;
-	QJsonObject* shTelem = nullptr;
+	scsTelemetryMap_s* scsTelem = nullptr;
+	ApiPoller shPoller = ApiPoller(QUrl("http://localhost:8888/api/getGameData"), 1000);
 
-	QChronoTimer* timer;
+	QTimer* checkTelemSourcesTimer;
 	QTimer* gearLogTimer;
 	QTimer* rpmLogTimer;
 };

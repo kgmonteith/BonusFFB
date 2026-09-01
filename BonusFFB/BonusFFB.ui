@@ -2723,7 +2723,7 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
         <item row="0" column="0">
          <widget class="QTabWidget" name="seqshifterTabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_12">
            <attribute name="title">
@@ -5030,25 +5030,37 @@ Simulates the detent ball riding up the cammed ramp between detent notches. This
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="ffbDeviceFoundLabel">
-           <property name="text">
-            <string>❌ FFB device not found</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="ffbDeviceFoundLabel">
+             <property name="text">
+              <string>❌ FFB device not found</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QLabel" name="vjoyDeviceFoundLabel">
-           <property name="text">
-            <string>❌ vJoy not installed</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="vjoyDeviceFoundLabel">
+             <property name="text">
+              <string>❌ vJoy not installed</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QLabel" name="telemetryLabel">
-           <property name="text">
-            <string>⚠️ Telemetry disconnected</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLabel" name="telemetryLabel">
+             <property name="text">
+              <string>⚠️ Telemetry disconnected</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>

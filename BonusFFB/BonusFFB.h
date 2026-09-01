@@ -64,7 +64,7 @@ public slots:
     void changeApp(int);
     void openUserGuide();
     void openAbout();
-    void displayTelemetryState(TelemetrySource);
+    void displayTelemetrySource();
     void start();
     void stop();
     void startButtonClicked();
@@ -93,6 +93,7 @@ private:
     QString active_profile_name;
 
     QTimer gameLoopTimer;
+    QTimer updateTelemetryDisplayTimer;
 
     Telemetry telemetry;
 };

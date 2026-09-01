@@ -20,10 +20,6 @@ void HShifterStateManager::start(DeviceConfiguration* d, Telemetry* t, SlotPatte
     slotPattern = spPtr;
 }
 
-void HShifterStateManager::setTelemetryState(TelemetrySource t) {
-	telemetryState = t;
-}
-
 void HShifterStateManager::update() {
     joystick = devices->getJoystickValues();
 
