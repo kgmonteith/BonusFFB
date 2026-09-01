@@ -15,7 +15,6 @@ Without telemetry, the sequential shifter mode acts like a hardware sequential s
 The sequential shifter is confirmed to be compatible with these rally games, including SimHub telemetry:
 
 - EA SPORTS WRC
-- DiRT Rally 2.0
 - BeamNG.drive
 
 Assetto Corsa Rally is not currently supported due to the game's handling of force-feedback devices.
