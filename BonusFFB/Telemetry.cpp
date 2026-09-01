@@ -101,7 +101,7 @@ void Telemetry::simhubDataReceived(const QJsonObject& obj) {
 	if (telemetrySource == TelemetrySource::NONE)
 	{
 		telemetrySource = TelemetrySource::SIMHUB;
-		shPoller.setInterval(100);
+		shPoller.setInterval(50);
 		emit telemetryChanged(TelemetrySource::SIMHUB);
 	}
 }

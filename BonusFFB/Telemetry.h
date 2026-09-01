@@ -66,6 +66,6 @@ private:
 	ApiPoller shPoller = ApiPoller(QUrl("http://localhost:8888/api/getGameData"), 1000);
 
 	QTimer* checkTelemSourcesTimer;
-	QTimer* gearLogTimer;
-	QTimer* rpmLogTimer;
+	//QTimer* gearLogTimer;
+	//QTimer* rpmLogTimer;
 };

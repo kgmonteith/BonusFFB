@@ -24,12 +24,12 @@ The H-shifter mode sends vJoy button presses when gears are engaged. Bind the in
 
 Changes to the slot pattern, position, slot depth, and width are reflected on the joystick map, consult it after making a change.
 
-- **Slot pattern**: Select the pattern that matches your vehicles's transmission.
+- **Slot pattern:** Select the pattern that matches your vehicles's transmission.
 - **Pattern position:** Aligns the pattern to the left or right side of the joystick range.
 - **Slot depth scale:** Adjusts the depth of the shifter slots. A smaller value results in a shorter shifter throw.
 - **Pattern width:** Sets the maximum width of the shifter pattern. A smaller value restricts the left/right movement of the shifter. A value of 100% uses the full left/range of the joystick base. 
-- **Neutral spring strength**: Sets the strength of the neutral centering spring effect, which is applied when the stick is near the neutral channel.
-- **Neutral spring position**: Sets the centering position of the neutral spring. This is limited to positions under and between the center and rightmost slots in heavy truck mode, to prevent conflicts with the left-slot wall effect. This setting is ignored by the ZF-16 Double-H pattern, which overrides the neutral spring position for each of the two H-patterns.
+- **Neutral spring strength:** Sets the strength of the neutral centering spring effect, which is applied when the stick is near the neutral channel.
+- **Neutral spring position:** Sets the centering position of the neutral spring. This is limited to positions under and between the center and rightmost slots in heavy truck mode, to prevent conflicts with the left-slot wall effect. This setting is ignored by the ZF-16 Double-H pattern, which overrides the neutral spring position for each of the two H-patterns.
 - **Detent spring strength:** Sets the strength of the detent felt at the ends of the shifter slots.
 - **Mechanical resistance:** Sets the strength of the spring force resisting the stick when it enters a gear slot until the detent is reached. This resistance must also be overcome when float shifting, so a low value is recommended.
 - **<span id="button-zone-depth">Grind zone depth:</span>** Adjusts how far into the slot you have to push the stick to trigger the transmission grinding effect, shown with a red line when the markers are enabled. The grind zone should always be between the button zone and the neutral slot.

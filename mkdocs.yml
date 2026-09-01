@@ -51,6 +51,7 @@ nav:
   - Modes:
     - Heavy truck shifter: heavytruck.md
     - H-Shifter: hshifter.md
+    - Sequential shifter: seqshifter.md
     - PRNDL: prndl.md
     - Push/pull hand control: pphc.md
     - Handbrake: handbrake.md

@@ -6,6 +6,7 @@ Bonus FFB is free, open-source software that simulates these devices using force
 
 * [Heavy truck shifters](heavytruck.md), built for American Truck Simulator and ETS2
 * [H-pattern manual shifters](hshifter.md)
+* [Sequential shifters](seqshifter.md)
 * ["PRNDL"-style automatic transmission shifters](prndl.md)
 * [Push/pull hand controls](pphc.md)
 * [Simple handbrakes](handbrake.md)

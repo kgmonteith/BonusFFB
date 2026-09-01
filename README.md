@@ -6,6 +6,7 @@ Bonus FFB simulates these devices using a force-feedback joystick:
 
 * Heavy truck shifters
 * H-pattern shifters
+* Sequential shifters
 * PRNDL-style automatic shifters
 * Push/pull hand controls
 * Simple handbrakes
