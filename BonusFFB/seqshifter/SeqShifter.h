@@ -75,6 +75,8 @@ signals:
 private:
 	QGraphicsScene* scene = nullptr;
 	QGraphicsRectItem* centerSlotRect;
+	QGraphicsRectItem* fwdDetentRect;
+	QGraphicsRectItem* backDetentRect;
 	QGraphicsEllipseItem* joystickCircle;
 
 	DIEFFECT slotSpringEff = {};

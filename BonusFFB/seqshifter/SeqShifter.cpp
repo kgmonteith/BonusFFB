@@ -63,6 +63,16 @@ void SeqShifter::initializeJoystickMap() {
     centerSlotRect->setPen(Qt::NoPen);
     scene->addItem(centerSlotRect);
 
+    fwdDetentRect = new QGraphicsRectItem();
+    fwdDetentRect->setBrush(QBrush(Qt::black));
+    fwdDetentRect->setPen(Qt::NoPen);
+    scene->addItem(fwdDetentRect);
+
+    backDetentRect = new QGraphicsRectItem();
+    backDetentRect->setBrush(QBrush(Qt::black));
+    backDetentRect->setPen(Qt::NoPen);
+    scene->addItem(backDetentRect);
+
     joystickCircle = new QGraphicsEllipseItem(0, 0, JOYSTICK_MARKER_DIAMETER_PX, JOYSTICK_MARKER_DIAMETER_PX);
     QColor seethroughWhite = Qt::transparent;
     seethroughWhite.setAlphaF(float(0.15));
@@ -90,6 +100,12 @@ void SeqShifter::redrawJoystickMap() {
 
     centerSlotRect->setRect(0, 0, SLOT_WIDTH_PX, sceneHeight * depth_scale);
     centerSlotRect->setPos(center - QPointF(SLOT_WIDTH_PX / 2, (sceneHeight * depth_scale) / 2));
+
+    fwdDetentRect->setRect(0, 0, SLOT_WIDTH_PX * 2, sceneHeight * depth_scale * detent_zone_scale * .5);
+    fwdDetentRect->setPos(center - QPointF(SLOT_WIDTH_PX, (sceneHeight * depth_scale) / 2));
+
+    backDetentRect->setRect(0, 0, SLOT_WIDTH_PX * 2, sceneHeight * depth_scale * detent_zone_scale * .5);
+    backDetentRect->setPos(center + QPointF(SLOT_WIDTH_PX * -1, (sceneHeight * depth_scale) / 2 - (sceneHeight * depth_scale * detent_zone_scale * .5)));
 
     joystickCircle->setPos(center - QPointF(joystickCircle->rect().width() / 2, joystickCircle->rect().height() / 2));
 }
@@ -263,17 +279,21 @@ void SeqShifter::updateState() {
 
 void SeqShifter::updateTelemetry() {
     if (telemetry->isConnected() != TelemetrySource::NONE) {
-        current_gear = telemetry->getActiveGear();
-        QString gearText = (current_gear) ? QString::number(current_gear).replace("-", "R") : "N";
-        ui->seqshifter_currentGearLabel->setText(gearText);
-
         max_gear = telemetry->getMaxGear();
         min_gear = -1;
+        current_gear = telemetry->getActiveGear();
+        QString gearText = "—";
+        if (max_gear)
+        {
+            gearText = (current_gear) ? QString::number(current_gear).replace("-1", "R") : "N";
+        }
+        ui->seqshifter_currentGearLabel->setText(gearText);
     }
     else {
         max_gear = 0;
         min_gear = 0;
         current_gear = 0;
+        ui->seqshifter_currentGearLabel->setText("—");
     }
 }
 
