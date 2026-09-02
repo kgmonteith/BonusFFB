@@ -25,13 +25,27 @@ Set these values in the "Controls" menu:
 ![ATS vJoy](images/ats-vjoy.png) 
 * Set `Transmission` to any automatic mode
 
-Set these values in the "Keys and buttons" menu:
+Set these values in the "Keys and buttons" menu. It's easiest to bind the buttons by starting with the stick in adjacent slot, starting the button bind detection, and then moving the stick into the target slot:
 
-* Set `Shift To Drive` to vJoy button 10
-* Set `Shift To Reverse` to vJoy button 8
-* Set `Shift To Neutral` to vJoy button 9
-* Set `Parking Brake` to vJoy button 7
-    * Disable the `Simulate Park slot in ATS/ETS2 using telemetry` setting in the "Other settings" tab in order to bind button 7, otherwise it will be overwritten by button 9
+* Set `Parking Brake` to vJoy button 11
+    * Disable the `Simulate Park slot in ATS/ETS2 using telemetry` setting in the "Other settings" tab in order to bind button 11, otherwise it will be overwritten by button 13
+* Set `Shift To Drive` to vJoy button 14
+* Set `Shift To Reverse` to vJoy button 12
+* Set `Shift To Neutral` to vJoy button 13
+
+![Truck sim parking brake binding](images/prndl-button-parking.png)
+
+![Truck sim transmission bindings](images/prndl-buttons-transmission.png)
+
+??? info "How to manually set bindings in controls.sii"
+    If you're comfortable editing the `controls.sii` file for you profile, you can also set the bindings by editing these entries, substituting `joy4` for your vJoy device number:
+
+    ```
+    config_lines[391]: "mix parkingbrake `keyboard.space?0 | joy4.b12?0 | semantical.parkingbrake?0`"
+    config_lines[483]: "mix gear0 `unbound?0 | joy4.b14?0 | semantical.gear0?0`"
+    config_lines[484]: "mix geardrive `modifier(cstm_mod_1?0 & (! cstm_mod_2?0) & (! cstm_mod_3?0) & (! cstm_mod_4?0) & (! cstm_mod_5?0) & (! cstm_mod_6?0), keyboard.d?0) || joy4.b15?0 | semantical.geardrive?0`"
+    config_lines[485]: "mix gearreverse `unbound?0 | joy4.b13?0 | semantical.gearreverse?0`"
+    ```
 
 The PRNDL mode will also output your pedals' values on vJoy virtual axes, to preserve compatibility with the heavy truck and H-shifter modes.
 
