@@ -487,6 +487,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="rangeSwitchInvertedCheckbox">
+          <property name="text">
+           <string>Switch is inverted</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
@@ -564,6 +571,13 @@
           </property>
           <property name="placeholderText">
            <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="splitterSwitchInvertedCheckbox">
+          <property name="text">
+           <string>Switch is inverted</string>
           </property>
          </widget>
         </item>

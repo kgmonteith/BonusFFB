@@ -221,12 +221,14 @@ void DeviceConfiguration::saveDeviceConfiguration() {
         config.beginGroup("range");
         config.setValue("device_guid", range->instanceGuid.toString());
         config.setValue("device_button", rangeButton);
+        config.setValue("switch_is_inverted", rangeSwitchIsInverted);
         config.endGroup();
     }
     if (splitter != nullptr) {
         config.beginGroup("splitter");
         config.setValue("device_guid", splitter->instanceGuid.toString());
         config.setValue("device_button", splitterButton);
+        config.setValue("switch_is_inverted", splitterSwitchIsInverted);
         config.endGroup();
     }
 
@@ -300,6 +302,7 @@ void DeviceConfiguration::loadDeviceConfiguration() {
         if (config.value("device_guid").toString() != "None") {
             range = getDeviceFromGuid(config.value("device_guid").toUuid());
             rangeButton = config.value("device_button").toInt();
+            rangeSwitchIsInverted = config.value("switch_is_inverted").toBool();
             if (range == nullptr) {
                 QMessageBox::warning(nullptr, "Shifter range device not found", "Saved shifter range device is not connected.\nReconnect the device or update the input/output config.");
             }
@@ -312,6 +315,7 @@ void DeviceConfiguration::loadDeviceConfiguration() {
         if (config.value("device_guid").toString() != "None") {
             splitter = getDeviceFromGuid(config.value("device_guid").toUuid());
             splitterButton = config.value("device_button").toInt();
+            splitterSwitchIsInverted = config.value("switch_is_inverted").toBool();
             if (splitter == nullptr) {
                 QMessageBox::warning(nullptr, "Shifter splitter device not found", "Saved shifter splitter device is not connected.\nReconnect the device or update the input/output config.");
             }
@@ -478,12 +482,14 @@ void DeviceConfiguration::openConfigurationDialog() {
         if (range != nullptr)
         {
             rangeButton = dialog.rangeSwitchComboBox->currentIndex();
+            rangeSwitchIsInverted = dialog.rangeSwitchInvertedCheckbox->isChecked();
             qDebug() << "New range: " << range->name;
         }
         splitter = getDeviceFromGuid(dialog.splitterDeviceComboBox->currentData().toUuid());
         if (splitter != nullptr)
         {
             splitterButton = dialog.splitterSwitchComboBox->currentIndex();
+            splitterSwitchIsInverted = dialog.splitterSwitchInvertedCheckbox->isChecked();
             qDebug() << "New splitter: " << range->name;
         }
 
@@ -571,9 +577,11 @@ void DeviceConfiguration::updateButtonComboBoxes(int flag, ButtonBinding binding
     if (flag & FLAG_DEVICES_RANGE) {
         dialog.rangeDeviceComboBox->setCurrentIndex(dialog.rangeDeviceComboBox->findData(binding.deviceUuid));
         dialog.rangeSwitchComboBox->setCurrentIndex(binding.button);
+        dialog.rangeSwitchInvertedCheckbox->setChecked(rangeSwitchIsInverted);
     } else if (flag & FLAG_DEVICES_SPLITTER) {
         dialog.splitterDeviceComboBox->setCurrentIndex(dialog.splitterDeviceComboBox->findData(binding.deviceUuid));
         dialog.splitterSwitchComboBox->setCurrentIndex(binding.button);
+        dialog.splitterSwitchInvertedCheckbox->setChecked(splitterSwitchIsInverted);
     } else if (flag & FLAG_DEVICES_SHIFTLOCK) {
         dialog.shiftLockDeviceComboBox->setCurrentIndex(dialog.shiftLockDeviceComboBox->findData(binding.deviceUuid));
         dialog.shiftLockButtonComboBox->setCurrentIndex(binding.button);
@@ -693,11 +701,16 @@ RangeSplitterValues DeviceConfiguration::getRangeSplitterValues() {
     RangeSplitterValues values = { false, false };
     // Override range value if configured
     values.range = range->isButtonPressed(rangeButton);
+    if (rangeSwitchIsInverted)
+        values.range = !values.range;
     if (rangeOverride) {
         values.range = rangeOverrideState;
     }
     emit rangeChanged(values.range);
     values.splitter = splitter->isButtonPressed(splitterButton);
+    if (splitterSwitchIsInverted) {
+        values.splitter = !values.splitter;
+    }
     emit splitterChanged(values.splitter);
     return values;
 }

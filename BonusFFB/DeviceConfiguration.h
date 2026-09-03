@@ -147,8 +147,10 @@ public:
 
 	DeviceInfo* range = nullptr;
 	int rangeButton;
+	bool rangeSwitchIsInverted = false;
 	DeviceInfo* splitter = nullptr;
 	int splitterButton;
+	bool splitterSwitchIsInverted = false;
 	bool rangeOverride = false;
 	bool rangeOverrideState = false;
 
