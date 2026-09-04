@@ -56,6 +56,7 @@ struct PedalValues {
 	long throttle;
 	long brake;
 	long clutch;
+	double throttle_pct;
 };
 
 struct RangeSplitterValues {

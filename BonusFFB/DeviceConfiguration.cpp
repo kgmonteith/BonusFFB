@@ -679,11 +679,12 @@ void DeviceConfiguration::changeShiftLockDevice(int deviceIndex) {
 }
 
 PedalValues DeviceConfiguration::getPedalValues() {
-    PedalValues values = { 0, 0, 0 };
+    PedalValues values = { 0, 0, 0, 0.0 };
     values.throttle = throttle->getAxisReading(throttleAxisGuid);
     if (invertThrottleAxis) {
         values.throttle = abs(65535 - values.throttle);
     }
+    values.throttle_pct = double(values.throttle) / 65535;
     emit throttleValueChanged(values.throttle);
     values.clutch = clutch->getAxisReading(clutchAxisGuid);
     if (invertClutchAxis) {

@@ -17,6 +17,8 @@ void PedalsManager::start(DeviceConfiguration* devPtr) {
 	devices = devPtr;
 	unblipTimer.setInterval(10);
 	unblipTimer.setSingleShot(true);
+	unblipIntervalTimer.setInterval(100);
+	unblipIntervalTimer.setSingleShot(true);
 }
 
 void PedalsManager::toggleVirtualPedals(bool state) {
@@ -40,8 +42,10 @@ void PedalsManager::updateVirtualPedals() {
 void PedalsManager::unblipThrottle() {
 	if (!enabled)
 		return;
-	if (!unblipTimer.isActive() && devices->getPedalValues().clutch == 0) {
+	if (!unblipIntervalTimer.isActive() && !unblipTimer.isActive() && devices->getPedalValues().clutch == 0) {
+		qDebug() << "Triggering throttle blip";
 		devices->vjoy.setAxisValue(0, HID_USAGE_X);
 		unblipTimer.start();
+		unblipIntervalTimer.start();
 	}
 }

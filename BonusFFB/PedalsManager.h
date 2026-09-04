@@ -32,6 +32,7 @@ public:
 	void start(DeviceConfiguration*);
 
 	DeviceConfiguration* devices;
-	QTimer unblipTimer;
+	QTimer unblipTimer;	// Timer for the actual throttle un-blip
+	QTimer unblipIntervalTimer;	// Timer for the interval between un-blips
 	QPair<int, int> lastPedalValues;
 };

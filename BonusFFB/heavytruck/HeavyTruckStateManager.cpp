@@ -83,6 +83,7 @@ void HeavyTruckStateManager::updateTargetGear() {
 
     rpmDelta = engineRPM - transmissionRPM;
 
+    
     if (engineRPM != lastEngineRPM) 
     {
         if (engineRPM > lastEngineRPM)
@@ -101,15 +102,15 @@ void HeavyTruckStateManager::updateDetentState() {
     if (slot != nullptr) {
         if (detentState == DetentState::ENTERING_DETENT && ((slot->orientation == SLOT_ORIENTATION_FORWARD && joystick.fb <= slotPattern->slotDepthAsJoystick(slot->orientation)) || (slot->orientation == SLOT_ORIENTATION_BACK && joystick.fb >= slotPattern->slotDepthAsJoystick(slot->orientation)))) {
             detentState = DetentState::DETENT_REACHED;
-            qDebug() << "DetentState::DETENT_REACHED";
+            //qDebug() << "DetentState::DETENT_REACHED";
         }
         else if (detentState == DetentState::DETENT_REACHED && !slotPattern->isInDetentZone(joystick)) {
             detentState = DetentState::EXITING_DETENT;
-            qDebug() << "DetentState::EXITING_DETENT";
+            //qDebug() << "DetentState::EXITING_DETENT";
         }
         else if (detentState == DetentState::EXITING_DETENT && !slotPattern->isInButtonZone(*slot, joystick)) {
             detentState = DetentState::ENTERING_DETENT;
-            qDebug() << "DetentState::ENTERING_DETENT";
+            //qDebug() << "DetentState::ENTERING_DETENT";
         }
     }
 }
@@ -121,17 +122,16 @@ void HeavyTruckStateManager::updateButtonZoneState(QPair<int, int> gearValues) {
             newState = slot->vJoyButton();
         }
         if (detentState == DetentState::EXITING_DETENT) {
-            qDebug() << "Triggering neutral from detent exit";
             newState = 0;
         }
     } 
     // Un-blip throttle if RPM is increasing, possible fix for truck sim's lack of support for throttle-on shifting
-    if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH) {
-        //qDebug() << "Triggering throttle blip";
+    if (rpmIncreasing && buttonZoneState && synchroState == HeavyTruckSynchroState::ENTERING_SYNCH && abs(rpmDelta) <= 35) {
+        qDebug() << "rpmDelta: " << rpmDelta;
         emit unblipThrottle();
     }
     // Un-blip throttle if the stick is in neutral and telemetry says a gear is still engaged
-    if (!buttonZoneState && slotPattern->isInNeutral(joystick) && gearValues.second && devices->getPedalValues().throttle > 0) {
+    else if (!buttonZoneState && slotPattern->isInNeutral(joystick) && gearValues.second && devices->getPedalValues().throttle > 0) {
         //qDebug() << "Triggering neutral throttle blip";
         emit unblipThrottle();
     }
