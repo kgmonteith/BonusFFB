@@ -28,7 +28,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #define BUTTON_PRNDL_LOW 16
 #define BUTTON_RANGE 23
 #define BUTTON_SPLITTER 24
-
+#define BUTTON_ACCESSORY 25
 
 #define FLAG_DEVICES_JOYSTICK_LR	0b00000000001
 #define FLAG_DEVICES_JOYSTICK_FB	0b00000000010
@@ -40,6 +40,7 @@ You should have received a copy of the GNU General Public License along with Bon
 #define FLAG_DEVICES_SHIFTLOCK		0b00001000000
 #define FLAG_DEVICES_RANGE			0b00010000000
 #define FLAG_DEVICES_SPLITTER		0b00100000000
+#define FLAG_DEVICES_ACCESSORY		0b01000000000
 
 #define DEVICES_NOT_AVAILABLE 0
 #define DEVICES_NOT_CONFIGURED 1
@@ -59,9 +60,10 @@ struct PedalValues {
 	double throttle_pct;
 };
 
-struct RangeSplitterValues {
-	bool range;
-	bool splitter;
+struct ShifterValues {
+	bool range = false;
+	bool splitter = false;
+	bool accessory = false;
 };
 
 struct AxisBinding {
@@ -89,6 +91,7 @@ public slots:
 	void updateClutchAxisList(int);
 	void changeRangeDevice(int);
 	void changeSplitterDevice(int);
+	void changeAccessoryDevice(int);
 	void changeShiftLockDevice(int);
 	void testEnableAcceptButton();
 
@@ -127,7 +130,7 @@ public:
 
 	JoystickValues getJoystickValues();
 	PedalValues getPedalValues();
-	RangeSplitterValues getRangeSplitterValues();
+	ShifterValues getShifterValues();
 
 	QList<DeviceInfo> deviceList;
 	HWND hwnd;
@@ -151,6 +154,8 @@ public:
 	bool rangeSwitchIsInverted = false;
 	DeviceInfo* splitter = nullptr;
 	int splitterButton;
+	DeviceInfo* accessory = nullptr;
+	int accessoryButton;
 	bool splitterSwitchIsInverted = false;
 	bool rangeOverride = false;
 	bool rangeOverrideState = false;

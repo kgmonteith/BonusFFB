@@ -18,7 +18,7 @@ void RangeSplitterManager::start(DeviceConfiguration* devPtr) {
 }
 
 void RangeSplitterManager::updateVirtualRangeSplitter() {
-	RangeSplitterValues newValues = devices->getRangeSplitterValues();
+	ShifterValues newValues = devices->getShifterValues();
 	// Set range and splitter vJoy buttons
 	if (newValues.range != lastValues.range) {
 		if (newValues.range == true)
@@ -32,5 +32,12 @@ void RangeSplitterManager::updateVirtualRangeSplitter() {
 		else
 			devices->vjoy.releaseButton(BUTTON_SPLITTER);
 	}
+	if (newValues.accessory != lastValues.accessory) {
+		if (newValues.accessory == true)
+			devices->vjoy.pressButton(BUTTON_ACCESSORY);
+		else
+			devices->vjoy.releaseButton(BUTTON_ACCESSORY);
+	}
+
 	lastValues = newValues;
 }

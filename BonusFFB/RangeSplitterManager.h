@@ -26,5 +26,5 @@ public:
 	void start(DeviceConfiguration*);
 
 	DeviceConfiguration* devices;
-	RangeSplitterValues lastValues = { false, false };
+	ShifterValues lastValues;
 };

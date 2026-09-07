@@ -43,7 +43,7 @@ public:
 	float getTransmissionRPMForGear(int);
 	int getActiveGear();
 	int getMaxGear();
-	int getGearForSlot(int, RangeSplitterValues*);
+	int getGearForSlot(int, ShifterValues*);
 	float getThrottlePercent();
 	//void logTelemetry();
 	QString getActiveGame();

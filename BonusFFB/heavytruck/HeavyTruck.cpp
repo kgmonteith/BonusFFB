@@ -29,6 +29,8 @@ void HeavyTruck::initialize() {
     appDeviceFlags = FLAG_DEVICES_REQUIRED | FLAG_DEVICES_THROTTLE | FLAG_DEVICES_CLUTCH | FLAG_DEVICES_RANGE | FLAG_DEVICES_SPLITTER;
     if (devices->brake != nullptr)
         appDeviceFlags |= FLAG_DEVICES_BRAKE;
+    if (devices->accessory != nullptr)
+        appDeviceFlags |= FLAG_DEVICES_ACCESSORY;
 
     // Add slot patterns
     for (auto pattern : TruckPatterns) {

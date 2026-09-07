@@ -17,7 +17,7 @@ void PedalsManager::start(DeviceConfiguration* devPtr) {
 	devices = devPtr;
 	unblipTimer.setInterval(10);
 	unblipTimer.setSingleShot(true);
-	unblipIntervalTimer.setInterval(100);
+	unblipIntervalTimer.setInterval(75);
 	unblipIntervalTimer.setSingleShot(true);
 }
 

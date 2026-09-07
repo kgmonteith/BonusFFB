@@ -24,7 +24,7 @@ void HeavyTruckStateManager::update() {
     joystick = devices->getJoystickValues();
 
     // Get new range and splitter values
-    rangeSplitter = devices->getRangeSplitterValues();
+    rangeSplitter = devices->getShifterValues();
 
     // Get telemetry values
     QPair<int, int> gearValues = { 0, 0 };

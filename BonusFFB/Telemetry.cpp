@@ -188,7 +188,7 @@ float Telemetry::getThrottlePercent() {
 	return 0;
 }
 
-int Telemetry::getGearForSlot(int slotButton, RangeSplitterValues* rangeSplitter) {
+int Telemetry::getGearForSlot(int slotButton, ShifterValues* rangeSplitter) {
 	if (slotButton < 0)
 		return 0;
 	if (telemetrySource == TelemetrySource::SCS) {

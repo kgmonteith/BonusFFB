@@ -57,7 +57,7 @@ private:
     DeviceConfiguration* devices = nullptr;
 
     Telemetry* telemetry = nullptr;
-    RangeSplitterValues rangeSplitter;
+    ShifterValues rangeSplitter;
     JoystickValues joystick;
 
     int buttonZoneState = 0;
