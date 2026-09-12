@@ -1,0 +1,22 @@
+.md-typeset p:not(.admonition p) {
+  text-indent: 1em;
+}
+
+/* Ensure the first paragraph following a header isn't indented, if desired */
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  text-indent: 0;
+}
+
+.md-typeset .tabbed-set {
+  border: 0.5px solid darkslategray;
+}
+
+.md-typeset .tabbed-content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
