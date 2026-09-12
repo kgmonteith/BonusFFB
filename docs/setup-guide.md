@@ -99,6 +99,7 @@ Configure your input and output devices in the `Settings > Configure input/outpu
 * A force-feedback enabled joystick and vJoy are required for all Bonus FFB modes
 * Pedals are required for the heavy truck and H-shifter modes
 * Range and splitter switches are required for the heavy truck mode
+    * The optional shifter accessory button is not used by Bonus FFB, but is provided to allow you to free up your shifter from using a USB slot in ATS/ETS2
 * A shift lock device is optionally used by the PRNDL mode
 
 Bonus FFB installs as a single application with a few modes:
