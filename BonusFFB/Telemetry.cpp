@@ -214,27 +214,27 @@ int Telemetry::getGearForSlot(int slotButton, ShifterValues* rangeSplitter) {
 		/*
 		if(!gearLogTimer->isActive()) 
 		{
-			qDebug() << "\tgetGearForSlot(" << slotNumber << "):";
-			qDebug() << "\t\tgears: " << pTelemMap->config_ui.gears;
-			qDebug() << "\t\tgears_reverse: " << pTelemMap->config_ui.gears_reverse;
-			qDebug() << "\t\tselectorCount: " << pTelemMap->config_ui.selectorCount;
-			qDebug() << "\t\ttelemetry range enabled: " << pTelemMap->truck_b.shifterToggle[0];
+			qDebug() << "\tgetGearForSlot(" << slotButton << "):";
+			qDebug() << "\t\tgears: " << scsTelem->config_ui.gears;
+			qDebug() << "\t\tgears_reverse: " << scsTelem->config_ui.gears_reverse;
+			qDebug() << "\t\tselectorCount: " << scsTelem->config_ui.selectorCount;
+			qDebug() << "\t\ttelemetry range enabled: " << scsTelem->truck_b.shifterToggle[0];
 			qDebug() << "\t\thardware  range enabled: " << rangeSplitter->range;
-			qDebug() << "\t\ttelemetry split enabled: " << pTelemMap->truck_b.shifterToggle[1];
+			qDebug() << "\t\ttelemetry split enabled: " << scsTelem->truck_b.shifterToggle[1];
 			qDebug() << "\t\thardware  split enabled: " << rangeSplitter->splitter;
 			qDebug() << "\t\tgearIndex: " << gearIndex;
-			qDebug() << "\t\tresulting gear: " << pTelemMap->truck_i.hshifterResulting[gearIndex];
+			qDebug() << "\t\tresulting gear: " << scsTelem->truck_i.hshifterResulting[gearIndex];
 			QString t_str = "";
 			QString r_str = "";
 			QString s_str = "";
-			for (int i = 0; i < std::size(pTelemMap->truck_i.hshifterResulting); i++) {
-				t_str += QString::number(pTelemMap->truck_i.hshifterResulting[i]).rightJustified(2, ' ') + " ";
-				r_str += QString::number(pTelemMap->truck_ui.hshifterPosition[i]).rightJustified(2, ' ') + " ";
-				s_str += QString::number(pTelemMap->truck_ui.hshifterBitmask[i]).rightJustified(2, ' ') + " ";
+			for (int i = 0; i < std::size(scsTelem->truck_i.hshifterResulting); i++) {
+				t_str += QString::number(scsTelem->truck_i.hshifterResulting[i]).rightJustified(2, ' ') + " ";
+				r_str += QString::number(scsTelem->truck_ui.hshifterPosition[i]).rightJustified(2, ' ') + " ";
+				s_str += QString::number(scsTelem->truck_ui.hshifterBitmask[i]).rightJustified(2, ' ') + " ";
 			}
-			qDebug() << "\t\tpTelemMap->truck_i.hshifterResulting[]: " << t_str;
-			qDebug() << "\t\tpTelemMap->truck_i.hshifterPosition[]:  " << r_str;
-			qDebug() << "\t\tpTelemMap->truck_i.hshifterBitmask[]:   " << s_str;
+			qDebug() << "\t\tscsTelem->truck_i.hshifterResulting[]: " << t_str;
+			qDebug() << "\t\tscsTelem->truck_i.hshifterPosition[]:  " << r_str;
+			qDebug() << "\t\tscsTelem->truck_i.hshifterBitmask[]:   " << s_str;
 			gearLogTimer->start();
 		}
 		*/

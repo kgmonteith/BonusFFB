@@ -22,6 +22,9 @@ void SlotPattern::setName(QString t_name) {
 
 void SlotPattern::setPattern(QString patternName) {
 	bool range_override = false;
+	if (patternName == "ZF 16 (Double-H)") {
+		range_override = true;
+	}
 	for (auto slotDef : AllPatterns) {
 		if (slotDef.name == patternName) {
 			name = patternName;

@@ -96,6 +96,7 @@ public slots:
 	void testEnableAcceptButton();
 
 	void setRangeOverride(bool newState) {
+		qDebug() << "Setting range override:" << newState;
 		rangeOverride = newState;
 	}
 	void forceRange(bool newState) {

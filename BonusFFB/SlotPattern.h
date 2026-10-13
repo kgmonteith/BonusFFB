@@ -72,6 +72,7 @@ static const QList<PatternDef> PresetPatterns = {
 	{"R+6", { R, X, 1, 2, 3, 4, 5, 6}, SLOT_WALL_LEFT},
 	{"R+7", { R, X, 1, 2, 3, 4, 5, 6, 7, X}, SLOT_WALL_LEFT},
 	{"R+8", { R, X, 1, 2, 3, 4, 5, 6, 7, 8}, SLOT_WALL_LEFT},
+	{"R over 1+3", { R, 1, 2, 3 } },
 	{"R over 1+4", { R, 1, 2, 3, 4, X} },
 	{"R over 1+5", { R, 1, 2, 3, 4, 5 } },
 	{"R over 1+6", { R, 1, 2, 3, 4, 5, 6, X } },
